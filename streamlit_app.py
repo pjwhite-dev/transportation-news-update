@@ -2,7 +2,9 @@ import hashlib
 import hmac
 import html
 import json
+import random
 import re
+import time
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import quote_plus
@@ -24,10 +26,19 @@ st.set_page_config(
 EASTERN = ZoneInfo("America/New_York")
 LOOKBACK_DAYS = 2
 ITEMS_PER_SECTION = 8
-GEMINI_ENDPOINT_TEMPLATE = (
-    "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-)
-DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
+OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
+DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
+DEFAULT_OPENAI_FALLBACK_MODELS = [
+    "gpt-5-mini",
+]
+TRANSIENT_OPENAI_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
+
+# Standard token prices per 1 million tokens. These are used only to
+# display an approximate cost after a run; OpenAI billing is authoritative.
+OPENAI_TOKEN_PRICES = {
+    "gpt-5.4-mini": {"input": 0.75, "output": 4.50},
+    "gpt-5-mini": {"input": 0.25, "output": 2.00},
+}
 
 TOPIC_SECTIONS = [
     "UAS and Drones",
@@ -398,74 +409,254 @@ def render_owner_access() -> None:
             st.sidebar.error("Incorrect password")
 
 
-def gemini_chat(messages: list[dict]) -> str:
-    api_key = secret_value("gemini_api_key")
-    model = secret_value("gemini_model", DEFAULT_GEMINI_MODEL)
+
+
+def openai_model_candidates() -> list[str]:
+    """Return the preferred OpenAI model followed by distinct fallbacks."""
+    preferred = secret_value("openai_model", DEFAULT_OPENAI_MODEL).strip()
+
+    configured_fallbacks = secret_value("openai_fallback_models", "")
+    extra = [
+        value.strip()
+        for value in configured_fallbacks.split(",")
+        if value.strip()
+    ]
+
+    candidates = [preferred, *extra, *DEFAULT_OPENAI_FALLBACK_MODELS]
+    unique = []
+    seen = set()
+    for model in candidates:
+        if model and model not in seen:
+            seen.add(model)
+            unique.append(model)
+    return unique
+
+
+def news_analysis_schema() -> dict:
+    """JSON Schema used by OpenAI Structured Outputs."""
+    cluster_schema = {
+        "type": "object",
+        "properties": {
+            "cluster_id": {"type": "string"},
+            "article_ids": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
+            "primary_article_id": {"type": "string"},
+            "section": {
+                "type": "string",
+                "enum": TOPIC_SECTIONS,
+            },
+            "relevant": {"type": "boolean"},
+            "importance": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10,
+            },
+            "canonical_title": {"type": "string"},
+            "summary": {"type": "string"},
+            "is_administration_win": {"type": "boolean"},
+            "eo_number": {"type": "string"},
+            "eo_section": {"type": "string"},
+            "win_explanation": {"type": "string"},
+            "confidence": {
+                "type": "string",
+                "enum": ["high", "medium", "low"],
+            },
+            "exclude_reason": {"type": "string"},
+        },
+        "required": [
+            "cluster_id",
+            "article_ids",
+            "primary_article_id",
+            "section",
+            "relevant",
+            "importance",
+            "canonical_title",
+            "summary",
+            "is_administration_win",
+            "eo_number",
+            "eo_section",
+            "win_explanation",
+            "confidence",
+            "exclude_reason",
+        ],
+        "additionalProperties": False,
+    }
+
+    return {
+        "type": "object",
+        "properties": {
+            "clusters": {
+                "type": "array",
+                "items": cluster_schema,
+            }
+        },
+        "required": ["clusters"],
+        "additionalProperties": False,
+    }
+
+
+def extract_openai_output_text(data: dict) -> str:
+    """Extract assistant text from a raw Responses API response."""
+    text_parts = []
+    refusals = []
+
+    for output_item in data.get("output", []):
+        if output_item.get("type") != "message":
+            continue
+        for content_item in output_item.get("content", []):
+            item_type = content_item.get("type")
+            if item_type == "output_text":
+                text_parts.append(content_item.get("text", ""))
+            elif item_type == "refusal":
+                refusals.append(content_item.get("refusal", "Request refused."))
+
+    if refusals:
+        raise RuntimeError("OpenAI declined the request: " + " ".join(refusals))
+
+    text = "".join(text_parts).strip()
+    if not text:
+        status = data.get("status", "unknown")
+        incomplete = data.get("incomplete_details") or {}
+        reason = incomplete.get("reason", "")
+        detail = f" Status: {status}."
+        if reason:
+            detail += f" Incomplete reason: {reason}."
+        raise RuntimeError("OpenAI returned no usable text." + detail)
+
+    return text
+
+
+def estimate_openai_cost(model: str, usage: dict) -> float | None:
+    prices = OPENAI_TOKEN_PRICES.get(model)
+    if not prices:
+        return None
+
+    input_tokens = int(usage.get("input_tokens", 0) or 0)
+    output_tokens = int(usage.get("output_tokens", 0) or 0)
+
+    return (
+        input_tokens * prices["input"] / 1_000_000
+        + output_tokens * prices["output"] / 1_000_000
+    )
+
+
+def openai_chat(messages: list[dict]) -> str:
+    """
+    Call the OpenAI Responses API with Structured Outputs.
+
+    Transient errors are retried with exponential backoff. If the
+    preferred model remains unavailable, the app tries the configured
+    fallback model.
+    """
+    api_key = secret_value("openai_api_key")
     if not api_key:
         raise RuntimeError(
-            "The gemini_api_key secret is missing from Streamlit settings."
+            "The openai_api_key secret is missing from Streamlit settings."
         )
 
-    system_parts = [
-        message.get("content", "")
+    input_messages = [
+        {
+            "role": message.get("role", "user"),
+            "content": message.get("content", ""),
+        }
         for message in messages
-        if message.get("role") in {"system", "developer"}
     ]
-    contents = []
-    for message in messages:
-        role = message.get("role")
-        if role in {"system", "developer"}:
-            continue
-        gemini_role = "model" if role == "assistant" else "user"
-        contents.append(
-            {
-                "role": gemini_role,
-                "parts": [{"text": message.get("content", "")}],
-            }
-        )
 
-    payload = {
-        "contents": contents,
-        "generationConfig": {
-            "temperature": 0.15,
-            "maxOutputTokens": 7000,
-            "responseMimeType": "application/json",
-        },
-    }
-    if system_parts:
-        payload["systemInstruction"] = {
-            "parts": [{"text": "\n\n".join(system_parts)}]
+    attempt_errors = []
+
+    for model in openai_model_candidates():
+        payload = {
+            "model": model,
+            "input": input_messages,
+            "reasoning": {"effort": "none"},
+            "max_output_tokens": 12000,
+            "store": False,
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "transportation_news_analysis",
+                    "strict": True,
+                    "schema": news_analysis_schema(),
+                }
+            },
         }
 
-    endpoint = GEMINI_ENDPOINT_TEMPLATE.format(model=model)
-    response = requests.post(
-        endpoint,
-        headers={
-            "Content-Type": "application/json",
-            "x-goog-api-key": api_key,
-        },
-        json=payload,
-        timeout=120,
-    )
-    if response.status_code >= 400:
-        detail = clean_spaces(response.text)[:800]
-        raise RuntimeError(
-            f"Gemini API returned HTTP {response.status_code}: {detail}"
-        )
+        for attempt in range(3):
+            try:
+                response = requests.post(
+                    OPENAI_RESPONSES_ENDPOINT,
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                    timeout=180,
+                )
+            except requests.RequestException as exc:
+                attempt_errors.append(f"{model}: network error: {exc}")
+                if attempt < 2:
+                    delay = (2 ** attempt) + random.uniform(0.25, 0.9)
+                    time.sleep(delay)
+                    continue
+                break
 
-    data = response.json()
-    try:
-        parts = data["candidates"][0]["content"]["parts"]
-        text = "".join(part.get("text", "") for part in parts)
-        if not text.strip():
-            raise KeyError("empty response")
-        return text
-    except (KeyError, IndexError, TypeError) as exc:
-        prompt_feedback = data.get("promptFeedback", {})
-        raise RuntimeError(
-            "Gemini returned an unexpected or empty response. "
-            f"Prompt feedback: {prompt_feedback}"
-        ) from exc
+            if response.status_code < 400:
+                try:
+                    data = response.json()
+                    text = extract_openai_output_text(data)
+                    usage = data.get("usage") or {}
+                    estimated_cost = estimate_openai_cost(model, usage)
+
+                    st.session_state["last_openai_model_used"] = model
+                    st.session_state["last_openai_usage"] = usage
+                    st.session_state["last_openai_estimated_cost"] = estimated_cost
+                    return text
+                except (ValueError, KeyError, TypeError) as exc:
+                    attempt_errors.append(
+                        f"{model}: unexpected successful response: {exc}"
+                    )
+                    break
+
+            detail = clean_spaces(response.text)[:700]
+            attempt_errors.append(
+                f"{model}: HTTP {response.status_code}: {detail}"
+            )
+
+            if response.status_code in TRANSIENT_OPENAI_STATUS_CODES:
+                if attempt < 2:
+                    delay = (2 ** attempt) + random.uniform(0.25, 0.9)
+                    time.sleep(delay)
+                    continue
+                break
+
+            # A missing/unavailable model may be resolved by the fallback.
+            if response.status_code == 404:
+                break
+
+            if response.status_code == 401:
+                raise RuntimeError(
+                    "OpenAI rejected the API key. Recopy the project API key "
+                    "into Streamlit Secrets and make sure billing is active."
+                )
+
+            if response.status_code == 429:
+                raise RuntimeError(
+                    "OpenAI rate or billing limit reached. Check the API Usage "
+                    "and Limits pages in the OpenAI Platform."
+                )
+
+            raise RuntimeError(
+                f"OpenAI API returned HTTP {response.status_code}: {detail}"
+            )
+
+    compact_errors = " | ".join(attempt_errors[-6:])
+    raise RuntimeError(
+        "OpenAI was unable to complete the analysis after automatic retries "
+        "and the fallback model. Try Run AI Analysis again. "
+        f"Recent attempts: {compact_errors}"
+    )
 
 def extract_json_object(text: str) -> dict:
     cleaned = text.strip()
@@ -648,7 +839,7 @@ def validate_ai_result(result: dict, articles: list[dict]) -> dict:
 
 
 def run_ai_analysis(articles: list[dict]) -> dict:
-    raw = gemini_chat(ai_prompt_payload(articles))
+    raw = openai_chat(ai_prompt_payload(articles))
     parsed = extract_json_object(raw)
     return validate_ai_result(parsed, articles)
 
@@ -1117,10 +1308,10 @@ ai_tab, preview_tab, raw_tab, status_tab = st.tabs(
 )
 
 with ai_tab:
-    token_configured = bool(secret_value("gemini_api_key"))
+    token_configured = bool(secret_value("openai_api_key"))
     if not token_configured:
         st.warning(
-            "Gemini is not configured yet. Add gemini_api_key in Streamlit Secrets."
+            "OpenAI is not configured yet. Add openai_api_key in Streamlit Secrets."
         )
     elif not owner_authenticated():
         st.info("Unlock Owner controls in the sidebar to run the AI analysis.")
@@ -1135,7 +1326,7 @@ with ai_tab:
         with info_col:
             st.caption(
                 f"Sends {len(articles)} public-source headlines/snippets to "
-                f"{secret_value('gemini_model', DEFAULT_GEMINI_MODEL)}."
+                f"{secret_value('openai_model', DEFAULT_OPENAI_MODEL)}."
             )
         if run_clicked:
             try:
@@ -1145,7 +1336,25 @@ with ai_tab:
                         if key.startswith("ai_") and key != "ai_result":
                             del st.session_state[key]
                     st.session_state["ai_result"] = run_ai_analysis(articles)
-                st.success("AI analysis completed.")
+                used_model = st.session_state.get(
+                    "last_openai_model_used",
+                    secret_value("openai_model", DEFAULT_OPENAI_MODEL),
+                )
+                usage = st.session_state.get("last_openai_usage", {})
+                estimated_cost = st.session_state.get(
+                    "last_openai_estimated_cost"
+                )
+                input_tokens = int(usage.get("input_tokens", 0) or 0)
+                output_tokens = int(usage.get("output_tokens", 0) or 0)
+
+                message = (
+                    f"AI analysis completed using {used_model}. "
+                    f"Tokens: {input_tokens:,} input and "
+                    f"{output_tokens:,} output."
+                )
+                if estimated_cost is not None:
+                    message += f" Estimated API cost: ${estimated_cost:.4f}."
+                st.success(message)
             except Exception as exc:
                 st.error(str(exc))
 
@@ -1205,7 +1414,7 @@ with raw_tab:
     render_raw_review(raw_briefing)
 
 with status_tab:
-    st.subheader("Source and AI status")
+    st.subheader("Source and OpenAI status")
     if source_errors:
         st.warning("Some source requests failed; the remaining results are still usable.")
         for error in source_errors:
@@ -1213,10 +1422,10 @@ with status_tab:
     else:
         st.success("All configured news-source requests completed.")
 
-    if secret_value("gemini_api_key"):
-        st.success("Gemini API key is configured in Streamlit Secrets.")
+    if secret_value("openai_api_key"):
+        st.success("OpenAI API key is configured in Streamlit Secrets.")
     else:
-        st.warning("Gemini API key is not configured.")
+        st.warning("OpenAI API key is not configured.")
 
     if secret_value("owner_password"):
         st.success("Owner-password protection is configured.")
@@ -1225,7 +1434,7 @@ with status_tab:
 
     st.markdown(
         f"""
-        **Configured AI model:** `{secret_value('gemini_model', DEFAULT_GEMINI_MODEL)}`
+        **Configured AI model:** `{secret_value('openai_model', DEFAULT_OPENAI_MODEL)}`
 
         **Current public sources**
 
