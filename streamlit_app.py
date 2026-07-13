@@ -190,12 +190,51 @@ def article_html(item: dict, section_name: str) -> str:
     """
 
 
+
+def compact_article_html(item: dict) -> str:
+    title = html.escape(item.get("title", "Untitled"))
+    source = html.escape(item.get("source", "Source"))
+    date_label = html.escape(item.get("date_label", ""))
+    url = safe_url(item.get("url", ""))
+    related = related_sources(item)
+    related_note = ""
+    if related:
+        related_note = f" · also {len(related)} other outlet{'s' if len(related) != 1 else ''}"
+    return f"""
+    <div style="padding:0 0 8px 0;margin:0 0 8px 0;">
+      <div style="font-size:14px;line-height:1.35;">
+        <a href="{url}" style="color:#173c5e;text-decoration:none;font-weight:700;">{title}</a>
+      </div>
+      <div style="font-size:10px;line-height:1.35;color:#77818a;">
+        {source}{f' &nbsp;•&nbsp; {date_label}' if date_label else ''}{related_note}
+      </div>
+    </div>
+    """
+
+
 def section_html(title: str, items: list[dict]) -> str:
     if not items:
         return ""
     is_wins = title == "Trump Administration Wins"
+    is_top = title == "Top Developments"
     heading_color = "#8c241e" if is_wins else "#173c5e"
-    content = "".join(article_html(item, title) for item in items)
+
+    if is_wins or is_top:
+        content = "".join(article_html(item, title) for item in items)
+    else:
+        featured = items[:4]
+        additional = items[4:]
+        content = "".join(article_html(item, title) for item in featured)
+        if additional:
+            compact = "".join(compact_article_html(item) for item in additional)
+            content += f"""
+            <div style="font-size:12px;font-weight:800;color:#48657d;
+                text-transform:uppercase;letter-spacing:.35px;margin:2px 0 9px 0;">
+              Additional Headlines
+            </div>
+            {compact}
+            """
+
     return f"""
     <div style="margin:0 0 25px 0;">
       <div style="font-size:19px;line-height:1.3;font-weight:800;color:{heading_color};
@@ -542,6 +581,17 @@ with status_tab:
     if current.get("estimated_cost") is not None:
         st.write(f"**Estimated API cost:** ${current['estimated_cost']:.4f}")
     st.write(f"**Candidate records reviewed:** {current.get('candidate_count', 0)}")
+
+    candidate_counts = current.get("candidate_counts", {})
+    included_counts = current.get("included_counts", {})
+    if candidate_counts:
+        st.markdown("**Candidates collected by search family:**")
+        for name, count in sorted(candidate_counts.items()):
+            st.write(f"- {name}: {count}")
+    if included_counts:
+        st.markdown("**Items displayed by section:**")
+        for name, count in included_counts.items():
+            st.write(f"- {name}: {count}")
     if current.get("source_errors"):
         st.warning("Some source requests failed:")
         for error in current["source_errors"]:

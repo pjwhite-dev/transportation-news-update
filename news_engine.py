@@ -42,47 +42,75 @@ SECTION_ORDER = [
 ]
 
 NEWS_QUERIES = {
-    "Trump Administration priorities": (
-        '("Unleashing American Drone Dominance" OR '
-        '"Restoring American Airspace Sovereignty" OR '
-        '"Leading the World in Supersonic Flight" OR '
-        '"eVTOL Integration Pilot Program" OR '
-        '(Trump AND (drone OR eVTOL OR supersonic OR autonomous vehicle)))'
-    ),
-    "UAS and Drones": (
-        '("unmanned aircraft system" OR "uncrewed aircraft system" OR '
-        '"beyond visual line of sight" OR BVLOS OR "drone delivery" OR '
-        '"Part 107" OR "Remote ID" OR "drone integration")'
-    ),
-    "UAS Security and C-UAS": (
-        '("counter-UAS" OR C-UAS OR "counter drone" OR "drone incursion" OR '
-        '"unauthorized drone" OR "drone detection" OR "airspace sovereignty" OR '
-        '"Section 2209" OR "critical infrastructure" drone)'
-    ),
-    "eVTOL Integration Pilot Program and AAM": (
-        '("eVTOL Integration Pilot Program" OR eIPP OR "advanced air mobility" OR '
-        'powered-lift OR "air taxi" OR eVTOL)'
-    ),
-    "Autonomous Vehicles": (
-        '("autonomous vehicle" OR robotaxi OR "automated driving system" OR '
-        '"self-driving vehicle" OR "automated vehicle") '
-        '(NHTSA OR DOT OR United States OR U.S. OR American)'
-    ),
-    "Other Advanced Transportation": (
-        '("civil supersonic" OR "quiet supersonic" OR "overland supersonic" OR '
-        '"high-speed rail" OR maglev OR "autonomous rail" OR '
-        '"advanced transportation technology") (United States OR U.S. OR American)'
-    ),
+    "Trump Administration priorities": [
+        '"Unleashing American Drone Dominance"',
+        '"Restoring American Airspace Sovereignty"',
+        '"Leading the World in Supersonic Flight"',
+        '"eVTOL Integration Pilot Program"',
+        '(Trump OR "Trump Administration") (drone OR UAS OR eVTOL OR supersonic OR autonomous vehicle)',
+        '(White House OR FAA OR DOT OR OSTP) (drone dominance OR airspace sovereignty OR supersonic)',
+    ],
+    "UAS and Drones": [
+        '("unmanned aircraft system" OR "uncrewed aircraft system" OR UAS) (FAA OR United States OR U.S.)',
+        '(drone OR UAS) (BVLOS OR "beyond visual line of sight" OR "Part 107" OR waiver)',
+        '(drone OR UAS) ("Remote ID" OR airspace integration OR certification OR rulemaking)',
+        '("drone delivery" OR "medical drone delivery" OR "package delivery drone") United States',
+        '(drone OR UAS) (inspection OR agriculture OR public safety OR infrastructure) United States',
+        '("American drone" OR "U.S. drone manufacturing" OR "domestic drone" OR "trusted drone")',
+        '(FAA OR NASA) (drone OR UAS) test range',
+    ],
+    "UAS Security and C-UAS": [
+        '("counter-UAS" OR C-UAS OR "counter drone") United States',
+        '("drone detection" OR "drone mitigation") (airport OR stadium OR border OR prison OR infrastructure)',
+        '("drone incursion" OR "unauthorized drone" OR "unlawful drone") United States',
+        '(drone OR UAS) ("critical infrastructure" OR border security OR military base)',
+        '("airspace sovereignty" OR "Section 2209") drone',
+        '(DHS OR DOJ OR FAA OR Pentagon OR DoD) ("counter-UAS" OR "counter drone")',
+        '("counter-drone" OR "counter UAS") (contract OR deployment OR test OR demonstration)',
+    ],
+    "eVTOL Integration Pilot Program and AAM": [
+        '"eVTOL Integration Pilot Program"',
+        '(eIPP AND (FAA OR eVTOL OR aircraft))',
+        '("advanced air mobility" OR AAM) (FAA OR United States OR U.S.)',
+        '(eVTOL OR "air taxi") (certification OR flight test OR deployment OR operations)',
+        '(powered-lift OR vertiport) (FAA OR regulation OR certification)',
+        '(Joby OR Archer OR BETA OR Wisk OR Eve OR Lilium) (FAA OR flight OR certification OR U.S.)',
+        '(electric aircraft OR eVTOL) (medical logistics OR cargo OR passenger) United States',
+    ],
+    "Autonomous Vehicles": [
+        '("autonomous vehicle" OR "automated vehicle") (NHTSA OR DOT OR United States OR U.S.)',
+        '(robotaxi OR "self-driving") (deployment OR expansion OR permit OR regulation) United States',
+        '("automated driving system" OR ADS) (NHTSA OR FMVSS OR exemption OR rulemaking)',
+        '("autonomous truck" OR "driverless truck") United States',
+        '(Waymo OR Cruise OR Zoox OR Tesla OR Aurora OR Motional) (robotaxi OR autonomous vehicle)',
+        '("autonomous vehicle" OR robotaxi) (crash OR safety OR investigation OR recall)',
+        '(state legislature OR governor OR city) ("autonomous vehicle" OR robotaxi)',
+    ],
+    "Other Advanced Transportation": [
+        '("civil supersonic" OR "commercial supersonic" OR "quiet supersonic") United States',
+        '(X-59 OR Boom Supersonic OR Overture OR Hermeus) (flight OR test OR FAA OR NASA)',
+        '("overland supersonic" OR "supersonic noise") (FAA OR rule OR regulation)',
+        '("high-speed rail" OR bullet train) United States',
+        '(maglev OR "autonomous rail" OR "automated train") United States',
+        '(FRA OR FTA OR DOT) (rail technology OR advanced rail OR passenger rail)',
+        '("advanced transportation technology" OR "smart transportation") United States',
+    ],
 }
 
 FEDERAL_REGISTER_TERMS = [
     "unmanned aircraft",
     "drone",
+    "beyond visual line of sight",
+    "remote identification",
     "advanced air mobility",
+    "powered-lift",
     "autonomous vehicle",
     "automated driving",
+    "motor vehicle safety",
     "supersonic",
     "high-speed rail",
+    "passenger rail",
+    "transportation technology",
 ]
 
 HEADERS = {
@@ -165,7 +193,7 @@ def parse_rss_date(value: str) -> datetime | None:
 def google_news_url(query: str) -> str:
     return (
         "https://news.google.com/rss/search?q="
-        + quote_plus(f"{query} when:1d")
+        + quote_plus(f"{query} when:2d")
         + "&hl=en-US&gl=US&ceid=US:en"
     )
 
@@ -175,7 +203,7 @@ def fetch_google_news(
     query: str,
     window_start: datetime,
     window_end: datetime,
-    max_items: int = 14,
+    max_items: int = 25,
 ) -> tuple[list[dict[str, Any]], str | None]:
     try:
         response = requests.get(google_news_url(query), headers=HEADERS, timeout=30)
@@ -314,11 +342,18 @@ def collect_articles(
     items: list[dict[str, Any]] = []
     errors: list[str] = []
 
-    for section, query in NEWS_QUERIES.items():
-        found, error = fetch_google_news(section, query, window_start, window_end)
-        items.extend(found)
-        if error:
-            errors.append(error)
+    for section, queries in NEWS_QUERIES.items():
+        for query in queries:
+            found, error = fetch_google_news(
+                section,
+                query,
+                window_start,
+                window_end,
+                max_items=25,
+            )
+            items.extend(found)
+            if error:
+                errors.append(error)
 
     federal_items, federal_errors = fetch_federal_register(window_start, window_end)
     items.extend(federal_items)
@@ -396,7 +431,11 @@ EDITORIAL PURPOSE
 - The voice may be administration-forward and confidently pro-American. Clearly credit
   President Trump or his Administration only when a direct, supportable causal connection
   exists. Do not use campaign slogans, advocacy language, or unsupported praise.
-- It is better to omit a section than fill it with weak or tangential material.
+- This is a news aggregator as well as an executive briefing. Include every substantively
+  relevant U.S. sector development, even when it is operational, commercial, technical,
+  state-level, research-oriented, or industry-led rather than a major federal policy action.
+- Do not reject a relevant story merely because it is not transformational. Exclude only
+  genuinely tangential, duplicative, promotional, or low-information material.
 
 EXECUTIVE SUMMARY
 - Write 2 or 3 sentences, 55-90 words total.
@@ -405,11 +444,16 @@ EXECUTIVE SUMMARY
 - Mention that a field was quiet only when useful.
 
 RELEVANCE
-- Exclude consumer products, generic AI/software features, celebrity commentary, stock
-  promotion, valuation pieces, broad market reports, routine foreign news without a
-  material U.S. policy or competitive implication, and keyword collisions.
-- If the honest summary would say a group is merely broad market activity, routine notices,
-  or not materially relevant, mark it irrelevant.
+- Include credible U.S. developments involving deployments, approvals, waivers,
+  certifications, testing, manufacturing, contracts, partnerships, investment, facilities,
+  research, enforcement, legislation, rulemaking, safety, operations, and market expansion.
+- Exclude consumer products, generic AI/software features, celebrity commentary, pure stock
+  promotion or valuation pieces, generic market-size reports, routine foreign news without
+  a material U.S. implication, and keyword collisions.
+- A story may be relevant with a low importance score. Use relevance to answer "does this
+  belong in this portfolio?" and importance to answer "how prominently should it appear?"
+- Aim to retain roughly 3-8 distinct stories per topic when the supplied candidates support
+  that many, without inventing or padding.
 
 CLUSTERING
 - Cluster only articles covering the same concrete event, announcement, rule, deployment,
@@ -645,21 +689,21 @@ def arrange_sections(stories: list[dict[str, Any]]) -> dict[str, list[dict[str, 
     relevant = sorted(stories, key=lambda item: (item["importance"], item["published"]), reverse=True)
 
     wins = [item for item in relevant if item["is_administration_win"]]
-    sections["Trump Administration Wins"] = wins[:5]
+    sections["Trump Administration Wins"] = wins[:6]
     win_ids = {item["id"] for item in sections["Trump Administration Wins"]}
 
     eligible_top = [
         item for item in relevant
         if item["id"] not in win_ids and item["importance"] >= 7
     ]
-    sections["Top Developments"] = eligible_top[:5]
+    sections["Top Developments"] = eligible_top[:6]
     top_ids = {item["id"] for item in sections["Top Developments"]}
 
     for item in relevant:
         if item["id"] in win_ids or item["id"] in top_ids:
             continue
         section = item["section"]
-        if section in sections and len(sections[section]) < 5:
+        if section in sections and len(sections[section]) < 10:
             sections[section].append(item)
 
     return sections
@@ -698,6 +742,17 @@ def generate_daily_briefing(
         if cluster["relevant"] and cluster["primary_article_id"] in lookup
     ]
 
+    arranged = arrange_sections(stories)
+    candidate_counts: dict[str, int] = {}
+    for article in articles:
+        key = article.get("search_section", "Unknown")
+        candidate_counts[key] = candidate_counts.get(key, 0) + 1
+
+    included_counts = {
+        section: len(items)
+        for section, items in arranged.items()
+    }
+
     return {
         "generated_at": datetime.now(EASTERN).isoformat(),
         "window_start": start.isoformat(),
@@ -707,9 +762,11 @@ def generate_daily_briefing(
         "estimated_cost": cost,
         "executive_summary": analysis["executive_summary"],
         "what_to_watch": analysis["what_to_watch"],
-        "sections": arrange_sections(stories),
+        "sections": arranged,
         "source_errors": source_errors,
         "candidate_count": len(articles),
+        "candidate_counts": candidate_counts,
+        "included_counts": included_counts,
     }
 
 
