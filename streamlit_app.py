@@ -25,7 +25,7 @@ st.set_page_config(
 
 EASTERN = ZoneInfo("America/New_York")
 LOOKBACK_DAYS = 2
-ITEMS_PER_SECTION = 8
+ITEMS_PER_SECTION = 10
 OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
 DEFAULT_OPENAI_FALLBACK_MODELS = [
@@ -129,6 +129,15 @@ EO 14304 — Leading the World in Supersonic Flight (June 6, 2025)
 - Sec. 3: OSTP-led Federal coordination of supersonic R&D, testing, regulatory data, commercial viability, and operational integration.
 - Sec. 4: International engagement and alignment on civil-supersonic regulation and safety agreements.
 """.strip()
+
+EO_DISPLAY_NAMES = {
+    "EO 14307": "Unleashing American Drone Dominance",
+    "14307": "Unleashing American Drone Dominance",
+    "EO 14305": "Restoring American Airspace Sovereignty",
+    "14305": "Restoring American Airspace Sovereignty",
+    "EO 14304": "Leading the World in Supersonic Flight",
+    "14304": "Leading the World in Supersonic Flight",
+}
 
 SOURCE_PREFERENCE = """
 Source preference, strongest first: official White House/Federal agency/Federal Register;
@@ -571,7 +580,7 @@ def openai_chat(messages: list[dict]) -> str:
             "model": model,
             "input": input_messages,
             "reasoning": {"effort": "none"},
-            "max_output_tokens": 12000,
+            "max_output_tokens": 16000,
             "store": False,
             "text": {
                 "format": {
@@ -700,20 +709,37 @@ Mark is_administration_win true only when the reported event directly fulfills, 
 advances, or provides a concrete result under a listed Trump executive-order mandate, or is
 an independently verifiable Trump 47 regulatory/operational achievement evident from the
 supplied metadata. Merely positive private-sector news is not automatically an Administration
-win. For each true win, write exactly one sentence of 30-55 words explaining WHY it is a win.
-Use confident, patriotic, pro-American language emphasizing American leadership, security,
-innovation, workers, manufacturing, or competitiveness as appropriate. Name the EO and
-section. Stay factual and do not overclaim causation. If support is uncertain, set false.
+win. For each true win, write exactly one sentence of 30-55 words explaining the concrete
+American policy or operational result. Use confident, patriotic, pro-American language
+emphasizing American leadership, security, innovation, workers, manufacturing, or
+competitiveness as appropriate. The app separately displays the full EO title, number, and
+section, so do not begin with "This is a win for EO..." and do not repeat the citation merely
+to fill space. Stay factual and do not overclaim causation. If support is uncertain, set false.
+Use exact eo_number values "EO 14307", "EO 14305", or "EO 14304" and a concise eo_section
+such as "Sec. 6".
 
 RELEVANCE STANDARD
 Exclude keyword collisions, consumer products, generic AI features, celebrity commentary,
 stock-promotion or valuation stories, routine foreign developments without a material U.S.
-policy/competitive implication, and stories outside the listed portfolio.
+policy/competitive implication, and stories outside the listed portfolio. If the best honest
+summary would say that the stories are "broader mobility-tech stories," "routine notices,"
+"not materially relevant," or merely share a market theme, mark them irrelevant. Never keep
+weak material simply to populate every section.
 
 CLUSTERING STANDARD
-Every relevant article about the same underlying event belongs in one cluster. Select one
-primary_article_id. Put all other matching article IDs in article_ids so the app can display
-"Also covered by." Do not create multiple clusters for the same event.
+Cluster articles only when they report the same concrete event, announcement, rule,
+deployment, flight, contract, facility, or government action. Sharing a broad topic is NOT
+enough. Distinct companies, cities, deployments, regulatory actions, or research findings
+must be separate clusters even when they illustrate the same trend. For example, an Amazon
+Cleveland launch, a Manna Tulsa expansion, and a Zipline Tampa network are three stories,
+not one "drone delivery expands" cluster.
+
+Most clusters should contain one to four articles. A cluster with more than five articles
+should be rare and must clearly concern the same named event. Avoid umbrella clusters and
+generic canonical headlines such as "market activity grows," "stories span...," or
+"developments surface across markets." Select one primary_article_id and put only true
+same-event coverage in article_ids so the app can display "Also covered by." Do not create
+multiple clusters for the same event.
 
 OUTPUT
 Return only valid JSON, no Markdown, matching this shape:
@@ -727,7 +753,7 @@ Return only valid JSON, no Markdown, matching this shape:
       "relevant": true,
       "importance": 1,
       "canonical_title": "concise factual headline",
-      "summary": "one or two cautious sentences, no more than 70 words total",
+      "summary": "one or two specific, cautious sentences, no more than 60 words total",
       "is_administration_win": false,
       "eo_number": "",
       "eo_section": "",
@@ -998,6 +1024,36 @@ def selected_raw_briefing(briefing: dict[str, list[dict]]) -> dict[str, list[dic
     return selected
 
 
+
+def executive_order_display(eo_number: str, eo_section: str) -> str:
+    """Return a reader-friendly EO title, number, and section."""
+    number = clean_spaces(eo_number)
+    section = clean_spaces(eo_section)
+    name = EO_DISPLAY_NAMES.get(number, "")
+
+    citation_bits = [bit for bit in [number, section] if bit]
+    citation = ", ".join(citation_bits)
+
+    if name and citation:
+        return f"{name} ({citation})"
+    if name:
+        return name
+    return citation
+
+
+def deduplicated_related_sources(related: list[dict]) -> list[dict]:
+    """Keep one link per outlet and omit the primary outlet elsewhere."""
+    unique = []
+    seen = set()
+    for item in related:
+        source = clean_spaces(item.get("source", "Related coverage"))
+        key = source.casefold()
+        if not source or key in seen:
+            continue
+        seen.add(key)
+        unique.append(item)
+    return unique
+
 def safe_url(value: str) -> str:
     value = (value or "").strip()
     if value.startswith(("https://", "http://")):
@@ -1005,54 +1061,89 @@ def safe_url(value: str) -> str:
     return "#"
 
 
-def article_html(item: dict) -> str:
+
+def article_html(item: dict, display_section: str = "") -> str:
     title = html.escape(item["title"])
     summary = html.escape(item.get("summary", ""))
     source = html.escape(item.get("source", "Source"))
-    tag = html.escape(item.get("tag", ""))
+    original_section = html.escape(item.get("tag", ""))
     date_label = html.escape(item.get("date_label", ""))
     url = safe_url(item.get("url", ""))
+
+    is_win = bool(item.get("is_administration_win"))
+    accent = "#b42318" if is_win else "#d6e0e8"
+    card_background = "#fffaf7" if is_win else "#ffffff"
+
+    category_markup = ""
+    if display_section == "Top Developments" and original_section:
+        category_markup = f"""
+        <div style="display:inline-block;margin:0 0 6px 0;padding:3px 7px;
+            border-radius:10px;background:#eef3f7;color:#365a78;
+            font-size:10px;line-height:1.2;font-weight:700;letter-spacing:.3px;
+            text-transform:uppercase;">
+          {original_section}
+        </div>
+        """
 
     summary_markup = ""
     if summary:
         summary_markup = f"""
-        <div style="font-size:15px;line-height:1.55;color:#222;margin-bottom:7px;">
+        <div style="font-size:15px;line-height:1.55;color:#222;margin-bottom:8px;">
           {summary}
         </div>
         """
 
     win_markup = ""
     if item.get("win_explanation"):
-        eo_bits = " ".join(
-            bit for bit in [item.get("eo_number", ""), item.get("eo_section", "")] if bit
+        eo_display = executive_order_display(
+            item.get("eo_number", ""),
+            item.get("eo_section", ""),
         )
-        eo_label = f" ({html.escape(eo_bits)})" if eo_bits else ""
+        eo_markup = (
+            f'<div style="font-size:12px;line-height:1.4;color:#8b2c26;'
+            f'margin-bottom:4px;font-weight:700;">'
+            f'{html.escape(eo_display)}</div>'
+            if eo_display
+            else ""
+        )
         win_markup = f"""
-        <div style="font-size:14px;line-height:1.5;color:#7b1d1d;margin:7px 0 8px 0;">
-          <strong>Why this is a win{eo_label}:</strong>
-          {html.escape(item['win_explanation'])}
+        <div style="background:#fff1ed;border-left:3px solid #b42318;
+            padding:10px 12px;margin:9px 0 10px 0;">
+          <div style="font-size:13px;line-height:1.3;color:#7a271a;
+              font-weight:800;margin-bottom:3px;">
+            WHY THIS IS A TRUMP ADMINISTRATION WIN
+          </div>
+          {eo_markup}
+          <div style="font-size:14px;line-height:1.5;color:#5f201a;">
+            {html.escape(item['win_explanation'])}
+          </div>
         </div>
         """
 
-    related = item.get("also_covered", [])
+    related = deduplicated_related_sources(item.get("also_covered", []))
     related_markup = ""
     if related:
+        visible = related[:5]
         links = []
-        for related_item in related[:8]:
+        for related_item in visible:
             links.append(
                 f'<a href="{safe_url(related_item.get("url", ""))}" '
                 f'style="color:#60758b;text-decoration:underline;">'
                 f'{html.escape(related_item.get("source", "Related coverage"))}</a>'
             )
+        more = len(related) - len(visible)
+        suffix = f" · +{more} more" if more > 0 else ""
         related_markup = f"""
-        <div style="font-size:11px;line-height:1.5;color:#77818b;margin-top:5px;">
-          <strong>Also covered by:</strong> {' · '.join(links)}
+        <div style="font-size:11px;line-height:1.5;color:#77818b;margin-top:7px;">
+          <strong>Also covered by:</strong> {' · '.join(links)}{suffix}
         </div>
         """
 
     return f"""
-    <div style="margin:0 0 20px 0;">
-      <div style="font-size:17px;line-height:1.35;font-weight:700;margin-bottom:4px;">
+    <div style="margin:0 0 17px 0;padding:12px 14px 12px 14px;
+        border-left:3px solid {accent};background:{card_background};">
+      {category_markup}
+      <div style="font-size:17px;line-height:1.35;font-weight:700;margin-bottom:5px;">
         <a href="{url}" style="color:#153a66;text-decoration:none;">{title}</a>
       </div>
       {summary_markup}
@@ -1060,7 +1151,6 @@ def article_html(item: dict) -> str:
       <div style="font-size:12px;line-height:1.4;color:#666;">
         {source}
         {f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
-        {f' &nbsp;•&nbsp; {tag}' if tag else ''}
         &nbsp;•&nbsp; <a href="{url}" style="color:#46698e;">Read source</a>
       </div>
       {related_markup}
@@ -1070,18 +1160,41 @@ def article_html(item: dict) -> str:
 
 def build_email_html(briefing: dict[str, list[dict]], display_date: str) -> str:
     sections = []
+    total_items = sum(len(items) for items in briefing.values())
+    win_count = len(briefing.get("Trump Administration Wins", []))
+    top_count = len(briefing.get("Top Developments", []))
+
     for section_name in SECTION_ORDER:
         items = briefing.get(section_name, [])
         if not items:
             continue
+
         is_wins = section_name == "Trump Administration Wins"
-        heading_color = "#8a1c1c" if is_wins else "#183a5a"
-        border_color = "#b43232" if is_wins else "#d7dde4"
+        is_top = section_name == "Top Developments"
+        heading_color = "#8a1c1c" if is_wins else "#173a5e"
+        border_color = "#b42318" if is_wins else "#c8d5df"
         background = "#fff8f4" if is_wins else "#ffffff"
-        stories = "".join(article_html(item) for item in items)
+        subheading = (
+            "Presidential priorities, executive-order implementation, and concrete American results"
+            if is_wins
+            else (
+                "The most consequential developments across the portfolio"
+                if is_top
+                else ""
+            )
+        )
+
+        stories = "".join(article_html(item, section_name) for item in items)
+        subheading_markup = (
+            f'<div style="font-size:12px;line-height:1.45;color:#687786;'
+            f'margin:-7px 0 14px 0;">{html.escape(subheading)}</div>'
+            if subheading
+            else ""
+        )
+
         sections.append(
             f"""
-            <div style="margin:0 0 26px 0;padding:{'18px' if is_wins else '0'};
+            <div style="margin:0 0 27px 0;padding:{'18px' if is_wins else '0'};
                 border:{'1px solid ' + border_color if is_wins else '0'};
                 border-radius:{'8px' if is_wins else '0'};background:{background};">
               <div style="color:{heading_color};font-size:20px;line-height:1.3;
@@ -1089,22 +1202,37 @@ def build_email_html(briefing: dict[str, list[dict]], display_date: str) -> str:
                   padding-bottom:7px;margin-bottom:14px;">
                 {html.escape(section_name)}
               </div>
+              {subheading_markup}
               {stories}
             </div>
             """
         )
 
+    glance_parts = []
+    if win_count:
+        glance_parts.append(f"{win_count} Administration win{'s' if win_count != 1 else ''}")
+    if top_count:
+        glance_parts.append(f"{top_count} top development{'s' if top_count != 1 else ''}")
+    glance_parts.append(f"{total_items} total item{'s' if total_items != 1 else ''}")
+    glance = " &nbsp;•&nbsp; ".join(glance_parts)
+
     return f"""
-    <div style="max-width:760px;margin:0 auto;padding:8px 4px 30px 4px;
+    <div style="max-width:760px;margin:0 auto;padding:0 4px 30px 4px;
         font-family:Arial,Helvetica,sans-serif;color:#1f2933;background:#ffffff;">
-      <div style="font-size:32px;line-height:1.2;font-weight:800;color:#132f4c;">
-        News Update
+      <div style="background:#123552;padding:20px 22px 18px 22px;margin-bottom:18px;">
+        <div style="font-size:30px;line-height:1.15;font-weight:800;color:#ffffff;">
+          News Update
+        </div>
+        <div style="font-size:14px;line-height:1.5;color:#dbe7ef;margin-top:5px;">
+          {html.escape(display_date)}
+        </div>
+        <div style="font-size:13px;line-height:1.5;color:#dbe7ef;margin-top:1px;">
+          UAS, Advanced Transportation, and Airspace Policy
+        </div>
       </div>
-      <div style="font-size:15px;line-height:1.5;color:#5b6570;margin:5px 0 4px 0;">
-        {html.escape(display_date)}
-      </div>
-      <div style="font-size:14px;line-height:1.5;color:#5b6570;margin-bottom:24px;">
-        UAS, Advanced Transportation, and Airspace Policy
+      <div style="font-size:11px;line-height:1.4;color:#5d6b78;
+          background:#f2f5f7;padding:8px 11px;margin-bottom:22px;">
+        <strong>AT A GLANCE:</strong> {glance}
       </div>
       {''.join(sections)}
       <div style="margin-top:30px;padding-top:12px;border-top:1px solid #d7dde4;
@@ -1114,7 +1242,6 @@ def build_email_html(briefing: dict[str, list[dict]], display_date: str) -> str:
       </div>
     </div>
     """
-
 
 def build_plain_text(briefing: dict[str, list[dict]], display_date: str) -> str:
     lines = [
@@ -1133,25 +1260,29 @@ def build_plain_text(briefing: dict[str, list[dict]], display_date: str) -> str:
             if item.get("summary"):
                 lines.append(item["summary"])
             if item.get("win_explanation"):
-                eo_bits = " ".join(
-                    bit for bit in [item.get("eo_number", ""), item.get("eo_section", "")] if bit
+                eo_display = executive_order_display(
+                    item.get("eo_number", ""),
+                    item.get("eo_section", ""),
                 )
-                label = f"Why this is a win ({eo_bits})" if eo_bits else "Why this is a win"
-                lines.append(f"{label}: {item['win_explanation']}")
+                lines.append("WHY THIS IS A TRUMP ADMINISTRATION WIN")
+                if eo_display:
+                    lines.append(eo_display)
+                lines.append(item["win_explanation"])
             lines.append(
                 " | ".join(
                     part for part in [item.get("source", ""), item.get("date_label", ""), item.get("url", "")] if part
                 )
             )
-            related = item.get("also_covered", [])
+            related = deduplicated_related_sources(item.get("also_covered", []))
             if related:
-                lines.append(
-                    "Also covered by: "
-                    + " | ".join(
-                        f"{related_item.get('source', 'Related')}: {related_item.get('url', '')}"
-                        for related_item in related
-                    )
+                visible = related[:5]
+                coverage = " | ".join(
+                    f"{related_item.get('source', 'Related')}: {related_item.get('url', '')}"
+                    for related_item in visible
                 )
+                if len(related) > len(visible):
+                    coverage += f" | +{len(related) - len(visible)} more"
+                lines.append("Also covered by: " + coverage)
             lines.append("")
     lines.append(
         "Public-source, AI-assisted update. Review all summaries and attributions before distribution."
