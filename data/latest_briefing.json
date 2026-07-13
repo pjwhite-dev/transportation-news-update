@@ -1,0 +1,22 @@
+{
+  "generated_at": "",
+  "window_start": "",
+  "window_end": "",
+  "model": "gpt-5.4-mini",
+  "usage": {},
+  "estimated_cost": null,
+  "executive_summary": "Run the Daily Transportation News Update workflow to generate the first 24-hour edition.",
+  "what_to_watch": [],
+  "sections": {
+    "Trump Administration Wins": [],
+    "Top Developments": [],
+    "UAS and Drones": [],
+    "UAS Security and C-UAS": [],
+    "eVTOL Integration Pilot Program and AAM": [],
+    "Autonomous Vehicles": [],
+    "Other Advanced Transportation": [],
+    "Federal Actions": []
+  },
+  "source_errors": [],
+  "candidate_count": 0
+}
