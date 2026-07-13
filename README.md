@@ -1,21 +1,19 @@
-# Transportation News Update
+# Transportation News Update — Live Prototype
 
-A Streamlit prototype for a daily public-source news update covering:
+This stage replaces sample items with current public-source results.
 
-- Trump Administration Wins
-- UAS and drones
-- UAS security
-- eVTOL Integration Pilot Program and advanced air mobility
-- Autonomous vehicles
-- Other advanced transportation
-- Federal actions
+## Sources
 
-## Deploy on Streamlit Community Cloud
+- Google News RSS searches
+- FederalRegister.gov public API
 
-1. Upload all files in this repository to GitHub.
-2. In Streamlit Community Cloud, select **Create app**.
-3. Choose this GitHub repository.
-4. Set the entrypoint file to `streamlit_app.py`.
-5. Deploy.
+## Updating an existing GitHub repository
 
-The initial version contains sample data to demonstrate the page and rich-email copy function.
+Replace these files in the repository:
+
+- `streamlit_app.py`
+- `requirements.txt`
+
+The `.streamlit/config.toml` theme file is optional.
+
+Streamlit Community Cloud should detect the new commit and redeploy the app.

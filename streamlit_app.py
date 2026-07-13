@@ -1,8 +1,14 @@
+import hashlib
 import html
 import json
-from datetime import datetime
+import re
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
+from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
+import feedparser
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -10,112 +16,13 @@ import streamlit.components.v1 as components
 st.set_page_config(
     page_title="News Update",
     page_icon="📰",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# -------------------------------------------------------------------
-# PROTOTYPE DATA
-# These sample items demonstrate the format only. In the next stage,
-# this dictionary will be populated automatically from news sources.
-# -------------------------------------------------------------------
-BRIEFING = {
-    "Trump Administration Wins": [
-        {
-            "title": "Sample Administration win — replace with a live item",
-            "summary": (
-                "This space will highlight a verified policy, regulatory, "
-                "security, manufacturing, or operational achievement tied to "
-                "the Trump Administration's advanced-transportation agenda."
-            ),
-            "source": "Official source",
-            "url": "https://www.whitehouse.gov/",
-            "tag": "EO connection to be verified",
-        }
-    ],
-    "Top Developments": [
-        {
-            "title": "Sample top development — replace with a live item",
-            "summary": (
-                "The most consequential new developments across the portfolio "
-                "will appear here, regardless of their topic."
-            ),
-            "source": "News source",
-            "url": "https://www.transportation.gov/",
-            "tag": "Top development",
-        }
-    ],
-    "UAS and Drones": [
-        {
-            "title": "Sample UAS item",
-            "summary": "A concise two- or three-sentence summary will appear here.",
-            "source": "FAA",
-            "url": "https://www.faa.gov/uas",
-            "tag": "UAS",
-        }
-    ],
-    "UAS Security": [
-        {
-            "title": "Sample UAS security item",
-            "summary": (
-                "Counter-UAS, critical-infrastructure protection, airspace "
-                "security, enforcement, and related developments will appear here."
-            ),
-            "source": "DHS",
-            "url": "https://www.dhs.gov/",
-            "tag": "UAS security",
-        }
-    ],
-    "eVTOL Integration Pilot Program and AAM": [
-        {
-            "title": "Sample eIPP or AAM item",
-            "summary": (
-                "New eIPP milestones, powered-lift integration, and advanced-air-"
-                "mobility developments will appear here."
-            ),
-            "source": "FAA",
-            "url": "https://www.faa.gov/air-taxis",
-            "tag": "eIPP / AAM",
-        }
-    ],
-    "Autonomous Vehicles": [
-        {
-            "title": "Sample autonomous-vehicle item",
-            "summary": (
-                "Federal actions, state developments, deployments, safety data, "
-                "and industry milestones will appear here."
-            ),
-            "source": "NHTSA",
-            "url": "https://www.nhtsa.gov/vehicle-safety/automated-vehicles-safety",
-            "tag": "Autonomous vehicles",
-        }
-    ],
-    "Other Advanced Transportation": [
-        {
-            "title": "Sample civil-supersonics, rail, or emerging-technology item",
-            "summary": (
-                "Civil supersonics, high-speed rail, maglev, autonomous rail, "
-                "and other advanced transportation developments will appear here."
-            ),
-            "source": "DOT",
-            "url": "https://www.transportation.gov/",
-            "tag": "Advanced transportation",
-        }
-    ],
-    "Federal Actions": [
-        {
-            "title": "Sample federal action",
-            "summary": (
-                "Federal Register documents, agency announcements, rules, notices, "
-                "guidance, grants, waivers, procurements, and hearings will appear here."
-            ),
-            "source": "Federal Register",
-            "url": "https://www.federalregister.gov/",
-            "tag": "Federal action",
-        }
-    ],
-}
-
+EASTERN = ZoneInfo("America/New_York")
+LOOKBACK_DAYS = 2
+ITEMS_PER_SECTION = 7
 
 SECTION_ORDER = [
     "Trump Administration Wins",
@@ -128,10 +35,324 @@ SECTION_ORDER = [
     "Federal Actions",
 ]
 
+NEWS_QUERIES = {
+    "Trump Administration Wins": (
+        '("Unleashing American Drone Dominance" OR '
+        '"Restoring American Airspace Sovereignty" OR '
+        '"Leading the World in Supersonic Flight" OR '
+        '"eVTOL Integration Pilot Program")'
+    ),
+    "UAS and Drones": (
+        '("unmanned aircraft system" OR "uncrewed aircraft system" OR '
+        '"beyond visual line of sight" OR BVLOS OR "drone delivery" OR '
+        '"Part 107" OR "Remote ID")'
+    ),
+    "UAS Security": (
+        '("counter-UAS" OR "counter drone" OR "drone incursion" OR '
+        '"unauthorized drone" OR "drone detection" OR '
+        '"airspace sovereignty" OR "Section 2209")'
+    ),
+    "eVTOL Integration Pilot Program and AAM": (
+        '("eVTOL Integration Pilot Program" OR eIPP OR '
+        '"advanced air mobility" OR powered-lift OR air-taxi)'
+    ),
+    "Autonomous Vehicles": (
+        '("autonomous vehicle" OR robotaxi OR "automated driving system" OR '
+        '"self-driving vehicle" OR "automated vehicle") '
+        '(NHTSA OR DOT OR United States OR American)'
+    ),
+    "Other Advanced Transportation": (
+        '("civil supersonic" OR "quiet supersonic" OR '
+        '"overland supersonic" OR "high-speed rail" OR maglev OR '
+        '"autonomous rail" OR "advanced transportation")'
+    ),
+}
+
+FEDERAL_REGISTER_TERMS = [
+    "unmanned aircraft",
+    "drone",
+    "advanced air mobility",
+    "autonomous vehicle",
+    "automated driving",
+    "supersonic",
+    "high-speed rail",
+]
+
+HEADERS = {
+    "User-Agent": (
+        "TransportationNewsUpdate/1.0 "
+        "(public-source Streamlit briefing; contact via repository)"
+    )
+}
+
+
+def clean_spaces(value: str) -> str:
+    return re.sub(r"\s+", " ", value or "").strip()
+
+
+def strip_html(value: str) -> str:
+    value = re.sub(r"<[^>]+>", " ", value or "")
+    return clean_spaces(html.unescape(value))
+
+
+def parse_rss_date(value: str) -> datetime:
+    try:
+        parsed = parsedate_to_datetime(value)
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(EASTERN)
+    except (TypeError, ValueError, OverflowError):
+        return datetime.now(EASTERN)
+
+
+def normalize_title(value: str) -> str:
+    value = value.lower()
+    value = re.sub(r"\s+-\s+[^-]{2,60}$", "", value)
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return clean_spaces(value)
+
+
+def stable_id(section: str, url: str, title: str) -> str:
+    raw = f"{section}|{url}|{title}".encode("utf-8")
+    return hashlib.sha1(raw).hexdigest()[:14]
+
+
+def google_news_url(query: str) -> str:
+    timed_query = f"{query} when:{LOOKBACK_DAYS}d"
+    encoded = quote_plus(timed_query)
+    return (
+        f"https://news.google.com/rss/search?q={encoded}"
+        "&hl=en-US&gl=US&ceid=US:en"
+    )
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_google_news(section: str, query: str) -> tuple[list[dict], str | None]:
+    url = google_news_url(query)
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=20)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        return [], f"{section}: {exc}"
+
+    feed = feedparser.parse(response.content)
+    items = []
+
+    for entry in feed.entries:
+        title = clean_spaces(entry.get("title", "Untitled"))
+        source = clean_spaces(
+            getattr(entry.get("source", {}), "title", "")
+            if not isinstance(entry.get("source", {}), dict)
+            else entry.get("source", {}).get("title", "")
+        )
+
+        if source and title.endswith(f" - {source}"):
+            title = title[: -(len(source) + 3)].strip()
+        elif " - " in title:
+            possible_title, possible_source = title.rsplit(" - ", 1)
+            if 1 < len(possible_source) < 80:
+                title = possible_title.strip()
+                source = source or possible_source.strip()
+
+        published = parse_rss_date(entry.get("published", ""))
+        summary = strip_html(entry.get("summary", ""))
+
+        # Google News summaries often just restate linked headlines.
+        # Keep only a useful, non-repetitive snippet.
+        if (
+            len(summary) < 45
+            or normalize_title(title) in normalize_title(summary)
+            or summary.count("http") > 0
+        ):
+            summary = ""
+
+        items.append(
+            {
+                "id": stable_id(section, entry.get("link", ""), title),
+                "section": section,
+                "title": title,
+                "summary": summary,
+                "source": source or "Google News",
+                "url": entry.get("link", ""),
+                "published": published.isoformat(),
+                "date_label": published.strftime("%b. %d, %Y").replace(" 0", " "),
+                "tag": (
+                    "Candidate—verify Administration attribution"
+                    if section == "Trump Administration Wins"
+                    else section
+                ),
+                "origin": "Google News RSS",
+            }
+        )
+
+    return items, None
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_federal_register() -> tuple[list[dict], list[str]]:
+    cutoff = (datetime.now(EASTERN) - timedelta(days=LOOKBACK_DAYS)).date().isoformat()
+    endpoint = "https://www.federalregister.gov/api/v1/documents.json"
+    items = []
+    errors = []
+
+    for term in FEDERAL_REGISTER_TERMS:
+        params = {
+            "per_page": 20,
+            "order": "newest",
+            "conditions[term]": term,
+            "conditions[publication_date][gte]": cutoff,
+        }
+
+        try:
+            response = requests.get(
+                endpoint, params=params, headers=HEADERS, timeout=20
+            )
+            response.raise_for_status()
+            data = response.json()
+        except (requests.RequestException, ValueError) as exc:
+            errors.append(f'Federal Register search "{term}": {exc}')
+            continue
+
+        for result in data.get("results", []):
+            title = clean_spaces(result.get("title", "Untitled federal action"))
+            agencies = ", ".join(
+                agency.get("name", "")
+                for agency in result.get("agencies", [])
+                if agency.get("name")
+            )
+            publication_date = result.get("publication_date", cutoff)
+            try:
+                published = datetime.fromisoformat(publication_date).replace(
+                    tzinfo=EASTERN
+                )
+            except ValueError:
+                published = datetime.now(EASTERN)
+
+            abstract = strip_html(result.get("abstract", ""))
+            if len(abstract) > 500:
+                abstract = abstract[:497].rsplit(" ", 1)[0] + "…"
+
+            url = result.get("html_url") or result.get("pdf_url") or ""
+
+            items.append(
+                {
+                    "id": stable_id("Federal Actions", url, title),
+                    "section": "Federal Actions",
+                    "title": title,
+                    "summary": abstract,
+                    "source": agencies or "Federal Register",
+                    "url": url,
+                    "published": published.isoformat(),
+                    "date_label": published.strftime("%b. %d, %Y").replace(" 0", " "),
+                    "tag": result.get("type", "Federal action"),
+                    "origin": "Federal Register API",
+                }
+            )
+
+    return items, errors
+
+
+def deduplicate(items: list[dict]) -> list[dict]:
+    seen_urls = set()
+    seen_titles = set()
+    unique = []
+
+    sorted_items = sorted(
+        items,
+        key=lambda item: item.get("published", ""),
+        reverse=True,
+    )
+
+    for item in sorted_items:
+        normalized = normalize_title(item["title"])
+        url = item.get("url", "")
+
+        if url and url in seen_urls:
+            continue
+        if normalized and normalized in seen_titles:
+            continue
+
+        if url:
+            seen_urls.add(url)
+        if normalized:
+            seen_titles.add(normalized)
+        unique.append(item)
+
+    return unique
+
+
+@st.cache_data(ttl=3600, show_spinner="Loading current public-source news…")
+def load_all_news() -> tuple[dict[str, list[dict]], list[str]]:
+    briefing = {}
+    errors = []
+
+    for section, query in NEWS_QUERIES.items():
+        items, error = fetch_google_news(section, query)
+        briefing[section] = deduplicate(items)[:ITEMS_PER_SECTION]
+        if error:
+            errors.append(error)
+
+    federal_items, federal_errors = fetch_federal_register()
+    briefing["Federal Actions"] = deduplicate(federal_items)[:ITEMS_PER_SECTION]
+    errors.extend(federal_errors)
+
+    main_sections = [
+        "UAS and Drones",
+        "UAS Security",
+        "eVTOL Integration Pilot Program and AAM",
+        "Autonomous Vehicles",
+        "Other Advanced Transportation",
+    ]
+
+    candidates = []
+    for section in main_sections:
+        for item in briefing.get(section, [])[:2]:
+            copied = dict(item)
+            copied["section"] = "Top Developments"
+            copied["tag"] = section
+            candidates.append(copied)
+
+    briefing["Top Developments"] = deduplicate(candidates)[:ITEMS_PER_SECTION]
+
+    for section in SECTION_ORDER:
+        briefing.setdefault(section, [])
+
+    return briefing, errors
+
+
+def initialize_editor_state(briefing: dict[str, list[dict]]) -> None:
+    for section in SECTION_ORDER:
+        for item in briefing.get(section, []):
+            include_key = f'include_{item["id"]}'
+            summary_key = f'summary_{item["id"]}'
+
+            if include_key not in st.session_state:
+                # Candidate wins should be consciously approved.
+                st.session_state[include_key] = (
+                    section != "Trump Administration Wins"
+                )
+            if summary_key not in st.session_state:
+                st.session_state[summary_key] = item.get("summary", "")
+
+
+def selected_briefing(briefing: dict[str, list[dict]]) -> dict[str, list[dict]]:
+    selected = {}
+
+    for section in SECTION_ORDER:
+        selected[section] = []
+        for item in briefing.get(section, []):
+            if st.session_state.get(f'include_{item["id"]}', False):
+                copied = dict(item)
+                copied["summary"] = st.session_state.get(
+                    f'summary_{item["id"]}', ""
+                ).strip()
+                selected[section].append(copied)
+
+    return selected
+
 
 def safe_url(value: str) -> str:
-    """Allow only ordinary HTTP(S) links in the rendered briefing."""
-    value = value.strip()
+    value = (value or "").strip()
     if value.startswith(("https://", "http://")):
         return html.escape(value, quote=True)
     return "#"
@@ -139,28 +360,37 @@ def safe_url(value: str) -> str:
 
 def article_html(item: dict) -> str:
     title = html.escape(item["title"])
-    summary = html.escape(item["summary"])
-    source = html.escape(item["source"])
+    summary = html.escape(item.get("summary", ""))
+    source = html.escape(item.get("source", "Source"))
     tag = html.escape(item.get("tag", ""))
-    url = safe_url(item["url"])
+    date_label = html.escape(item.get("date_label", ""))
+    url = safe_url(item.get("url", ""))
+
+    summary_markup = ""
+    if summary:
+        summary_markup = f"""
+        <div style="font-size:15px;line-height:1.55;color:#222;margin-bottom:5px;">
+          {summary}
+        </div>
+        """
 
     return f"""
     <div style="margin:0 0 18px 0;">
       <div style="font-size:17px;line-height:1.35;font-weight:700;margin-bottom:4px;">
         <a href="{url}" style="color:#153a66;text-decoration:none;">{title}</a>
       </div>
-      <div style="font-size:15px;line-height:1.55;color:#222;margin-bottom:5px;">
-        {summary}
-      </div>
+      {summary_markup}
       <div style="font-size:12px;line-height:1.4;color:#666;">
-        {source} &nbsp;•&nbsp; {tag} &nbsp;•&nbsp;
-        <a href="{url}" style="color:#46698e;">Read source</a>
+        {source}
+        {f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
+        {f' &nbsp;•&nbsp; {tag}' if tag else ''}
+        &nbsp;•&nbsp; <a href="{url}" style="color:#46698e;">Read source</a>
       </div>
     </div>
     """
 
 
-def build_email_html(briefing: dict, display_date: str) -> str:
+def build_email_html(briefing: dict[str, list[dict]], display_date: str) -> str:
     sections = []
 
     for section_name in SECTION_ORDER:
@@ -172,7 +402,6 @@ def build_email_html(briefing: dict, display_date: str) -> str:
         heading_color = "#8a1c1c" if is_wins else "#183a5a"
         border_color = "#b43232" if is_wins else "#d7dde4"
         background = "#fff8f4" if is_wins else "#ffffff"
-
         stories = "".join(article_html(item) for item in items)
 
         sections.append(
@@ -227,13 +456,16 @@ def build_email_html(briefing: dict, display_date: str) -> str:
           font-size:11px;
           line-height:1.5;
       ">
-        Public-source news update. Review all summaries and attributions before distribution.
+        Public-source news update. Review all summaries, links, and Administration
+        attributions before distribution.
       </div>
     </div>
     """
 
 
-def build_plain_text(briefing: dict, display_date: str) -> str:
+def build_plain_text(
+    briefing: dict[str, list[dict]], display_date: str
+) -> str:
     lines = [
         "NEWS UPDATE",
         display_date,
@@ -249,18 +481,28 @@ def build_plain_text(briefing: dict, display_date: str) -> str:
         lines.extend([section_name.upper(), ""])
         for item in items:
             lines.append(item["title"])
-            lines.append(item["summary"])
-            lines.append(f'{item["source"]} | {item["url"]}')
+            if item.get("summary"):
+                lines.append(item["summary"])
+            metadata = " | ".join(
+                part
+                for part in [
+                    item.get("source", ""),
+                    item.get("date_label", ""),
+                    item.get("url", ""),
+                ]
+                if part
+            )
+            lines.append(metadata)
             lines.append("")
 
     lines.append(
-        "Public-source news update. Review all summaries and attributions before distribution."
+        "Public-source news update. Review all summaries, links, and "
+        "Administration attributions before distribution."
     )
     return "\n".join(lines)
 
 
 def copy_buttons(email_html: str, plain_text: str) -> None:
-    """Render clipboard buttons in an isolated Streamlit component."""
     html_js = json.dumps(email_html)
     plain_js = json.dumps(plain_text)
 
@@ -289,14 +531,8 @@ def copy_buttons(email_html: str, plain_text: str) -> None:
             font-weight: 700;
             cursor: pointer;
           }}
-          #rich {{
-            background: #153a66;
-            color: white;
-          }}
-          #plain {{
-            background: white;
-            color: #153a66;
-          }}
+          #rich {{ background: #153a66; color: white; }}
+          #plain {{ background: white; color: #153a66; }}
           #status {{
             color: #46606f;
             font-size: 13px;
@@ -310,7 +546,6 @@ def copy_buttons(email_html: str, plain_text: str) -> None:
           <button id="plain" onclick="copyPlain()">Copy Plain Text</button>
           <span id="status"></span>
         </div>
-
         <script>
           const richContent = {html_js};
           const plainContent = {plain_js};
@@ -351,25 +586,68 @@ def copy_buttons(email_html: str, plain_text: str) -> None:
       </body>
     </html>
     """
-
     components.html(component, height=60)
+
+
+def render_review_section(section: str, items: list[dict]) -> None:
+    st.subheader(section)
+
+    if section == "Trump Administration Wins":
+        st.info(
+            "These are candidates found through executive-order-related searches. "
+            "They are excluded from the email until you affirmatively select them."
+        )
+
+    if not items:
+        st.caption("No matching items were found during this refresh.")
+        return
+
+    for item in items:
+        include_key = f'include_{item["id"]}'
+        summary_key = f'summary_{item["id"]}'
+
+        with st.container(border=True):
+            left, right = st.columns([0.76, 0.24])
+            with left:
+                st.markdown(f'**[{item["title"]}]({item["url"]})**')
+                st.caption(
+                    " · ".join(
+                        part
+                        for part in [
+                            item.get("source", ""),
+                            item.get("date_label", ""),
+                            item.get("origin", ""),
+                        ]
+                        if part
+                    )
+                )
+            with right:
+                st.checkbox(
+                    "Include in update",
+                    key=include_key,
+                )
+
+            st.text_area(
+                "Summary or editorial note",
+                key=summary_key,
+                height=88,
+                placeholder=(
+                    "Add a concise summary. Leave blank to include only the "
+                    "headline, source, date, and link."
+                ),
+                label_visibility="collapsed",
+            )
 
 
 # -----------------------------
 # PAGE
 # -----------------------------
-today = datetime.now(ZoneInfo("America/New_York"))
-display_date = today.strftime("%A, %B %d, %Y").replace(" 0", " ")
-
-email_html = build_email_html(BRIEFING, display_date)
-plain_text = build_plain_text(BRIEFING, display_date)
-
 st.markdown(
     """
     <style>
       .block-container {
-        max-width: 900px;
-        padding-top: 2rem;
+        max-width: 1180px;
+        padding-top: 1.5rem;
         padding-bottom: 4rem;
       }
       [data-testid="stHeader"] {
@@ -380,26 +658,79 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.caption("Prototype · public-source sample data")
-copy_buttons(email_html, plain_text)
+today = datetime.now(EASTERN)
+display_date = today.strftime("%A, %B %d, %Y").replace(" 0", " ")
 
-st.download_button(
-    "Download HTML",
-    data=email_html,
-    file_name=f"news-update-{today.strftime('%Y-%m-%d')}.html",
-    mime="text/html",
+st.title("News Update")
+st.caption(
+    f"Live public-source prototype · preceding {LOOKBACK_DAYS} days · "
+    f"last page run {today.strftime('%-I:%M %p')} Eastern"
 )
 
-st.divider()
-st.html(email_html)
+button_col, note_col = st.columns([0.22, 0.78])
+with button_col:
+    if st.button("Refresh live feeds", use_container_width=True):
+        st.cache_data.clear()
+        st.session_state.clear()
+        st.rerun()
+with note_col:
+    st.caption(
+        "The first load may take several seconds. Feed results are cached for one hour."
+    )
 
-with st.expander("What comes next"):
+briefing, errors = load_all_news()
+initialize_editor_state(briefing)
+
+review_tab, preview_tab, status_tab = st.tabs(
+    ["1. Review and Edit", "2. Email Preview", "Source Status"]
+)
+
+with review_tab:
+    st.markdown(
+        "Select the items to include and add or revise a short summary. "
+        "Changes immediately appear in **Email Preview**."
+    )
+    for section in SECTION_ORDER:
+        render_review_section(section, briefing.get(section, []))
+        st.divider()
+
+with preview_tab:
+    selected = selected_briefing(briefing)
+    email_html = build_email_html(selected, display_date)
+    plain_text = build_plain_text(selected, display_date)
+
+    selected_count = sum(len(items) for items in selected.values())
+    st.caption(f"{selected_count} items selected for the current update.")
+    copy_buttons(email_html, plain_text)
+    st.download_button(
+        "Download HTML",
+        data=email_html,
+        file_name=f"news-update-{today.strftime('%Y-%m-%d')}.html",
+        mime="text/html",
+    )
+    st.divider()
+    st.html(email_html)
+
+with status_tab:
+    st.subheader("Source status")
+    if errors:
+        st.warning(
+            "Some source requests failed. The rest of the briefing can still be used."
+        )
+        for error in errors:
+            st.code(error)
+    else:
+        st.success("All configured source requests completed.")
+
     st.markdown(
         """
-        1. Replace the sample stories with automatically collected articles.
-        2. Add duplicate detection and topic classification.
-        3. Add an editorial review screen.
-        4. Add automatic executive-order mapping and Administration-win review.
-        5. Schedule the collector to refresh before the morning briefing.
+        **Current free sources**
+
+        - Google News RSS searches for the five portfolio topics and executive-order terms
+        - FederalRegister.gov public API for recent federal documents
+
+        This version does not yet remember yesterday's stories permanently. It uses
+        a rolling two-day window and removes duplicates within the current result set.
+        Persistent “new since the previous morning” tracking is the next stage.
         """
     )
