@@ -310,6 +310,16 @@ def load_all_news() -> tuple[dict[str, list[dict]], list[str]]:
             copied = dict(item)
             copied["section"] = "Top Developments"
             copied["tag"] = section
+
+            # The same story may also remain in its original topic section.
+            # Give the Top Developments copy its own widget identity so
+            # Streamlit does not see duplicate checkbox/text-area keys.
+            copied["id"] = stable_id(
+                "Top Developments",
+                copied.get("url", ""),
+                copied.get("title", ""),
+            )
+
             candidates.append(copied)
 
     briefing["Top Developments"] = deduplicate(candidates)[:ITEMS_PER_SECTION]
