@@ -16,11 +16,13 @@ concurrency:
 jobs:
   build-daily-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,14 +39,53 @@ jobs:
           OPENAI_MODEL: gpt-5.4-mini
         run: python daily_update.py
 
-      - name: Commit the new edition
+      - name: Commit the new edition safely
+        shell: bash
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest_briefing.json data/archive/
-          if git diff --cached --quiet; then
-            echo "No briefing changes to commit."
-          else
-            git commit -m "Daily news update $(date -u +%Y-%m-%d)"
-            git push
+
+          # Preserve the generated files outside the checkout. This lets the
+          # workflow update itself to the newest main branch without losing
+          # the newly generated briefing.
+          rm -rf /tmp/generated-briefing
+          mkdir -p /tmp/generated-briefing/archive
+          cp data/latest_briefing.json /tmp/generated-briefing/latest_briefing.json
+          if [ -d data/archive ]; then
+            cp -a data/archive/. /tmp/generated-briefing/archive/
           fi
+
+          for attempt in 1 2 3 4; do
+            echo "Save attempt ${attempt}..."
+
+            # Start from the newest remote main branch on every attempt.
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Restore the briefing generated earlier in this workflow.
+            mkdir -p data/archive
+            cp /tmp/generated-briefing/latest_briefing.json data/latest_briefing.json
+            cp -a /tmp/generated-briefing/archive/. data/archive/
+
+            git add data/latest_briefing.json data/archive/
+
+            if git diff --cached --quiet; then
+              echo "The generated edition is already current."
+              exit 0
+            fi
+
+            git commit -m "Daily news update $(date -u +%Y-%m-%d)"
+
+            if git push origin HEAD:main; then
+              echo "Daily briefing committed successfully."
+              exit 0
+            fi
+
+            echo "Main changed during the push; retrying from the newest version."
+            sleep $((attempt * 2))
+          done
+
+          echo "Unable to save the briefing after four attempts."
+          exit 1
