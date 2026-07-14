@@ -247,7 +247,7 @@ def section_html(title: str, items: list[dict]) -> str:
     """
 
 
-def build_email_html(briefing: dict, executive_only: bool = False) -> str:
+def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
     start_text = format_datetime(briefing.get("window_start", ""))
@@ -323,6 +323,439 @@ def build_email_html(briefing: dict, executive_only: bool = False) -> str:
     """
 
 
+
+def outlook_spacer(height: int) -> str:
+    return (
+        f'<tr><td height="{height}" style="height:{height}px;'
+        f'line-height:{height}px;font-size:0;">&nbsp;</td></tr>'
+    )
+
+
+def outlook_related_html(item: dict) -> str:
+    related = related_sources(item)
+    if not related:
+        return ""
+
+    shown = related[:3]
+    links = []
+    for related_item in shown:
+        links.append(
+            f'<a href="{safe_url(related_item.get("url", ""))}" '
+            f'style="color:#60758a;text-decoration:underline;">'
+            f'{html.escape(related_item.get("source", "Related coverage"))}</a>'
+        )
+
+    extra = len(related) - len(shown)
+    suffix = f" &nbsp;•&nbsp; +{extra} more" if extra else ""
+
+    return f"""
+    <tr>
+      <td style="padding:8px 0 0 0;font-family:Arial,Helvetica,sans-serif;
+          font-size:10px;line-height:15px;color:#737f89;
+          mso-line-height-rule:exactly;">
+        <strong style="color:#596873;">Additional coverage:</strong>
+        {" &nbsp;•&nbsp; ".join(links)}{suffix}
+      </td>
+    </tr>
+    """
+
+
+def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> str:
+    title = html.escape(item.get("title", "Untitled"))
+    summary = html.escape(item.get("summary", ""))
+    source = html.escape(item.get("source", "Source"))
+    date_label = html.escape(item.get("date_label", ""))
+    url = safe_url(item.get("url", ""))
+
+    category_html = ""
+    if section_name == "Top Developments" and item.get("section"):
+        category_html = f"""
+        <tr>
+          <td style="padding:0 0 5px 0;font-family:Arial,Helvetica,sans-serif;
+              font-size:9px;line-height:12px;font-weight:bold;color:#49677f;
+              text-transform:uppercase;letter-spacing:.4px;
+              mso-line-height-rule:exactly;">
+            {html.escape(item["section"])}
+          </td>
+        </tr>
+        """
+
+    if compact:
+        related = related_sources(item)
+        related_note = (
+            f" &nbsp;•&nbsp; also {len(related)} other outlet"
+            f"{'s' if len(related) != 1 else ''}"
+            if related else ""
+        )
+        return f"""
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td width="14" valign="top" style="width:14px;padding:2px 0 0 0;
+                font-family:Arial,Helvetica,sans-serif;font-size:13px;
+                line-height:18px;color:#49677f;">&#8226;</td>
+            <td valign="top" style="padding:0 0 9px 0;
+                font-family:Arial,Helvetica,sans-serif;">
+              <div style="font-size:13px;line-height:18px;font-weight:bold;
+                  mso-line-height-rule:exactly;">
+                <a href="{url}" style="color:#173c5e;text-decoration:underline;">
+                  {title}
+                </a>
+              </div>
+              <div style="padding-top:2px;font-size:9px;line-height:13px;
+                  color:#78838c;mso-line-height-rule:exactly;">
+                {source}{f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
+                {related_note}
+              </div>
+            </td>
+          </tr>
+        </table>
+        """
+
+    win_html = ""
+    if item.get("is_administration_win") and item.get("win_explanation"):
+        citation = html.escape(eo_display(item))
+        win_html = f"""
+        <tr>
+          <td style="padding:11px 0 3px 0;">
+            <table role="presentation" width="100%" border="0" cellspacing="0"
+                cellpadding="0" bgcolor="#FFF2EE"
+                style="width:100%;border-collapse:collapse;background-color:#FFF2EE;
+                border-left:4px solid #B42318;">
+              <tr>
+                <td style="padding:12px 14px 13px 14px;
+                    font-family:Arial,Helvetica,sans-serif;">
+                  <div style="font-size:10px;line-height:14px;font-weight:bold;
+                      color:#7A271A;letter-spacing:.3px;
+                      mso-line-height-rule:exactly;">
+                    WHY THIS IS A TRUMP ADMINISTRATION WIN
+                  </div>
+                  {f'<div style="padding-top:4px;font-size:11px;line-height:16px;'
+                    f'font-weight:bold;color:#8A2E27;mso-line-height-rule:exactly;">'
+                    f'{citation}</div>' if citation else ''}
+                  <div style="padding-top:5px;font-size:13px;line-height:20px;
+                      color:#57201B;mso-line-height-rule:exactly;">
+                    {html.escape(item["win_explanation"])}
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        """
+
+    summary_html = ""
+    if summary:
+        summary_html = f"""
+        <tr>
+          <td style="padding:7px 0 0 0;font-family:Arial,Helvetica,sans-serif;
+              font-size:13px;line-height:20px;color:#252B31;
+              mso-line-height-rule:exactly;">
+            {summary}
+          </td>
+        </tr>
+        """
+
+    return f"""
+    <table role="presentation" width="100%" border="0" cellspacing="0"
+        cellpadding="0" style="width:100%;border-collapse:collapse;">
+      {category_html}
+      <tr>
+        <td style="padding:0;font-family:Arial,Helvetica,sans-serif;
+            font-size:17px;line-height:22px;font-weight:bold;
+            mso-line-height-rule:exactly;">
+          <a href="{url}" style="color:#173C5E;text-decoration:underline;">
+            {title}
+          </a>
+        </td>
+      </tr>
+      {summary_html}
+      {win_html}
+      <tr>
+        <td style="padding:9px 0 0 0;font-family:Arial,Helvetica,sans-serif;
+            font-size:10px;line-height:15px;color:#707B84;
+            mso-line-height-rule:exactly;">
+          {source}{f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
+          &nbsp;•&nbsp;
+          <a href="{url}" style="color:#58738A;text-decoration:underline;">
+            Read source
+          </a>
+        </td>
+      </tr>
+      {outlook_related_html(item)}
+      {outlook_spacer(17)}
+      <tr>
+        <td height="1" bgcolor="#DFE5E9"
+            style="height:1px;line-height:1px;font-size:0;
+            background-color:#DFE5E9;">&nbsp;</td>
+      </tr>
+      {outlook_spacer(18)}
+    </table>
+    """
+
+
+def outlook_section_html(title: str, items: list[dict]) -> str:
+    if not items:
+        return ""
+
+    is_wins = title == "Trump Administration Wins"
+    is_top = title == "Top Developments"
+    heading_color = "#8C241E" if is_wins else "#173C5E"
+    rule_color = "#B42318" if is_wins else "#CBD6DE"
+
+    if is_wins or is_top:
+        stories = "".join(outlook_story_html(item, title) for item in items)
+    else:
+        featured = items[:4]
+        additional = items[4:]
+        stories = "".join(outlook_story_html(item, title) for item in featured)
+        if additional:
+            stories += f"""
+            <table role="presentation" width="100%" border="0" cellspacing="0"
+                cellpadding="0" style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;
+                    font-size:10px;line-height:14px;font-weight:bold;color:#48657D;
+                    text-transform:uppercase;letter-spacing:.4px;
+                    mso-line-height-rule:exactly;">
+                  Additional Headlines
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0;">
+                  {"".join(outlook_story_html(item, title, compact=True)
+                           for item in additional)}
+                </td>
+              </tr>
+            </table>
+            """
+
+    return f"""
+    <tr>
+      <td style="padding:0 28px 0 28px;">
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
+                font-size:18px;line-height:23px;font-weight:bold;color:{heading_color};
+                border-bottom:2px solid {rule_color};
+                mso-line-height-rule:exactly;">
+              {html.escape(title)}
+            </td>
+          </tr>
+          {outlook_spacer(15)}
+          <tr>
+            <td style="padding:0;">{stories}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {outlook_spacer(8)}
+    """
+
+
+def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
+    end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
+    date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
+    start_text = format_datetime(briefing.get("window_start", ""))
+    end_text = format_datetime(briefing.get("window_end", ""))
+
+    sections = briefing.get("sections", {})
+    visible_sections = ["Trump Administration Wins", "Top Developments"]
+    if not executive_only:
+        visible_sections.extend(TOPIC_SECTIONS)
+
+    win_count = len(sections.get("Trump Administration Wins", []))
+    top_count = len(sections.get("Top Developments", []))
+    total_count = sum(len(sections.get(section, [])) for section in visible_sections)
+
+    section_markup = "".join(
+        outlook_section_html(section, sections.get(section, []))
+        for section in visible_sections
+    )
+
+    watch = briefing.get("what_to_watch", [])
+    watch_markup = ""
+    if watch:
+        rows = ""
+        for item in watch:
+            rows += f"""
+            <tr>
+              <td width="16" valign="top" style="width:16px;padding:1px 0 7px 0;
+                  font-family:Arial,Helvetica,sans-serif;font-size:13px;
+                  line-height:19px;color:#48657D;">&#8226;</td>
+              <td valign="top" style="padding:0 0 7px 0;
+                  font-family:Arial,Helvetica,sans-serif;font-size:13px;
+                  line-height:19px;color:#252B31;
+                  mso-line-height-rule:exactly;">
+                {html.escape(item)}
+              </td>
+            </tr>
+            """
+
+        watch_markup = f"""
+        <tr>
+          <td style="padding:0 28px;">
+            <table role="presentation" width="100%" border="0" cellspacing="0"
+                cellpadding="0" style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
+                    font-size:18px;line-height:23px;font-weight:bold;color:#173C5E;
+                    border-bottom:2px solid #CBD6DE;
+                    mso-line-height-rule:exactly;">
+                  What to Watch
+                </td>
+              </tr>
+              {outlook_spacer(13)}
+              <tr>
+                <td>
+                  <table role="presentation" width="100%" border="0" cellspacing="0"
+                      cellpadding="0" style="width:100%;border-collapse:collapse;">
+                    {rows}
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        {outlook_spacer(20)}
+        """
+
+    glance_parts = []
+    if win_count:
+        glance_parts.append(
+            f"{win_count} Administration win{'s' if win_count != 1 else ''}"
+        )
+    if top_count:
+        glance_parts.append(
+            f"{top_count} top development{'s' if top_count != 1 else ''}"
+        )
+    glance_parts.append(f"{total_count} total item{'s' if total_count != 1 else ''}")
+    glance = " &nbsp;•&nbsp; ".join(glance_parts)
+
+    return f"""<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td, a, p, span {{font-family: Arial, Helvetica, sans-serif !important;}}
+    table {{border-collapse: collapse !important;}}
+  </style>
+  <![endif]-->
+</head>
+<body style="Margin:0;padding:0;background-color:#FFFFFF;">
+  <table role="presentation" width="100%" border="0" cellspacing="0"
+      cellpadding="0" bgcolor="#FFFFFF"
+      style="width:100%;border-collapse:collapse;background-color:#FFFFFF;">
+    <tr>
+      <td align="center" style="padding:0;">
+        <table role="presentation" width="720" border="0" cellspacing="0"
+            cellpadding="0" align="center" bgcolor="#FFFFFF"
+            style="width:720px;border-collapse:collapse;background-color:#FFFFFF;">
+          <tr>
+            <td bgcolor="#153A5A"
+                style="padding:23px 28px 21px 28px;background-color:#153A5A;
+                font-family:Arial,Helvetica,sans-serif;">
+              <div style="font-size:28px;line-height:32px;font-weight:bold;
+                  color:#FFFFFF;mso-line-height-rule:exactly;">
+                News Update
+              </div>
+              <div style="padding-top:6px;font-size:13px;line-height:18px;
+                  color:#DCE8F0;mso-line-height-rule:exactly;">
+                {html.escape(date_text)}
+              </div>
+              <div style="font-size:12px;line-height:17px;color:#DCE8F0;
+                  mso-line-height-rule:exactly;">
+                UAS, C-UAS, and Advanced Transportation
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:11px 28px 0 28px;font-family:Arial,Helvetica,sans-serif;
+                font-size:9px;line-height:14px;color:#687681;
+                mso-line-height-rule:exactly;">
+              <strong>24-HOUR COVERAGE WINDOW:</strong>
+              {html.escape(start_text)} through {html.escape(end_text)}
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:10px 28px 0 28px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" bgcolor="#F2F5F7"
+                  style="width:100%;border-collapse:collapse;background-color:#F2F5F7;">
+                <tr>
+                  <td style="padding:8px 11px;font-family:Arial,Helvetica,sans-serif;
+                      font-size:10px;line-height:15px;color:#5D6B78;
+                      mso-line-height-rule:exactly;">
+                    <strong>TODAY AT A GLANCE:</strong> {glance}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          {outlook_spacer(17)}
+
+          <tr>
+            <td style="padding:0 28px 0 28px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" bgcolor="#EDF4F8"
+                  style="width:100%;border-collapse:collapse;background-color:#EDF4F8;
+                  border-left:4px solid #4D7898;">
+                <tr>
+                  <td style="padding:14px 16px 15px 16px;
+                      font-family:Arial,Helvetica,sans-serif;">
+                    <div style="font-size:10px;line-height:14px;font-weight:bold;
+                        color:#244D6B;letter-spacing:.3px;
+                        mso-line-height-rule:exactly;">
+                      EXECUTIVE SUMMARY
+                    </div>
+                    <div style="padding-top:6px;font-size:14px;line-height:21px;
+                        color:#24323D;mso-line-height-rule:exactly;">
+                      {html.escape(briefing.get("executive_summary", ""))}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          {outlook_spacer(25)}
+          {section_markup}
+          {watch_markup}
+
+          <tr>
+            <td style="padding:0 28px 24px 28px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" style="width:100%;border-collapse:collapse;
+                  border-top:1px solid #DFE4E8;">
+                <tr>
+                  <td style="padding:10px 0 0 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:9px;line-height:14px;color:#7B848C;
+                      mso-line-height-rule:exactly;">
+                    Public-source, AI-assisted news update. Review summaries, links,
+                    executive-order citations, and Administration attributions before
+                    distribution.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+
+
 def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     lines = [
@@ -379,36 +812,56 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
     return "\n".join(lines)
 
 
-def copy_controls(full_html: str, full_text: str, short_html: str, short_text: str) -> None:
+def copy_controls(
+    full_html: str,
+    full_text: str,
+    short_html: str,
+    short_text: str,
+    subject_line: str,
+) -> None:
     component = f"""
     <!doctype html><html><head><meta charset="utf-8"><style>
     body{{margin:0;font-family:Arial,Helvetica,sans-serif;background:transparent}}
     .row{{display:flex;gap:9px;align-items:center;flex-wrap:wrap}}
     button{{border:1px solid #153a5a;border-radius:6px;padding:10px 14px;
       font-size:13px;font-weight:700;cursor:pointer}}
-    #full{{background:#153a5a;color:white}} #short{{background:white;color:#153a5a}}
+    #full{{background:#153a5a;color:white}}
+    #short,#subject{{background:white;color:#153a5a}}
     #status{{font-size:12px;color:#5f6f7b;min-height:17px}}
     </style></head><body><div class="row">
       <button id="full" onclick="copyVersion('full')">Copy for Outlook</button>
       <button id="short" onclick="copyVersion('short')">Copy Executive Version</button>
+      <button id="subject" onclick="copySubject()">Copy Subject Line</button>
       <span id="status"></span>
     </div><script>
-    const fullHtml={json.dumps(full_html)}; const fullText={json.dumps(full_text)};
-    const shortHtml={json.dumps(short_html)}; const shortText={json.dumps(short_text)};
+    const fullHtml={json.dumps(full_html)};
+    const fullText={json.dumps(full_text)};
+    const shortHtml={json.dumps(short_html)};
+    const shortText={json.dumps(short_text)};
+    const subjectLine={json.dumps(subject_line)};
     function status(msg){{const el=document.getElementById('status');el.textContent=msg;
-      setTimeout(()=>el.textContent='',2600)}}
+      setTimeout(()=>el.textContent='',2800)}}
     async function copyVersion(which){{
-      const h=which==='full'?fullHtml:shortHtml; const t=which==='full'?fullText:shortText;
-      try{{await navigator.clipboard.write([new ClipboardItem({{
-        'text/html':new Blob([h],{{type:'text/html'}}),
-        'text/plain':new Blob([t],{{type:'text/plain'}})}})]);status('Copied with formatting.')}}
-      catch(e){{try{{await navigator.clipboard.writeText(t);status('Copied as plain text.')}}
-      catch(e2){{status('Browser blocked clipboard access.')}}}}
+      const h=which==='full'?fullHtml:shortHtml;
+      const t=which==='full'?fullText:shortText;
+      try{{
+        await navigator.clipboard.write([new ClipboardItem({{
+          'text/html':new Blob([h],{{type:'text/html'}}),
+          'text/plain':new Blob([t],{{type:'text/plain'}})
+        }})]);
+        status('Copied Outlook-formatted email.');
+      }} catch(e){{
+        try{{await navigator.clipboard.writeText(t);status('Copied as plain text.')}}
+        catch(e2){{status('Browser blocked clipboard access.')}}
+      }}
+    }}
+    async function copySubject(){{
+      try{{await navigator.clipboard.writeText(subjectLine);status('Subject line copied.')}}
+      catch(e){{status('Browser blocked clipboard access.')}}
     }}
     </script></body></html>
     """
-    components.html(component, height=55)
-
+    components.html(component, height=60)
 
 def initialize_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
@@ -547,19 +1000,35 @@ st.caption(
 preview_tab, edit_tab, status_tab = st.tabs(["Email Preview", "Review & Edit", "Status"])
 
 with preview_tab:
-    full_html = build_email_html(current, executive_only=False)
+    web_preview_html = build_web_preview_html(current, executive_only=False)
+    outlook_full_html = build_outlook_html(current, executive_only=False)
+    outlook_short_html = build_outlook_html(current, executive_only=True)
     full_text = build_plain_text(current, executive_only=False)
-    short_html = build_email_html(current, executive_only=True)
     short_text = build_plain_text(current, executive_only=True)
-    copy_controls(full_html, full_text, short_html, short_text)
+    subject_line = f"Advanced Transportation News Update — {end.strftime('%B %d, %Y').replace(' 0', ' ')}"
+
+    st.caption(
+        "Copy for Outlook uses a separate Microsoft Outlook–optimized table layout "
+        "with fixed spacing and inline formatting."
+    )
+    copy_controls(
+        outlook_full_html,
+        full_text,
+        outlook_short_html,
+        short_text,
+        subject_line,
+    )
     st.download_button(
-        "Download HTML",
-        data=full_html,
+        "Download Outlook HTML",
+        data=outlook_full_html,
         file_name=f"news-update-{end.date().isoformat()}.html",
         mime="text/html",
     )
     st.divider()
-    st.html(full_html)
+    st.html(web_preview_html)
+
+    with st.expander("Preview the Outlook-optimized layout"):
+        st.html(outlook_full_html)
 
 with edit_tab:
     if owner_authenticated():
