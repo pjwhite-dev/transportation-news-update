@@ -2,11 +2,18 @@ from __future__ import annotations
 
 import hmac
 import html
+import ipaddress
 import json
+import random
+import re
+import socket
+import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -14,9 +21,17 @@ from news_engine import (
     DEFAULT_OPENAI_MODEL,
     EASTERN,
     EO_DISPLAY_NAMES,
+    EO_REFERENCE,
+    OPENAI_RESPONSES_ENDPOINT,
+    OPENAI_TOKEN_PRICES,
     SECTION_ORDER,
+    SOURCE_PREFERENCE,
     TOPIC_SECTIONS,
+    TRANSIENT_OPENAI_STATUS_CODES,
+    arrange_sections,
+    clean_spaces,
     generate_daily_briefing,
+    stable_id,
 )
 
 st.set_page_config(
@@ -863,6 +878,650 @@ def copy_controls(
     """
     components.html(component, height=60)
 
+
+MANUAL_IMPORT_USER_AGENT = (
+    "TransportationNewsUpdate/4.0 manual-intake metadata fetcher"
+)
+URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s<>\"'`]+", re.IGNORECASE)
+
+
+def normalize_import_url(value: str) -> str:
+    value = html.unescape(value or "").replace("\u200b", "").strip()
+    value = value.lstrip("<([{'")
+    value = value.rstrip(">)]}'\".,;:!?\\")
+    if value.lower().startswith("www."):
+        value = "https://" + value
+    return value
+
+
+def url_is_public(value: str) -> bool:
+    try:
+        parsed = urlparse(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            return False
+        host = parsed.hostname.casefold()
+        if host in {"localhost", "localhost.localdomain"} or host.endswith(".local"):
+            return False
+        addresses = socket.getaddrinfo(host, parsed.port or 443, type=socket.SOCK_STREAM)
+        for address in addresses:
+            ip = ipaddress.ip_address(address[4][0])
+            if (
+                ip.is_private
+                or ip.is_loopback
+                or ip.is_link_local
+                or ip.is_multicast
+                or ip.is_reserved
+                or ip.is_unspecified
+            ):
+                return False
+        return True
+    except (ValueError, OSError, socket.gaierror):
+        return False
+
+
+def context_for_url(lines: list[str], index: int) -> str:
+    nearby = []
+    for line_index in range(max(0, index - 2), min(len(lines), index + 2)):
+        text = clean_spaces(lines[line_index])
+        if text:
+            nearby.append(text)
+    return clean_spaces(" ".join(nearby))[:900]
+
+
+def extract_pasted_links(raw_text: str) -> list[dict]:
+    text = html.unescape(raw_text or "").replace("\u200b", "")
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    records = []
+    seen = set()
+
+    for line_index, line in enumerate(lines):
+        for match in URL_PATTERN.finditer(line):
+            url = normalize_import_url(match.group(0))
+            if not url.startswith(("https://", "http://")):
+                continue
+            key = url.casefold()
+            if key in seen:
+                continue
+            seen.add(key)
+            records.append(
+                {
+                    "id": stable_id("manual", url),
+                    "url": url,
+                    "pasted_context": context_for_url(lines, line_index),
+                    "title": "",
+                    "description": "",
+                    "page_text": "",
+                    "source": urlparse(url).netloc.removeprefix("www."),
+                    "final_url": url,
+                    "fetch_status": "Not fetched",
+                }
+            )
+
+    return records
+
+
+def first_html_match(document: str, patterns: list[str]) -> str:
+    for pattern in patterns:
+        match = re.search(pattern, document, flags=re.IGNORECASE | re.DOTALL)
+        if match:
+            return clean_spaces(html.unescape(re.sub(r"<[^>]+>", " ", match.group(1))))
+    return ""
+
+
+def fetch_link_metadata(record: dict) -> dict:
+    enriched = dict(record)
+    url = record["url"]
+    if not url_is_public(url):
+        enriched["fetch_status"] = "Skipped unsafe or invalid address"
+        return enriched
+
+    try:
+        response = requests.get(
+            url,
+            headers={
+                "User-Agent": MANUAL_IMPORT_USER_AGENT,
+                "Accept": "text/html,application/xhtml+xml",
+            },
+            timeout=14,
+            allow_redirects=True,
+            stream=True,
+        )
+        response.raise_for_status()
+        final_url = response.url
+        if not url_is_public(final_url):
+            enriched["fetch_status"] = "Redirected to an unsafe address"
+            return enriched
+
+        content_type = response.headers.get("Content-Type", "").lower()
+        if "html" not in content_type:
+            enriched["final_url"] = final_url
+            enriched["source"] = urlparse(final_url).netloc.removeprefix("www.")
+            enriched["fetch_status"] = f"Non-HTML source ({content_type or 'unknown type'})"
+            return enriched
+
+        chunks = []
+        total = 0
+        for chunk in response.iter_content(chunk_size=16384, decode_unicode=False):
+            if not chunk:
+                continue
+            chunks.append(chunk)
+            total += len(chunk)
+            if total >= 750_000:
+                break
+        raw = b"".join(chunks)
+        encoding = response.encoding or "utf-8"
+        document = raw.decode(encoding, errors="replace")
+
+        title = first_html_match(
+            document,
+            [
+                r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\'](.*?)["\']',
+                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:title["\']',
+                r'<meta[^>]+name=["\']twitter:title["\'][^>]+content=["\'](.*?)["\']',
+                r"<title[^>]*>(.*?)</title>",
+            ],
+        )
+        description = first_html_match(
+            document,
+            [
+                r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\'](.*?)["\']',
+                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:description["\']',
+                r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']',
+            ],
+        )
+
+        body = re.sub(r"(?is)<script.*?</script>|<style.*?</style>|<noscript.*?</noscript>", " ", document)
+        body = clean_spaces(html.unescape(re.sub(r"<[^>]+>", " ", body)))
+
+        enriched.update(
+            {
+                "title": title[:300],
+                "description": description[:1200],
+                "page_text": body[:3500],
+                "final_url": final_url,
+                "source": urlparse(final_url).netloc.removeprefix("www."),
+                "fetch_status": "Metadata fetched",
+            }
+        )
+    except requests.RequestException as exc:
+        enriched["fetch_status"] = f"Could not fetch page: {type(exc).__name__}"
+
+    return enriched
+
+
+def flatten_briefing_stories(briefing: dict) -> list[dict]:
+    stories = []
+    seen = set()
+    for section_name in SECTION_ORDER:
+        for item in briefing.get("sections", {}).get(section_name, []):
+            item_id = item.get("id", "")
+            if not item_id or item_id in seen:
+                continue
+            seen.add(item_id)
+            copied = json.loads(json.dumps(item))
+            if copied.get("section") not in TOPIC_SECTIONS:
+                copied["section"] = (
+                    section_name if section_name in TOPIC_SECTIONS else "Other Advanced Transportation"
+                )
+            stories.append(copied)
+    return stories
+
+
+def manual_import_schema() -> dict:
+    group = {
+        "type": "object",
+        "properties": {
+            "manual_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+            "action": {"type": "string", "enum": ["new_story", "merge_existing"]},
+            "existing_story_id": {"type": "string"},
+            "section": {"type": "string", "enum": TOPIC_SECTIONS},
+            "importance": {"type": "integer", "minimum": 1, "maximum": 10},
+            "canonical_title": {"type": "string"},
+            "summary": {"type": "string"},
+            "is_administration_win": {"type": "boolean"},
+            "eo_number": {
+                "type": "string",
+                "enum": ["", "EO 14307", "EO 14305", "EO 14304"],
+            },
+            "eo_section": {"type": "string"},
+            "win_explanation": {"type": "string"},
+            "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        },
+        "required": [
+            "manual_ids", "action", "existing_story_id", "section", "importance",
+            "canonical_title", "summary", "is_administration_win", "eo_number",
+            "eo_section", "win_explanation", "confidence",
+        ],
+        "additionalProperties": False,
+    }
+    return {
+        "type": "object",
+        "properties": {
+            "revised_executive_summary": {"type": "string"},
+            "revised_what_to_watch": {"type": "array", "items": {"type": "string"}},
+            "groups": {"type": "array", "items": group},
+        },
+        "required": ["revised_executive_summary", "revised_what_to_watch", "groups"],
+        "additionalProperties": False,
+    }
+
+
+def extract_openai_text(data: dict) -> str:
+    parts = []
+    refusals = []
+    for output in data.get("output", []):
+        if output.get("type") != "message":
+            continue
+        for content in output.get("content", []):
+            if content.get("type") == "output_text":
+                parts.append(content.get("text", ""))
+            elif content.get("type") == "refusal":
+                refusals.append(content.get("refusal", "Request refused."))
+    if refusals:
+        raise RuntimeError("OpenAI declined the import: " + " ".join(refusals))
+    text = "".join(parts).strip()
+    if not text:
+        raise RuntimeError("OpenAI returned no usable import analysis.")
+    return text
+
+
+def manual_import_cost(model: str, usage: dict) -> float | None:
+    prices = OPENAI_TOKEN_PRICES.get(model)
+    if not prices:
+        return None
+    return (
+        int(usage.get("input_tokens", 0) or 0) * prices["input"] / 1_000_000
+        + int(usage.get("output_tokens", 0) or 0) * prices["output"] / 1_000_000
+    )
+
+
+def analyze_manual_links(
+    briefing: dict,
+    records: list[dict],
+    api_key: str,
+    model: str,
+) -> tuple[dict, dict, float | None]:
+    existing = flatten_briefing_stories(briefing)
+    compact_existing = [
+        {
+            "id": item.get("id", ""),
+            "title": item.get("title", ""),
+            "summary": item.get("summary", ""),
+            "section": item.get("section", ""),
+            "is_administration_win": bool(item.get("is_administration_win")),
+            "eo_number": item.get("eo_number", ""),
+        }
+        for item in existing
+    ]
+    compact_manual = [
+        {
+            "id": item["id"],
+            "url": item.get("final_url") or item["url"],
+            "source": item.get("source", ""),
+            "pasted_context": item.get("pasted_context", ""),
+            "page_title": item.get("title", ""),
+            "page_description": item.get("description", ""),
+            "page_text_excerpt": item.get("page_text", ""),
+        }
+        for item in records
+    ]
+
+    developer = f"""
+You are integrating a second, manually pasted daily news email into an existing U.S.
+advanced-transportation briefing. Account for EVERY manual_id exactly once. No pasted link
+may be silently omitted. A manual link must either become a new story or merge into a clearly
+matching existing story as additional coverage.
+
+RULES
+- Group manual links only when they cover the same concrete event. Broad topic similarity is
+  not enough.
+- Use merge_existing only for a true same-event match, and provide its existing_story_id.
+- Otherwise create a new story and assign the closest listed section. If ambiguous, use
+  Other Advanced Transportation rather than dropping the item.
+- Write specific, factual titles and 1-2 sentence summaries using only supplied material.
+- Check every group for a direct, supportable Trump Administration win. Positive private
+  news alone is not a win. Use EO fields only when the supplied information supports them.
+- Win language may be confident and pro-American but must remain factual and tied to a
+  concrete Administration action or result.
+- Revise the Executive Summary to reflect the combined briefing in 2-3 sentences, 55-95
+  words. Return 0-3 grounded What to Watch items.
+- Prefer primary and authoritative sources: {SOURCE_PREFERENCE}
+
+{EO_REFERENCE}
+""".strip()
+
+    user = json.dumps(
+        {
+            "existing_briefing_stories": compact_existing,
+            "manual_records": compact_manual,
+        },
+        ensure_ascii=False,
+    )
+
+    payload = {
+        "model": model,
+        "input": [
+            {"role": "developer", "content": developer},
+            {"role": "user", "content": user},
+        ],
+        "reasoning": {"effort": "none"},
+        "max_output_tokens": 12000,
+        "store": False,
+        "text": {
+            "format": {
+                "type": "json_schema",
+                "name": "manual_news_import",
+                "strict": True,
+                "schema": manual_import_schema(),
+            }
+        },
+    }
+
+    errors = []
+    for attempt in range(4):
+        try:
+            response = requests.post(
+                OPENAI_RESPONSES_ENDPOINT,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+                timeout=240,
+            )
+        except requests.RequestException as exc:
+            errors.append(f"network error: {exc}")
+            if attempt < 3:
+                time.sleep((2 ** attempt) + random.uniform(0.2, 1.0))
+                continue
+            break
+
+        if response.status_code < 400:
+            data = response.json()
+            result = json.loads(extract_openai_text(data))
+            usage = data.get("usage") or {}
+            return result, usage, manual_import_cost(model, usage)
+
+        detail = clean_spaces(response.text)[:700]
+        errors.append(f"HTTP {response.status_code}: {detail}")
+        if response.status_code in TRANSIENT_OPENAI_STATUS_CODES and attempt < 3:
+            time.sleep((2 ** attempt) + random.uniform(0.2, 1.0))
+            continue
+        raise RuntimeError(f"OpenAI import returned HTTP {response.status_code}: {detail}")
+
+    raise RuntimeError("OpenAI import failed after retries: " + " | ".join(errors[-4:]))
+
+
+def fallback_section(record: dict) -> str:
+    text = " ".join(
+        [
+            record.get("title", ""),
+            record.get("description", ""),
+            record.get("pasted_context", ""),
+            record.get("url", ""),
+        ]
+    ).casefold()
+    if any(term in text for term in ["counter-uas", "c-uas", "counter drone", "drone detection", "drone threat"]):
+        return "UAS Security and C-UAS"
+    if any(term in text for term in ["evtol", "advanced air mobility", "air taxi", "powered-lift", "vertiport", "eipp"]):
+        return "eVTOL Integration Pilot Program and AAM"
+    if any(term in text for term in ["autonomous vehicle", "robotaxi", "self-driving", "driverless", "automated driving"]):
+        return "Autonomous Vehicles"
+    if any(term in text for term in ["drone", "uas", "unmanned aircraft", "bvlos", "remote id"]):
+        return "UAS and Drones"
+    if any(term in text for term in ["federal register", "faa.gov", "dot.gov", "nhtsa.gov", "fra.gov", "whitehouse.gov"]):
+        return "Federal Actions"
+    return "Other Advanced Transportation"
+
+
+def merge_manual_analysis(
+    briefing: dict,
+    records: list[dict],
+    analysis: dict,
+    usage: dict,
+    cost: float | None,
+) -> tuple[dict, dict]:
+    merged = json.loads(json.dumps(briefing))
+    stories = flatten_briefing_stories(merged)
+    existing_lookup = {item["id"]: item for item in stories}
+    record_lookup = {item["id"]: item for item in records}
+    used_manual = set()
+    new_story_ids = []
+    merged_link_count = 0
+
+    for group in analysis.get("groups", []):
+        manual_ids = []
+        for manual_id in group.get("manual_ids", []):
+            if manual_id in record_lookup and manual_id not in used_manual:
+                used_manual.add(manual_id)
+                manual_ids.append(manual_id)
+        if not manual_ids:
+            continue
+
+        group_records = [record_lookup[item_id] for item_id in manual_ids]
+        existing_id = group.get("existing_story_id", "")
+        action = group.get("action", "new_story")
+        section = group.get("section", "")
+        if section not in TOPIC_SECTIONS:
+            section = fallback_section(group_records[0])
+
+        if action == "merge_existing" and existing_id in existing_lookup:
+            story = existing_lookup[existing_id]
+            related = story.setdefault("also_covered", [])
+            known_urls = {item.get("url", "") for item in related}
+            known_urls.add(story.get("url", ""))
+            for record in group_records:
+                record_url = record.get("final_url") or record["url"]
+                if record_url in known_urls:
+                    continue
+                known_urls.add(record_url)
+                related.append({"source": record.get("source", "Imported source"), "url": record_url})
+                merged_link_count += 1
+            if clean_spaces(group.get("canonical_title", "")):
+                story["title"] = clean_spaces(group["canonical_title"])
+            if clean_spaces(group.get("summary", "")):
+                story["summary"] = clean_spaces(group["summary"])
+            story["importance"] = max(
+                int(story.get("importance", 1)),
+                max(1, min(10, int(group.get("importance", 1) or 1))),
+            )
+            if group.get("is_administration_win"):
+                story["is_administration_win"] = True
+                story["eo_number"] = group.get("eo_number", "")
+                story["eo_name"] = EO_DISPLAY_NAMES.get(story["eo_number"], "")
+                story["eo_section"] = clean_spaces(group.get("eo_section", ""))
+                story["win_explanation"] = clean_spaces(group.get("win_explanation", ""))
+            continue
+
+        primary = group_records[0]
+        primary_url = primary.get("final_url") or primary["url"]
+        title = clean_spaces(group.get("canonical_title", "")) or primary.get("title") or primary.get("pasted_context") or primary_url
+        summary = clean_spaces(group.get("summary", "")) or primary.get("description") or "Imported from the supplemental daily news email."
+        story_id = stable_id("manual-story", *manual_ids)
+        related = [
+            {
+                "source": record.get("source", "Imported source"),
+                "url": record.get("final_url") or record["url"],
+            }
+            for record in group_records[1:]
+        ]
+        story = {
+            "id": story_id,
+            "title": title,
+            "summary": summary,
+            "source": primary.get("source", "Imported source"),
+            "url": primary_url,
+            "published": datetime.now(EASTERN).isoformat(),
+            "date_label": datetime.now(EASTERN).strftime("%b. %d, %Y").replace(" 0", " "),
+            "section": section,
+            "importance": max(1, min(10, int(group.get("importance", 4) or 4))),
+            "confidence": group.get("confidence", "medium"),
+            "is_administration_win": bool(group.get("is_administration_win", False)),
+            "eo_number": group.get("eo_number", ""),
+            "eo_name": EO_DISPLAY_NAMES.get(group.get("eo_number", ""), ""),
+            "eo_section": clean_spaces(group.get("eo_section", "")),
+            "win_explanation": clean_spaces(group.get("win_explanation", "")),
+            "also_covered": related,
+            "manual_imported": True,
+        }
+        stories.append(story)
+        existing_lookup[story_id] = story
+        new_story_ids.append(story_id)
+
+    missing_ids = [manual_id for manual_id in record_lookup if manual_id not in used_manual]
+    for manual_id in missing_ids:
+        record = record_lookup[manual_id]
+        story_id = stable_id("manual-fallback", manual_id)
+        story = {
+            "id": story_id,
+            "title": record.get("title") or record.get("pasted_context") or record["url"],
+            "summary": record.get("description") or "Imported from the supplemental daily news email.",
+            "source": record.get("source", "Imported source"),
+            "url": record.get("final_url") or record["url"],
+            "published": datetime.now(EASTERN).isoformat(),
+            "date_label": datetime.now(EASTERN).strftime("%b. %d, %Y").replace(" 0", " "),
+            "section": fallback_section(record),
+            "importance": 3,
+            "confidence": "low",
+            "is_administration_win": False,
+            "eo_number": "",
+            "eo_name": "",
+            "eo_section": "",
+            "win_explanation": "",
+            "also_covered": [],
+            "manual_imported": True,
+        }
+        stories.append(story)
+        new_story_ids.append(story_id)
+
+    arranged = arrange_sections(stories)
+    displayed_ids = {
+        item.get("id")
+        for items in arranged.values()
+        for item in items
+    }
+    for story in stories:
+        if story.get("id") in new_story_ids and story.get("id") not in displayed_ids:
+            arranged[story["section"]].append(story)
+
+    revised_summary = clean_spaces(analysis.get("revised_executive_summary", ""))
+    if revised_summary:
+        merged["executive_summary"] = revised_summary
+    revised_watch = [
+        clean_spaces(item)
+        for item in analysis.get("revised_what_to_watch", [])[:3]
+        if clean_spaces(item)
+    ]
+    if revised_watch:
+        merged["what_to_watch"] = revised_watch
+    merged["sections"] = arranged
+    merged["manual_import"] = {
+        "imported_at": datetime.now(EASTERN).isoformat(),
+        "pasted_link_count": len(records),
+        "new_story_count": len(new_story_ids),
+        "merged_coverage_count": merged_link_count,
+        "fallback_count": len(missing_ids),
+        "usage": usage,
+        "estimated_cost": cost,
+    }
+    report = merged["manual_import"]
+    return merged, report
+
+
+def render_manual_intake(current: dict, base_edition_key: str) -> None:
+    st.subheader("Add links from another daily email")
+    st.caption(
+        "Paste the email text below. Every unique link will be accounted for: it will "
+        "either become a story or be added as supplemental coverage to an existing story."
+    )
+    paste_key = f"manual_paste_{base_edition_key}"
+    st.text_area(
+        "Paste email text or links",
+        key=paste_key,
+        height=260,
+        placeholder=(
+            "Paste the full email here. Links enclosed in < > and links followed by "
+            "commas, brackets, or other punctuation will be cleaned automatically."
+        ),
+    )
+    fetch_pages = st.checkbox(
+        "Fetch public page titles and descriptions before AI analysis",
+        value=True,
+        help="If a page is blocked or paywalled, the app still includes the link using the pasted context.",
+    )
+
+    extract_col, clear_col = st.columns([0.72, 0.28])
+    with extract_col:
+        if st.button("Extract and review links", use_container_width=True):
+            records = extract_pasted_links(st.session_state.get(paste_key, ""))
+            if fetch_pages and records:
+                progress = st.progress(0, text="Reading public page metadata…")
+                enriched = []
+                for index, record in enumerate(records, start=1):
+                    enriched.append(fetch_link_metadata(record))
+                    progress.progress(index / len(records), text=f"Reading link {index} of {len(records)}…")
+                progress.empty()
+                records = enriched
+            st.session_state[f"manual_records_{base_edition_key}"] = records
+            if not records:
+                st.warning("No HTTP or HTTPS links were found in the pasted text.")
+            else:
+                st.success(f"Extracted {len(records)} unique link{'s' if len(records) != 1 else ''}.")
+    with clear_col:
+        if st.button("Clear import", use_container_width=True):
+            st.session_state.pop(f"manual_records_{base_edition_key}", None)
+            st.session_state.pop(f"manual_override_{base_edition_key}", None)
+            st.session_state.pop(f"manual_report_{base_edition_key}", None)
+            st.rerun()
+
+    records = st.session_state.get(f"manual_records_{base_edition_key}", [])
+    if records:
+        st.markdown(f"**Links that will be included: {len(records)}**")
+        for index, record in enumerate(records, start=1):
+            with st.expander(
+                f"{index}. {record.get('title') or record.get('source') or record['url']}",
+                expanded=False,
+            ):
+                st.markdown(f"[{record['url']}]({record['url']})")
+                st.write(record.get("pasted_context") or "No surrounding pasted context.")
+                st.caption(record.get("fetch_status", ""))
+
+        if st.button("Integrate all links with AI", type="primary", use_container_width=True):
+            api_key = secret_value("openai_api_key")
+            model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
+            if not api_key:
+                st.error("Add openai_api_key to Streamlit Secrets.")
+            else:
+                with st.spinner("Classifying, deduplicating, checking Administration wins, and updating the briefing…"):
+                    try:
+                        analysis, usage, cost = analyze_manual_links(
+                            current, records, api_key, model
+                        )
+                        merged, report = merge_manual_analysis(
+                            current, records, analysis, usage, cost
+                        )
+                        st.session_state[f"manual_override_{base_edition_key}"] = merged
+                        st.session_state[f"manual_report_{base_edition_key}"] = report
+                        st.rerun()
+                    except Exception as exc:
+                        st.error(str(exc))
+
+    report = st.session_state.get(f"manual_report_{base_edition_key}")
+    if report:
+        st.success(
+            f"Integrated {report['pasted_link_count']} pasted links: "
+            f"{report['new_story_count']} new stories and "
+            f"{report['merged_coverage_count']} supplemental coverage links."
+        )
+        if report.get("fallback_count"):
+            st.info(
+                f"{report['fallback_count']} link(s) were included with fallback metadata "
+                "because the AI did not account for them explicitly."
+            )
+        if report.get("estimated_cost") is not None:
+            st.caption(f"Estimated OpenAI cost for this import: ${report['estimated_cost']:.4f}")
+
+
 def initialize_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
     if prefix + "initialized" in st.session_state:
@@ -988,6 +1647,12 @@ if not briefing.get("window_end"):
     )
     st.stop()
 
+base_edition_key = edition_key
+manual_override = st.session_state.get(f"manual_override_{base_edition_key}")
+if manual_override:
+    briefing = manual_override
+    edition_key = base_edition_key + "_manual"
+
 initialize_editor(briefing, edition_key)
 current = edited_briefing(briefing, edition_key) if owner_authenticated() else briefing
 
@@ -997,7 +1662,7 @@ st.caption(
     f"24-hour coverage through {end.strftime('%-I:%M %p ET on %B %d, %Y').replace(' 0', ' ')}"
 )
 
-preview_tab, edit_tab, status_tab = st.tabs(["Email Preview", "Review & Edit", "Status"])
+preview_tab, intake_tab, edit_tab, status_tab = st.tabs(["Email Preview", "Add Daily Links", "Review & Edit", "Status"])
 
 with preview_tab:
     web_preview_html = build_web_preview_html(current, executive_only=False)
@@ -1030,6 +1695,13 @@ with preview_tab:
     with st.expander("Preview the Outlook-optimized layout"):
         st.html(outlook_full_html)
 
+with intake_tab:
+    if owner_authenticated():
+        render_manual_intake(current, base_edition_key)
+    else:
+        st.info("Unlock Owner controls in the sidebar to paste and integrate supplemental links.")
+
+
 with edit_tab:
     if owner_authenticated():
         st.caption("Edits affect only this browser session and the copied email; they do not modify the archived GitHub edition.")
@@ -1050,6 +1722,21 @@ with status_tab:
     if current.get("estimated_cost") is not None:
         st.write(f"**Estimated API cost:** ${current['estimated_cost']:.4f}")
     st.write(f"**Candidate records reviewed:** {current.get('candidate_count', 0)}")
+    manual_info = current.get("manual_import", {})
+    if manual_info:
+        st.write(
+            f"**Manual intake:** {manual_info.get('pasted_link_count', 0)} links; "
+            f"{manual_info.get('new_story_count', 0)} new stories; "
+            f"{manual_info.get('merged_coverage_count', 0)} supplemental links"
+        )
+        manual_usage = manual_info.get("usage", {})
+        if manual_usage:
+            st.write(
+                f"**Manual-intake tokens:** {int(manual_usage.get('input_tokens', 0)):,} input; "
+                f"{int(manual_usage.get('output_tokens', 0)):,} output"
+            )
+        if manual_info.get("estimated_cost") is not None:
+            st.write(f"**Manual-intake estimated cost:** ${manual_info['estimated_cost']:.4f}")
 
     candidate_counts = current.get("candidate_counts", {})
     included_counts = current.get("included_counts", {})
