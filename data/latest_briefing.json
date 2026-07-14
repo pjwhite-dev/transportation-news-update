@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-07-14T06:43:32.740159-04:00",
-  "window_start": "2026-07-13T06:43:01.915282-04:00",
-  "window_end": "2026-07-14T06:43:01.915282-04:00",
+  "generated_at": "2026-07-14T08:51:45.273221-04:00",
+  "window_start": "2026-07-13T08:51:15.185277-04:00",
+  "window_end": "2026-07-14T08:51:15.185277-04:00",
   "model": "gpt-5.4-mini",
   "usage": {
-    "input_tokens": 26275,
+    "input_tokens": 25764,
     "input_tokens_details": {
       "cache_write_tokens": 0,
       "cached_tokens": 0
     },
-    "output_tokens": 2589,
+    "output_tokens": 2450,
     "output_tokens_details": {
       "reasoning_tokens": 0
     },
-    "total_tokens": 28864
+    "total_tokens": 28214
   },
-  "estimated_cost": 0.03135675,
-  "executive_summary": "The day’s biggest U.S. advanced-transportation development was a sharp cluster of drone and counter-drone moves: FAA approval for avalanche-control drone operations, Blue UAS eligibility for AIRO’s RQ-35, and a major border counter-UAS contract for CACI. In autonomous vehicles, Washington and D.C. continued to weigh robotaxi rules while Waymo and Tesla faced fresh operational scrutiny. eVTOL/AAM activity was steadier, led by certification progress, facility expansion, and testing updates.",
+  "estimated_cost": 0.030348,
+  "executive_summary": "Advanced transportation was active across drones, robotaxis, and eVTOLs, but the clearest federal move was FAA action to lift the longstanding overland supersonic flight ban by moving toward a noise-threshold standard. In drones, the day leaned toward security and integration: counter-UAS demonstrations, border-defense contracting, and Blue UAS certification all stood out. Autonomous-vehicle coverage was heavy on robotaxi expansion and safety/regulatory friction, especially in Washington, D.C. and San Francisco.",
   "what_to_watch": [
-    "DC Council and federal officials continue debating robotaxi rules and vehicle-equipment requirements.",
-    "Expect follow-up on CACI’s southern-border counter-drone deployment and related C-UAS procurements.",
-    "Watch for more detail on FAA’s AV and supersonic rulemaking timelines."
+    "FAA supersonic rulemaking details and the public-comment path after the proposed noise standard.",
+    "Washington, D.C. robotaxi legislation and any federal or local response to safety and accessibility concerns.",
+    "Whether additional U.S. drone-defense contracts or deployment announcements follow the CACI border award and AT&T/Ericsson demo."
   ],
   "sections": {
     "Trump Administration Wins": [
       {
-        "id": "uas_caci_border_cuas",
-        "title": "DoD Awards CACI $100 Million Counter-UAS Contract for the Southern Border",
-        "summary": "Multiple records say DoD awarded CACI a $100 million contract to supply counter-UAS capabilities for the southern border. The deal expands federal border-drone defense capacity and appears to be driving a share reaction.",
+        "id": "cluster_4",
+        "title": "DoD awards CACI a $100 million counter-UAS contract for the southern border",
+        "summary": "CACI said the Pentagon awarded it a $100 million contract to supply counter-UAS capabilities for southern-border defense. Related market items report the stock moving on the award.",
         "source": "Defense Daily",
         "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPUlJuRXBzNFVreXdlZUgzX1p5VUxDTm9wTUdQNmVodThWdy12dGdxNkhXRXM1SWJZWHRHWGxFN1h2ZGthYlJtNkJJRjllY0cyUU5lYWp5d3ZxTlFjemQ2VGtsTFJHazVKX3dTd3NFODhLY1FjTXNCRnY4MmpuelhmZ0JMQmxMVzBSYlRsX08tUzRBdW9YMVV1N24xUGlhT0w1Qk9DSjZORnVMNl8zOTVPMUlmN2hUUDVYcjc2cQ?oc=5",
         "published": "2026-07-13T18:14:43-04:00",
@@ -38,31 +38,27 @@
         "is_administration_win": true,
         "eo_number": "EO 14305",
         "eo_name": "Restoring American Airspace Sovereignty",
-        "eo_section": "Sec. 8; Sec. 9",
-        "win_explanation": "A major Defense Department contract will put counter-drone systems on the U.S. southern border, strengthening protection for a sensitive national-security area. The award also supports domestic counter-UAS capability and operational deployment rather than leaving the mission on paper.",
+        "eo_section": "Sec. 8",
+        "win_explanation": "This is a direct federal deployment of counter-drone capability to protect the southern border, which the Administration has identified as a priority area. The contract strengthens operational defenses while supporting a U.S. defense-industrial outcome.",
         "also_covered": [
-          {
-            "source": "Investing.com UK",
-            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPcVlLSXRTMzJmQWE2OTNaUjM3VGFFNmFoUXhPaERYMmJNd2t2R2VGVHpHTlV3WXFlUHlLck9NdlFDSFBBVmlhOXJLTFhCRUVpYWVEWExRMHR0MFlRUGZkUjNGWFRxZ0o0YTJhbkkyajVPNEt0dTBkcEJYT2RFOVc3STQxM3pjN3YtQkxIVG84NVV4VG1KbmR6bENDQkZjbml3VGRHSkMyTFRSQ3FreExmWGsxTndkdjVRVEJJd3VXekNtNXlhU2NoX3RFbG8?oc=5"
-          },
-          {
-            "source": "Unmanned airspace",
-            "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNM291Tjkzdzh3aHpkOEtLOVNSLXhTQjhHWGtqTG9aOVFCbUMzVWd0ME40TDRoRGJ0UnBnZTkxUGJkRDFhUVdQSm1zdF9DNzhPVGFrT2pkTzdNVDRaLU1WdXQ0YUZaRWlqbllucHVWb3A2YjJHTHQ4U2Vxbl9IN003cENkektKQkRSTmdTQkJMUWdiWUpqdWw1dGxIaUlOWTdsUl9YdXlicVFBcmlCaUptZWd1LWtaam5HUWs5S1EtazQzZ2EtMl9ZZmp3SlVfakhtanpkcFpocjI?oc=5"
-          },
           {
             "source": "Yahoo Finance",
             "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQdDNhdUlHV3hsS1A0X1h4blVvX3VHN0NmcllRcEpIQWhzUHVWdW9hWjk2NEJ0eGdGeUpVdmF6MFJCOHRxZVAzdnNRSUpBYVJTWGc2LXByYUlUX2d4OGpFN01ZQVczMlA5Y1d5eXlDYUNYaGpKa3BUU1dZNG05NDNkWUxxakh2R1pkRm43c3VFdHg4MS1scnJtcHRJXzlSOW8?oc=5"
           },
           {
-            "source": "Investing.com Australia",
-            "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOMS1EdTROUTdrYUxsQy1tQmUwRjBrb0NZYmRBSGw3RHp4NGFRajAwa0l3aGR1ZERXS3FWWTFGaUVFMExoN3F0Nm5LaUd3Y3BPTWxDS3VaYlIwVkNoNC0zLThFVDM3bmtab1pkSV91WWtHbFJHdW1RdTlKbFkxMEc3SXZ6dDd1UVJzaXhiNUcxZTlHZVlTT1otX2xPTXRUOVJmSXJQelNrU3VqclVJWGtia3NwcjBKVHV2clRnaDlwUV9fUWtPQ2ZlVkF2dFRTV21QNnFyaA?oc=5"
+            "source": "Investing.com UK",
+            "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQeWlSNl9LUGtZMGFJMGRMYURJUFRfU1FrT184OVZYdHZ3a1B3M2p3ZlFfNGFVQng0UmdOczlVTllLeGM0dmZOU1JtbzRWa0VYVmlXTk9MMGJwbWpHcVFyNXRkYnVvQUtIVWwzempBTmI5WldmY283UGpQVDB5VE5sdlVTM0tLdWtvY054ZWlYZ3k5M0h2TGN3bWUtSDg2czFtSm9BOElOUUJERk5hTnBLclhfYlBMZThtVnRnUXRHMFVoeFloeDRSVUozd0kwUmZoVDFsSw?oc=5"
+          },
+          {
+            "source": "Army Recognition",
+            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNWW4wU09lbnBPc3hNdl9qSGhodlpycVlXNHM0T2Y5LTFhaVR4OC1XS1B1UkxUOWItOHk1a3VWeldoOFlfM29MempBTkl5MF93RDlERTFDNC1JRmIzUnFLM2x2YkhzTE5ubXZ5SzFyTzJ6bElaUnJVaXBlZW9UOGZReGtjUzU0cm1TRnpfMTBJYlhmTUNQT2phUVl2WEQ0ZVVzMW5aXy1tb2JYdmJJSzdSWVQ2VGZvWWY4Y19WU2puZ05wOVdGWXkwejlFRmVWUmdMd2c?oc=5"
           }
         ]
       },
       {
-        "id": "fed_supersonic_faa_proposal",
-        "title": "FAA Proposes to End Ban on Overland Supersonic Flight",
-        "summary": "A National Law Review item says the FAA proposed ending the ban on overland supersonic flights and creating an interim noise-based standard. Related headlines say government may start allowing overland supersonic flight, making this the day’s key federal policy move.",
+        "id": "cluster_1",
+        "title": "FAA proposes noise-based standard to end the overland supersonic flight ban",
+        "summary": "FAA is moving to replace the decades-old overland supersonic flight ban with an interim noise-based en route standard. The shift would be the first step toward fully authorizing supersonic operations over land.",
         "source": "The National Law Review",
         "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOVjd6cm9QcFRacmNrVTdaSzJsSzMxY2JJNjc5dlgxMlRxZkhQRzNBQzU1cnpHMl90TnRQRXJWa2ozamk3NWhrald3LWxVQVZOekRPbjBaOGRYMXU5bzFSSkJjaXhlOHR6YktUd3NrUWpkdlM0UFpVZFRxeVVad1F2SVRNUzRWRTBfTE85SlIxVnVUaHgyZ2o0Y2p0dkpsOUZjTUIwdmo0YnFSTkwwSFhCclZvb2HSAboBQVVfeXFMTmdSNUg4Nl9XMm11enUyWGpwMUlCenRpLVFtenlsUnBCVzR1NDRrSmhqZGRHVkVUcGZlSVdORkhWMW94Qnc4UEszSmhuMkR0VkE3dFFkQ2l0UlVPWENtb191cVRkTmJSVlhvaEc3cUFtSXNvVm1VSTJ2MWdmMm9mUklCQ2pVdzNSOGZ3SW00enFMNHByS0kxbkdtdDJxYjlDRFludWh5SnhldjUtQlluZ2dvS1AtZkE5MEln?oc=5",
         "published": "2026-07-13T17:43:18-04:00",
@@ -74,52 +70,110 @@
         "eo_number": "EO 14304",
         "eo_name": "Leading the World in Supersonic Flight",
         "eo_section": "Sec. 2",
-        "win_explanation": "The FAA proposal would remove a long-standing barrier to civil supersonic flight over land and begin establishing a practical noise-based standard. That gives U.S. developers a clearer path to testing, certification, and eventual commercial operations.",
+        "win_explanation": "The FAA proposal would remove an obsolete barrier to civil supersonic flight and create a path toward noise-based certification standards in the United States. That directly advances domestic testing and commercial readiness for faster civil aviation.",
         "also_covered": [
           {
-            "source": "MSN",
-            "url": "https://news.google.com/rss/articles/CBMiwgJBVV95cUxNeVFHSl90TW5vX082dDh0R01ES0RkTmJpVVlBLWFtSWZENEZTODBJQ3ViaTF3U3RTdndudFdPQm5qSVV6VXZDQ2FsNFBlVTh2a01pVWZjcndESG1RNG52ZWJYNGdKMlNOc3pzdTJDckpaWHhaRjZBc2Q3cjMwbGdBaXFxUjJOaHNhZ3AtdElSN0FTdXc1UjNaT09waWZRbnItMWk1SThXbEk0dzZNb3N6ajBtaXlSRmFfTmwzc3BqWWVQZGdmb1NnMmRmbGdqbmpCX2IwV0JCWUxiZzNRb3lzSzVrODFMd1RLd1BJX3kzcF9Od3I5aXJtVGd6dVlfRXgxN0NTZFVCNjdCWUk4cHJwc3MwLUtRT3ctc2xKRGhqU1ZuNm5tZEUyMk03UU12QTNZbHAxbHB4dElCaTAzXzVib2dB?oc=5"
+            "source": "londoninsider.co.uk",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNV2hRb0xoODBkX1hHVzZ6UE1iTW1JdnJSbUhTc0N5RUlwUTJYWnRscDhRTjdCRGZJWHpQNjUtdDJjT2s4bWpHRWtLX2Y4NU4wNk1CU1lDX1pKeGRUOXNsREV4dmVBLXFmazhBb1g5cGFVbFB6V0trUHBuaW1xZXJLc2M1M0ZWbzEzTTNLdnpqMlgzVjlRRkhCUHYtaFBjUnUxUUVxVGRNYngzZTBJTkIxTEFQS0xvbV9qQkpRWjdTVWs?oc=5"
           },
           {
-            "source": "westernjournal.com",
-            "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPQkgwekxua0xrY181TENacU9RZFNrSEQ3TVNORm5hWGlfYXlkaDNBQ3ZtSGRLOVJHX3huRFZ5V081SFhkUlBoandkTDZyV21vV1c0SzY0NnozMnNYcXlFMEdUdXh2Rk56NHBhRUp5ZWllampRR0NGaWVtbi10ZjB0LXhRRm5ZMnpiM0YyQQ?oc=5"
+            "source": "MSN",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQanZOZDlCT09vNEp5akIxZEJOTHgyYzlPbDFlLXJyY2xiWmZqUUQ5bC13RDdieVVlOGoyQjJsZ1J3STN6Z0xCbkZGRThVQmVjeWNjelNZOGhQSTQ2Ymc5WnJaUjljU0RKalhWd1UwTUVEZG1PRXMtdVVNX0hVQXVnSGFEQ1hqdlZibHNjbkRPcFlqTjJZcTJVQVI4V1hHOXZQcmROazRUYWd0ZVU?oc=5"
+          },
+          {
+            "source": "The National Interest",
+            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPVl9Da3VuUnRpUzl0VUVTOHE3VGdLc2tyUlc0VURMRjM4Y3F2Y0NqWjZUVjk2OHNCeG95ek12bEgwT3hONU5uV1FvUHBjVVE1Z0FpYnhEc1dUN25EaGJ3T3VqcEt6ZHFRSV9rSHBZR2s0RWFMYUpEZ29hYkN5WEVKQXJoZjQxcGloTDN4d241QmRING8?oc=5"
           }
         ]
-      }
-    ],
-    "Top Developments": [],
-    "UAS and Drones": [
+      },
       {
-        "id": "uas_blue_airo_rq35",
-        "title": "AIRO RQ-35 Heidrun Added to U.S. Blue UAS List",
-        "summary": "Multiple records report that AIRO Group’s RQ-35 Heidrun received Blue UAS certification / was added to the U.S. Blue UAS list. The designation makes the drone eligible for U.S. defense use under the program’s approved-vendor framework.",
-        "source": "Voice of Alexandria",
-        "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxORmJDaHBjV0N5ZzIyS3pnZ1k5NGNlWEg3WGpNdzktUkx4cWM0S1RqVGg4OHpLQ09Ta3M2VFZOMzZETEl3di1yTWtOZElXYno2YkN1Q2VWTTVSRDJNc2RId3BzRUpFQVJKSG9WYWJyREpNQjl2N0IweUZZMmFhd0xZMC1ZYzNRWFJqbHo2NTRTQTQ0Mlp6S0pLLWg5VDFtcEU5dFI4T2ZpcGkzRDZlOU4tTHhnOFNtV3ZLZE9pWjV3b2d0OU5meVFWZmV6c2tnZ1ZaVU9DWm92VVQwNG1VWXU0OVF1SVRjY3hXM0U3QUxYdnJKak05MUUyeWFLeU1WZw?oc=5",
+        "id": "cluster_3",
+        "title": "AIRO Group’s RQ-35 Heidrun drone added to the U.S. Blue UAS list",
+        "summary": "AIRO said its RQ-35 Heidrun ISR drone was added to the U.S. Blue UAS list. Another record says the company’s RQ-35 received Blue UAS certification.",
+        "source": "News-Press NOW",
+        "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxORXMzeHpQZ0Y0RUhZb2UzYXRJQVc4aEtIX193b09oRUZOY0pfXy1DTU1uMzl0QURSR19Qc0ZsX1FLU1ZUUUdfRlFhclB2eldXelVRbWh0Z04wdEc5dzdmTnRYS3QxYXlNalRiMnhsem9jN3pLY2k2VUtSNVpFYkVZSERSY1puNVRLZWJiTjRXWXVUcGZmVkZKVTdGeXQycW85OWhia1EwYmZ5YTJWVllpTVQ3N0pkblNXWHhrQUw4NGtUSFp3RUtZbzA3YmZxVTNic0pvdF9rd0FfLVlFckpmaWg3YU9iUjBDN2hiSFloNUtMZUxQWFJV?oc=5",
         "published": "2026-07-14T06:30:09-04:00",
         "date_label": "Jul. 14, 2026",
         "section": "UAS and Drones",
         "importance": 4,
         "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
+        "is_administration_win": true,
+        "eo_number": "EO 14307",
+        "eo_name": "Unleashing American Drone Dominance",
+        "eo_section": "Sec. 7",
+        "win_explanation": "Blue UAS certification supports a trusted American-aligned drone industrial base and makes it easier for approved systems to reach U.S. defense and public-safety users. That is a concrete domestic market-access outcome tied to federal procurement and supply-chain priorities.",
         "also_covered": [
+          {
+            "source": "DroneXL",
+            "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9TZXZVNGJaWW8ybkx3MTduaklaMkdIbjY4YW9xOTgwcVIzeEF5NER5QVdEaUhqank4STZ2eGpQa3JxeTlHaWFRMmdoaFhvR0Qxd0x0cjllZk03d1NjSWd2WTM3aUVya2lHa3ZzYUVSZmh6dXZ5?oc=5"
+          },
           {
             "source": "Investing.com Canada",
             "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOVGFwMUEwV1JGLTktdWFmb2xNeTFZS3NfbUJONVFqblpiRHlGNXlvMksyeFJEamdPaEJSSmIyNGdlamdUMExNTmlpbXJTMHROU1NYcFZ1S2tEelpzSER0YUgxMkZlTVV1OVp5X0NrYlFfc0t0TUFua0tyMVZSbDVfaHhTWDZGdkVoZ0Vka2VpM2xGdEZNTmZPS1g2QWFFYzA3eFhTcnlWTVJZdDZ0aTBOV2FIel9DUQ?oc=5"
           },
           {
-            "source": "Stock Titan",
-            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPdm1IQzBJaXB6QnJvWFg4d2t3WUQ2ZHMzRVFvbzM1SmRQWTBtYldjbVY3MGROZG9yVkpWWjVOUWUxY1pTSVFaNWJ5eWxyS184WEhPcHRGWlhSRUZ3RHVWaUFuLTM1a2I1aEp4QjhCQ1ItbDBpdDlYakg3azVfVWh3cmptR2lwZHk4a3RsaGlwRktCS3ZwUGdwY2pmbC01cmxWMTJwb0U4Szd0RkU?oc=5"
+            "source": "New Castle News",
+            "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxQQlEtcVNFcFdQWHZuLTh0TzY4SDJQWml4bHVWMU02ZjE4SDZxTFJyVmNmVHQySU4wMDY1U0F3U1ZPWTQ1NVVVTlhvU2NoRUJyNnJ4bEhyVmdGU3dlN1dLTXVHNk9SVzNjZ3RxaXNkYzhZelNpdjVGOUIxRlZpTEtNeS1ZTUNBUlNZYzloYmx2M2lpOVZNTVRabWg2R19oZ0gxZ1IzOExzQUFDeTUyalRrVE1BZnJUaUtMNTZRTDJzOC1EU0FtdlBqZnFWa0VWLXg1LXBoRnhzOUROVFpZRnBURFZmQ3E?oc=5"
           }
         ]
       },
       {
-        "id": "uas_faa_avalanche_ops",
-        "title": "FAA Clears Drone for U.S. Avalanche-Control Operations",
-        "summary": "The FAA cleared a drone for avalanche-control operations in the United States, according to the headline. The approval points to another operational use case for commercial UAS in safety-critical work.",
+        "id": "cluster_9",
+        "title": "FBI issues SAFER SKIES counter-drone operations framework",
+        "summary": "The FBI issued a SAFER SKIES counter-drone operation framework, adding another federal tool for managing UAS threats. Separate records also describe BAE counter-drone testing and live-trials progress.",
+        "source": "Fire & Safety Journal Americas",
+        "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBzMFctbEV1ZFpIN1gzU09ySUc0Smk0WnQwcUYyVDFybFF1YkF0Z1VaSGtKdE92VGtQdDFCaTM1S0xGVEpubnZRRTY1aHdtUnJRcXp6Ynl5N2Joa3A2VFo0RTJGSXNhaG5EQjdnRGgxcTlzQlI5UDZkejB1Zw?oc=5",
+        "published": "2026-07-14T05:40:08-04:00",
+        "date_label": "Jul. 14, 2026",
+        "section": "UAS Security and C-UAS",
+        "importance": 4,
+        "confidence": "medium",
+        "is_administration_win": true,
+        "eo_number": "EO 14305",
+        "eo_name": "Restoring American Airspace Sovereignty",
+        "eo_section": "Sec. 9",
+        "win_explanation": "A federal operating framework for counter-drone response gives law-enforcement and security teams clearer procedures for identifying and managing UAS threats. That directly advances coordinated U.S. counter-UAS capacity and readiness.",
+        "also_covered": [
+          {
+            "source": "BAE Systems",
+            "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQeE11ZnBwa0FiMzlpWUhjd0Z6b0pHdkJvS2syOGNBZUhselRPX3RFOHZxb3BDSVN6OUI2ejViWjQ0Yk8td3NWalJKa3JVc2o0azRUUU04UkdMZkpWbzNZTlEwaHE0SFN1M19ZUGpjOW9WYlNqZ0MwWVU2VWo4UjIzVTVpMTZ0b2ZyY1VlaXRFTTJWRFZ4cG1KTFFSbkFqakRXTlE?oc=5"
+          },
+          {
+            "source": "Satellite Evolution",
+            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPb2pDd29OdzVkZ1FIU3ZJU2p2eG1rNTY1RE1sN0RFQVg0dWdQbF9rNHk4SGRYYXRISWU5YU1kTF85NlUyUXZmWkU2S3RzMXlqXzl1R2h5RkdyNTJBVDlzRlE4dGl1V3ZtcTU0NUtwUkJLcnRvUi1tbmZVOHBLdmN1ZzlidS1LaDQyX3pMUHRhelZwZHdYQ0tFeHlTeHFPQkxZQXZSUw?oc=5"
+          },
+          {
+            "source": "Unmanned airspace",
+            "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxQM0R0alhTbWxJUUdMMnVvVWRtUHZtNEpaY2FtSGoxVzJmREpWa3pGQVNXXzc1SE9XbWFxTVJWamdIOHlRaVB2UHBKYzZUclQ4bEp4djFRanlNTVZpeFotTDJXaGF0UlBwVFZnbm5PZV9JclJzWkdtMkdmdVpRcm90ajlFaDRaNFpWYTVqako1dG5vYVQxa2tCWDZZYVlKRjNZS3hhcjZKcTAzYm1nZHphcG5acGh1UHVZY3RHUlg5R0RCT3J0LTByZlYyaDhDbUlGcDlhb3N3?oc=5"
+          },
+          {
+            "source": "Defence Industry Europe",
+            "url": "https://news.google.com/rss/articles/CBMiggJBVV95cUxPV2RFcmNxaFJaS2xHb0ZvOWtGbkxDR1RCODdlTkluM0NqU1ZKTXBneHdzV1dvOENpeVhQbzZqa2VEMkx5elNfTDhWV0YxYzN3Q2Z6LUFNazl3VXUtcUhYYURCQUdieFRuaE1fX19EcjhZMFYyb21CcENpc0pNcU1mRDdMa3RoV292eUFiZHVWaF9lX3JWbGRfMzNkRllsMWVCWjNZdjZaNVdmNGYzZDdLbGRBckNydE56Mmx5cThQa3Z4MGZtQ3hFX0pucl9UVEdhclA4bkk5OUt2V2xGN01DZjVEQkl0cTFHYTFtdmgybm5YZHgyZWE0QXlpbTFEN053ZXc?oc=5"
+          }
+        ]
+      },
+      {
+        "id": "cluster_5",
+        "title": "Federal electric-plane pilot program launches in Virginia",
+        "summary": "A local report says federal authorities launched a pilot program for electric aircraft in Virginia. No further details were included in the record snippet.",
+        "source": "WWBT",
+        "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNZ0EwM2FkdTIxQUhBVmF0ckZtNGlVbDMyaHZOWVdPanJtb2IxTWUwQXZzWVBleEtKdVRRZTQtaTZHcGtOeG9RcHpTUUFpWXZQOFdMeG14RGsyYTVlU1FNOXV0ekE1anBISjAyQ2ZQN1VXeDFLTnozWGRNbE50cmpRM2FNZGRDSms1NklzeWI5cW5talRrM0FGeGRaS2oza2JRc3ctVy16QknSAbwBQVVfeXFMTm1JTmR4ODdxNFlEVDNFSUFiUlN0Qms5ejZlSGcyVldtUHBWdHVlell4MDRFTjd2YkFpbFFTMXQxUTltdUZlTmRWLTBWMzFTVVdoRDI4V3lIcmllbW55QXd4WklQUjExT3RnT09kNW52dk95VUxTWFlVY2ZPVXdkWHJhV2lnd2VWYVVUR1Z0bXdfMHhtU2NnZnBONXJqZFV6bDBFR1JpcTNQM1AySmpGa1ZEZkpXY1ZXaVF4Z3U?oc=5",
+        "published": "2026-07-13T13:10:00-04:00",
+        "date_label": "Jul. 13, 2026",
+        "section": "eVTOL Integration Pilot Program and AAM",
+        "importance": 4,
+        "confidence": "medium",
+        "is_administration_win": true,
+        "eo_number": "EO 14307",
+        "eo_name": "Unleashing American Drone Dominance",
+        "eo_section": "Sec. 6",
+        "win_explanation": "Launching a federal electric-aircraft pilot program creates a domestic test environment for advanced air mobility and helps generate operational data for regulation and planning. That is the kind of safe deployment framework the Administration has directed.",
+        "also_covered": []
+      },
+      {
+        "id": "cluster_10",
+        "title": "FAA clears drone for U.S. avalanche-control operations",
+        "summary": "FAA cleared a drone for avalanche-control operations in the United States. The record does not provide additional operational detail.",
         "source": "Aero-News Network",
         "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNbk9tcmo2YWEzamtBZ1lvYlpBejd2M3JQWEFrdmNxNEVWX3l0SU42QnNRR3psSTFycWdvOEc3T2F4NnZXNFBZRkoySDFpaTdUUDVIYXV6amZxZVVMR2F1UndHZmZHRW9xNGJySE1DdEpzZEhDX3EtSHZ2N0ZXTVpXVDgwelpKUGVGM1RDMy1jM3hTUC10dTNJ?oc=5",
         "published": "2026-07-14T05:56:15-04:00",
@@ -127,40 +181,20 @@
         "section": "UAS and Drones",
         "importance": 3,
         "confidence": "medium",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
+        "is_administration_win": true,
+        "eo_number": "EO 14307",
+        "eo_name": "Unleashing American Drone Dominance",
+        "eo_section": "Sec. 3",
+        "win_explanation": "FAA clearance expands lawful U.S. drone operations into a specialized public-safety use case. It supports routine commercial and governmental UAS deployment by removing an operational barrier for a real-world mission.",
         "also_covered": []
-      },
+      }
+    ],
+    "Top Developments": [],
+    "UAS and Drones": [
       {
-        "id": "uas_drone_delivery_zipline_cleveland",
-        "title": "Zipline Expands Medical Drone Delivery Use Cases",
-        "summary": "Cleveland Clinic is using Zipline drones for prescription runs, and another record highlights Zipline’s medical delivery operations more broadly. Together they show continued U.S. expansion of healthcare drone logistics.",
-        "source": "DroneXL",
-        "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPOXdTU1U3bHVkWnE0WnFpT2JRWDlkOVFzc0xIV09tYW1ZUXowYm5YbFdOSENiVERrOUlMT3hZWGlNT1BYUkZZSUJVRzFZYUxSZEtBcTE4WmcxeFpNUGl3eFM2ZFZtY2ozN0lCcFRXb1NpdVJiM1FTLUZGOGwtclZ2Mw?oc=5",
-        "published": "2026-07-13T22:26:00-04:00",
-        "date_label": "Jul. 13, 2026",
-        "section": "UAS and Drones",
-        "importance": 3,
-        "confidence": "medium",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
-        "also_covered": [
-          {
-            "source": "IEEE Spectrum",
-            "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPYzJNSUdiTnFncWxYNjFiNllwZ1UwS0laREJGQTlnRlFObHdqOW9DRXQ3amFZVTFiSmwtdWJxT2tvbzZ0N3hZb2NKR21iWklYbzdpbU9sLU4xNk43QmoyRXczVmowSWZrU2YyQjFqejd1eGxmTjlqWGxFUm55VGdRRU9nYTJtMzZwWWZ6cVVB?oc=5"
-          }
-        ]
-      },
-      {
-        "id": "uas_manna_tulsa_expansion",
-        "title": "Manna Chooses Tulsa as Base for Major U.S. Drone-Delivery Expansion",
-        "summary": "Manna picked Tulsa as the base for a major U.S. drone-delivery expansion, according to the headline. The move signals continued buildout of commercial delivery-drone operations in the U.S.",
+        "id": "cluster_11",
+        "title": "Manna selects Tulsa as a U.S. base for drone delivery expansion",
+        "summary": "Manna picked Tulsa as a base for a major U.S. drone-delivery expansion. The record is brief and provides no additional operating details.",
         "source": "Commercial UAV News",
         "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOSTlGVHNNM2NZcFNPdndHbkNZbVFiOUVabE4zX3I2NUJJVmxYT0hkWndMbTFRZFpsZGxhcFJpSkxIczJreGpfREVoMFJhaTRCRmdGNlEwTzJUMk5wWFpiaTRibjZTclN6RjZJWW5LRzBGM1BPVVg0SnZuOWdfUUt0Ylp1LVBBZw?oc=5",
         "published": "2026-07-13T09:15:51-04:00",
@@ -178,16 +212,16 @@
     ],
     "UAS Security and C-UAS": [
       {
-        "id": "uas_att_ericsson_detection",
-        "title": "AT&T and Ericsson Demonstrate Drone-Detection Technology Near AT&T Stadium",
-        "summary": "AT&T and Ericsson demonstrated drone-detection technology near AT&T Stadium, according to the headline. Another record frames the trial as a possible 6G use case, suggesting continued telecom-linked C-UAS experimentation.",
+        "id": "cluster_2",
+        "title": "AT&T and Ericsson demonstrate drone detection technology near AT&T Stadium",
+        "summary": "AT&T and Ericsson demonstrated drone-detection technology near AT&T Stadium in Arlington. One writeup describes the demo as bringing 6G capabilities to 5G.",
         "source": "uasweekly.com",
         "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxORjVmd3hhYWFJd3B4bmwwY1FZQkRGVjdGMGxUc2VWdklHNnFjNUlJZV9lYkxkZjJUbDJZbzBDVGtXazhfTm5Qc00yaGoyRlVpb3RHVXJqcVp5Q2tFNEhJQXZIX3dScWtSUzVzaGRFQTN4VUtlSWRmWVhiR3BCN2ozVHVBU2dFalJqUklKU2tKYzlndXhuOE51Rmp6bFE1VndjTnNCZGNVSU5UZw?oc=5",
         "published": "2026-07-14T06:37:08-04:00",
         "date_label": "Jul. 14, 2026",
         "section": "UAS Security and C-UAS",
-        "importance": 3,
-        "confidence": "medium",
+        "importance": 4,
+        "confidence": "high",
         "is_administration_win": false,
         "eo_number": "",
         "eo_name": "",
@@ -195,68 +229,31 @@
         "win_explanation": "",
         "also_covered": [
           {
-            "source": "The Globe and Mail",
-            "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxOdXFrWUJBQzFPZml1akhHSjJQRVlQODBRZXFhMnE5M1MxQnRpRVhVN2lMeWRjdTE3VUZXaWktY1hBaFJ5clFfRzNBOUJGX0ZWazZJaGlUU0hDVmJnZDE4T1BaM2F6Yk9RaVpQLXBpUlJ6SDFvMXJZZWprakFwLXZ0VVY0TnZsalVmeHE3TkVYX1g3ZENjVkl0Ykpsb253Zmx3andFdjYwMXE5VlBnMUFwYy1SQWVoY296RGh2ZG5iYjZjM0drNEtha2phQ3dGV19QR0IxMWZjWWhxUDc4M0tfVXZmWk9mSXM?oc=5"
-          }
-        ]
-      },
-      {
-        "id": "uas_bae_bats_trials",
-        "title": "BAE Systems Says Its Layered BATS Counter-UAS System Was Successfully Trialed",
-        "summary": "BAE Systems said its layered BATS counter-UAS system completed successful trials and was test-proven within months. The reports emphasize rapid development and operational validation of a new C-UAS capability.",
-        "source": "BAE Systems",
-        "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQeE11ZnBwa0FiMzlpWUhjd0Z6b0pHdkJvS2syOGNBZUhselRPX3RFOHZxb3BDSVN6OUI2ejViWjQ0Yk8td3NWalJKa3JVc2o0azRUUU04UkdMZkpWbzNZTlEwaHE0SFN1M19ZUGpjOW9WYlNqZ0MwWVU2VWo4UjIzVTVpMTZ0b2ZyY1VlaXRFTTJWRFZ4cG1KTFFSbkFqakRXTlE?oc=5",
-        "published": "2026-07-14T05:56:39-04:00",
-        "date_label": "Jul. 14, 2026",
-        "section": "UAS Security and C-UAS",
-        "importance": 2,
-        "confidence": "medium",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
-        "also_covered": [
-          {
-            "source": "Unmanned airspace",
-            "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxQM0R0alhTbWxJUUdMMnVvVWRtUHZtNEpaY2FtSGoxVzJmREpWa3pGQVNXXzc1SE9XbWFxTVJWamdIOHlRaVB2UHBKYzZUclQ4bEp4djFRanlNTVZpeFotTDJXaGF0UlBwVFZnbm5PZV9JclJzWkdtMkdmdVpRcm90ajlFaDRaNFpWYTVqako1dG5vYVQxa2tCWDZZYVlKRjNZS3hhcjZKcTAzYm1nZHphcG5acGh1UHVZY3RHUlg5R0RCT3J0LTByZlYyaDhDbUlGcDlhb3N3?oc=5"
+            "source": "Dallas Innovates",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQM3lOdzROMzRuUV9zVmxOWkpqb3lpVmlabEJHQkRDNTVoQzhtNzdWTTVxNElZVjAtaGdHMU52ZlBCdFA4M0VaRVNQaWd4cWEtNTVpeTFXdW5jc0FBZFpDYXJidHh3eHFWYUNXR05HY3hnZ3BFN2gwdmJ5TFZjNFlxeTNmQTlFanZ0bm05Mzlxbld2TEpZaUg5MzZaMW1Kc2ZwYWlN?oc=5"
           },
           {
-            "source": "Satellite Evolution",
-            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPb2pDd29OdzVkZ1FIU3ZJU2p2eG1rNTY1RE1sN0RFQVg0dWdQbF9rNHk4SGRYYXRISWU5YU1kTF85NlUyUXZmWkU2S3RzMXlqXzl1R2h5RkdyNTJBVDlzRlE4dGl1V3ZtcTU0NUtwUkJLcnRvUi1tbmZVOHBLdmN1ZzlidS1LaDQyX3pMUHRhelZwZHdYQ0tFeHlTeHFPQkxZQXZSUw?oc=5"
+            "source": "TradingView",
+            "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPbTFINkVHYWFoenlJcW0tWFRveEZ5SF90akM5dWNZRmd4ckliQ1JJX3NKLW04YmVtS1ZuMUR5RTc4WGsxSGcxRmNfeHk2VWNkN1Ntb1I0NG0zcEJEVDBVMGlPbTVHd3JtVUI3OFpDZG1RRjlLV1FXQ1FtVGFnTVhoenhMV19TZnU2YWowZVgzdXFURmwxM2RrSXJvUXgtUWpSMWVyem5NVFk3Q2h5ZmxDTVZOZjFYRld6VUhlbExzNnVRQWs?oc=5"
+          },
+          {
+            "source": "Unmanned airspace",
+            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPNmU3dTRxOGlWZzRFM2N6dll6LWw2WV9XV0NtVThkV3RDVHBBdWtHX1Q0OEU3UlJCMXRkNFR6LUppcVVuXzVWcVlBUXlLdGV0b1Q3aXlRamsxX245ay1ZQktCdlJldzI4MkhITFVCMnNtNm9pZkV6TDlfSjEwa2Vtcy1IcGlPTGpFNkphQWxVMGNIQU9CWEYyaElBb1czVjg?oc=5"
           }
         ]
       }
     ],
     "eVTOL Integration Pilot Program and AAM": [
       {
-        "id": "aam_faa_electric_plane_pilot_virginia",
-        "title": "Federal Agencies Launch Electric Plane Pilot Program in Virginia",
-        "summary": "A Virginia report says federal agencies launched a groundbreaking electric-plane pilot program. The headline suggests a new public-sector AAM testbed aimed at operational learning.",
-        "source": "WWBT",
-        "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNZ0EwM2FkdTIxQUhBVmF0ckZtNGlVbDMyaHZOWVdPanJtb2IxTWUwQXZzWVBleEtKdVRRZTQtaTZHcGtOeG9RcHpTUUFpWXZQOFdMeG14RGsyYTVlU1FNOXV0ekE1anBISjAyQ2ZQN1VXeDFLTnozWGRNbE50cmpRM2FNZGRDSms1NklzeWI5cW5talRrM0FGeGRaS2oza2JRc3ctVy16QknSAbwBQVVfeXFMTm1JTmR4ODdxNFlEVDNFSUFiUlN0Qms5ejZlSGcyVldtUHBWdHVlell4MDRFTjd2YkFpbFFTMXQxUTltdUZlTmRWLTBWMzFTVVdoRDI4V3lIcmllbW55QXd4WklQUjExT3RnT09kNW52dk95VUxTWFlVY2ZPVXdkWHJhV2lnd2VWYVVUR1Z0bXdfMHhtU2NnZnBONXJqZFV6bDBFR1JpcTNQM1AySmpGa1ZEZkpXY1ZXaVF4Z3U?oc=5",
-        "published": "2026-07-13T13:10:00-04:00",
-        "date_label": "Jul. 13, 2026",
-        "section": "eVTOL Integration Pilot Program and AAM",
-        "importance": 4,
-        "confidence": "medium",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
-        "also_covered": []
-      },
-      {
-        "id": "aam_eve_sustainability_report",
-        "title": "Eve Air Mobility Publishes Inaugural Sustainability Report",
-        "summary": "Eve Air Mobility published its first sustainability report, with another record repeating the announcement. The item is corporate and informational, with no direct operational milestone in the headline.",
-        "source": "Business Airport International",
-        "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOTk82Vkx1VG9NZXRoc3FhNW53anNieUJPdm1xbUh2VzM3ekRQSnRRSnBoUFl1VU55M2FLLUc4TmxNQVRHaWZkemd3ZE02ZmJQbjlfZW1jdmpfdEZEVUxSbENCbGowdV9oQ2JPRFFEYzIwWTMwZ2F6SEQ5ZHQ0N2dRMXA3X0VJVkNEZEgwdko2eEl0dC0xNGYxbFg2ZS1mUGxPRDhIYXFLVUNkSE5wQURfOWVmOWFKVEJOemc?oc=5",
-        "published": "2026-07-14T06:13:24-04:00",
+        "id": "cluster_6",
+        "title": "Eve Air Mobility reports eVTOL flight progress and certification path ahead of Farnborough",
+        "summary": "Eve Air Mobility said it is advancing eVTOL flight testing and has a clear path to certification, with additional records noting transition-flight preparation and binding orders. Several duplicative items cover the same company update.",
+        "source": "PR Newswire",
+        "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxOYmdzSU5wRDJIRVlNZXJvb3JXbEFiZTJQWjNXYmZCR29aeFk2U0NjOG9iVk1YbW9zS2RocHI5SVJXLVlIeHQxbUV1b0FrZmFKb1ZtVVZUZmdOTG1pS1Z3N3Y5MkZZbC15SXRuMlo1cmxrSkhvRWNQZlBsS3N4Y3MybGJudkNvampKbXRtLUhvUDhnWHh2N25YclJ5MXpZWC1aS1U4eU96SzgyeXJFbWUxOU5Xb0dGeXdxMWFXcjg1Vkh3ZzRRV18wdDBSNGZWcEdhNUZpelpSMEZvVE9VSllmb3pjZ0Y1Vnl3MVNHZlJkVXY4QQ?oc=5",
+        "published": "2026-07-14T07:00:00-04:00",
         "date_label": "Jul. 14, 2026",
         "section": "eVTOL Integration Pilot Program and AAM",
-        "importance": 2,
+        "importance": 3,
         "confidence": "high",
         "is_administration_win": false,
         "eo_number": "",
@@ -265,85 +262,86 @@
         "win_explanation": "",
         "also_covered": [
           {
-            "source": "Yahoo! Finance Canada",
-            "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOLWVLdVhubVNLblVIaGF3TkpxVlZqci15cGVEU1Y0NXJpU19GZ2ZBSmdsRm9iNDk5VFJrWUpXU09iZklRbTZwOVA1TUVGMHZCeXBMd2xFOXlPbDVaMUZOOUFBNDJiU29WQ0xpSGlQWTFWbkc3TnRveUhFU0s0VEFMeGVHR1M3cFlMU0pQQmN3?oc=5"
+            "source": "TipRanks",
+            "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNekhuUm9EYjB0X1N4SGJYOHB3Y09iZWZuN1ZBaW8yNkhISzczcjBtLVRjUnowYmxzck9zajI3cmRValdfOUZvWHhvdDRqaFI3bnFZTjFuc0hoX184NlRwSUZjWmFoRUpGT3FCbEZrS21RYWtIbVFBSmdtRF8tb0JybWc4ZHQ5blBGRWl5cS01bTBIb2RfcVp1YmlISXdRS214UnZta0FIQXlKdTlYdjFkM1dWTWFhRmpCNG5ZNnJUbGtjY0QyWXdhQjFPUnNtaGlpS3BJR3FwWHA1QQ?oc=5"
+          },
+          {
+            "source": "Pluang",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQMXhsdll4U1dBVC1YV1JqWFo0TnJfY0NNdnQ4clN4bXNESGhmMmVKd0FOTlk2dld5MUhjUkRJTXY1dDZEUWI0V01JQVZjXzJXdk9pak5jSHREc2FxZGwtMndfOGJuaGVMVFM1T09ITGFfMjdfRm1VbzZXR1FfZVRuOUJVTkJyc3hfQ255aVh3V3EwMHBZejhpVV9vSEpSTE1MOFJ3?oc=5"
+          },
+          {
+            "source": "Stock Titan",
+            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPQkZzSUpxY3BTQ2I2eUl2Z3ZHY2FwaWxJUDlLVlpfaWp6Z2lXc0xWZm54ZWtHbUxhbW5XQkpBYS0yZjY5T1pSZjJ3cjExQW5KZi1iMUE2OGFseVNhdzBwcU5iT3RpMGxFVFgxN21hSEdOQ0VSWXBkbTRjV0lOXzJvUnI0d0xaYk9xblN6THJoMVNtdjNYSlpkdGJEWFYxRXlwTXdNbm1QWTFmOFAzZnJjdTFPaTBxdXc?oc=5"
+          },
+          {
+            "source": "조선일보",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPM0Z6UmZsRUQ3XzJkcXFjdXZJS2cyZWFyWGJKakVCYmx4UUo1X010NE5RMHpFSXV2Q1hVRWx2WEwtSU53blYyeGNOdU0tUlhsekxtbHNWdTVMUXZhU0R0Y0p1S3hIbnJqYWNzZ0lYNWRPUS04eGVZbWNLUXotSTNpcHduZE52Z3Qz?oc=5"
           }
         ]
       }
     ],
     "Autonomous Vehicles": [
       {
-        "id": "aav_waymo_dc_hearings",
-        "title": "Washington, D.C., Debates Autonomous-Vehicle Legislation as Waymo Pushes Entry",
-        "summary": "D.C. officials are debating autonomous-vehicle legislation that could pave the way for robotaxis, with multiple records highlighting jobs, privacy, and safety concerns. The issue remains unresolved and could shape local AV market entry.",
+        "id": "cluster_8",
+        "title": "Washington, D.C. and San Francisco intensify robotaxi safety and policy scrutiny",
+        "summary": "D.C. council members are debating robotaxi legislation, while San Francisco reports additional Waymo-related disruptions and possible fines for impeding emergency response. The records show growing policy pressure alongside continued operational incidents.",
         "source": "WJLA",
         "url": "https://news.google.com/rss/articles/CBMiwAJBVV95cUxPajZteXJfTHhlOWxGZ0F2TnpWUHlSWWxibnMwNVdLaU1BOW9BZjZzVEJCNlpmQVF0YTBfcnlUZG9RQlROY3FpMEhfRExwY19lQnoyRHhNcnN2NEZ2ZzdOWW9vNmlYOXNjWHJtalQydFhicW1ITERlc2hOUUhVclpWc19ENzRDVm9OQ2ZnX1ZzRm81dmpkS0hFSU1oQlpaQkEzN0luMUJWX0ZNRkhpVXFjemdyRDBNQzN5blpkS21oRTZEZHJuWlBKUnNIWVlQaWR6dHNBWUd4ekd6SDJ1eThWekNxOENzMDdXMkljMlRYM3I2NzBSMGNab3R5VFltRmNadEpuNjhvU2hTaHdwMVJuYlF2YkRvUG5qM3NKdjhaVmlTSEQ3ZkhyT0kwMUxvWlk1dGQ2ZXFpTmlzSHJTRnRLQg?oc=5",
         "published": "2026-07-14T05:54:14-04:00",
         "date_label": "Jul. 14, 2026",
         "section": "Autonomous Vehicles",
-        "importance": 4,
-        "confidence": "high",
+        "importance": 5,
+        "confidence": "medium",
         "is_administration_win": false,
         "eo_number": "",
         "eo_name": "",
         "eo_section": "",
         "win_explanation": "",
         "also_covered": [
+          {
+            "source": "Tesla Oracle",
+            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOc3RMWmpYVE1vVGI2cG9RRWxsOXBCNFZIQ00tXzYzR2hTODhCVVlNNkVZczE2RjIxM1c1N0paVTJ2cHVrRnhQZE5mdFBHQlU0S3N4aVhwc2xUMTJLa2ZBRVdjTEgtVExFd3dOdU83U2RIQ1k2cEkxbGdaWlBiNkNYQkpzNGdhYVVxWEtvZGRrLWFTMlloTnhDQUZxMlZ3LWFmTjhCelg5ZjEyakJhVy1RYzFNVlRaQUk?oc=5"
+          },
+          {
+            "source": "AOL.com",
+            "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE9hUjJkQUhHWU8yRjFNTGRwYVlUeno4anhWSDZrNWFTWmhXUm5SNFNkamN5a3hPSFQwSzM0RzhGMTF4WUJYbVlUYWZqTmdNcTVhcTBCNktDRnlKZEhreE5lX25fenl2WGVGZWFHcTZnaXp6bVJRX1YyN2kzdWE?oc=5"
+          },
+          {
+            "source": "Bloomberg.com",
+            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQckJOQ2JpVnd5ZTJfUEhzcTVkMUNadmx0dERJakhBYTl1UEFSeFplVlpLRU1rMVZndW92Zlk4ODRSYmxJWGRDcWtiWnduSFYyeWNKN1R6dWVwbHlXZFlzZW5MbDc0azZ2a1hqU2pSemFnbnF4aVZhb0xIMFBBVEZWVGRaU1pMQ0MzVUxsRlNSX3NaM21rWTBQdVVtaDBUdGE4V3h4cXlEaDlNemtl?oc=5"
+          },
+          {
+            "source": "MSN",
+            "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxQLVUtTkJpeS1LaFhyMzJnalhYcDZMUmt0Y3I3d1h3ZzJmTFFhYWwzTm5jX3NCYmVtSG9fTi05c0p0Z21HeTZ0VDlNY0pndThlN05pX3BoZW8wWXNGTHRUOGxtTWpUVVJ1dEFYM3BVNXlBLVR1Ukh2SVZQN28wd1Vfa0htM2JVYmg3aGQzSWZUNHhnY1NvbnpKVjVRN2lTM3dodG9KNTc3ZjE5cmRUai1rWnAtd3JHOXZqdHpsemR4bTFlUzRQSTVaekhVRzZId0lxaHpUckQzNWE1Nml3R1RfUVBvVWFaOS1tV2I1VTRQMG9IT1VG?oc=5"
+          },
           {
             "source": "Axios",
             "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQdEp5dzF1VFpPRm5MTUN3SHFWSG5xSUVkbG9KSEZLT1BQUi03c1ZuMzYyRDhOUkZ5NXo0d210elFvQ1lNbWlPcE5YUDBjRUlwUUtMRWx2TEdSVjcwSXNVb1kyUkpvM0xpTXNCZ0todkp4Ti11a1VlbDhaMzFzb1M2RHNHZw?oc=5"
           },
           {
-            "source": "AOL.com",
-            "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1SbDZJV3dZUmliNE4zcUZoUkpsVUpDajZUb1FzSlhSeDN6UmhiV1FHS1hSb1J5ZDBjcHBvelR6MzY1TS0yblcwQkhReHZkZEVEVTcxX3hTbVhXWU9sYlVnaFpjNFBNMXIwQlNwOGFISjdDWUNxd3hwOGRR?oc=5"
+            "source": "WUSA9",
+            "url": "https://news.google.com/rss/articles/CBMimwJBVV95cUxNSmZqT0NoTU5POGJBaDRocnAyTlN0NzF6UzJmQ2V3RENhaUZVc2hhMXFNcGVlNVRrLUotcnhxd1dFcHhSc0JrUkJTQWhwVEVCSzhRcXRwSzNyVjlackx4aXhseDh4Z2lQbzNyTnc0dEV4cWFIWFdQMUgweTFHYlhKZk1JYlk5ZUxUd1BWNkNud1lSTUtjUjl3MlNPTEh3c3g5UzNfSVA5a2poYzBBSmVZei1nQVNNdnhkbHowZzBmUUc0a0Rxbm9xbVYtWVVKRGJISnVZR2NtcDhBRTI2cEhhTUxyRVgybUZZZmZablVsYnJ3c3M4T29SUGt1blo2dm5yVnNrSnphUnYxOVNnQUp5aVBxSkc2R3Rfa1A0?oc=5"
           },
           {
-            "source": "FOX 5 DC",
-            "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE55UnRyc0Fodk9aN1FwejJ0QnlXTVNMa2ZfYk41bDk5T3c3b1JwNk1oNGVBMmcyRDUtTXFQY1pEdWhPWHF6WnRESWFRcGoxX3ltVkx1Sk9XVDh0MkRGWkHSAWNBVV95cUxPX3M3U0JiSXdpNE1uLThiWlpxQVliUWo2SDlDRF9fUW16eVlWTEcxdVFUN00wMWNNZ0U4eDBxTkd3dFNWVHZhVzVJMmlkVHNsc015N095XzBLNVNFMEVsbVN4WXc?oc=5"
+            "source": "Safer Highways",
+            "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQaC1LQmVJVWFYbHNMOHozT1dUc3ktSEZhWEZOMEg2a1J6MkFfT1NnTXVraFpETXI0LUpZR1BXRG1Jb251QXQ3NXZyQkN0ZVVSWFhpRHJyQUQzTEZWbm9aWkNNMGZoc1hCckNNM1hKQjJaQ3k5R0ZUTzRBSUM4RndidWRabnFaRks4aGVjWEFCSi1FY1VDNUF3N3F6TnJ3R1lma194bW10VXZybWNGenk2Zjd6QU81Q2dEX3VrTHA2a2E0cUhUNUVkZml3cnJCUQ?oc=5"
+          },
+          {
+            "source": "CleanTechnica",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPR1o0UHlYRF9ib1Y1RW1ZRGFFcFdVV0tpNDdOMlRvSFV5ZkdRUFRnR05hcXNIdXhqejRvaGJpY2NoNlFkVjdXazFiOVk0N1dHMWY2NWtWR01QdFJ2VHlIM25wT05zN0VvbDZzNC1nMDVFMHE2RlRNbzhwSFI2dGJFel9TNW9ST1A0dnQweG1tcnhnbDU1QWdBQ2JjVzBDTUlldVRycTFyNnpyTWZHdzQ2YWNibGVNZw?oc=5"
           }
         ]
       },
       {
-        "id": "aav_waymo_operations_scrutiny",
-        "title": "Waymo Freeway and Emergency-Scene Issues Draw Fresh Scrutiny",
-        "summary": "Waymo halted freeway rides after a recall tied to work-zone errors, while other reports describe public concern about emergency-response interference and unsafe behavior. The cluster points to operational growing pains as robotaxis scale.",
-        "source": "MSN",
-        "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxQLVUtTkJpeS1LaFhyMzJnalhYcDZMUmt0Y3I3d1h3ZzJmTFFhYWwzTm5jX3NCYmVtSG9fTi05c0p0Z21HeTZ0VDlNY0pndThlN05pX3BoZW8wWXNGTHRUOGxtTWpUVVJ1dEFYM3BVNXlBLVR1Ukh2SVZQN28wd1Vfa0htM2JVYmg3aGQzSWZUNHhnY1NvbnpKVjVRN2lTM3dodG9KNTc3ZjE5cmRUai1rWnAtd3JHOXZqdHpsemR4bTFlUzRQSTVaekhVRzZId0lxaHpUckQzNWE1Nml3R1RfUVBvVWFaOS1tV2I1VTRQMG9IT1VG?oc=5",
-        "published": "2026-07-13T18:58:31-04:00",
-        "date_label": "Jul. 13, 2026",
-        "section": "Autonomous Vehicles",
-        "importance": 4,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
-        "also_covered": [
-          {
-            "source": "AOL.com",
-            "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNak8zbTg0bXVjNGw0Z0NmMkRSaHJPSDAtX0xNamRDVXRMM2phajQzZnZtNkJaUEJsQjhWODJ0MDdlX1VwMU9qUm1jdGNTRW5zenIxWTVrQ2k4M0FUbnJDOV9lWS1tSHQyTjRZMGFRbmRKUEZudktqQlpLZ0prV0pWaWMyUHJjVlFBU0FvalRpWQ?oc=5"
-          },
-          {
-            "source": "dailydispatch.com",
-            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPZmpma2w2dkFhcDRGYURxZW80TnVLNjNQRW0zWktoc0oyREFtd0hnTUJnUmh1SXVLbjNWMmd6U1lSdmhrdEp5UVU5QkkyNEItRWZLRzJ5SXBqbU9WUkxkU0gxSndDekRNLVRGQXNhd2E3SmhXVk1IbzhidzZiMVVmTmlJZUVOOFpjQ19rRkRZdE1tVWE5aWloSVY1M0EzNGpOTElqUjBXbVRPT05tdnNOOXA2SnBrQW1lSUtqTlg4ZDRhb29XeHBRSDd5ODdCWHBXbmc?oc=5"
-          },
-          {
-            "source": "AZ Family",
-            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOVmU2UnhCbmM0d3Z6dkdyMnhjM21pbktiSFVqejNWYjBqbHllODZVT21uc0UyVVZIeUs0QjVMcUQycUM1X0QyczJWMjREdHVMY0FLWTF3TnZaeENUTEIwYnYxdHV5cmRKeTJIeTk2V2V1NVEyZnNyWldjY2tTQXFhMDM4a0UtUTRJOGlTVFNKUXlTbmxUdk1qVFEzcXBlaVVNSms0VE56a3NvajBUVHBQcXBSS21xb0lOMm8zeUphZ9IBvwFBVV95cUxOVmU2UnhCbmM0d3Z6dkdyMnhjM21pbktiSFVqejNWYjBqbHllODZVT21uc0UyVVZIeUs0QjVMcUQycUM1X0QyczJWMjREdHVMY0FLWTF3TnZaeENUTEIwYnYxdHV5cmRKeTJIeTk2V2V1NVEyZnNyWldjY2tTQXFhMDM4a0UtUTRJOGlTVFNKUXlTbmxUdk1qVFEzcXBlaVVNSms0VE56a3NvajBUVHBQcXBSS21xb0lOMm8zeUphZw?oc=5"
-          }
-        ]
-      },
-      {
-        "id": "aav_tesla_cybercab_employee_rides",
-        "title": "Tesla Begins Employee Rides on Cybercab at Gigafactory Texas",
-        "summary": "Tesla reports say employee rides have begun on the Cybercab at Gigafactory Texas, with additional records describing the effort as a milestone. The move suggests continued internal validation ahead of broader rollout.",
+        "id": "cluster_7",
+        "title": "Tesla begins employee rides in Cybercab at Gigafactory Texas",
+        "summary": "Tesla says employee rides have begun on the Cybercab at Gigafactory Texas, marking a new step in its robotaxi program. Related stories also describe a wheelchair-accessible version under development.",
         "source": "Basic Tutorials",
         "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOX0pGcjdSR0s5Z1YzX3FXMXNjYTQ1N2dFMmczbUJ5eXEwcFVuQTFoRjlRTUFMX3QxQVUzd29ocFNZeHpGNUhBYUo5ZzJucWc3SEIzbi02RVR4RmIxRGpzOTdPUndDTHhOd2ZDUWQyTTNmWjdEbUlDWFNHRWpmMmJIcDh4QlZTV3prYmNZdWRIbFl2UExSNWZRQUJMM0tKeHBKSW02QTJxN2laY1VQ?oc=5",
         "published": "2026-07-14T01:04:24-04:00",
         "date_label": "Jul. 14, 2026",
         "section": "Autonomous Vehicles",
-        "importance": 3,
+        "importance": 5,
         "confidence": "high",
         "is_administration_win": false,
         "eo_number": "",
@@ -356,35 +354,16 @@
             "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPTFNUUXZDMmVULVhWSVpPclRFRHpacUNkYWRqNlVBVmIzYjl4bWgzdko2c1Y1c0FxNHp0RkZ0LUlTaVBfajRhdEMtOHU5YmdzV2ttX2o5NTE0d2pFQThmRmk5NnJhUzVOYUh3RmJPWmZsdURFVENBNnl3OHlJSDc5Wml2dUV4TFV5bUZNN2JIa3NnNjRyLVQ4cVBwQk40eEpZdGZRU0lxT1N2ZFNvVFlXaDZBTTdtdElRMDhJekJtUGRoZWdtUnpXMTktSnZycXE0cFJxSTB4RFJjenREWjNKV0RJRjRRdw?oc=5"
           },
           {
-            "source": "Teslarati",
-            "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPOEdjbFpwR0k1R2xMakt4Y2pwVzVfeVYyRFZaSlhIRjB3aFFpdHZwVlhBQl9qdUdWSVc1Q2RERlF5STVicjRVdjQzdjJfenl2bmNWNlFaNFBsSEhUMExyTDVKalk0ZjhYcFJ3RUFCS0FHOHdSNGgycEs4MXBEbGwyOGFoUS1IMWN1YmlNLVJKejhkeVFnRGc?oc=5"
+            "source": "WIRED",
+            "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOYk1lbEhjM1lfemxkc1FBdU1xWnZ2NnNjdjJ4TUVoYmhSYzZKT1pFWVhFSTJTS2lkeERGZjMxZWhhMGpEU1RDb1R3cVZyaF9KSkZEVS16WXh0NFl3dkI3RmdyMThtdHZMd2xrTE9lYnpRZHF1U0N6TU1XVlVONFZVbVRHSC14STdBVl8xY1Z3?oc=5"
           },
           {
-            "source": "Not a Tesla App",
-            "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxObTlXZjd4ZW95N054MnhGT3dSOHdtc0lRcGRUWmM1Qi1rU2NGYjBFSjNzOU5lWk96YmV3OVVKbWNJOUx4eHpNNTI2Q0lvX3NPTnZYTEpEeU9QdElaOWktbzFIbC1SR3pEaUZ5eGhVQVFiRlhGOEZZaGFBdktVQ2wwU2ZmMFJ1bUVYaVBhZk8xbllDSHJ3UU93V1FiWWw?oc=5"
-          }
-        ]
-      },
-      {
-        "id": "aav_tesla_robotaxi_incidents",
-        "title": "Tesla Robotaxi Rear-Ended in Austin, Adding to Fleet Incident Count",
-        "summary": "One report says a Tesla robotaxi was rear-ended in Austin, and another says an NHTSA filing shows the incident. The story adds to the company’s growing record of fleet-level safety scrutiny.",
-        "source": "MSN",
-        "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxNNkpXMi00Wl9TaTM0Z1AybW1FWGJaRnJLT3FtS0ZpNk1icWU4c1dZMjRucUFzQzZuWmRIajNKSjlEeG1xV1FZMktpNnExOWdRRURTdlZBUjUtLXN5N2pOeXVTNENCWUt2YVNzZlZTZVIyRnRZUVotanhtT29uWFJXZTM1NEthaF9paVFQcHhxQmlYdTdkMU5uS01adUpPZ242SHRUM005S3JWWUFpbTdEdERWa2JHRVlLenJsSXY4Nldab0gxbXBZeWs4XzcyN1JveEVYUDdzUm9zYVJ1MDU3Q1E5WkQ0MWh4SEktN0Q4YUp6dzhMQTdtMA?oc=5",
-        "published": "2026-07-14T01:04:20-04:00",
-        "date_label": "Jul. 14, 2026",
-        "section": "Autonomous Vehicles",
-        "importance": 3,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "win_explanation": "",
-        "also_covered": [
+            "source": "Teslarati",
+            "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxONk9vdDdPS2dpMVdZWUZaYXhxOWlHWFd2RUJJY1BuLVRXbkdDcGEzRGJybzhnd3hCY2FZdzFCdHBuQ2RYWENlZkJSNVZnbHB0b194Vmt6bjVQbFJiODJ6aDdSX3hsYmh1dWtaa0tjWE1xZFcySDRSMlJDWkUwM1VmVVJtYURGVDZYd294QUdVai1oek9qVHJheA?oc=5"
+          },
           {
-            "source": "Stocktwits",
-            "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOajdybHdidWlzUnR1Ti1tWWg5OVBKb3dCemhBcWlRVkFTZFhqOFhUbmhObXpUNzFGQlozMV8wdndQTnhXbFVNWGppbmVCbG5VWE14bEs3VUtXSVZVNHhZOGVZV1drN3hNZXltbVhyTmtRQ0JXTGpiMDFzYVRkWmdpZzdRSm9ISjY2X0pIcmQ5d2xQZjdlRko2MExRNFFuUFhkLWZBQXllZ1h4MExwbjE4bGs1R3duN0ROVF8tYXFLZUg5cldwb2hUaA?oc=5"
+            "source": "Gizchina.com",
+            "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxONy04dUIwb3hrT3pqdmNUZnRpR2RvMkpYSmFVbU94REQtZXJBSmcyN2V4ODAwdWcyOUhEVWlocFpJSFpQMTFKYW4tdkV3ZVhKeWc3WmhPbklRS2ppV2NoVjJVY3JlbUFwQkxJQ3dnLXRjSVBWUHdwdDY0M2J3emdfcFpGQ2hwZHJGVGE0VTNSSU9lcmJHSVhKck9ubzZZZ2Jp?oc=5"
           }
         ]
       }
@@ -393,23 +372,23 @@
     "Federal Actions": []
   },
   "source_errors": [],
-  "candidate_count": 276,
+  "candidate_count": 268,
   "candidate_counts": {
-    "Other Advanced Transportation": 36,
-    "UAS Security and C-UAS": 51,
-    "UAS and Drones": 62,
-    "Autonomous Vehicles": 57,
-    "eVTOL Integration Pilot Program and AAM": 35,
-    "Trump Administration priorities": 29,
+    "UAS Security and C-UAS": 47,
+    "Autonomous Vehicles": 58,
+    "Trump Administration priorities": 31,
+    "Other Advanced Transportation": 37,
+    "UAS and Drones": 55,
+    "eVTOL Integration Pilot Program and AAM": 34,
     "Federal Actions": 6
   },
   "included_counts": {
-    "Trump Administration Wins": 2,
+    "Trump Administration Wins": 6,
     "Top Developments": 0,
-    "UAS and Drones": 4,
-    "UAS Security and C-UAS": 2,
-    "eVTOL Integration Pilot Program and AAM": 2,
-    "Autonomous Vehicles": 4,
+    "UAS and Drones": 1,
+    "UAS Security and C-UAS": 1,
+    "eVTOL Integration Pilot Program and AAM": 1,
+    "Autonomous Vehicles": 2,
     "Other Advanced Transportation": 0,
     "Federal Actions": 0
   }
