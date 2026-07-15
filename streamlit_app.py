@@ -2,18 +2,11 @@ from __future__ import annotations
 
 import hmac
 import html
-import ipaddress
 import json
-import random
-import re
-import socket
-import time
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
-import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -23,10 +16,9 @@ from news_engine import (
     EO_DISPLAY_NAMES,
     SECTION_ORDER,
     TOPIC_SECTIONS,
-    clean_spaces,
     generate_briefing_from_records,
-    stable_id,
 )
+from supplemental_email import extract_supplemental_items
 
 st.set_page_config(
     page_title="Advanced Transportation News Update",
@@ -809,207 +801,6 @@ def copy_controls(
     components.html(component, height=60)
 
 
-MANUAL_IMPORT_USER_AGENT = (
-    "TransportationNewsUpdate/4.0 manual-intake metadata fetcher"
-)
-URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s<>\"'`]+", re.IGNORECASE)
-
-
-
-SOURCE_ONLY_LABELS = {
-    "msn", "msn.com", "aol", "aol.com", "yahoo", "yahoo finance",
-    "google news", "reuters", "associated press", "ap", "read more",
-    "click here", "article", "link",
-}
-
-
-def normalize_import_url(value: str) -> str:
-    value = html.unescape(value or "").strip()
-    value = value.strip("<>[](){}\"'`")
-    value = re.sub(r"[.,;:!?]+$", "", value)
-    return value
-
-
-def source_from_url(url: str) -> str:
-    try:
-        host = urlparse(url).hostname or ""
-    except ValueError:
-        return "Supplemental source"
-    host = host.lower().removeprefix("www.")
-    brand = host.split(".")[0].replace("-", " ").strip()
-    known = {
-        "msn": "MSN",
-        "aol": "AOL",
-        "finance": "Yahoo Finance",
-        "news": "Google News",
-    }
-    return known.get(brand, brand.title() or "Supplemental source")
-
-
-def is_source_only(value: str, source: str = "") -> bool:
-    cleaned = clean_spaces(re.sub(r"^[•\-–—\s]+", "", value or "")).strip(" :|")
-    if not cleaned:
-        return True
-    lowered = cleaned.casefold()
-    if lowered in SOURCE_ONLY_LABELS:
-        return True
-    if source and lowered == source.casefold():
-        return True
-    if lowered.startswith(("http://", "https://")):
-        return True
-    return len(cleaned) < 8
-
-
-def clean_headline_candidate(value: str, source: str = "") -> str:
-    value = re.sub(r"https?://\S+", " ", value or "")
-    value = clean_spaces(value)
-    value = re.sub(r"^[•\-–—\d.)\s]+", "", value)
-    value = value.strip("<>[](){}\"'` ")
-    if source:
-        value = re.sub(
-            rf"\s*[-|–—]\s*{re.escape(source)}\s*$",
-            "",
-            value,
-            flags=re.IGNORECASE,
-        )
-    return clean_spaces(value)
-
-
-def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
-    same_line = clean_headline_candidate(lines[index].replace(url, ""))
-    context_lines = []
-    for offset in (0, -1, -2, 1):
-        pos = index + offset
-        if 0 <= pos < len(lines):
-            candidate = clean_spaces(lines[pos])
-            if candidate and candidate not in context_lines:
-                context_lines.append(candidate)
-
-    context = " ".join(context_lines)[:1200]
-    if same_line and not is_source_only(same_line):
-        return same_line, context
-
-    for offset in (-1, -2, 1):
-        pos = index + offset
-        if 0 <= pos < len(lines):
-            candidate = clean_headline_candidate(lines[pos])
-            if candidate and not is_source_only(candidate):
-                return candidate, context
-
-    return "", context
-
-
-def first_html_match(document: str, patterns: list[str]) -> str:
-    for pattern in patterns:
-        match = re.search(pattern, document, flags=re.IGNORECASE | re.DOTALL)
-        if match:
-            return clean_spaces(html.unescape(re.sub(r"<[^>]+>", " ", match.group(1))))
-    return ""
-
-
-def fetch_link_metadata(record: dict) -> dict:
-    enriched = dict(record)
-    try:
-        response = requests.get(
-            record["url"],
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 Safari/537.36"
-                )
-            },
-            timeout=18,
-            allow_redirects=True,
-        )
-        response.raise_for_status()
-        document = response.text[:750000]
-        final_url = normalize_import_url(response.url)
-        source = source_from_url(final_url)
-
-        fetched_title = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:title["\']',
-                r"<title[^>]*>(.*?)</title>",
-            ],
-        )
-        description = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']',
-            ],
-        )
-
-        pasted = clean_headline_candidate(enriched.get("pasted_headline", ""), source)
-        fetched = clean_headline_candidate(fetched_title, source)
-        if pasted and not is_source_only(pasted, source):
-            title = pasted
-        elif fetched and not is_source_only(fetched, source):
-            title = fetched
-        else:
-            title = clean_headline_candidate(enriched.get("pasted_context", ""), source)
-
-        enriched.update(
-            {
-                "url": final_url or record["url"],
-                "title": title[:260],
-                "original_title": fetched_title[:260],
-                "description": description[:1200],
-                "source": source,
-                "fetch_status": "Metadata retrieved",
-            }
-        )
-    except Exception as exc:
-        source = source_from_url(record["url"])
-        pasted = clean_headline_candidate(record.get("pasted_headline", ""), source)
-        context_title = clean_headline_candidate(record.get("pasted_context", ""), source)
-        title = pasted if pasted and not is_source_only(pasted, source) else context_title
-        enriched.update(
-            {
-                "source": source,
-                "title": title[:260],
-                "description": "",
-                "fetch_status": f"Metadata unavailable: {clean_spaces(str(exc))[:160]}",
-            }
-        )
-    return enriched
-
-
-def extract_supplemental_items(raw_text: str, fetch_metadata: bool = True) -> list[dict]:
-    lines = [line.rstrip() for line in (raw_text or "").splitlines()]
-    pattern = re.compile(r"https?://[^\s<>]+")
-    records = []
-    seen = set()
-
-    for index, line in enumerate(lines):
-        # Strip malformed wrappers such as <https://...>.
-        for match in pattern.finditer(html.unescape(line)):
-            url = normalize_import_url(match.group(0))
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            pasted_headline, context = context_for_link(lines, index, match.group(0))
-            record = {
-                "id": stable_id("supplemental", url),
-                "url": url,
-                "title": pasted_headline,
-                "pasted_headline": pasted_headline,
-                "pasted_context": context,
-                "summary": "",
-                "description": "",
-                "source": source_from_url(url),
-                "origin": "Supplemental daily email",
-                "required_include": True,
-                "fetch_status": "Not fetched",
-            }
-            records.append(fetch_link_metadata(record) if fetch_metadata else record)
-
-    return records
-
-
 def raw_feed_text(raw_feed: dict) -> str:
     lines = []
     for index, item in enumerate(raw_feed.get("articles", []), start=1):
@@ -1280,35 +1071,42 @@ with build_tab:
                         except Exception as exc:
                             st.error(str(exc))
         else:
-            st.info(
-                "Unlock Owner controls in the sidebar to run the AI editorial pass."
+            st.warning(
+                "Enter the owner password in the sidebar and select **Unlock**. "
+                "The AI build button will then appear here."
             )
     else:
         st.info(
-            "The supplemental email is optional. To build using only the automated "
-            "24-hour feed, paste nothing and click the button below."
+            "The supplemental email is optional. You can build today’s update using "
+            "only the automated 24-hour feed."
         )
-        if owner_authenticated() and st.button(
-            "Build from Automated Feed Only",
-            type="primary",
-            use_container_width=True,
-        ):
-            api_key = secret_value("openai_api_key")
-            model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
-            if not api_key:
-                st.error("Add openai_api_key to Streamlit Secrets.")
-            else:
-                with st.spinner("Building today’s update…"):
-                    try:
-                        briefing = generate_briefing_from_records(
-                            raw_feed, [], api_key, model
-                        )
-                        st.session_state[
-                            f"generated_briefing_{build_key}"
-                        ] = briefing
-                        st.rerun()
-                    except Exception as exc:
-                        st.error(str(exc))
+        if owner_authenticated():
+            if st.button(
+                "Build from Automated Feed Only",
+                type="primary",
+                use_container_width=True,
+            ):
+                api_key = secret_value("openai_api_key")
+                model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
+                if not api_key:
+                    st.error("Add openai_api_key to Streamlit Secrets.")
+                else:
+                    with st.spinner("Building today’s update…"):
+                        try:
+                            briefing = generate_briefing_from_records(
+                                raw_feed, [], api_key, model
+                            )
+                            st.session_state[
+                                f"generated_briefing_{build_key}"
+                            ] = briefing
+                            st.rerun()
+                        except Exception as exc:
+                            st.error(str(exc))
+        else:
+            st.warning(
+                "Enter the owner password in the sidebar and select **Unlock**. "
+                "The **Build from Automated Feed Only** button will then appear here."
+            )
 
 briefing = st.session_state.get(f"generated_briefing_{build_key}")
 
@@ -1413,10 +1211,11 @@ with status_tab:
                 f"**Estimated OpenAI cost:** ${briefing['estimated_cost']:.4f}"
             )
         st.write(
-            f"**Supplemental links:** {briefing.get('supplemental_count', 0)}"
+            f"**Supplemental links extracted:** "
+            f"{briefing.get('supplemental_count', 0)}"
         )
         st.write(
-            f"**Supplemental links accounted for:** "
+            f"**Supplemental links represented in the briefing:** "
             f"{briefing.get('supplemental_accounted_count', 0)}"
         )
     else:

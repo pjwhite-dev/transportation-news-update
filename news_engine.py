@@ -201,6 +201,25 @@ OBVIOUS_NON_PORTFOLIO_MARKERS = (
     "clinical trial", "medicare", "medicaid", "public health emergency",
 )
 
+PUBLISHER_ONLY_HEADLINES = {
+    "aol",
+    "associated press",
+    "ap",
+    "google news",
+    "msn",
+    "reuters",
+    "yahoo",
+    "yahoo finance",
+}
+
+GENERIC_SUPPLEMENTAL_HEADLINES = {
+    "additional headline",
+    "additional headlines",
+    "imported from the supplemental daily news email",
+    "supplemental daily news email",
+    "supplemental story",
+}
+
 
 def automated_record_is_portfolio_relevant(record: dict[str, Any]) -> bool:
     """Conservative pre-AI guard against obvious keyword collisions."""
@@ -230,6 +249,23 @@ def automated_record_is_portfolio_relevant(record: dict[str, Any]) -> bool:
 
 def clean_spaces(value: str) -> str:
     return re.sub(r"\s+", " ", value or "").strip()
+
+
+def normalized_headline_label(value: str) -> str:
+    return clean_spaces(re.sub(r"[^a-z0-9]+", " ", (value or "").casefold()))
+
+
+def headline_is_publisher_only(value: str, source: str = "") -> bool:
+    """Reject publisher labels and prohibited filler as story headlines."""
+    label = normalized_headline_label(value)
+    source_label = normalized_headline_label(source)
+    if not label:
+        return True
+    return (
+        label in PUBLISHER_ONLY_HEADLINES
+        or label in GENERIC_SUPPLEMENTAL_HEADLINES
+        or bool(source_label and label == source_label)
+    )
 
 
 def strip_html(value: str) -> str:
@@ -392,13 +428,43 @@ def fetch_federal_register(
 
 
 def deduplicate_articles(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    seen: set[tuple[str, str]] = set()
+    positions: dict[tuple[str, str], list[int]] = {}
     unique: list[dict[str, Any]] = []
     for item in sorted(items, key=lambda value: value["published"], reverse=True):
         key = (normalize_title(item["title"]), item.get("source", "").casefold())
-        if key in seen:
+        matches = positions.get(key, [])
+        if not matches:
+            positions[key] = [len(unique)]
+            unique.append(item)
             continue
-        seen.add(key)
+
+        if not item.get("required_include", False):
+            continue
+
+        same_url_index = next(
+            (
+                index
+                for index in matches
+                if unique[index].get("url", "") == item.get("url", "")
+            ),
+            None,
+        )
+        if same_url_index is not None:
+            existing = unique[same_url_index]
+            existing["required_include"] = True
+            for field in (
+                "pasted_headline",
+                "pasted_context",
+                "description",
+            ):
+                if item.get(field) and not existing.get(field):
+                    existing[field] = item[field]
+            continue
+
+        # Required supplemental links must survive even when the publisher and
+        # headline match another record; the AI may later identify them as true
+        # same-event additional coverage.
+        positions[key].append(len(unique))
         unique.append(item)
     return unique
 
@@ -454,7 +520,14 @@ def analysis_schema() -> dict[str, Any]:
             "win_foreign_company_expansion_only": {"type": "boolean"},
             "eo_number": {"type": "string"},
             "eo_section": {"type": "string"},
-            "win_explanation": {"type": "string"},
+            "win_explanation": {
+                "type": "string",
+                "description": (
+                    "Reader-facing plain-English explanation naming the specific "
+                    "Administration action and concrete American benefit; no internal "
+                    "editorial-test language or vague procurement jargon."
+                ),
+            },
             "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
             "exclude_reason": {"type": "string"},
         },
@@ -487,12 +560,12 @@ def best_record_title(record: dict[str, Any]) -> str:
         record.get("pasted_headline", ""),
         record.get("pasted_context", ""),
     ]
-    source = clean_spaces(record.get("source", "")).casefold()
+    source = clean_spaces(record.get("source", ""))
     for value in candidates:
         value = clean_spaces(value)
         if not value:
             continue
-        if value.casefold() == source:
+        if headline_is_publisher_only(value, source):
             continue
         if value.lower().startswith(("http://", "https://")):
             continue
@@ -656,7 +729,17 @@ STALE-NEWS EXAMPLES
 
 - A positive private-sector story is not automatically an Administration win.
 - When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section.
-- Write one 30-55 word explanation focused on the concrete American result.
+- Write one 30-55 word explanation that will be published verbatim in the email.
+- Make the explanation stand on its own for a reader who has not seen these instructions:
+  name the Administration, agency, or federal program that acted; state what it actually
+  did; and explain the specific benefit for U.S. capability, jobs, manufacturing, safety,
+  security, deployment, or regulatory progress.
+- Use active voice and ordinary language. If the event is a contract or purchase, say who
+  awarded or ordered what, who will provide it, and what American mission it supports.
+- Never say "during the window," "within the coverage window," "the record shows,"
+  "qualifies as a win," "clear federal procurement action," "direct nexus," "concrete
+  benefit," or similar internal editorial language. Do not tell the reader that the story
+  passed a test; explain the real-world action and result instead.
 - The app displays the full EO name separately, so do not begin "This is a win for EO...".
 
 WHAT TO WATCH
@@ -764,6 +847,17 @@ def analyze_articles(
     raise RuntimeError("OpenAI request failed after retries: " + " | ".join(errors[-4:]))
 
 
+def administration_win_is_eligible(raw: dict[str, Any]) -> bool:
+    """Apply the four mandatory Administration Win eligibility gates."""
+    return (
+        bool(raw.get("is_administration_win", False))
+        and bool(raw.get("win_event_within_window", False))
+        and bool(raw.get("win_direct_administration_nexus", False))
+        and bool(raw.get("win_concrete_american_benefit", False))
+        and not bool(raw.get("win_foreign_company_expansion_only", False))
+    )
+
+
 def validate_analysis(
     analysis: dict[str, Any],
     articles: list[dict[str, Any]],
@@ -791,8 +885,12 @@ def validate_analysis(
         used.update(ids)
 
         section = raw.get("section", "")
-        if section not in TOPIC_SECTIONS:
-            section = infer_section(lookup[primary])
+        inferred_section = infer_section(lookup[primary])
+        if section not in TOPIC_SECTIONS or (
+            section == "Federal Actions"
+            and inferred_section == "Autonomous Vehicles"
+        ):
+            section = inferred_section
 
         eo_number = clean_spaces(raw.get("eo_number", ""))
         if eo_number not in EO_DISPLAY_NAMES:
@@ -800,24 +898,7 @@ def validate_analysis(
 
         includes_required = any(article_id in required for article_id in ids)
 
-        win_event_within_window = bool(raw.get("win_event_within_window", False))
-        win_direct_nexus = bool(
-            raw.get("win_direct_administration_nexus", False)
-        )
-        win_american_benefit = bool(
-            raw.get("win_concrete_american_benefit", False)
-        )
-        win_foreign_expansion_only = bool(
-            raw.get("win_foreign_company_expansion_only", False)
-        )
-        validated_win = (
-            bool(raw.get("is_administration_win", False))
-            and win_event_within_window
-            and win_direct_nexus
-            and win_american_benefit
-            and not win_foreign_expansion_only
-            and bool(eo_number)
-        )
+        validated_win = administration_win_is_eligible(raw)
 
         if not validated_win:
             eo_number = ""
@@ -917,7 +998,9 @@ def cluster_to_story(
         seen_sources.add(source.casefold())
         related.append({"source": source, "url": url})
 
-    title = cluster["canonical_title"] or best_record_title(primary)
+    title = clean_spaces(cluster["canonical_title"])
+    if headline_is_publisher_only(title, primary.get("source", "")):
+        title = best_record_title(primary)
     summary = cluster["summary"] or clean_spaces(
         primary.get("description", "")
         or primary.get("summary", "")
@@ -979,6 +1062,31 @@ def arrange_sections(stories: list[dict[str, Any]]) -> dict[str, list[dict[str, 
             sections[section].append(item)
 
     return sections
+
+
+def represented_urls(sections: dict[str, list[dict[str, Any]]]) -> set[str]:
+    urls: set[str] = set()
+    for items in sections.values():
+        for item in items:
+            if item.get("url"):
+                urls.add(item["url"])
+            urls.update(
+                related["url"]
+                for related in item.get("also_covered", [])
+                if related.get("url")
+            )
+    return urls
+
+
+def supplemental_link_accounting(
+    supplemental_records: list[dict[str, Any]],
+    sections: dict[str, list[dict[str, Any]]],
+) -> tuple[int, int]:
+    supplemental_urls = {
+        item.get("url", "") for item in supplemental_records if item.get("url")
+    }
+    included_urls = represented_urls(sections)
+    return len(supplemental_urls), len(supplemental_urls & included_urls)
 
 
 def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
@@ -1082,6 +1190,9 @@ def generate_briefing_from_records(
         section: len(items)
         for section, items in arranged.items()
     }
+    supplemental_count, supplemental_accounted_count = (
+        supplemental_link_accounting(supplemental, arranged)
+    )
 
     return {
         "generated_at": datetime.now(EASTERN).isoformat(),
@@ -1098,8 +1209,8 @@ def generate_briefing_from_records(
         "raw_automated_candidate_count": len(raw_automated),
         "automated_candidate_count": len(automated),
         "automated_filtered_out_count": len(raw_automated) - len(automated),
-        "supplemental_count": len(supplemental),
-        "supplemental_accounted_count": analysis["required_accounted_count"],
+        "supplemental_count": supplemental_count,
+        "supplemental_accounted_count": supplemental_accounted_count,
         "candidate_counts": raw_feed.get("candidate_counts", {}),
         "included_counts": included_counts,
     }
