@@ -258,6 +258,7 @@ def extract_supplemental_items(
                 "source": source_from_url(url),
                 "origin": "Supplemental daily email",
                 "required_include": True,
+                "editor_vetted": True,
                 "fetch_status": "Not fetched",
             }
             if fetch_metadata:

@@ -1269,8 +1269,9 @@ with build_tab:
     if records:
         st.markdown("### Supplemental items that will all be included")
         st.caption(
-            "Edit any weak headline before the AI pass. Every listed URL must appear "
-            "as a story or as true same-event additional coverage."
+            "These links are presumed relevant because you supplied and vetted them. "
+            "Edit any weak headline before the AI pass. Every listed URL will appear "
+            "as its own story or as true same-event additional coverage."
         )
         for index, record in enumerate(records):
             with st.container(border=True):
