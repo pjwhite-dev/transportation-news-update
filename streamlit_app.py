@@ -16,7 +16,12 @@ from news_engine import (
     EO_DISPLAY_NAMES,
     SECTION_ORDER,
     TOPIC_SECTIONS,
+    arrange_sections,
+    canonical_eo_section,
+    distinct_story_summary,
+    eo_section_summary,
     generate_briefing_from_records,
+    infer_section,
 )
 from regulatory_tracker import build_regulatory_tracker
 from supplemental_email import extract_supplemental_items
@@ -86,8 +91,13 @@ def format_datetime(value: str) -> str:
 def eo_display(item: dict) -> str:
     number = item.get("eo_number", "")
     name = item.get("eo_name", "") or EO_DISPLAY_NAMES.get(number, "")
-    section = item.get("eo_section", "")
-    citation = ", ".join(part for part in [number, section] if part)
+    section = canonical_eo_section(item.get("eo_section", ""))
+    section_note = item.get("eo_section_summary", "") or eo_section_summary(
+        number, section
+    )
+    citation = ", ".join(
+        part for part in [number, section, section_note] if part
+    )
     if name and citation:
         return f"{name} ({citation})"
     return name or citation
@@ -106,8 +116,11 @@ def related_sources(item: dict) -> list[dict]:
 
 
 def article_html(item: dict, section_name: str) -> str:
-    title = html.escape(item.get("title", "Untitled"))
-    summary = html.escape(item.get("summary", ""))
+    raw_title = item.get("title", "Untitled")
+    title = html.escape(raw_title)
+    summary = html.escape(
+        distinct_story_summary(raw_title, item.get("summary", ""))
+    )
     source = html.escape(item.get("source", "Source"))
     date_label = html.escape(item.get("date_label", ""))
     url = safe_url(item.get("url", ""))
@@ -122,12 +135,18 @@ def article_html(item: dict, section_name: str) -> str:
         )
 
     win = ""
-    if item.get("is_administration_win") and item.get("win_explanation"):
+    if item.get("is_administration_win"):
         citation = eo_display(item)
         citation_html = (
             f'<div style="font-size:12px;font-weight:700;color:#8a2e27;'
             f'margin-bottom:4px;">{html.escape(citation)}</div>'
             if citation else ""
+        )
+        explanation_html = (
+            '<div style="font-size:14px;line-height:1.45;color:#57201b;">'
+            + html.escape(item.get("win_explanation", ""))
+            + "</div>"
+            if item.get("win_explanation") else ""
         )
         win = f"""
         <div style="background:#fff3ef;border-left:3px solid #b42318;
@@ -137,9 +156,7 @@ def article_html(item: dict, section_name: str) -> str:
             WHY THIS IS A TRUMP ADMINISTRATION WIN
           </div>
           {citation_html}
-          <div style="font-size:14px;line-height:1.45;color:#57201b;">
-            {html.escape(item['win_explanation'])}
-          </div>
+          {explanation_html}
         </div>
         """
 
@@ -160,6 +177,12 @@ def article_html(item: dict, section_name: str) -> str:
             '<strong>Also covered by:</strong> ' + " · ".join(links) + suffix + "</div>"
         )
 
+    summary_html = (
+        '<div style="font-size:14px;line-height:1.5;color:#252b31;'
+        f'margin-bottom:6px;">{summary}</div>'
+        if summary else ""
+    )
+
     return f"""
     <div style="padding:0 0 14px 0;margin:0 0 14px 0;
         border-bottom:1px solid #e1e6ea;">
@@ -167,9 +190,7 @@ def article_html(item: dict, section_name: str) -> str:
       <div style="font-size:17px;line-height:1.32;font-weight:700;margin-bottom:5px;">
         <a href="{url}" style="color:#173c5e;text-decoration:none;">{title}</a>
       </div>
-      <div style="font-size:14px;line-height:1.5;color:#252b31;margin-bottom:6px;">
-        {summary}
-      </div>
+      {summary_html}
       {win}
       <div style="font-size:11px;line-height:1.4;color:#707b84;">
         {source}{f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
@@ -405,8 +426,11 @@ def outlook_related_html(item: dict) -> str:
 
 
 def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> str:
-    title = html.escape(item.get("title", "Untitled"))
-    summary = html.escape(item.get("summary", ""))
+    raw_title = item.get("title", "Untitled")
+    title = html.escape(raw_title)
+    summary = html.escape(
+        distinct_story_summary(raw_title, item.get("summary", ""))
+    )
     source = html.escape(item.get("source", "Source"))
     date_label = html.escape(item.get("date_label", ""))
     url = safe_url(item.get("url", ""))
@@ -457,8 +481,15 @@ def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> 
         """
 
     win_html = ""
-    if item.get("is_administration_win") and item.get("win_explanation"):
+    if item.get("is_administration_win"):
         citation = html.escape(eo_display(item))
+        explanation_html = (
+            '<div style="padding-top:5px;font-size:13px;line-height:20px;'
+            'color:#57201B;mso-line-height-rule:exactly;">'
+            + html.escape(item.get("win_explanation", ""))
+            + "</div>"
+            if item.get("win_explanation") else ""
+        )
         win_html = f"""
         <tr>
           <td style="padding:11px 0 3px 0;">
@@ -477,10 +508,7 @@ def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> 
                   {f'<div style="padding-top:4px;font-size:11px;line-height:16px;'
                     f'font-weight:bold;color:#8A2E27;mso-line-height-rule:exactly;">'
                     f'{citation}</div>' if citation else ''}
-                  <div style="padding-top:5px;font-size:13px;line-height:20px;
-                      color:#57201B;mso-line-height-rule:exactly;">
-                    {html.escape(item["win_explanation"])}
-                  </div>
+                  {explanation_html}
                 </td>
               </tr>
             </table>
@@ -858,14 +886,18 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
             continue
         lines.extend([section.upper(), ""])
         for item in items:
-            lines.append(item.get("title", ""))
-            lines.append(item.get("summary", ""))
-            if item.get("win_explanation"):
+            title = item.get("title", "")
+            lines.append(title)
+            summary = distinct_story_summary(title, item.get("summary", ""))
+            if summary:
+                lines.append(summary)
+            if item.get("is_administration_win"):
                 lines.append("WHY THIS IS A TRUMP ADMINISTRATION WIN")
                 citation = eo_display(item)
                 if citation:
                     lines.append(citation)
-                lines.append(item["win_explanation"])
+                if item.get("win_explanation"):
+                    lines.append(item["win_explanation"])
             lines.append(
                 " | ".join(
                     value for value in [
@@ -1003,9 +1035,42 @@ def initialize_editor(briefing: dict, edition_key: str) -> None:
                 st.session_state[prefix + item_id + "_summary"] = item.get(
                     "summary", ""
                 )
+                st.session_state[prefix + item_id + "_is_win"] = bool(
+                    item.get("is_administration_win", False)
+                )
+                st.session_state[prefix + item_id + "_eo_number"] = (
+                    item.get("eo_number", "")
+                    if item.get("eo_number", "") in EO_DISPLAY_NAMES
+                    else ""
+                )
+                st.session_state[prefix + item_id + "_eo_section"] = (
+                    canonical_eo_section(item.get("eo_section", ""))
+                )
                 st.session_state[prefix + item_id + "_win"] = item.get(
                     "win_explanation", ""
                 )
+    # Backfill controls for browser sessions initialized before editable Win
+    # classification and EO fields were added.
+    for items in briefing.get("sections", {}).values():
+        for item in items:
+            item_id = item["id"]
+            defaults = {
+                prefix + item_id + "_is_win": bool(
+                    item.get("is_administration_win", False)
+                ),
+                prefix + item_id + "_eo_number": (
+                    item.get("eo_number", "")
+                    if item.get("eo_number", "") in EO_DISPLAY_NAMES
+                    else ""
+                ),
+                prefix + item_id + "_eo_section": canonical_eo_section(
+                    item.get("eo_section", "")
+                ),
+                prefix + item_id + "_win": item.get("win_explanation", ""),
+            }
+            for key, value in defaults.items():
+                if key not in st.session_state:
+                    st.session_state[key] = value
     for item in briefing.get("regulatory_tracker", []):
         editor_key = prefix + "tracker_" + item["id"] + "_include"
         if editor_key not in st.session_state:
@@ -1025,6 +1090,24 @@ def reset_editor_state(edition_key: str) -> None:
 def ensure_regulatory_tracker(briefing: dict, as_of: datetime) -> dict:
     if "regulatory_tracker" not in briefing:
         briefing["regulatory_tracker"] = build_regulatory_tracker(as_of)
+    return briefing
+
+
+def ensure_current_story_sections(briefing: dict) -> dict:
+    """Add Military and recategorize legacy in-session stories without AI."""
+    stories = []
+    seen_ids = set()
+    for items in briefing.get("sections", {}).values():
+        for item in items:
+            item_id = item.get("id", "")
+            if item_id in seen_ids:
+                continue
+            seen_ids.add(item_id)
+            inferred = infer_section(item)
+            if inferred == "Military" or item.get("section") not in TOPIC_SECTIONS:
+                item["section"] = inferred
+            stories.append(item)
+    briefing["sections"] = arrange_sections(stories)
     return briefing
 
 
@@ -1077,23 +1160,59 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
         for line in st.session_state.get(prefix + "what_to_watch", "").splitlines()
         if line.strip()
     ][:3]
-    for section, items in list(edited.get("sections", {}).items()):
-        kept = []
+    stories = []
+    seen_ids = set()
+    for items in edited.get("sections", {}).values():
         for item in items:
             item_id = item["id"]
+            if item_id in seen_ids:
+                continue
+            seen_ids.add(item_id)
             if not st.session_state.get(prefix + item_id + "_include", True):
                 continue
             item["title"] = st.session_state.get(
                 prefix + item_id + "_title", item["title"]
             ).strip()
-            item["summary"] = st.session_state.get(
-                prefix + item_id + "_summary", item["summary"]
-            ).strip()
-            item["win_explanation"] = st.session_state.get(
-                prefix + item_id + "_win", item.get("win_explanation", "")
-            ).strip()
-            kept.append(item)
-        edited["sections"][section] = kept
+            item["summary"] = distinct_story_summary(
+                item["title"],
+                st.session_state.get(
+                    prefix + item_id + "_summary", item["summary"]
+                ),
+            )
+            item["is_administration_win"] = bool(
+                st.session_state.get(
+                    prefix + item_id + "_is_win",
+                    item.get("is_administration_win", False),
+                )
+            )
+            if item["is_administration_win"]:
+                eo_number = st.session_state.get(
+                    prefix + item_id + "_eo_number", item.get("eo_number", "")
+                )
+                item["eo_number"] = (
+                    eo_number if eo_number in EO_DISPLAY_NAMES else ""
+                )
+                item["eo_name"] = EO_DISPLAY_NAMES.get(item["eo_number"], "")
+                item["eo_section"] = canonical_eo_section(
+                    st.session_state.get(
+                        prefix + item_id + "_eo_section",
+                        item.get("eo_section", ""),
+                    )
+                )
+                item["eo_section_summary"] = eo_section_summary(
+                    item["eo_number"], item["eo_section"]
+                )
+                item["win_explanation"] = st.session_state.get(
+                    prefix + item_id + "_win", item.get("win_explanation", "")
+                ).strip()
+            else:
+                item["eo_number"] = ""
+                item["eo_name"] = ""
+                item["eo_section"] = ""
+                item["eo_section_summary"] = ""
+                item["win_explanation"] = ""
+            stories.append(item)
+    edited["sections"] = arrange_sections(stories)
     edited["regulatory_tracker"] = [
         item
         for item in edited.get("regulatory_tracker", [])
@@ -1119,7 +1238,38 @@ def render_editor(briefing: dict, edition_key: str) -> None:
                 st.checkbox("Include", key=prefix + item_id + "_include")
                 st.text_input("Headline", key=prefix + item_id + "_title")
                 st.text_area("Summary", key=prefix + item_id + "_summary", height=90)
-                if item.get("is_administration_win"):
+                is_win = st.checkbox(
+                    "Trump Administration Win",
+                    key=prefix + item_id + "_is_win",
+                    help=(
+                        "Check to place this story in Trump Administration Wins; "
+                        "uncheck to return it to Top Developments or its topic section."
+                    ),
+                )
+                if is_win:
+                    selected_eo = st.selectbox(
+                        "Executive order (optional)",
+                        options=["", *EO_DISPLAY_NAMES],
+                        format_func=lambda value: (
+                            f"{value} — {EO_DISPLAY_NAMES[value]}"
+                            if value else "No specific EO"
+                        ),
+                        key=prefix + item_id + "_eo_number",
+                    )
+                    selected_section = st.text_input(
+                        "EO section (optional, for example Section 3)",
+                        key=prefix + item_id + "_eo_section",
+                    )
+                    section_note = eo_section_summary(
+                        selected_eo, selected_section
+                    )
+                    if section_note:
+                        st.caption(
+                            "Citation note: "
+                            + canonical_eo_section(selected_section)
+                            + ", "
+                            + section_note
+                        )
                     st.text_area(
                         "Why this is a Trump Administration win",
                         key=prefix + item_id + "_win",
@@ -1393,6 +1543,7 @@ with build_tab:
 briefing = st.session_state.get(f"generated_briefing_{build_key}")
 if briefing:
     ensure_regulatory_tracker(briefing, end)
+    ensure_current_story_sections(briefing)
 
 with preview_tab:
     if not briefing:

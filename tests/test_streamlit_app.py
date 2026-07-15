@@ -77,6 +77,7 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
                 "Top Developments",
                 "UAS and Drones",
                 "UAS Security and C-UAS",
+                "Military",
                 "eVTOL Integration Pilot Program and AAM",
                 "Autonomous Vehicles",
                 "Other Advanced Transportation",
@@ -113,6 +114,70 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         self.assertLess(
             subheaders.index("Regulatory Deadline Tracker"),
             subheaders.index("What to Watch"),
+        )
+
+    def test_every_story_has_editable_administration_win_controls(self) -> None:
+        app = self.load_app()
+        sections = {
+            section: []
+            for section in (
+                "Trump Administration Wins",
+                "Top Developments",
+                "UAS and Drones",
+                "UAS Security and C-UAS",
+                "Military",
+                "eVTOL Integration Pilot Program and AAM",
+                "Autonomous Vehicles",
+                "Other Advanced Transportation",
+                "Federal Actions",
+            )
+        }
+        sections["Military"] = [
+            {
+                "id": "military-story",
+                "title": "Army tests a new autonomous aircraft",
+                "summary": "The service completed a new flight test.",
+                "source": "U.S. Army",
+                "url": "https://www.army.mil/example",
+                "published": "2026-07-15T03:00:00-04:00",
+                "date_label": "Jul. 15, 2026",
+                "section": "Military",
+                "importance": 6,
+                "confidence": "high",
+                "is_administration_win": False,
+                "eo_number": "",
+                "eo_name": "",
+                "eo_section": "",
+                "eo_section_summary": "",
+                "win_explanation": "",
+                "also_covered": [],
+            }
+        ]
+        app.session_state["owner_authenticated"] = True
+        app.session_state["generated_briefing_2026-07-15"] = {
+            "window_start": "2026-07-14T04:15:00-04:00",
+            "window_end": "2026-07-15T04:15:00-04:00",
+            "executive_summary": "The Army completed a new aviation test.",
+            "what_to_watch": [],
+            "sections": sections,
+            "usage": {},
+            "model": "test",
+        }
+        app.run()
+
+        win_key = "edit_2026-07-15_military-story_is_win"
+        self.assertIn(win_key, {item.key for item in app.checkbox if item.key})
+
+        app.session_state[win_key] = True
+        app.run()
+
+        self.assertIn(
+            "edit_2026-07-15_military-story_eo_number",
+            {item.key for item in app.selectbox if item.key},
+        )
+        self.assertIn(
+            "edit_2026-07-15_military-story_eo_section",
+            {item.key for item in app.text_input if item.key},
         )
 
 

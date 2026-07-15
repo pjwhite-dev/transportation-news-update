@@ -82,12 +82,13 @@ Preserve these explicit sections and ordering:
 2. Top Developments
 3. UAS and Drones
 4. UAS Security and C-UAS
-5. eVTOL Integration Pilot Program and AAM
-6. Autonomous Vehicles
-7. Other Advanced Transportation
-8. Federal Actions
-9. Regulatory Deadline Tracker
-10. What to Watch
+5. Military
+6. eVTOL Integration Pilot Program and AAM
+7. Autonomous Vehicles
+8. Other Advanced Transportation
+9. Federal Actions
+10. Regulatory Deadline Tracker
+11. What to Watch
 
 Place the Regulatory Deadline Tracker at the bottom of the email immediately
 before What to Watch. It is a persistent public-information section, not a list
@@ -129,6 +130,15 @@ Treat the following as Autonomous Vehicles when directly relevant:
 AV-specific federal actions normally belong in **Autonomous Vehicles**, not the
 generic **Federal Actions** section. Enforce this in deterministic validation,
 not only in the AI prompt.
+
+## Military coverage
+
+Place stories centered on the Department of Defense, a military service,
+defense acquisition, military operations or exercises, bases, warfighters,
+battlefield use, or military-focused contractors in **Military**. This includes
+military UAS, counter-UAS, autonomy, advanced aircraft, procurement, testing,
+deployments, and operational use. Enforce this categorization deterministically
+so military stories are not buried in generic UAS or Federal Actions.
 
 ## Trump Administration Win eligibility
 
@@ -175,13 +185,22 @@ Preserve the **Review & Edit** tab. The authenticated editor must be able to:
 
 - Remove individual stories with an Include checkbox.
 - Edit headlines and summaries.
-- Edit Administration Win explanations.
+- Check or uncheck Trump Administration Win status for every story and move the
+  story into or out of the Win section accordingly.
+- Edit Administration Win explanations and optional EO/section citations.
 - Edit the Executive Summary and What to Watch.
 
 The Executive Summary must read as a polished, standalone news briefing for a
 senior executive. It must never expose intake or editorial-process language such
 as “required supplemental,” automated feed, records, links extracted or
 represented, accounting, or how the briefing was assembled.
+It must also never discuss whether any story is or is not an Administration Win
+or why a story passed or failed the Win test. If a story description or summary
+merely repeats its headline, omit the description entirely.
+
+When a Win cites a recognized EO and section, append a concise plain-English
+summary of that section, for example: “Section 3, advancing domestic
+commercialization of UAS technologies at scale.”
 
 Preserve the Outlook-specific renderer and controls:
 

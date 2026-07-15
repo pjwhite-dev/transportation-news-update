@@ -74,6 +74,43 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             "Autonomous Vehicles",
         )
 
+    def test_military_story_is_forced_into_military_section(self) -> None:
+        article = record(
+            title="U.S. Army awards contract for autonomous reconnaissance drones",
+            summary="The military program will deploy new unmanned aircraft.",
+            source="U.S. Army",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        analysis = {
+            "executive_summary": "The Army expanded autonomous aviation capability.",
+            "what_to_watch": [],
+            "clusters": [cluster(section="UAS and Drones")],
+        }
+
+        validated = news_engine.validate_analysis(analysis, [article])
+
+        self.assertIn("Military", news_engine.TOPIC_SECTIONS)
+        self.assertEqual(validated["clusters"][0]["section"], "Military")
+
+    def test_win_toggle_moves_story_into_and_out_of_win_section(self) -> None:
+        story = {
+            "id": "military-1",
+            "section": "Military",
+            "importance": 5,
+            "published": "2026-07-15T03:00:00-04:00",
+            "is_administration_win": True,
+        }
+
+        checked = news_engine.arrange_sections([story])
+        self.assertEqual(checked["Trump Administration Wins"], [story])
+        self.assertEqual(checked["Military"], [])
+
+        story["is_administration_win"] = False
+        unchecked = news_engine.arrange_sections([story])
+        self.assertEqual(unchecked["Trump Administration Wins"], [])
+        self.assertEqual(unchecked["Military"], [story])
+
 
 class AdministrationWinTests(unittest.TestCase):
     def test_prompt_requires_reader_facing_plain_english_win_explanation(self) -> None:
@@ -170,6 +207,8 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertIn("never substitute a quotation", instructions)
         self.assertIn("standalone news briefing for a senior executive", instructions)
         self.assertIn("never mention intake methods", instructions)
+        self.assertIn("in military", instructions)
+        self.assertIn("never discuss whether a story is or is not", instructions)
 
     def test_ai_cannot_mark_required_supplemental_record_irrelevant(self) -> None:
         supplemental = record(
@@ -323,6 +362,78 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertEqual(
             validated["executive_summary"],
             "FAA advanced a new BVLOS action affecting drone operations.",
+        )
+
+    def test_executive_summary_removes_win_eligibility_commentary(self) -> None:
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": (
+                    "None of the stories qualifies as an Administration Win. "
+                    "The Army expanded its autonomous aircraft program."
+                ),
+                "what_to_watch": [],
+                "clusters": [cluster()],
+            },
+            [record()],
+        )
+
+        self.assertEqual(
+            validated["executive_summary"],
+            "The Army expanded its autonomous aircraft program.",
+        )
+
+    def test_duplicate_story_summary_is_omitted(self) -> None:
+        article = record(title="FAA authorizes routine BVLOS operations")
+        raw_cluster = cluster(
+            canonical_title="Ignored AI title",
+            summary="FAA authorizes routine BVLOS operations.",
+            section="UAS and Drones",
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": "FAA advanced routine drone operations.",
+                "what_to_watch": [],
+                "clusters": [raw_cluster],
+            },
+            [article],
+        )
+
+        story = news_engine.cluster_to_story(
+            validated["clusters"][0],
+            {article["id"]: article},
+        )
+
+        self.assertEqual(story["summary"], "")
+
+    def test_eo_section_is_normalized_and_gets_plain_english_summary(self) -> None:
+        article = record(title="FAA expands domestic UAS commercialization")
+        raw_cluster = cluster(
+            is_administration_win=True,
+            win_event_within_window=True,
+            win_direct_administration_nexus=True,
+            win_concrete_american_benefit=True,
+            win_foreign_company_expansion_only=False,
+            eo_number="EO 14307",
+            eo_section="Sec. 3",
+            win_explanation="FAA expanded a domestic UAS commercialization program.",
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": "FAA expanded domestic UAS capability.",
+                "what_to_watch": [],
+                "clusters": [raw_cluster],
+            },
+            [article],
+        )
+        story = news_engine.cluster_to_story(
+            validated["clusters"][0],
+            {article["id"]: article},
+        )
+
+        self.assertEqual(story["eo_section"], "Section 3")
+        self.assertEqual(
+            story["eo_section_summary"],
+            "advancing domestic commercialization of UAS technologies at scale",
         )
 
     def test_executive_summary_has_factual_fallback_if_all_copy_is_internal(
