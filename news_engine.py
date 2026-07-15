@@ -37,6 +37,14 @@ EXECUTIVE_SUMMARY_PROCESS_MARKERS = (
     "coverage accounting",
     "links extracted",
     "links represented",
+    "administration win",
+    "administrative win",
+    "qualifies as a win",
+    "qualify as a win",
+    "win eligibility",
+    "win criteria",
+    "win test",
+    "win for the administration",
 )
 
 OPENAI_TOKEN_PRICES = {
@@ -47,6 +55,7 @@ OPENAI_TOKEN_PRICES = {
 TOPIC_SECTIONS = [
     "UAS and Drones",
     "UAS Security and C-UAS",
+    "Military",
     "eVTOL Integration Pilot Program and AAM",
     "Autonomous Vehicles",
     "Other Advanced Transportation",
@@ -85,6 +94,14 @@ NEWS_QUERIES = {
         '("airspace sovereignty" OR "Section 2209") drone',
         '(DHS OR DOJ OR FAA OR Pentagon OR DoD) ("counter-UAS" OR "counter drone")',
         '("counter-drone" OR "counter UAS") (contract OR deployment OR test OR demonstration)',
+    ],
+    "Military": [
+        '(Pentagon OR DoD OR "Department of Defense") (drone OR UAS OR autonomous OR eVTOL)',
+        '(Army OR Navy OR "Air Force" OR Marines OR "Space Force") (drone OR UAS OR autonomous aircraft)',
+        '(DIU OR DARPA OR AFWERX OR SOCOM) (drone OR UAS OR autonomy OR advanced aviation)',
+        '(military OR defense) (counter-UAS OR counter-drone OR drone contract OR autonomous system)',
+        '(warfighter OR battlefield OR combat) (drone OR UAS OR autonomous vehicle)',
+        '(defense contract OR military procurement) (drone OR UAS OR aircraft OR autonomy)',
     ],
     "eVTOL Integration Pilot Program and AAM": [
         '"eVTOL Integration Pilot Program"',
@@ -180,6 +197,52 @@ EO_DISPLAY_NAMES = {
     "EO 14304": "Leading the World in Supersonic Flight",
 }
 
+EO_SECTION_SUMMARIES = {
+    "EO 14307": {
+        "Section 3": (
+            "advancing domestic commercialization of UAS technologies at scale"
+        ),
+        "Section 4(a)": "enabling routine BVLOS operations through FAA rulemaking",
+        "Section 4(c)": "using AI to expedite Part 107 waiver reviews",
+        "Section 5(a)": "updating the national civil-UAS integration roadmap",
+        "Section 5(b)": (
+            "using FAA UAS Test Ranges to accelerate testing and deployment"
+        ),
+        "Section 6": "accelerating safe U.S. eVTOL deployment through eIPP",
+        "Section 7": (
+            "strengthening the domestic drone industrial base and trusted supply chains"
+        ),
+    },
+    "EO 14305": {
+        "Section 3": (
+            "protecting the public and sensitive sites from unlawful UAS activity"
+        ),
+        "Section 4": (
+            "coordinating Federal airspace-security work through a dedicated task force"
+        ),
+        "Section 5": (
+            "advancing Section 2209 fixed-site restrictions and security coordination"
+        ),
+        "Section 8": (
+            "expanding protections for borders, airports, facilities, and military assets"
+        ),
+        "Section 9": (
+            "expanding counter-UAS capacity, training, and operational coordination"
+        ),
+    },
+    "EO 14304": {
+        "Section 2": (
+            "removing obsolete barriers and establishing noise-based supersonic standards"
+        ),
+        "Section 3": (
+            "coordinating supersonic research, testing, regulation, and integration"
+        ),
+        "Section 4": (
+            "aligning international civil-supersonic regulation and safety agreements"
+        ),
+    },
+}
+
 SOURCE_PREFERENCE = """
 Prefer, in order: official White House/Federal agency/Federal Register; original program or
 company announcement; Reuters/AP/major national outlet; recognized aviation,
@@ -212,11 +275,22 @@ PORTFOLIO_ANCHORS = (
     "nhtsa", "fmvss", "fmcsa", "part 555", "vehicle-to-everything", "v2x",
     "supersonic", "x-59", "boom overture", "hermeus", "high-speed rail",
     "bullet train", "maglev", "autonomous rail", "passenger rail",
+    "pentagon", "department of defense", "military drone", "defense drone",
+    "warfighter", "battlefield autonomy", "defense innovation unit", "afwerx",
 )
 
 OBVIOUS_NON_PORTFOLIO_MARKERS = (
     "psychedelic", "psilocybin", "mental health therapy", "drug therapy",
     "clinical trial", "medicare", "medicaid", "public health emergency",
+)
+
+MILITARY_SECTION_PATTERN = re.compile(
+    r"\b(?:department of defen[sc]e|defen[sc]e department|"
+    r"ministry of defen[sc]e|pentagon|dod|military|defen[sc]e|army|navy|air force|"
+    r"marine corps|marines|space force|armed forces|warfighters?|battlefield|"
+    r"combat|defen[sc]e contractor|defen[sc]e acquisition|nato|darpa|afwerx|"
+    r"socom|northcom|diu)\b",
+    re.IGNORECASE,
 )
 
 PUBLISHER_ONLY_HEADLINES = {
@@ -295,6 +369,38 @@ def normalize_title(value: str) -> str:
     value = re.sub(r"\s+-\s+[^-]{2,60}$", "", value)
     value = re.sub(r"[^a-z0-9]+", " ", value)
     return clean_spaces(value)
+
+
+def distinct_story_summary(title: str, summary: str) -> str:
+    """Return no summary when it merely repeats the headline."""
+    summary = clean_spaces(summary)
+    if not summary:
+        return ""
+    if normalize_title(summary) == normalize_title(title):
+        return ""
+    return summary
+
+
+def canonical_eo_section(value: str) -> str:
+    """Normalize common EO section spellings for display and lookup."""
+    section = clean_spaces(value)
+    match = re.fullmatch(
+        r"(?:sec(?:tion)?\.?\s*)?(\d+)(?:\s*\(?([a-z])\)?)?",
+        section,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return section
+    number, paragraph = match.groups()
+    suffix = f"({paragraph.lower()})" if paragraph else ""
+    return f"Section {number}{suffix}"
+
+
+def eo_section_summary(eo_number: str, section: str) -> str:
+    return EO_SECTION_SUMMARIES.get(eo_number, {}).get(
+        canonical_eo_section(section),
+        "",
+    )
 
 
 def stable_id(*parts: str) -> str:
@@ -603,8 +709,13 @@ def best_record_title(record: dict[str, Any]) -> str:
 def infer_section(record: dict[str, Any]) -> str:
     text = " ".join(
         str(record.get(key, ""))
-        for key in ("title", "summary", "description", "pasted_context", "search_section")
+        for key in (
+            "title", "summary", "description", "pasted_context", "search_section",
+            "source",
+        )
     ).lower()
+    if MILITARY_SECTION_PATTERN.search(text):
+        return "Military"
     if any(term in text for term in (
         "counter-uas", "counter uas", "c-uas", "counter drone", "drone detection",
         "drone mitigation", "airspace sovereignty", "unauthorized drone",
@@ -688,10 +799,15 @@ EDITORIAL SCOPE AND RELEVANCE
 - Produce a useful, fairly comprehensive briefing on:
   1. UAS and drones.
   2. UAS security and counter-UAS.
-  3. eIPP, eVTOL, powered-lift, and advanced air mobility.
-  4. Autonomous vehicles and automated driving.
-  5. Civil supersonics and genuinely advanced rail or transportation technology.
-  6. Directly relevant Federal actions.
+  3. Military applications, procurement, operations, testing, and defense technology.
+  4. eIPP, eVTOL, powered-lift, and advanced air mobility.
+  5. Autonomous vehicles and automated driving.
+  6. Civil supersonics and genuinely advanced rail or transportation technology.
+  7. Directly relevant Federal actions.
+- Put stories centered on the Department of Defense, a military service, defense acquisition,
+  military operations, bases, warfighters, battlefield use, or military-focused contractors
+  in Military. This includes military UAS, counter-UAS, autonomy, advanced aircraft, contracts,
+  tests, deployments, and exercises; do not bury them in generic UAS or Federal Actions.
 - Autonomous Vehicles explicitly includes robotaxis, privately owned automated vehicles,
   autonomous trucking, ADS-equipped commercial motor vehicles, NHTSA and FMCSA actions,
   FMVSS modernization, Part 555 exemptions, recalls, investigations, permits, state and
@@ -726,6 +842,7 @@ HEADLINES AND SUMMARIES
 - Never substitute a quotation, description, summary fragment, or surrounding email prose
   for an article headline. Do not invent or paraphrase a new headline.
 - Write 1-2 concise factual sentences, normally 35-70 words.
+- If the available description or summary merely repeats the headline, return an empty summary.
 - Select the strongest primary source using this preference: {SOURCE_PREFERENCE}
 - Preserve every required supplemental URL either as primary coverage or "Also covered by."
 
@@ -735,6 +852,8 @@ EXECUTIVE SUMMARY
   overall pattern and most consequential developments using only news facts.
 - Never mention intake methods, records, required or supplemental material, automated feeds,
   links or accounting, the editorial process, or how the briefing was assembled.
+- Never discuss whether a story is or is not a Trump Administration Win, whether it passed
+  the Win test, or why any story failed or satisfied Win eligibility. Report the news itself.
 
 TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST
 A story may be labeled a win only when ALL of the following are true:
@@ -768,7 +887,8 @@ STALE-NEWS EXAMPLES
   other conditions are met.
 
 - A positive private-sector story is not automatically an Administration win.
-- When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section.
+- When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section using
+  the form "Section 3" or "Section 4(a)" so the app can add its plain-English section summary.
 - Write one 30-55 word explanation that will be published verbatim in the email.
 - Make the explanation stand on its own for a reader who has not seen these instructions:
   name the Administration, agency, or federal program that acted; state what it actually
@@ -898,6 +1018,17 @@ def administration_win_is_eligible(raw: dict[str, Any]) -> bool:
     )
 
 
+def executive_summary_sentence_is_public(sentence: str) -> bool:
+    lowered = sentence.casefold()
+    if any(marker in lowered for marker in EXECUTIVE_SUMMARY_PROCESS_MARKERS):
+        return False
+    mentions_win = bool(re.search(r"\bwins?\b", lowered))
+    mentions_administration = bool(
+        re.search(r"\badministrat(?:ion|ive)\b", lowered)
+    )
+    return not (mentions_win and mentions_administration)
+
+
 def sanitize_executive_summary(
     value: str,
     clusters: list[dict[str, Any]],
@@ -909,10 +1040,7 @@ def sanitize_executive_summary(
         sentence
         for sentence in sentences
         if sentence
-        and not any(
-            marker in sentence.casefold()
-            for marker in EXECUTIVE_SUMMARY_PROCESS_MARKERS
-        )
+        and executive_summary_sentence_is_public(sentence)
     ]
     if public_sentences:
         return clean_spaces(" ".join(public_sentences))
@@ -964,7 +1092,9 @@ def validate_analysis(
 
         section = raw.get("section", "")
         inferred_section = infer_section(lookup[primary])
-        if section not in TOPIC_SECTIONS or (
+        if inferred_section == "Military":
+            section = "Military"
+        elif section not in TOPIC_SECTIONS or (
             section == "Federal Actions"
             and inferred_section == "Autonomous Vehicles"
         ):
@@ -983,7 +1113,7 @@ def validate_analysis(
             eo_section = ""
             win_explanation = ""
         else:
-            eo_section = clean_spaces(raw.get("eo_section", ""))
+            eo_section = canonical_eo_section(raw.get("eo_section", ""))
             win_explanation = clean_spaces(raw.get("win_explanation", ""))
 
         clusters.append(
@@ -1016,8 +1146,7 @@ def validate_analysis(
             or record.get("summary", "")
             or record.get("pasted_context", "")
         )
-        if not description or description.casefold() == title.casefold():
-            description = f"{title}."
+        description = distinct_story_summary(title, description)
         clusters.append(
             {
                 "cluster_id": stable_id("required", article_id),
@@ -1086,6 +1215,7 @@ def cluster_to_story(
         or primary.get("summary", "")
         or primary.get("pasted_context", "")
     )
+    summary = distinct_story_summary(title, summary)
 
     return {
         "id": cluster["cluster_id"],
@@ -1105,6 +1235,9 @@ def cluster_to_story(
         "eo_number": cluster["eo_number"],
         "eo_name": EO_DISPLAY_NAMES.get(cluster["eo_number"], ""),
         "eo_section": cluster["eo_section"],
+        "eo_section_summary": eo_section_summary(
+            cluster["eo_number"], cluster["eo_section"]
+        ),
         "win_explanation": cluster["win_explanation"],
         "also_covered": related,
         "contains_supplemental": any(
@@ -1124,7 +1257,7 @@ def arrange_sections(stories: list[dict[str, Any]]) -> dict[str, list[dict[str, 
     )
 
     wins = [item for item in relevant if item["is_administration_win"]]
-    sections["Trump Administration Wins"] = wins[:8]
+    sections["Trump Administration Wins"] = wins
     win_ids = {item["id"] for item in sections["Trump Administration Wins"]}
 
     eligible_top = [
