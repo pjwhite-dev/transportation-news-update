@@ -78,13 +78,19 @@ NEWS_QUERIES = {
         '(electric aircraft OR eVTOL) (medical logistics OR cargo OR passenger) United States',
     ],
     "Autonomous Vehicles": [
-        '("autonomous vehicle" OR "automated vehicle") (NHTSA OR DOT OR United States OR U.S.)',
-        '(robotaxi OR "self-driving") (deployment OR expansion OR permit OR regulation) United States',
-        '("automated driving system" OR ADS) (NHTSA OR FMVSS OR exemption OR rulemaking)',
-        '("autonomous truck" OR "driverless truck") United States',
-        '(Waymo OR Cruise OR Zoox OR Tesla OR Aurora OR Motional) (robotaxi OR autonomous vehicle)',
-        '("autonomous vehicle" OR robotaxi) (crash OR safety OR investigation OR recall)',
-        '(state legislature OR governor OR city) ("autonomous vehicle" OR robotaxi)',
+        '("autonomous vehicle" OR "automated vehicle" OR "automated driving system") (NHTSA OR DOT OR United States OR U.S.)',
+        '(robotaxi OR "self-driving" OR driverless) (deployment OR expansion OR permit OR regulation OR operations) United States',
+        '("automated driving system" OR "ADS-equipped" OR driverless) (NHTSA OR FMVSS OR exemption OR rulemaking OR compliance)',
+        '(FMVSS OR "Federal Motor Vehicle Safety Standards") ("automated driving" OR autonomous OR driverless OR ADS)',
+        '("FMVSS 102" OR "FMVSS 103" OR "FMVSS 104" OR "FMVSS 108") (ADS OR autonomous OR automated)',
+        '("Part 555" OR "temporary exemption") (autonomous vehicle OR automated driving OR ADS)',
+        '(FMCSA OR "commercial motor vehicle") ("automated driving system" OR autonomous truck OR driverless truck)',
+        '("autonomous truck" OR "driverless truck" OR "self-driving truck") (deployment OR operations OR regulation OR safety) United States',
+        '(Waymo OR Cruise OR Zoox OR Tesla OR Aurora OR Motional OR Gatik OR Kodiak OR Torc OR Waabi OR Nuro OR "May Mobility") (robotaxi OR autonomous vehicle OR driverless OR self-driving)',
+        '("autonomous vehicle" OR robotaxi OR "automated driving system") (crash OR safety OR investigation OR recall OR enforcement)',
+        '(state legislature OR governor OR city OR DMV) ("autonomous vehicle" OR robotaxi OR driverless)',
+        '("vehicle-to-everything" OR V2X OR "roadside infrastructure") ("automated driving" OR autonomous vehicle)',
+        '("autonomous vehicle" OR "automated driving") (simulation OR mapping OR validation OR testing) United States',
     ],
     "Other Advanced Transportation": [
         '("civil supersonic" OR "commercial supersonic" OR "quiet supersonic") United States',
@@ -106,6 +112,11 @@ FEDERAL_REGISTER_TERMS = [
     "powered-lift",
     "autonomous vehicle",
     "automated driving",
+    "automated driving system",
+    "ADS-equipped commercial motor vehicle",
+    "Federal Motor Vehicle Safety Standards",
+    "FMVSS",
+    "Part 555",
     "motor vehicle safety",
     "supersonic",
     "high-speed rail",
@@ -158,6 +169,63 @@ transportation, security, or technology trade publication; credible local report
 aggregator. Exclude stock promotion, valuation pieces, product lists, celebrity commentary,
 generic market reports, and obvious keyword collisions.
 """.strip()
+
+
+TRANSPORTATION_AGENCY_MARKERS = (
+    "department of transportation",
+    "federal aviation administration",
+    "national highway traffic safety administration",
+    "federal motor carrier safety administration",
+    "federal railroad administration",
+    "federal transit administration",
+    "pipeline and hazardous materials safety administration",
+    "maritime administration",
+    "transportation security administration",
+)
+
+PORTFOLIO_ANCHORS = (
+    "drone", "unmanned aircraft", "uncrewed aircraft", "uas", "counter-uas",
+    "counter uas", "c-uas", "counter drone", "airspace sovereignty",
+    "beyond visual line of sight", "bvlos", "remote id", "part 107",
+    "advanced air mobility", "aam", "evtol", "air taxi", "powered-lift",
+    "vertiport", "electric aircraft", "autonomous vehicle", "automated vehicle",
+    "automated driving", "automated driving system", "ads-equipped", "robotaxi",
+    "self-driving", "driverless", "autonomous truck", "driverless truck",
+    "nhtsa", "fmvss", "fmcsa", "part 555", "vehicle-to-everything", "v2x",
+    "supersonic", "x-59", "boom overture", "hermeus", "high-speed rail",
+    "bullet train", "maglev", "autonomous rail", "passenger rail",
+)
+
+OBVIOUS_NON_PORTFOLIO_MARKERS = (
+    "psychedelic", "psilocybin", "mental health therapy", "drug therapy",
+    "clinical trial", "medicare", "medicaid", "public health emergency",
+)
+
+
+def automated_record_is_portfolio_relevant(record: dict[str, Any]) -> bool:
+    """Conservative pre-AI guard against obvious keyword collisions."""
+    if record.get("required_include", False):
+        return True
+
+    text = clean_spaces(
+        " ".join(
+            str(record.get(key, ""))
+            for key in ("title", "summary", "description", "source")
+        )
+    ).casefold()
+
+    has_anchor = any(marker in text for marker in PORTFOLIO_ANCHORS)
+    has_transport_agency = any(
+        marker in text for marker in TRANSPORTATION_AGENCY_MARKERS
+    )
+
+    if record.get("origin") == "Federal Register API":
+        return has_transport_agency or has_anchor
+
+    if any(marker in text for marker in OBVIOUS_NON_PORTFOLIO_MARKERS):
+        return has_anchor
+
+    return True
 
 
 def clean_spaces(value: str) -> str:
@@ -358,7 +426,12 @@ def collect_articles(
     federal_items, federal_errors = fetch_federal_register(window_start, window_end)
     items.extend(federal_items)
     errors.extend(federal_errors)
-    return deduplicate_articles(items), errors
+
+    filtered = [
+        item for item in items
+        if automated_record_is_portfolio_relevant(item)
+    ]
+    return deduplicate_articles(filtered), errors
 
 
 
@@ -375,6 +448,10 @@ def analysis_schema() -> dict[str, Any]:
             "canonical_title": {"type": "string"},
             "summary": {"type": "string"},
             "is_administration_win": {"type": "boolean"},
+            "win_event_within_window": {"type": "boolean"},
+            "win_direct_administration_nexus": {"type": "boolean"},
+            "win_concrete_american_benefit": {"type": "boolean"},
+            "win_foreign_company_expansion_only": {"type": "boolean"},
             "eo_number": {"type": "string"},
             "eo_section": {"type": "string"},
             "win_explanation": {"type": "string"},
@@ -384,7 +461,9 @@ def analysis_schema() -> dict[str, Any]:
         "required": [
             "cluster_id", "article_ids", "primary_article_id", "section",
             "relevant", "importance", "canonical_title", "summary",
-            "is_administration_win", "eo_number", "eo_section",
+            "is_administration_win", "win_event_within_window",
+            "win_direct_administration_nexus", "win_concrete_american_benefit",
+            "win_foreign_company_expansion_only", "eo_number", "eo_section",
             "win_explanation", "confidence", "exclude_reason",
         ],
         "additionalProperties": False,
@@ -439,7 +518,11 @@ def infer_section(record: dict[str, Any]) -> str:
         return "eVTOL Integration Pilot Program and AAM"
     if any(term in text for term in (
         "autonomous vehicle", "automated vehicle", "robotaxi", "self-driving",
-        "driverless", "automated driving", "waymo", "zoox",
+        "driverless", "automated driving", "automated driving system",
+        "ads-equipped", "autonomous truck", "driverless truck", "waymo",
+        "cruise", "zoox", "aurora", "motional", "gatik", "kodiak",
+        "torc", "waabi", "nuro", "may mobility", "nhtsa", "fmvss",
+        "fmcsa", "part 555", "vehicle-to-everything", "v2x",
     )):
         return "Autonomous Vehicles"
     if any(term in text for term in (
@@ -495,14 +578,31 @@ MANDATORY SUPPLEMENTAL-ITEM RULE
 - Never use generic filler such as "Imported from the supplemental daily news email."
 - Different events must remain separate stories. Merge only true same-event coverage.
 
-EDITORIAL PURPOSE
-- Produce a useful, fairly comprehensive briefing on U.S. drones, UAS security and C-UAS,
-  eIPP/AAM, autonomous vehicles, civil supersonics, rail innovation, and federal actions.
+EDITORIAL SCOPE AND RELEVANCE
+- Produce a useful, fairly comprehensive briefing on:
+  1. UAS and drones.
+  2. UAS security and counter-UAS.
+  3. eIPP, eVTOL, powered-lift, and advanced air mobility.
+  4. Autonomous vehicles and automated driving.
+  5. Civil supersonics and genuinely advanced rail or transportation technology.
+  6. Directly relevant Federal actions.
+- Autonomous Vehicles explicitly includes robotaxis, privately owned automated vehicles,
+  autonomous trucking, ADS-equipped commercial motor vehicles, NHTSA and FMCSA actions,
+  FMVSS modernization, Part 555 exemptions, recalls, investigations, permits, state and
+  local laws, deployments, testing, simulation, mapping, and V2X when directly connected
+  to automated driving.
+- Place AV-specific Federal actions, including FMVSS and NHTSA/FMCSA ADS actions, in the
+  Autonomous Vehicles section rather than the generic Federal Actions section.
 - Include substantive operational, commercial, technical, regulatory, state, research,
   manufacturing, contract, deployment, safety, and enforcement developments.
-- Exclude only obvious keyword collisions, pure stock promotion, generic market-size reports,
-  consumer-product lists, and unrelated material—except that required supplemental items
-  must still be included in the closest reasonable portfolio section.
+- Be strict about relevance. Exclude health policy, medicine, pharmaceuticals, HHS, NIH,
+  FDA, psychedelic therapies, generic AI, unrelated energy stories, and other keyword
+  collisions unless the record has a direct and material connection to one of the
+  transportation categories above.
+- Exclude pure stock promotion, generic market-size reports, consumer-product lists,
+  celebrity commentary, and articles that merely repeat old news without a new development.
+- A required supplemental item must still be accounted for, but unrelated automated records
+  must be marked relevant=false and excluded.
 - The voice may be confidently pro-American and Administration-forward, but credit President
   Trump or his Administration only where a direct, supportable connection exists.
 
@@ -523,10 +623,37 @@ EXECUTIVE SUMMARY
 - Write 2-3 sentences, 60-100 words.
 - Describe the day's overall pattern and most consequential developments.
 
-TRUMP ADMINISTRATION WINS
-- A win requires a direct, supportable connection to an Administration action, EO mandate,
-  rule, approval, federal program, enforcement result, industrial-base outcome, or removal
-  of a regulatory barrier.
+TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST
+A story may be labeled a win only when ALL of the following are true:
+1. The underlying event, decision, milestone, approval, deployment, contract, enforcement
+   result, or rulemaking action actually occurred during the stated 24-hour coverage window.
+   Publication of a new article during the window is not enough.
+2. There is a direct, supportable causal or operational nexus to a Trump Administration
+   action, EO mandate, rule, approval, federal program, enforcement action, or removal of
+   a regulatory barrier. Do not infer credit merely because a story is generally consistent
+   with an EO.
+3. The event produces a concrete American benefit: U.S. capability, domestic manufacturing,
+   American jobs, public safety, national security, operational deployment, regulatory
+   progress, or removal of a barrier for American innovation.
+4. The story is not merely a foreign-headquartered company entering, expanding in, selling
+   into, or investing in the United States. Foreign-company U.S. expansion alone is NOT an
+   Administration win and must remain an ordinary sector story.
+
+Set the four structured win fields carefully:
+- win_event_within_window=true only for a genuinely new event in the 24-hour window.
+- win_direct_administration_nexus=true only when the record itself supports the nexus.
+- win_concrete_american_benefit=true only for a specific, tangible U.S. result.
+- win_foreign_company_expansion_only=true when the claimed benefit is simply a foreign
+  company's U.S. entry, expansion, sales, investment, office, or facility.
+
+STALE-NEWS EXAMPLES
+- An article published today discussing an NPRM issued weeks ago is not a new win.
+- A retrospective, explainer, opinion piece, or recap of an earlier Administration action
+  is not a win.
+- A new comment deadline, hearing, OIRA movement, final rule, approval, contract award,
+  implementation milestone, or operational launch during the window may qualify if the
+  other conditions are met.
+
 - A positive private-sector story is not automatically an Administration win.
 - When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section.
 - Write one 30-55 word explanation focused on the concrete American result.
@@ -672,6 +799,34 @@ def validate_analysis(
             eo_number = ""
 
         includes_required = any(article_id in required for article_id in ids)
+
+        win_event_within_window = bool(raw.get("win_event_within_window", False))
+        win_direct_nexus = bool(
+            raw.get("win_direct_administration_nexus", False)
+        )
+        win_american_benefit = bool(
+            raw.get("win_concrete_american_benefit", False)
+        )
+        win_foreign_expansion_only = bool(
+            raw.get("win_foreign_company_expansion_only", False)
+        )
+        validated_win = (
+            bool(raw.get("is_administration_win", False))
+            and win_event_within_window
+            and win_direct_nexus
+            and win_american_benefit
+            and not win_foreign_expansion_only
+            and bool(eo_number)
+        )
+
+        if not validated_win:
+            eo_number = ""
+            eo_section = ""
+            win_explanation = ""
+        else:
+            eo_section = clean_spaces(raw.get("eo_section", ""))
+            win_explanation = clean_spaces(raw.get("win_explanation", ""))
+
         clusters.append(
             {
                 "cluster_id": clean_spaces(raw.get("cluster_id", "")) or stable_id(*ids),
@@ -682,10 +837,10 @@ def validate_analysis(
                 "importance": max(1, min(10, int(raw.get("importance", 1) or 1))),
                 "canonical_title": clean_spaces(raw.get("canonical_title", "")),
                 "summary": clean_spaces(raw.get("summary", "")),
-                "is_administration_win": bool(raw.get("is_administration_win", False)),
+                "is_administration_win": validated_win,
                 "eo_number": eo_number,
-                "eo_section": clean_spaces(raw.get("eo_section", "")),
-                "win_explanation": clean_spaces(raw.get("win_explanation", "")),
+                "eo_section": eo_section,
+                "win_explanation": win_explanation,
                 "confidence": raw.get("confidence", "low"),
                 "exclude_reason": clean_spaces(raw.get("exclude_reason", "")),
             }
@@ -890,7 +1045,11 @@ def generate_briefing_from_records(
     start = datetime.fromisoformat(raw_feed["window_start"]).astimezone(EASTERN)
     end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
 
-    automated = [dict(item) for item in raw_feed.get("articles", [])]
+    raw_automated = [dict(item) for item in raw_feed.get("articles", [])]
+    automated = [
+        item for item in raw_automated
+        if automated_record_is_portfolio_relevant(item)
+    ]
     supplemental = []
     for item in supplemental_records:
         record = dict(item)
@@ -936,7 +1095,9 @@ def generate_briefing_from_records(
         "sections": arranged,
         "source_errors": raw_feed.get("source_errors", []),
         "candidate_count": len(combined),
+        "raw_automated_candidate_count": len(raw_automated),
         "automated_candidate_count": len(automated),
+        "automated_filtered_out_count": len(raw_automated) - len(automated),
         "supplemental_count": len(supplemental),
         "supplemental_accounted_count": analysis["required_accounted_count"],
         "candidate_counts": raw_feed.get("candidate_counts", {}),
