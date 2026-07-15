@@ -29,6 +29,9 @@ Streamlit app must never call OpenAI.
 - Clean malformed URL wrappers such as `<https://example.com/article>`, remove
   trailing punctuation, remove duplicate URLs, and associate each link with a
   nearby pasted headline and context.
+- Fetch and use the linked article's actual page headline when metadata is
+  available. A nearby description, quotation, or sentence fragment must never
+  replace the article headline merely because it appears beside the URL.
 - Let the editor review and correct extracted headlines before AI processing.
 - Run OpenAI only after the authenticated owner clicks a build button.
 - Process the automated feed and all supplemental records together in one
@@ -102,6 +105,9 @@ build, with an Include checkbox for every item. Carry those selections into
 Review & Edit, where the owner can change them again. If an already-open browser
 session contains a briefing created before tracker support was added, populate
 the tracker deterministically without requiring another AI build.
+Use concise noun-style action labels such as “Routine BVLOS drone operations /
+Part 108”; do not begin tracker labels with boilerplate such as “Create rules
+for,” “Enable,” “Modernize,” or “Decide.”
 
 Do not add “new since yesterday” or “materially changed” badges. The email is
 already limited to new developments. Do not add By-the-Numbers, Today-at-a-
@@ -171,6 +177,11 @@ Preserve the **Review & Edit** tab. The authenticated editor must be able to:
 - Edit headlines and summaries.
 - Edit Administration Win explanations.
 - Edit the Executive Summary and What to Watch.
+
+The Executive Summary must read as a polished, standalone news briefing for a
+senior executive. It must never expose intake or editorial-process language such
+as “required supplemental,” automated feed, records, links extracted or
+represented, accounting, or how the briefing was assembled.
 
 Preserve the Outlook-specific renderer and controls:
 

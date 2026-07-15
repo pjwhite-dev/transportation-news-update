@@ -1252,6 +1252,15 @@ with build_tab:
                     fetch_metadata=fetch_metadata,
                 )
             st.session_state[f"supplemental_records_{build_key}"] = records
+            # Re-previewing the same URL must refresh stale title/source widget
+            # state with the newly fetched page metadata.
+            for record in records:
+                st.session_state[
+                    f"supp_title_{build_key}_{record['id']}"
+                ] = record.get("title", "")
+                st.session_state[
+                    f"supp_source_{build_key}_{record['id']}"
+                ] = record.get("source", "")
             if records:
                 st.success(
                     f"Found {len(records)} unique supplemental link"
@@ -1312,6 +1321,8 @@ with build_tab:
                             f"supp_title_{build_key}_{record['id']}",
                             record.get("title", ""),
                         ).strip()
+                        if edited["title"] != record.get("title", "").strip():
+                            edited["editor_title_override"] = edited["title"]
                         edited["pasted_headline"] = edited["title"]
                         edited["source"] = st.session_state.get(
                             f"supp_source_{build_key}_{record['id']}",

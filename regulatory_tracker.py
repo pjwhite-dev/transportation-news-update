@@ -10,10 +10,7 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "section-2209-uafr",
         "agency": "FAA",
-        "action": (
-            "Create UAS flight restrictions around eligible fixed sites "
-            "under Section 2209 (proposed 14 CFR part 74)"
-        ),
+        "action": "Section 2209 fixed-site UAS flight restrictions / Part 74",
         "docket": "FAA-2026-4558",
         "comment_deadline": "2026-08-05",
         "post_comment_status": "Pending final rule",
@@ -23,8 +20,7 @@ TRACKED_RULEMAKINGS = (
         "id": "supersonic-overland-flight",
         "agency": "FAA",
         "action": (
-            "Enable civil supersonic overland flight and establish an interim "
-            "noise standard"
+            "Civil supersonic overland flight / interim noise standard"
         ),
         "docket": "FAA-2026-6935",
         "comment_deadline": "2026-08-17",
@@ -34,10 +30,7 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "bvlos-part-108",
         "agency": "FAA and TSA",
-        "action": (
-            "Create rules for routine BVLOS drone operations under proposed "
-            "parts 108 and 146"
-        ),
+        "action": "Routine BVLOS drone operations / Part 108",
         "docket": "FAA-2025-1908",
         "comment_deadline": "2026-02-11",
         "post_comment_status": "Pending final rule",
@@ -47,7 +40,7 @@ TRACKED_RULEMAKINGS = (
         "id": "fmvss-102-ads",
         "agency": "NHTSA",
         "action": (
-            "Modernize FMVSS No. 102 for ADS-equipped vehicles without manual "
+            "FMVSS No. 102 for ADS-equipped vehicles without manual "
             "driving controls"
         ),
         "docket": "NHTSA-2026-0628",
@@ -59,7 +52,7 @@ TRACKED_RULEMAKINGS = (
         "id": "fmvss-103-104-ads",
         "agency": "NHTSA",
         "action": (
-            "Modernize FMVSS Nos. 103 and 104 for ADS-equipped vehicles without "
+            "FMVSS Nos. 103 and 104 for ADS-equipped vehicles without "
             "manual driving controls"
         ),
         "docket": "NHTSA-2026-0629",
@@ -70,7 +63,7 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "fmvss-110-ads",
         "agency": "NHTSA",
-        "action": "Modernize FMVSS No. 110 for ADS-equipped vehicles",
+        "action": "FMVSS No. 110 for ADS-equipped vehicles",
         "docket": "NHTSA-2026-0630",
         "comment_deadline": "2026-05-01",
         "post_comment_status": "Pending NHTSA action",
@@ -80,7 +73,7 @@ TRACKED_RULEMAKINGS = (
         "id": "zoox-part-555",
         "agency": "NHTSA",
         "action": (
-            "Decide Zoox's Part 555 temporary exemption petition covering FMVSS "
+            "Zoox Part 555 temporary exemption petition / FMVSS "
             "Nos. 103, 104, 108, 111, 135, 201, 205, and 208"
         ),
         "docket": "NHTSA-2025-0523",
