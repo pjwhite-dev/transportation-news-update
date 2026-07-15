@@ -361,6 +361,7 @@ def collect_articles(
     return deduplicate_articles(items), errors
 
 
+
 def analysis_schema() -> dict[str, Any]:
     cluster = {
         "type": "object",
@@ -400,6 +401,57 @@ def analysis_schema() -> dict[str, Any]:
     }
 
 
+def best_record_title(record: dict[str, Any]) -> str:
+    candidates = [
+        record.get("title", ""),
+        record.get("original_title", ""),
+        record.get("pasted_headline", ""),
+        record.get("pasted_context", ""),
+    ]
+    source = clean_spaces(record.get("source", "")).casefold()
+    for value in candidates:
+        value = clean_spaces(value)
+        if not value:
+            continue
+        if value.casefold() == source:
+            continue
+        if value.lower().startswith(("http://", "https://")):
+            continue
+        if len(value) >= 10:
+            return value[:240]
+    return clean_spaces(record.get("url", "Untitled supplemental item"))
+
+
+def infer_section(record: dict[str, Any]) -> str:
+    text = " ".join(
+        str(record.get(key, ""))
+        for key in ("title", "summary", "description", "pasted_context", "search_section")
+    ).lower()
+    if any(term in text for term in (
+        "counter-uas", "counter uas", "c-uas", "counter drone", "drone detection",
+        "drone mitigation", "airspace sovereignty", "unauthorized drone",
+    )):
+        return "UAS Security and C-UAS"
+    if any(term in text for term in (
+        "evtol", "eipp", "advanced air mobility", "air taxi", "powered-lift",
+        "vertiport", "electric aircraft",
+    )):
+        return "eVTOL Integration Pilot Program and AAM"
+    if any(term in text for term in (
+        "autonomous vehicle", "automated vehicle", "robotaxi", "self-driving",
+        "driverless", "automated driving", "waymo", "zoox",
+    )):
+        return "Autonomous Vehicles"
+    if any(term in text for term in (
+        "supersonic", "x-59", "high-speed rail", "bullet train", "maglev",
+        "passenger rail", "autonomous rail",
+    )):
+        return "Other Advanced Transportation"
+    if record.get("origin") == "Federal Register API":
+        return "Federal Actions"
+    return "UAS and Drones"
+
+
 def prompt_messages(
     articles: list[dict[str, Any]],
     window_start: datetime,
@@ -408,86 +460,87 @@ def prompt_messages(
     compact = [
         {
             "id": item["id"],
-            "search_section": item["search_section"],
-            "title": item["title"],
+            "search_section": item.get("search_section", ""),
+            "title": item.get("title", ""),
+            "original_title": item.get("original_title", ""),
             "summary": item.get("summary", ""),
-            "source": item["source"],
-            "published": item["published"],
-            "origin": item["origin"],
+            "description": item.get("description", ""),
+            "pasted_headline": item.get("pasted_headline", ""),
+            "pasted_context": item.get("pasted_context", ""),
+            "source": item.get("source", ""),
+            "published": item.get("published", ""),
+            "origin": item.get("origin", ""),
+            "required_include": bool(item.get("required_include", False)),
         }
         for item in articles
     ]
 
     developer = f"""
-You are the senior editor of a concise daily U.S. advanced-transportation news update.
-The coverage window is exactly {window_start.isoformat()} through {window_end.isoformat()}.
-Analyze only the supplied public-source records. Do not invent facts or infer details that
-are not supported by a headline or snippet.
+You are the senior editor of a daily U.S. advanced-transportation news update.
+The coverage window is {window_start.isoformat()} through {window_end.isoformat()}.
+Analyze only the supplied public-source records. Do not invent facts.
+
+The records combine:
+1. An automated raw news collection from the preceding 24 hours.
+2. Supplemental items pasted by the editor from another daily news email.
+
+MANDATORY SUPPLEMENTAL-ITEM RULE
+- Every record with required_include=true MUST be accounted for.
+- A required item must either be the primary article in a distinct story or appear in
+  article_ids as genuine same-event coverage of another story.
+- Never discard a required item merely because it is low importance or imperfectly formatted.
+- Never use a publisher name such as "MSN", "AOL", or "Yahoo" as the canonical headline.
+- Use the pasted headline, surrounding context, fetched metadata, and URL information to
+  write a specific factual headline.
+- Never use generic filler such as "Imported from the supplemental daily news email."
+- Different events must remain separate stories. Merge only true same-event coverage.
 
 EDITORIAL PURPOSE
-- Produce a short, useful executive briefing for readers focused on U.S. drones, C-UAS,
-  advanced air mobility, autonomous vehicles, civil supersonics, rail innovation, and
-  related federal actions.
-- The voice may be administration-forward and confidently pro-American. Clearly credit
-  President Trump or his Administration only when a direct, supportable causal connection
-  exists. Do not use campaign slogans, advocacy language, or unsupported praise.
-- This is a news aggregator as well as an executive briefing. Include every substantively
-  relevant U.S. sector development, even when it is operational, commercial, technical,
-  state-level, research-oriented, or industry-led rather than a major federal policy action.
-- Do not reject a relevant story merely because it is not transformational. Exclude only
-  genuinely tangential, duplicative, promotional, or low-information material.
-
-EXECUTIVE SUMMARY
-- Write 2 or 3 sentences, 55-90 words total.
-- Explain the overall pattern of the day rather than listing every headline.
-- Identify the most consequential development and major movement across the portfolio.
-- Mention that a field was quiet only when useful.
-
-RELEVANCE
-- Include credible U.S. developments involving deployments, approvals, waivers,
-  certifications, testing, manufacturing, contracts, partnerships, investment, facilities,
-  research, enforcement, legislation, rulemaking, safety, operations, and market expansion.
-- Exclude consumer products, generic AI/software features, celebrity commentary, pure stock
-  promotion or valuation pieces, generic market-size reports, routine foreign news without
-  a material U.S. implication, and keyword collisions.
-- A story may be relevant with a low importance score. Use relevance to answer "does this
-  belong in this portfolio?" and importance to answer "how prominently should it appear?"
-- Aim to retain roughly 3-8 distinct stories per topic when the supplied candidates support
-  that many, without inventing or padding.
+- Produce a useful, fairly comprehensive briefing on U.S. drones, UAS security and C-UAS,
+  eIPP/AAM, autonomous vehicles, civil supersonics, rail innovation, and federal actions.
+- Include substantive operational, commercial, technical, regulatory, state, research,
+  manufacturing, contract, deployment, safety, and enforcement developments.
+- Exclude only obvious keyword collisions, pure stock promotion, generic market-size reports,
+  consumer-product lists, and unrelated material—except that required supplemental items
+  must still be included in the closest reasonable portfolio section.
+- The voice may be confidently pro-American and Administration-forward, but credit President
+  Trump or his Administration only where a direct, supportable connection exists.
 
 CLUSTERING
-- Cluster only articles covering the same concrete event, announcement, rule, deployment,
+- Cluster only records covering the same concrete event, announcement, rule, deployment,
   flight, contract, facility, study, or government action.
-- Sharing a broad topic is not enough. Different cities, companies, deployments, rules,
-  contracts, or studies are separate stories.
-- Most clusters should have 1-4 articles. More than five should be exceptionally rare.
-- Avoid umbrella headlines such as "market activity grows" or "stories span...".
+- Different companies, cities, contracts, tests, rules, or deployments are separate stories.
+- Most clusters should contain 1-4 records.
+- Do not create broad umbrella stories such as "drone activity expands" or "market activity grows."
 
-SUMMARIES
-- Canonical titles should be factual and specific.
-- Write 1-2 sentences, no more than 60 words, using only supplied information.
+HEADLINES AND SUMMARIES
+- Every distinct story must receive a specific canonical headline.
+- Write 1-2 concise factual sentences, normally 35-70 words.
 - Select the strongest primary source using this preference: {SOURCE_PREFERENCE}
+- Preserve every required supplemental URL either as primary coverage or "Also covered by."
+
+EXECUTIVE SUMMARY
+- Write 2-3 sentences, 60-100 words.
+- Describe the day's overall pattern and most consequential developments.
 
 TRUMP ADMINISTRATION WINS
 - A win requires a direct, supportable connection to an Administration action, EO mandate,
-  rule, approval, federal program, enforcement result, domestic-industrial-base outcome,
-  or removal of a regulatory barrier.
+  rule, approval, federal program, enforcement result, industrial-base outcome, or removal
+  of a regulatory barrier.
 - A positive private-sector story is not automatically an Administration win.
-- For a true win, use exactly one of EO 14307, EO 14305, or EO 14304 only when applicable.
-  If another verified Administration action is the basis, leave EO fields blank.
-- Write one 30-55 word win explanation focused on the concrete American result. The app
-  displays the EO's full title separately, so do not begin "This is a win for EO...".
-- If the causal connection is uncertain, set is_administration_win false.
+- When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section.
+- Write one 30-55 word explanation focused on the concrete American result.
+- The app displays the full EO name separately, so do not begin "This is a win for EO...".
 
 WHAT TO WATCH
-- Return 0-3 concise items, each no more than 28 words.
-- Include only pending actions, expected next steps, deadlines, or unresolved developments
-  reasonably supported by the supplied stories. Do not invent forecasts.
+- Return 0-3 concise, supportable next steps, deadlines, or unresolved developments.
 
 {EO_REFERENCE}
 """.strip()
 
-    user = "Analyze these candidate records:\n" + json.dumps(compact, ensure_ascii=False)
+    user = "Build the briefing from these records:\n" + json.dumps(
+        compact, ensure_ascii=False
+    )
     return [
         {"role": "developer", "content": developer},
         {"role": "user", "content": user},
@@ -537,7 +590,7 @@ def analyze_articles(
         "model": model,
         "input": prompt_messages(articles, window_start, window_end),
         "reasoning": {"effort": "none"},
-        "max_output_tokens": 16000,
+        "max_output_tokens": 20000,
         "store": False,
         "text": {
             "format": {
@@ -559,7 +612,7 @@ def analyze_articles(
                     "Content-Type": "application/json",
                 },
                 json=payload,
-                timeout=240,
+                timeout=300,
             )
         except requests.RequestException as exc:
             errors.append(f"network error: {exc}")
@@ -574,7 +627,7 @@ def analyze_articles(
             usage = data.get("usage") or {}
             return analysis, usage, estimate_cost(model, usage)
 
-        detail = clean_spaces(response.text)[:700]
+        detail = clean_spaces(response.text)[:900]
         errors.append(f"HTTP {response.status_code}: {detail}")
         if response.status_code in TRANSIENT_OPENAI_STATUS_CODES and attempt < 3:
             time.sleep((2 ** attempt) + random.uniform(0.2, 1.0))
@@ -588,16 +641,22 @@ def validate_analysis(
     analysis: dict[str, Any],
     articles: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    known = {item["id"] for item in articles}
+    lookup = {item["id"]: item for item in articles}
+    known = set(lookup)
+    required = {
+        item["id"] for item in articles if item.get("required_include", False)
+    }
     clusters: list[dict[str, Any]] = []
     used: set[str] = set()
 
     for raw in analysis.get("clusters", []):
-        ids = [article_id for article_id in raw.get("article_ids", []) if article_id in known]
+        ids = [
+            article_id for article_id in raw.get("article_ids", [])
+            if article_id in known and article_id not in used
+        ]
         primary = raw.get("primary_article_id", "")
-        if primary in known and primary not in ids:
+        if primary in known and primary not in ids and primary not in used:
             ids.insert(0, primary)
-        ids = [article_id for article_id in ids if article_id not in used]
         if not ids:
             continue
         if primary not in ids:
@@ -606,21 +665,20 @@ def validate_analysis(
 
         section = raw.get("section", "")
         if section not in TOPIC_SECTIONS:
-            section = articles[0].get("search_section", "UAS and Drones")
-            if section not in TOPIC_SECTIONS:
-                section = "UAS and Drones"
+            section = infer_section(lookup[primary])
 
         eo_number = clean_spaces(raw.get("eo_number", ""))
         if eo_number not in EO_DISPLAY_NAMES:
             eo_number = ""
 
+        includes_required = any(article_id in required for article_id in ids)
         clusters.append(
             {
                 "cluster_id": clean_spaces(raw.get("cluster_id", "")) or stable_id(*ids),
                 "article_ids": ids,
                 "primary_article_id": primary,
                 "section": section,
-                "relevant": bool(raw.get("relevant", False)),
+                "relevant": bool(raw.get("relevant", False)) or includes_required,
                 "importance": max(1, min(10, int(raw.get("importance", 1) or 1))),
                 "canonical_title": clean_spaces(raw.get("canonical_title", "")),
                 "summary": clean_spaces(raw.get("summary", "")),
@@ -633,6 +691,38 @@ def validate_analysis(
             }
         )
 
+    # Guarantee that every supplemental item is represented. This should be rare,
+    # because the prompt already requires it, but it prevents silent loss.
+    missing_required = required - used
+    for article_id in sorted(missing_required):
+        record = lookup[article_id]
+        title = best_record_title(record)
+        description = clean_spaces(
+            record.get("description", "")
+            or record.get("summary", "")
+            or record.get("pasted_context", "")
+        )
+        if not description or description.casefold() == title.casefold():
+            description = f"{title}."
+        clusters.append(
+            {
+                "cluster_id": stable_id("required", article_id),
+                "article_ids": [article_id],
+                "primary_article_id": article_id,
+                "section": infer_section(record),
+                "relevant": True,
+                "importance": 3,
+                "canonical_title": title,
+                "summary": description[:500],
+                "is_administration_win": False,
+                "eo_number": "",
+                "eo_section": "",
+                "win_explanation": "",
+                "confidence": "low",
+                "exclude_reason": "",
+            }
+        )
+
     return {
         "executive_summary": clean_spaces(analysis.get("executive_summary", "")),
         "what_to_watch": [
@@ -641,6 +731,8 @@ def validate_analysis(
             if clean_spaces(item)
         ],
         "clusters": clusters,
+        "required_count": len(required),
+        "required_accounted_count": len(required),
     }
 
 
@@ -650,28 +742,44 @@ def cluster_to_story(
 ) -> dict[str, Any]:
     primary = lookup[cluster["primary_article_id"]]
     related: list[dict[str, str]] = []
+    seen_urls = {primary.get("url", "")}
     seen_sources = {primary.get("source", "").casefold()}
+
     for article_id in cluster["article_ids"]:
         if article_id == cluster["primary_article_id"]:
             continue
         article = lookup.get(article_id)
         if not article:
             continue
-        source_key = article.get("source", "").casefold()
-        if not source_key or source_key in seen_sources:
+        url = article.get("url", "")
+        source = article.get("source", "") or "Related coverage"
+        if not url or url in seen_urls:
             continue
-        seen_sources.add(source_key)
-        related.append({"source": article["source"], "url": article["url"]})
+        seen_urls.add(url)
+        # Preserve supplemental links even if the publisher repeats.
+        if source.casefold() in seen_sources and not article.get("required_include"):
+            continue
+        seen_sources.add(source.casefold())
+        related.append({"source": source, "url": url})
 
-    title = cluster["canonical_title"] or primary["title"]
+    title = cluster["canonical_title"] or best_record_title(primary)
+    summary = cluster["summary"] or clean_spaces(
+        primary.get("description", "")
+        or primary.get("summary", "")
+        or primary.get("pasted_context", "")
+    )
+
     return {
         "id": cluster["cluster_id"],
         "title": title,
-        "summary": cluster["summary"],
-        "source": primary["source"],
-        "url": primary["url"],
-        "published": primary["published"],
-        "date_label": primary["date_label"],
+        "summary": summary,
+        "source": primary.get("source", "Source"),
+        "url": primary.get("url", ""),
+        "published": primary.get("published", datetime.now(EASTERN).isoformat()),
+        "date_label": primary.get(
+            "date_label",
+            datetime.now(EASTERN).strftime("%b. %d, %Y").replace(" 0", " "),
+        ),
         "section": cluster["section"],
         "importance": cluster["importance"],
         "confidence": cluster["confidence"],
@@ -680,73 +788,136 @@ def cluster_to_story(
         "eo_name": EO_DISPLAY_NAMES.get(cluster["eo_number"], ""),
         "eo_section": cluster["eo_section"],
         "win_explanation": cluster["win_explanation"],
-        "also_covered": related[:8],
+        "also_covered": related,
+        "contains_supplemental": any(
+            lookup[article_id].get("required_include", False)
+            for article_id in cluster["article_ids"]
+            if article_id in lookup
+        ),
     }
 
 
 def arrange_sections(stories: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     sections = {section: [] for section in SECTION_ORDER}
-    relevant = sorted(stories, key=lambda item: (item["importance"], item["published"]), reverse=True)
+    relevant = sorted(
+        stories,
+        key=lambda item: (item["importance"], item.get("published", "")),
+        reverse=True,
+    )
 
     wins = [item for item in relevant if item["is_administration_win"]]
-    sections["Trump Administration Wins"] = wins[:6]
+    sections["Trump Administration Wins"] = wins[:8]
     win_ids = {item["id"] for item in sections["Trump Administration Wins"]}
 
     eligible_top = [
         item for item in relevant
         if item["id"] not in win_ids and item["importance"] >= 7
     ]
-    sections["Top Developments"] = eligible_top[:6]
+    sections["Top Developments"] = eligible_top[:8]
     top_ids = {item["id"] for item in sections["Top Developments"]}
 
     for item in relevant:
         if item["id"] in win_ids or item["id"] in top_ids:
             continue
         section = item["section"]
-        if section in sections and len(sections[section]) < 10:
+        if section in sections:
             sections[section].append(item)
 
     return sections
 
 
-def generate_daily_briefing(
-    api_key: str,
-    model: str = DEFAULT_OPENAI_MODEL,
-    window_end: datetime | None = None,
-) -> dict[str, Any]:
+def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
     end = (window_end or datetime.now(EASTERN)).astimezone(EASTERN)
     start = end - timedelta(hours=24)
     articles, source_errors = collect_articles(start, end)
 
-    if not articles:
-        return {
-            "generated_at": datetime.now(EASTERN).isoformat(),
-            "window_start": start.isoformat(),
-            "window_end": end.isoformat(),
-            "model": model,
-            "usage": {},
-            "estimated_cost": None,
-            "executive_summary": "No consequential new public-source developments were identified in the preceding 24 hours.",
-            "what_to_watch": [],
-            "sections": {section: [] for section in SECTION_ORDER},
-            "source_errors": source_errors,
-            "candidate_count": 0,
-        }
+    # Keep broad coverage while preventing one query family from swamping the feed.
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for article in articles:
+        grouped.setdefault(article.get("search_section", "Unknown"), []).append(article)
 
-    raw_analysis, usage, cost = analyze_articles(articles, api_key, model, start, end)
-    analysis = validate_analysis(raw_analysis, articles)
-    lookup = {item["id"]: item for item in articles}
+    capped: list[dict[str, Any]] = []
+    for _, records in grouped.items():
+        capped.extend(records[:45])
+    capped = deduplicate_articles(capped)
+
+    counts: dict[str, int] = {}
+    for article in capped:
+        key = article.get("search_section", "Unknown")
+        counts[key] = counts.get(key, 0) + 1
+
+    return {
+        "generated_at": datetime.now(EASTERN).isoformat(),
+        "window_start": start.isoformat(),
+        "window_end": end.isoformat(),
+        "articles": capped,
+        "source_errors": source_errors,
+        "candidate_count": len(capped),
+        "candidate_counts": counts,
+    }
+
+
+def write_raw_feed(
+    raw_feed: dict[str, Any],
+    repository_root: Path,
+) -> tuple[Path, Path]:
+    data_dir = repository_root / "data"
+    archive_dir = data_dir / "raw_archive"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    archive_dir.mkdir(parents=True, exist_ok=True)
+
+    latest_path = data_dir / "latest_raw_news.json"
+    date_label = (
+        datetime.fromisoformat(raw_feed["window_end"])
+        .astimezone(EASTERN)
+        .date()
+        .isoformat()
+    )
+    archive_path = archive_dir / f"{date_label}.json"
+
+    payload = json.dumps(raw_feed, indent=2, ensure_ascii=False) + "\n"
+    latest_path.write_text(payload, encoding="utf-8")
+    archive_path.write_text(payload, encoding="utf-8")
+    return latest_path, archive_path
+
+
+def generate_briefing_from_records(
+    raw_feed: dict[str, Any],
+    supplemental_records: list[dict[str, Any]],
+    api_key: str,
+    model: str = DEFAULT_OPENAI_MODEL,
+) -> dict[str, Any]:
+    start = datetime.fromisoformat(raw_feed["window_start"]).astimezone(EASTERN)
+    end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
+
+    automated = [dict(item) for item in raw_feed.get("articles", [])]
+    supplemental = []
+    for item in supplemental_records:
+        record = dict(item)
+        record["required_include"] = True
+        record["origin"] = "Supplemental daily email"
+        record["search_section"] = record.get("search_section") or "Supplemental email"
+        record["published"] = record.get("published") or end.isoformat()
+        record["date_label"] = record.get("date_label") or end.strftime(
+            "%b. %d, %Y"
+        ).replace(" 0", " ")
+        record["id"] = record.get("id") or stable_id(
+            "supplemental", record.get("url", ""), record.get("title", "")
+        )
+        supplemental.append(record)
+
+    combined = deduplicate_articles(automated + supplemental)
+    raw_analysis, usage, cost = analyze_articles(
+        combined, api_key, model, start, end
+    )
+    analysis = validate_analysis(raw_analysis, combined)
+    lookup = {item["id"]: item for item in combined}
     stories = [
         cluster_to_story(cluster, lookup)
         for cluster in analysis["clusters"]
         if cluster["relevant"] and cluster["primary_article_id"] in lookup
     ]
-
     arranged = arrange_sections(stories)
-    candidate_counts: dict[str, int] = {}
-    for article in articles:
-        key = article.get("search_section", "Unknown")
-        candidate_counts[key] = candidate_counts.get(key, 0) + 1
 
     included_counts = {
         section: len(items)
@@ -763,24 +934,11 @@ def generate_daily_briefing(
         "executive_summary": analysis["executive_summary"],
         "what_to_watch": analysis["what_to_watch"],
         "sections": arranged,
-        "source_errors": source_errors,
-        "candidate_count": len(articles),
-        "candidate_counts": candidate_counts,
+        "source_errors": raw_feed.get("source_errors", []),
+        "candidate_count": len(combined),
+        "automated_candidate_count": len(automated),
+        "supplemental_count": len(supplemental),
+        "supplemental_accounted_count": analysis["required_accounted_count"],
+        "candidate_counts": raw_feed.get("candidate_counts", {}),
         "included_counts": included_counts,
     }
-
-
-def write_briefing(briefing: dict[str, Any], repository_root: Path) -> tuple[Path, Path]:
-    data_dir = repository_root / "data"
-    archive_dir = data_dir / "archive"
-    archive_dir.mkdir(parents=True, exist_ok=True)
-    data_dir.mkdir(parents=True, exist_ok=True)
-
-    latest_path = data_dir / "latest_briefing.json"
-    date_label = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN).date().isoformat()
-    archive_path = archive_dir / f"{date_label}.json"
-
-    payload = json.dumps(briefing, indent=2, ensure_ascii=False) + "\n"
-    latest_path.write_text(payload, encoding="utf-8")
-    archive_path.write_text(payload, encoding="utf-8")
-    return latest_path, archive_path
