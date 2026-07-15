@@ -52,7 +52,22 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         )
         self.assertNotIn("UAS, C-UAS, and Advanced Transportation", rendered_text)
 
-    def test_tracker_items_have_include_checkboxes_before_what_to_watch(self) -> None:
+    def test_tracker_is_visible_and_selectable_before_build(self) -> None:
+        app = self.load_app()
+        tracker = build_regulatory_tracker(date(2026, 7, 15))
+
+        self.assertIn(
+            "Regulatory Deadline Tracker",
+            [item.value for item in app.subheader],
+        )
+        checkbox_keys = {item.key for item in app.checkbox if item.key}
+        for item in tracker:
+            self.assertIn(
+                f"build_2026-07-15_tracker_{item['id']}_include",
+                checkbox_keys,
+            )
+
+    def test_legacy_briefing_gets_tracker_before_what_to_watch(self) -> None:
         app = self.load_app()
         tracker = build_regulatory_tracker(date(2026, 7, 15))
         sections = {
@@ -69,13 +84,15 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
             )
         }
         app.session_state["owner_authenticated"] = True
+        app.session_state[
+            "build_2026-07-15_tracker_bvlos-part-108_include"
+        ] = False
         app.session_state["generated_briefing_2026-07-15"] = {
             "window_start": "2026-07-14T04:15:00-04:00",
             "window_end": "2026-07-15T04:15:00-04:00",
             "executive_summary": "Summary",
             "what_to_watch": ["Watch this"],
             "sections": sections,
-            "regulatory_tracker": tracker,
             "usage": {},
             "model": "test",
         }
@@ -87,6 +104,11 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
                 f"edit_2026-07-15_tracker_{item['id']}_include",
                 checkbox_keys,
             )
+        self.assertFalse(
+            app.session_state[
+                "edit_2026-07-15_tracker_bvlos-part-108_include"
+            ]
+        )
         subheaders = [item.value for item in app.subheader]
         self.assertLess(
             subheaders.index("Regulatory Deadline Tracker"),

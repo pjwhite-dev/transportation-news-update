@@ -18,6 +18,7 @@ from news_engine import (
     TOPIC_SECTIONS,
     generate_briefing_from_records,
 )
+from regulatory_tracker import build_regulatory_tracker
 from supplemental_email import extract_supplemental_items
 
 st.set_page_config(
@@ -984,22 +985,85 @@ def raw_feed_text(raw_feed: dict) -> str:
 
 def initialize_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
-    if prefix + "initialized" in st.session_state:
-        return
-    st.session_state[prefix + "executive_summary"] = briefing.get("executive_summary", "")
-    st.session_state[prefix + "what_to_watch"] = "\n".join(briefing.get("what_to_watch", []))
-    for section, items in briefing.get("sections", {}).items():
-        for item in items:
-            item_id = item["id"]
-            st.session_state[prefix + item_id + "_include"] = True
-            st.session_state[prefix + item_id + "_title"] = item.get("title", "")
-            st.session_state[prefix + item_id + "_summary"] = item.get("summary", "")
-            st.session_state[prefix + item_id + "_win"] = item.get("win_explanation", "")
+    initialized = prefix + "initialized" in st.session_state
+    if not initialized:
+        st.session_state[prefix + "executive_summary"] = briefing.get(
+            "executive_summary", ""
+        )
+        st.session_state[prefix + "what_to_watch"] = "\n".join(
+            briefing.get("what_to_watch", [])
+        )
+        for section, items in briefing.get("sections", {}).items():
+            for item in items:
+                item_id = item["id"]
+                st.session_state[prefix + item_id + "_include"] = True
+                st.session_state[prefix + item_id + "_title"] = item.get(
+                    "title", ""
+                )
+                st.session_state[prefix + item_id + "_summary"] = item.get(
+                    "summary", ""
+                )
+                st.session_state[prefix + item_id + "_win"] = item.get(
+                    "win_explanation", ""
+                )
     for item in briefing.get("regulatory_tracker", []):
-        st.session_state[
-            prefix + "tracker_" + item["id"] + "_include"
-        ] = True
+        editor_key = prefix + "tracker_" + item["id"] + "_include"
+        if editor_key not in st.session_state:
+            st.session_state[editor_key] = st.session_state.get(
+                f"build_{edition_key}_tracker_{item['id']}_include",
+                True,
+            )
     st.session_state[prefix + "initialized"] = True
+
+
+def reset_editor_state(edition_key: str) -> None:
+    for key in list(st.session_state):
+        if key.startswith(f"edit_{edition_key}_"):
+            del st.session_state[key]
+
+
+def ensure_regulatory_tracker(briefing: dict, as_of: datetime) -> dict:
+    if "regulatory_tracker" not in briefing:
+        briefing["regulatory_tracker"] = build_regulatory_tracker(as_of)
+    return briefing
+
+
+def tracker_item_caption(item: dict) -> str:
+    is_open = item.get("days_remaining") is not None
+    deadline_prefix = "Closes" if is_open else "Closed"
+    days = (
+        f"{item['days_remaining']} days remaining"
+        if is_open
+        else "No open comment period"
+    )
+    return " · ".join(
+        [
+            item.get("agency", ""),
+            item.get("docket", ""),
+            f"{deadline_prefix} {item.get('comment_deadline_label', '')}",
+            days,
+            item.get("status", ""),
+        ]
+    )
+
+
+def render_prebuild_tracker(items: list[dict], edition_key: str) -> None:
+    st.divider()
+    st.subheader("Regulatory Deadline Tracker")
+    st.caption(
+        "This public-information tracker will appear near the bottom of the email, "
+        "immediately above What to Watch. Uncheck any item you want omitted."
+    )
+    for item in items:
+        include_key = f"build_{edition_key}_tracker_{item['id']}_include"
+        if include_key not in st.session_state:
+            st.session_state[include_key] = True
+        with st.container(border=True):
+            st.checkbox("Include in email", key=include_key)
+            st.markdown(
+                f"**[{item.get('action', '')}]({item.get('source_url', '')})**"
+            )
+            st.caption(tracker_item_caption(item))
 
 
 def edited_briefing(briefing: dict, edition_key: str) -> dict:
@@ -1085,27 +1149,7 @@ def render_editor(briefing: dict, edition_key: str) -> None:
                 st.markdown(
                     f"**[{item.get('action', '')}]({item.get('source_url', '')})**"
                 )
-                is_open = item.get("days_remaining") is not None
-                deadline_prefix = "Closes" if is_open else "Closed"
-                days = (
-                    f"{item['days_remaining']} days remaining"
-                    if is_open
-                    else "No open comment period"
-                )
-                st.caption(
-                    " · ".join(
-                        [
-                            item.get("agency", ""),
-                            item.get("docket", ""),
-                            (
-                                f"{deadline_prefix} "
-                                f"{item.get('comment_deadline_label', '')}"
-                            ),
-                            days,
-                            item.get("status", ""),
-                        ]
-                    )
-                )
+                st.caption(tracker_item_caption(item))
 
     st.subheader("What to Watch")
     st.text_area(
@@ -1142,6 +1186,7 @@ if not raw_feed.get("window_end"):
 
 end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
 build_key = end.date().isoformat()
+tracker_for_day = build_regulatory_tracker(end)
 
 st.title("Advanced Transportation News Update")
 st.caption(
@@ -1287,10 +1332,7 @@ with build_tab:
                             st.session_state[
                                 f"generated_briefing_{build_key}"
                             ] = briefing
-                            # Reset editor state for the new generation.
-                            for key in list(st.session_state):
-                                if key.startswith(f"edit_{build_key}_"):
-                                    del st.session_state[key]
+                            reset_editor_state(build_key)
                             st.success("Today’s Advanced Transportation News Update is ready.")
                             st.rerun()
                         except Exception as exc:
@@ -1324,6 +1366,7 @@ with build_tab:
                             st.session_state[
                                 f"generated_briefing_{build_key}"
                             ] = briefing
+                            reset_editor_state(build_key)
                             st.rerun()
                         except Exception as exc:
                             st.error(str(exc))
@@ -1333,7 +1376,11 @@ with build_tab:
                 "The **Build from Automated Feed Only** button will then appear here."
             )
 
+    render_prebuild_tracker(tracker_for_day, build_key)
+
 briefing = st.session_state.get(f"generated_briefing_{build_key}")
+if briefing:
+    ensure_regulatory_tracker(briefing, end)
 
 with preview_tab:
     if not briefing:

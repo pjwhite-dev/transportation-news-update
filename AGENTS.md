@@ -90,8 +90,11 @@ The tracker must include the FAA BVLOS/Part 108 rule, the Section 2209 fixed-sit
 UAS restriction rule, the supersonic-overland-flight rulemaking, key ADS-focused
 FMVSS modernization actions, and important Part 555 petitions. Verify dates and
 extensions against the latest official Federal Register notice before updating
-the curated tracker. Give every tracker item its own Include checkbox in Review
-& Edit so the owner can omit individual actions from the email.
+the curated tracker. Show the tracker on Build Today’s Update before any AI
+build, with an Include checkbox for every item. Carry those selections into
+Review & Edit, where the owner can change them again. If an already-open browser
+session contains a briefing created before tracker support was added, populate
+the tracker deterministically without requiring another AI build.
 
 Do not add “new since yesterday” or “materially changed” badges. The email is
 already limited to new developments. Do not add By-the-Numbers, Today-at-a-
