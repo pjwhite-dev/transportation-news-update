@@ -2,18 +2,11 @@ from __future__ import annotations
 
 import hmac
 import html
-import ipaddress
 import json
-import random
-import re
-import socket
-import time
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
-import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -23,10 +16,9 @@ from news_engine import (
     EO_DISPLAY_NAMES,
     SECTION_ORDER,
     TOPIC_SECTIONS,
-    clean_spaces,
     generate_briefing_from_records,
-    stable_id,
 )
+from supplemental_email import extract_supplemental_items
 
 st.set_page_config(
     page_title="Advanced Transportation News Update",
@@ -227,6 +219,74 @@ def section_html(title: str, items: list[dict]) -> str:
     """
 
 
+def regulatory_tracker_web_html(items: list[dict]) -> str:
+    if not items:
+        return ""
+
+    rows = []
+    for item in items:
+        is_open = item.get("days_remaining") is not None
+        deadline_prefix = "Closes" if is_open else "Closed"
+        days = str(item["days_remaining"]) if is_open else "—"
+        rows.append(
+            f"""
+            <tr>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;font-weight:700;color:#334e63;">
+                {html.escape(item.get('agency', ''))}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:13px;line-height:1.4;color:#252b31;">
+                <a href="{safe_url(item.get('source_url', ''))}"
+                    style="color:#173c5e;text-decoration:none;font-weight:700;">
+                  {html.escape(item.get('action', ''))}
+                </a>
+                <div style="font-size:10px;line-height:1.35;color:#77818a;margin-top:3px;">
+                  {html.escape(item.get('docket', ''))}
+                </div>
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;color:#4f5f6c;white-space:nowrap;">
+                {deadline_prefix} {html.escape(item.get('comment_deadline_label', ''))}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;text-align:center;color:#4f5f6c;">
+                {days}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;color:#4f5f6c;">
+                {html.escape(item.get('status', ''))}
+              </td>
+            </tr>
+            """
+        )
+
+    return f"""
+    <div style="margin:0 0 25px 0;">
+      <div style="font-size:19px;line-height:1.3;font-weight:800;color:#173c5e;
+          padding-bottom:6px;margin-bottom:12px;border-bottom:2px solid #cbd6de;">
+        Regulatory Deadline Tracker
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0"
+          style="width:100%;border-collapse:collapse;table-layout:fixed;">
+        <tr style="background:#f3f6f8;">
+          <th width="12%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Agency</th>
+          <th width="40%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Action</th>
+          <th width="19%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Comment period</th>
+          <th width="10%" style="padding:7px 8px;text-align:center;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Days</th>
+          <th width="19%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Status</th>
+        </tr>
+        {''.join(rows)}
+      </table>
+    </div>
+    """
+
+
 def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
@@ -242,6 +302,11 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
         section_html(section, sections.get(section, []))
         for section in visible_sections
     )
+    tracker_markup = ""
+    if not executive_only:
+        tracker_markup = regulatory_tracker_web_html(
+            briefing.get("regulatory_tracker", [])
+        )
 
     watch = briefing.get("what_to_watch", [])
     watch_markup = ""
@@ -289,6 +354,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
       </div>
 
       {section_markup}
+      {tracker_markup}
       {watch_markup}
 
       <div style="font-size:10px;line-height:1.45;color:#7b848c;
@@ -504,6 +570,98 @@ def outlook_section_html(title: str, items: list[dict]) -> str:
     """
 
 
+def regulatory_tracker_outlook_html(items: list[dict]) -> str:
+    if not items:
+        return ""
+
+    rows = []
+    for item in items:
+        is_open = item.get("days_remaining") is not None
+        deadline_prefix = "Closes" if is_open else "Closed"
+        days = str(item["days_remaining"]) if is_open else "—"
+        rows.append(
+            f"""
+            <tr>
+              <td width="70" valign="top" style="width:70px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;font-weight:bold;color:#334E63;">
+                {html.escape(item.get('agency', ''))}
+              </td>
+              <td width="245" valign="top" style="width:245px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:11px;line-height:16px;color:#252B31;">
+                <a href="{safe_url(item.get('source_url', ''))}"
+                    style="color:#173C5E;text-decoration:none;font-weight:bold;">
+                  {html.escape(item.get('action', ''))}
+                </a><br>
+                <span style="font-size:9px;line-height:13px;color:#77818A;">
+                  {html.escape(item.get('docket', ''))}
+                </span>
+              </td>
+              <td width="105" valign="top" style="width:105px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;color:#4F5F6C;">
+                {deadline_prefix} {html.escape(item.get('comment_deadline_label', ''))}
+              </td>
+              <td width="45" valign="top" align="center" style="width:45px;
+                  padding:10px 7px;border-bottom:1px solid #E1E6EA;
+                  font-family:Arial,Helvetica,sans-serif;font-size:10px;
+                  line-height:15px;color:#4F5F6C;">{days}</td>
+              <td width="105" valign="top" style="width:105px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;color:#4F5F6C;">
+                {html.escape(item.get('status', ''))}
+              </td>
+            </tr>
+            """
+        )
+
+    return f"""
+    <tr>
+      <td style="padding:0 28px;">
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
+                font-size:18px;line-height:23px;font-weight:bold;color:#173C5E;
+                border-bottom:2px solid #CBD6DE;mso-line-height-rule:exactly;">
+              Regulatory Deadline Tracker
+            </td>
+          </tr>
+          {outlook_spacer(13)}
+          <tr>
+            <td>
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" style="width:100%;border-collapse:collapse;
+                  table-layout:fixed;">
+                <tr bgcolor="#F3F6F8">
+                  <td width="70" style="width:70px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">AGENCY</td>
+                  <td width="245" style="width:245px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">ACTION</td>
+                  <td width="105" style="width:105px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">COMMENT PERIOD</td>
+                  <td width="45" align="center" style="width:45px;padding:7px;
+                      font-family:Arial,Helvetica,sans-serif;font-size:9px;
+                      line-height:13px;font-weight:bold;color:#5D6B78;">DAYS</td>
+                  <td width="105" style="width:105px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">STATUS</td>
+                </tr>
+                {''.join(rows)}
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {outlook_spacer(20)}
+    """
+
+
 def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
@@ -515,14 +673,15 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     if not executive_only:
         visible_sections.extend(TOPIC_SECTIONS)
 
-    win_count = len(sections.get("Trump Administration Wins", []))
-    top_count = len(sections.get("Top Developments", []))
-    total_count = sum(len(sections.get(section, [])) for section in visible_sections)
-
     section_markup = "".join(
         outlook_section_html(section, sections.get(section, []))
         for section in visible_sections
     )
+    tracker_markup = ""
+    if not executive_only:
+        tracker_markup = regulatory_tracker_outlook_html(
+            briefing.get("regulatory_tracker", [])
+        )
 
     watch = briefing.get("what_to_watch", [])
     watch_markup = ""
@@ -571,18 +730,6 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
         {outlook_spacer(20)}
         """
 
-    glance_parts = []
-    if win_count:
-        glance_parts.append(
-            f"{win_count} Administration win{'s' if win_count != 1 else ''}"
-        )
-    if top_count:
-        glance_parts.append(
-            f"{top_count} top development{'s' if top_count != 1 else ''}"
-        )
-    glance_parts.append(f"{total_count} total item{'s' if total_count != 1 else ''}")
-    glance = " &nbsp;•&nbsp; ".join(glance_parts)
-
     return f"""<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:v="urn:schemas-microsoft-com:vml"
@@ -630,22 +777,6 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
             </td>
           </tr>
 
-          <tr>
-            <td style="padding:10px 28px 0 28px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0"
-                  cellpadding="0" bgcolor="#F2F5F7"
-                  style="width:100%;border-collapse:collapse;background-color:#F2F5F7;">
-                <tr>
-                  <td style="padding:8px 11px;font-family:Arial,Helvetica,sans-serif;
-                      font-size:10px;line-height:15px;color:#5D6B78;
-                      mso-line-height-rule:exactly;">
-                    <strong>TODAY AT A GLANCE:</strong> {glance}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
           {outlook_spacer(17)}
 
           <tr>
@@ -674,6 +805,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
 
           {outlook_spacer(25)}
           {section_markup}
+          {tracker_markup}
           {watch_markup}
 
           <tr>
@@ -749,6 +881,35 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
                 ))
             lines.append("")
 
+    if not executive_only and briefing.get("regulatory_tracker"):
+        lines.extend(["REGULATORY DEADLINE TRACKER", ""])
+        for item in briefing["regulatory_tracker"]:
+            is_open = item.get("days_remaining") is not None
+            deadline_prefix = "Closes" if is_open else "Closed"
+            days = (
+                f"{item['days_remaining']} days remaining"
+                if is_open
+                else "No open comment period"
+            )
+            lines.extend(
+                [
+                    item.get("action", ""),
+                    " | ".join(
+                        value
+                        for value in (
+                            item.get("agency", ""),
+                            item.get("docket", ""),
+                            f"{deadline_prefix} {item.get('comment_deadline_label', '')}",
+                            days,
+                            item.get("status", ""),
+                        )
+                        if value
+                    ),
+                    item.get("source_url", ""),
+                    "",
+                ]
+            )
+
     watch = briefing.get("what_to_watch", [])
     if watch:
         lines.extend(["WHAT TO WATCH", ""])
@@ -809,207 +970,6 @@ def copy_controls(
     components.html(component, height=60)
 
 
-MANUAL_IMPORT_USER_AGENT = (
-    "TransportationNewsUpdate/4.0 manual-intake metadata fetcher"
-)
-URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s<>\"'`]+", re.IGNORECASE)
-
-
-
-SOURCE_ONLY_LABELS = {
-    "msn", "msn.com", "aol", "aol.com", "yahoo", "yahoo finance",
-    "google news", "reuters", "associated press", "ap", "read more",
-    "click here", "article", "link",
-}
-
-
-def normalize_import_url(value: str) -> str:
-    value = html.unescape(value or "").strip()
-    value = value.strip("<>[](){}\"'`")
-    value = re.sub(r"[.,;:!?]+$", "", value)
-    return value
-
-
-def source_from_url(url: str) -> str:
-    try:
-        host = urlparse(url).hostname or ""
-    except ValueError:
-        return "Supplemental source"
-    host = host.lower().removeprefix("www.")
-    brand = host.split(".")[0].replace("-", " ").strip()
-    known = {
-        "msn": "MSN",
-        "aol": "AOL",
-        "finance": "Yahoo Finance",
-        "news": "Google News",
-    }
-    return known.get(brand, brand.title() or "Supplemental source")
-
-
-def is_source_only(value: str, source: str = "") -> bool:
-    cleaned = clean_spaces(re.sub(r"^[•\-–—\s]+", "", value or "")).strip(" :|")
-    if not cleaned:
-        return True
-    lowered = cleaned.casefold()
-    if lowered in SOURCE_ONLY_LABELS:
-        return True
-    if source and lowered == source.casefold():
-        return True
-    if lowered.startswith(("http://", "https://")):
-        return True
-    return len(cleaned) < 8
-
-
-def clean_headline_candidate(value: str, source: str = "") -> str:
-    value = re.sub(r"https?://\S+", " ", value or "")
-    value = clean_spaces(value)
-    value = re.sub(r"^[•\-–—\d.)\s]+", "", value)
-    value = value.strip("<>[](){}\"'` ")
-    if source:
-        value = re.sub(
-            rf"\s*[-|–—]\s*{re.escape(source)}\s*$",
-            "",
-            value,
-            flags=re.IGNORECASE,
-        )
-    return clean_spaces(value)
-
-
-def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
-    same_line = clean_headline_candidate(lines[index].replace(url, ""))
-    context_lines = []
-    for offset in (0, -1, -2, 1):
-        pos = index + offset
-        if 0 <= pos < len(lines):
-            candidate = clean_spaces(lines[pos])
-            if candidate and candidate not in context_lines:
-                context_lines.append(candidate)
-
-    context = " ".join(context_lines)[:1200]
-    if same_line and not is_source_only(same_line):
-        return same_line, context
-
-    for offset in (-1, -2, 1):
-        pos = index + offset
-        if 0 <= pos < len(lines):
-            candidate = clean_headline_candidate(lines[pos])
-            if candidate and not is_source_only(candidate):
-                return candidate, context
-
-    return "", context
-
-
-def first_html_match(document: str, patterns: list[str]) -> str:
-    for pattern in patterns:
-        match = re.search(pattern, document, flags=re.IGNORECASE | re.DOTALL)
-        if match:
-            return clean_spaces(html.unescape(re.sub(r"<[^>]+>", " ", match.group(1))))
-    return ""
-
-
-def fetch_link_metadata(record: dict) -> dict:
-    enriched = dict(record)
-    try:
-        response = requests.get(
-            record["url"],
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 Safari/537.36"
-                )
-            },
-            timeout=18,
-            allow_redirects=True,
-        )
-        response.raise_for_status()
-        document = response.text[:750000]
-        final_url = normalize_import_url(response.url)
-        source = source_from_url(final_url)
-
-        fetched_title = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:title["\']',
-                r"<title[^>]*>(.*?)</title>",
-            ],
-        )
-        description = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']',
-            ],
-        )
-
-        pasted = clean_headline_candidate(enriched.get("pasted_headline", ""), source)
-        fetched = clean_headline_candidate(fetched_title, source)
-        if pasted and not is_source_only(pasted, source):
-            title = pasted
-        elif fetched and not is_source_only(fetched, source):
-            title = fetched
-        else:
-            title = clean_headline_candidate(enriched.get("pasted_context", ""), source)
-
-        enriched.update(
-            {
-                "url": final_url or record["url"],
-                "title": title[:260],
-                "original_title": fetched_title[:260],
-                "description": description[:1200],
-                "source": source,
-                "fetch_status": "Metadata retrieved",
-            }
-        )
-    except Exception as exc:
-        source = source_from_url(record["url"])
-        pasted = clean_headline_candidate(record.get("pasted_headline", ""), source)
-        context_title = clean_headline_candidate(record.get("pasted_context", ""), source)
-        title = pasted if pasted and not is_source_only(pasted, source) else context_title
-        enriched.update(
-            {
-                "source": source,
-                "title": title[:260],
-                "description": "",
-                "fetch_status": f"Metadata unavailable: {clean_spaces(str(exc))[:160]}",
-            }
-        )
-    return enriched
-
-
-def extract_supplemental_items(raw_text: str, fetch_metadata: bool = True) -> list[dict]:
-    lines = [line.rstrip() for line in (raw_text or "").splitlines()]
-    pattern = re.compile(r"https?://[^\s<>]+")
-    records = []
-    seen = set()
-
-    for index, line in enumerate(lines):
-        # Strip malformed wrappers such as <https://...>.
-        for match in pattern.finditer(html.unescape(line)):
-            url = normalize_import_url(match.group(0))
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            pasted_headline, context = context_for_link(lines, index, match.group(0))
-            record = {
-                "id": stable_id("supplemental", url),
-                "url": url,
-                "title": pasted_headline,
-                "pasted_headline": pasted_headline,
-                "pasted_context": context,
-                "summary": "",
-                "description": "",
-                "source": source_from_url(url),
-                "origin": "Supplemental daily email",
-                "required_include": True,
-                "fetch_status": "Not fetched",
-            }
-            records.append(fetch_link_metadata(record) if fetch_metadata else record)
-
-    return records
-
-
 def raw_feed_text(raw_feed: dict) -> str:
     lines = []
     for index, item in enumerate(raw_feed.get("articles", []), start=1):
@@ -1035,6 +995,10 @@ def initialize_editor(briefing: dict, edition_key: str) -> None:
             st.session_state[prefix + item_id + "_title"] = item.get("title", "")
             st.session_state[prefix + item_id + "_summary"] = item.get("summary", "")
             st.session_state[prefix + item_id + "_win"] = item.get("win_explanation", "")
+    for item in briefing.get("regulatory_tracker", []):
+        st.session_state[
+            prefix + "tracker_" + item["id"] + "_include"
+        ] = True
     st.session_state[prefix + "initialized"] = True
 
 
@@ -1066,17 +1030,20 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
             ).strip()
             kept.append(item)
         edited["sections"][section] = kept
+    edited["regulatory_tracker"] = [
+        item
+        for item in edited.get("regulatory_tracker", [])
+        if st.session_state.get(
+            prefix + "tracker_" + item["id"] + "_include",
+            True,
+        )
+    ]
     return edited
 
 
 def render_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
     st.text_area("Executive Summary", key=prefix + "executive_summary", height=120)
-    st.text_area(
-        "What to Watch — one item per line",
-        key=prefix + "what_to_watch",
-        height=95,
-    )
     for section in SECTION_ORDER:
         items = briefing.get("sections", {}).get(section, [])
         if not items:
@@ -1097,6 +1064,55 @@ def render_editor(briefing: dict, edition_key: str) -> None:
                 st.caption(
                     f"{item.get('source', '')} · {item.get('date_label', '')}"
                 )
+
+    tracker = briefing.get("regulatory_tracker", [])
+    if tracker:
+        st.subheader("Regulatory Deadline Tracker")
+        st.caption(
+            "Uncheck any rulemaking you do not want included in the email."
+        )
+        for item in tracker:
+            with st.container(border=True):
+                st.checkbox(
+                    "Include",
+                    key=(
+                        prefix
+                        + "tracker_"
+                        + item["id"]
+                        + "_include"
+                    ),
+                )
+                st.markdown(
+                    f"**[{item.get('action', '')}]({item.get('source_url', '')})**"
+                )
+                is_open = item.get("days_remaining") is not None
+                deadline_prefix = "Closes" if is_open else "Closed"
+                days = (
+                    f"{item['days_remaining']} days remaining"
+                    if is_open
+                    else "No open comment period"
+                )
+                st.caption(
+                    " · ".join(
+                        [
+                            item.get("agency", ""),
+                            item.get("docket", ""),
+                            (
+                                f"{deadline_prefix} "
+                                f"{item.get('comment_deadline_label', '')}"
+                            ),
+                            days,
+                            item.get("status", ""),
+                        ]
+                    )
+                )
+
+    st.subheader("What to Watch")
+    st.text_area(
+        "One item per line",
+        key=prefix + "what_to_watch",
+        height=95,
+    )
 
 
 st.markdown("""
@@ -1280,35 +1296,42 @@ with build_tab:
                         except Exception as exc:
                             st.error(str(exc))
         else:
-            st.info(
-                "Unlock Owner controls in the sidebar to run the AI editorial pass."
+            st.warning(
+                "Enter the owner password in the sidebar and select **Unlock**. "
+                "The AI build button will then appear here."
             )
     else:
         st.info(
-            "The supplemental email is optional. To build using only the automated "
-            "24-hour feed, paste nothing and click the button below."
+            "The supplemental email is optional. You can build today’s update using "
+            "only the automated 24-hour feed."
         )
-        if owner_authenticated() and st.button(
-            "Build from Automated Feed Only",
-            type="primary",
-            use_container_width=True,
-        ):
-            api_key = secret_value("openai_api_key")
-            model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
-            if not api_key:
-                st.error("Add openai_api_key to Streamlit Secrets.")
-            else:
-                with st.spinner("Building today’s update…"):
-                    try:
-                        briefing = generate_briefing_from_records(
-                            raw_feed, [], api_key, model
-                        )
-                        st.session_state[
-                            f"generated_briefing_{build_key}"
-                        ] = briefing
-                        st.rerun()
-                    except Exception as exc:
-                        st.error(str(exc))
+        if owner_authenticated():
+            if st.button(
+                "Build from Automated Feed Only",
+                type="primary",
+                use_container_width=True,
+            ):
+                api_key = secret_value("openai_api_key")
+                model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
+                if not api_key:
+                    st.error("Add openai_api_key to Streamlit Secrets.")
+                else:
+                    with st.spinner("Building today’s update…"):
+                        try:
+                            briefing = generate_briefing_from_records(
+                                raw_feed, [], api_key, model
+                            )
+                            st.session_state[
+                                f"generated_briefing_{build_key}"
+                            ] = briefing
+                            st.rerun()
+                        except Exception as exc:
+                            st.error(str(exc))
+        else:
+            st.warning(
+                "Enter the owner password in the sidebar and select **Unlock**. "
+                "The **Build from Automated Feed Only** button will then appear here."
+            )
 
 briefing = st.session_state.get(f"generated_briefing_{build_key}")
 
@@ -1413,10 +1436,11 @@ with status_tab:
                 f"**Estimated OpenAI cost:** ${briefing['estimated_cost']:.4f}"
             )
         st.write(
-            f"**Supplemental links:** {briefing.get('supplemental_count', 0)}"
+            f"**Supplemental links extracted:** "
+            f"{briefing.get('supplemental_count', 0)}"
         )
         st.write(
-            f"**Supplemental links accounted for:** "
+            f"**Supplemental links represented in the briefing:** "
             f"{briefing.get('supplemental_accounted_count', 0)}"
         )
     else:
