@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import re
+from html.parser import HTMLParser
 from urllib.parse import urlparse, urlunparse
 
 import requests
@@ -98,9 +99,11 @@ def is_source_only(value: str, source: str = "") -> bool:
 
 
 def clean_headline_candidate(value: str, source: str = "") -> str:
-    value = re.sub(r"https?://\S+", " ", value or "")
+    value = URL_PATTERN.sub(" ", html.unescape(value or ""))
+    value = re.sub(r"<>|<\s*>|[<>]", " ", value)
     value = clean_spaces(value)
-    value = re.sub(r"^[•\-–—\d.)\s]+", "", value)
+    value = re.sub(r"^[•\-–—]\s*", "", value)
+    value = re.sub(r"^\d{1,2}[.)]\s+", "", value)
     value = value.strip("<>[](){}\"'` ")
     if source:
         value = re.sub(
@@ -112,38 +115,110 @@ def clean_headline_candidate(value: str, source: str = "") -> str:
     return clean_spaces(value)
 
 
+def is_likely_headline(value: str, source: str = "") -> bool:
+    """Reject source labels and obvious prose fragments used as link context."""
+    candidate = clean_headline_candidate(value, source)
+    if not candidate or is_source_only(candidate, source):
+        return False
+    words = candidate.split()
+    if len(candidate) > 240 or len(words) > 28:
+        return False
+    lowered = candidate.casefold()
+    prose_openings = (
+        "it's ", "it is ", "this is ", "there is ", "there are ",
+        "we are ", "we're ", "they are ", "they're ",
+    )
+    if len(candidate) > 70 and lowered.startswith(prose_openings):
+        return False
+    if len(candidate) > 120 and candidate.endswith((".", "?", "!")):
+        return False
+    return True
+
+
 def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
-    same_line = clean_headline_candidate(lines[index].replace(url, ""))
+    source = source_from_url(normalize_import_url(url))
+    same_line = clean_headline_candidate(lines[index], source)
     context_lines = []
     for offset in (0, -1, -2, 1):
         pos = index + offset
         if 0 <= pos < len(lines):
-            candidate = clean_spaces(lines[pos])
+            candidate = clean_headline_candidate(lines[pos], source)
             if candidate and candidate not in context_lines:
                 context_lines.append(candidate)
 
     context = " ".join(context_lines)[:1200]
-    if same_line and not is_source_only(same_line):
-        return same_line, context
-
-    for offset in (-1, -2, 1):
+    # A headline normally precedes a pasted source/description/link block. Prefer
+    # those lines to prose that happens to share the URL's line.
+    for offset in (-1, -2):
         pos = index + offset
         if 0 <= pos < len(lines):
-            candidate = clean_headline_candidate(lines[pos])
-            if candidate and not is_source_only(candidate):
+            candidate = clean_headline_candidate(lines[pos], source)
+            if is_likely_headline(candidate, source):
                 return candidate, context
+
+    if is_likely_headline(same_line, source):
+        return same_line, context
+
+    pos = index + 1
+    if pos < len(lines):
+        candidate = clean_headline_candidate(lines[pos], source)
+        if is_likely_headline(candidate, source):
+            return candidate, context
 
     return "", context
 
 
-def first_html_match(document: str, patterns: list[str]) -> str:
-    for pattern in patterns:
-        match = re.search(pattern, document, flags=re.IGNORECASE | re.DOTALL)
-        if match:
-            return clean_spaces(
-                html.unescape(re.sub(r"<[^>]+>", " ", match.group(1)))
-            )
-    return ""
+class ArticleMetadataParser(HTMLParser):
+    """Extract title metadata without breaking on quotes inside attribute values."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.metadata: dict[str, str] = {}
+        self.in_title = False
+        self.title_parts: list[str] = []
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        if tag.casefold() == "title":
+            self.in_title = True
+            return
+        if tag.casefold() != "meta":
+            return
+        attributes = {
+            key.casefold(): clean_spaces(value or "") for key, value in attrs
+        }
+        key = (attributes.get("property") or attributes.get("name") or "").casefold()
+        content = attributes.get("content", "")
+        if key and content and key not in self.metadata:
+            self.metadata[key] = content
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.casefold() == "title":
+            self.in_title = False
+
+    def handle_data(self, data: str) -> None:
+        if self.in_title and clean_spaces(data):
+            self.title_parts.append(data)
+
+
+def parse_article_metadata(document: str) -> tuple[str, str]:
+    parser = ArticleMetadataParser()
+    parser.feed(document)
+    title = (
+        parser.metadata.get("og:title")
+        or parser.metadata.get("twitter:title")
+        or clean_spaces(" ".join(parser.title_parts))
+    )
+    description = (
+        parser.metadata.get("og:description")
+        or parser.metadata.get("twitter:description")
+        or parser.metadata.get("description")
+        or ""
+    )
+    return clean_spaces(title), clean_spaces(description)
 
 
 def fetch_link_metadata(record: dict) -> dict:
@@ -160,34 +235,26 @@ def fetch_link_metadata(record: dict) -> dict:
         final_url = normalize_import_url(response.url)
         source = source_from_url(final_url)
 
-        fetched_title = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:title["\']',
-                r"<title[^>]*>(.*?)</title>",
-            ],
-        )
-        description = first_html_match(
-            document,
-            [
-                r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']',
-                r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']',
-            ],
-        )
+        fetched_title, description = parse_article_metadata(document)
 
         pasted = clean_headline_candidate(
             enriched.get("pasted_headline", ""), source
         )
         fetched = clean_headline_candidate(fetched_title, source)
-        if pasted and not is_source_only(pasted, source):
-            title = pasted
-        elif fetched and not is_source_only(fetched, source):
+        # The linked article's own metadata is authoritative. Nearby pasted
+        # text is only a fallback because it may be a description or quotation.
+        if fetched and not is_source_only(fetched, source):
             title = fetched
+        elif is_likely_headline(pasted, source):
+            title = pasted
         else:
-            title = clean_headline_candidate(
+            context_title = clean_headline_candidate(
                 enriched.get("pasted_context", ""), source
+            )
+            title = (
+                context_title
+                if is_likely_headline(context_title, source)
+                else "Headline unavailable — review this link"
             )
 
         enriched.update(
@@ -208,11 +275,12 @@ def fetch_link_metadata(record: dict) -> dict:
         context_title = clean_headline_candidate(
             record.get("pasted_context", ""), source
         )
-        title = (
-            pasted
-            if pasted and not is_source_only(pasted, source)
-            else context_title
-        )
+        if is_likely_headline(pasted, source):
+            title = pasted
+        elif is_likely_headline(context_title, source):
+            title = context_title
+        else:
+            title = "Headline unavailable — review this link"
         enriched.update(
             {
                 "source": source,

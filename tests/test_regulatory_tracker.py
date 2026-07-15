@@ -27,6 +27,16 @@ class RegulatoryTrackerTests(unittest.TestCase):
             <= set(self.items)
         )
         self.assertIn("FMVSS Nos. 103, 104, 108", self.items["zoox-part-555"]["action"])
+        self.assertEqual(
+            self.items["bvlos-part-108"]["action"],
+            "Routine BVLOS drone operations / Part 108",
+        )
+        for item in self.items.values():
+            with self.subTest(item=item["id"]):
+                self.assertNotRegex(
+                    item["action"],
+                    r"^(Create rules|Create |Enable |Modernize |Decide )",
+                )
 
     def test_open_periods_show_current_days_remaining(self) -> None:
         section_2209 = self.items["section-2209-uafr"]

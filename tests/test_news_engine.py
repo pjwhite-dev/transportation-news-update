@@ -157,6 +157,20 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertIn("presume every record", instructions)
         self.assertIn("keep the required item as a distinct story", instructions)
 
+    def test_prompt_requires_actual_article_headlines_and_executive_news_copy(
+        self,
+    ) -> None:
+        instructions = news_engine.prompt_messages(
+            [record()],
+            datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
+            datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
+        )[0]["content"].casefold()
+
+        self.assertIn("actual headline of the selected primary article", instructions)
+        self.assertIn("never substitute a quotation", instructions)
+        self.assertIn("standalone news briefing for a senior executive", instructions)
+        self.assertIn("never mention intake methods", instructions)
+
     def test_ai_cannot_mark_required_supplemental_record_irrelevant(self) -> None:
         supplemental = record(
             origin="Supplemental daily email",
@@ -246,6 +260,89 @@ class SupplementalGuardrailTests(unittest.TestCase):
             story["title"],
             "FAA approves expanded BVLOS drone operations",
         )
+
+    def test_source_headline_overrides_pasted_prose_and_ai_paraphrase(self) -> None:
+        article = record(
+            title="It's creating opportunities not only for drone operators",
+            original_title=(
+                "FAA authorizes routine BVLOS drone operations | Example News"
+            ),
+            source="Example News",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        raw_cluster = cluster(
+            canonical_title="Drone rules create new opportunities",
+            section="UAS and Drones",
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": "FAA advanced drone integration.",
+                "what_to_watch": [],
+                "clusters": [raw_cluster],
+            },
+            [article],
+        )
+
+        story = news_engine.cluster_to_story(
+            validated["clusters"][0],
+            {article["id"]: article},
+        )
+
+        self.assertEqual(
+            story["title"],
+            "FAA authorizes routine BVLOS drone operations",
+        )
+
+    def test_explicit_editor_headline_override_remains_authoritative(self) -> None:
+        article = record(
+            title="Fetched title",
+            original_title="Fetched title | Example News",
+            editor_title_override="Editor-corrected actual article headline",
+            source="Example News",
+        )
+
+        self.assertEqual(
+            news_engine.best_record_title(article),
+            "Editor-corrected actual article headline",
+        )
+
+    def test_executive_summary_removes_internal_intake_language(self) -> None:
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": (
+                    "Required supplemental records were included. "
+                    "FAA advanced a new BVLOS action affecting drone operations."
+                ),
+                "what_to_watch": [],
+                "clusters": [cluster()],
+            },
+            [record()],
+        )
+
+        self.assertEqual(
+            validated["executive_summary"],
+            "FAA advanced a new BVLOS action affecting drone operations.",
+        )
+
+    def test_executive_summary_has_factual_fallback_if_all_copy_is_internal(
+        self,
+    ) -> None:
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": (
+                    "The supplemental email satisfied link accounting."
+                ),
+                "what_to_watch": [],
+                "clusters": [cluster()],
+            },
+            [record()],
+        )
+
+        summary = validated["executive_summary"].casefold()
+        self.assertIn("nhtsa modernizes fmvss 108", summary)
+        for marker in news_engine.EXECUTIVE_SUMMARY_PROCESS_MARKERS:
+            self.assertNotIn(marker, summary)
 
     @patch("news_engine.analyze_articles")
     def test_every_distinct_supplemental_url_is_counted_and_represented(

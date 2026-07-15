@@ -23,6 +23,22 @@ OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
 TRANSIENT_OPENAI_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
 
+EXECUTIVE_SUMMARY_PROCESS_MARKERS = (
+    "supplemental",
+    "automated feed",
+    "automated record",
+    "required item",
+    "editorial pass",
+    "editorial process",
+    "source record",
+    "record id",
+    "article id",
+    "link accounting",
+    "coverage accounting",
+    "links extracted",
+    "links represented",
+)
+
 OPENAI_TOKEN_PRICES = {
     "gpt-5.4-mini": {"input": 0.75, "output": 4.50},
     "gpt-5-mini": {"input": 0.25, "output": 2.00},
@@ -557,8 +573,9 @@ def analysis_schema() -> dict[str, Any]:
 
 def best_record_title(record: dict[str, Any]) -> str:
     candidates = [
-        record.get("title", ""),
+        record.get("editor_title_override", ""),
         record.get("original_title", ""),
+        record.get("title", ""),
         record.get("pasted_headline", ""),
         record.get("pasted_context", ""),
     ]
@@ -567,6 +584,13 @@ def best_record_title(record: dict[str, Any]) -> str:
         value = clean_spaces(value)
         if not value:
             continue
+        if source:
+            value = re.sub(
+                rf"\s*[-|–—]\s*{re.escape(source)}\s*$",
+                "",
+                value,
+                flags=re.IGNORECASE,
+            ).strip()
         if headline_is_publisher_only(value, source):
             continue
         if value.lower().startswith(("http://", "https://")):
@@ -621,6 +645,7 @@ def prompt_messages(
             "search_section": item.get("search_section", ""),
             "title": item.get("title", ""),
             "original_title": item.get("original_title", ""),
+            "editor_title_override": item.get("editor_title_override", ""),
             "summary": item.get("summary", ""),
             "description": item.get("description", ""),
             "pasted_headline": item.get("pasted_headline", ""),
@@ -695,14 +720,21 @@ CLUSTERING
 - Do not create broad umbrella stories such as "drone activity expands" or "market activity grows."
 
 HEADLINES AND SUMMARIES
-- Every distinct story must receive a specific canonical headline.
+- For each story, use the actual headline of the selected primary article. Use that
+  record's editor_title_override when present. Otherwise use original_title verbatim
+  when it is available and usable, removing only a publisher suffix; then use title.
+- Never substitute a quotation, description, summary fragment, or surrounding email prose
+  for an article headline. Do not invent or paraphrase a new headline.
 - Write 1-2 concise factual sentences, normally 35-70 words.
 - Select the strongest primary source using this preference: {SOURCE_PREFERENCE}
 - Preserve every required supplemental URL either as primary coverage or "Also covered by."
 
 EXECUTIVE SUMMARY
 - Write 2-3 sentences, 60-100 words.
-- Describe the day's overall pattern and most consequential developments.
+- Write a polished, standalone news briefing for a senior executive. Describe the day's
+  overall pattern and most consequential developments using only news facts.
+- Never mention intake methods, records, required or supplemental material, automated feeds,
+  links or accounting, the editorial process, or how the briefing was assembled.
 
 TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST
 A story may be labeled a win only when ALL of the following are true:
@@ -866,6 +898,44 @@ def administration_win_is_eligible(raw: dict[str, Any]) -> bool:
     )
 
 
+def sanitize_executive_summary(
+    value: str,
+    clusters: list[dict[str, Any]],
+    lookup: dict[str, dict[str, Any]],
+) -> str:
+    """Remove internal workflow language and provide a factual safe fallback."""
+    sentences = re.split(r"(?<=[.!?])\s+", clean_spaces(value))
+    public_sentences = [
+        sentence
+        for sentence in sentences
+        if sentence
+        and not any(
+            marker in sentence.casefold()
+            for marker in EXECUTIVE_SUMMARY_PROCESS_MARKERS
+        )
+    ]
+    if public_sentences:
+        return clean_spaces(" ".join(public_sentences))
+
+    relevant = sorted(
+        (cluster for cluster in clusters if cluster.get("relevant", False)),
+        key=lambda cluster: cluster.get("importance", 1),
+        reverse=True,
+    )
+    titles = [
+        best_record_title(lookup[cluster["primary_article_id"]])
+        for cluster in relevant[:3]
+        if cluster.get("primary_article_id") in lookup
+    ]
+    if not titles:
+        return "Today's briefing covers the most consequential developments in advanced transportation."
+    if len(titles) == 1:
+        return f"The leading development is {titles[0]}."
+    if len(titles) == 2:
+        return f"Key developments include {titles[0]} and {titles[1]}."
+    return f"Key developments include {titles[0]}; {titles[1]}; and {titles[2]}."
+
+
 def validate_analysis(
     analysis: dict[str, Any],
     articles: list[dict[str, Any]],
@@ -968,7 +1038,9 @@ def validate_analysis(
         )
 
     return {
-        "executive_summary": clean_spaces(analysis.get("executive_summary", "")),
+        "executive_summary": sanitize_executive_summary(
+            analysis.get("executive_summary", ""), clusters, lookup
+        ),
         "what_to_watch": [
             clean_spaces(item)
             for item in analysis.get("what_to_watch", [])[:3]
@@ -1006,9 +1078,9 @@ def cluster_to_story(
         seen_sources.add(source.casefold())
         related.append({"source": source, "url": url})
 
-    title = clean_spaces(cluster["canonical_title"])
-    if headline_is_publisher_only(title, primary.get("source", "")):
-        title = best_record_title(primary)
+    # Headlines are source metadata, not AI-authored copy. This prevents a
+    # description, quotation, or model paraphrase from replacing the article title.
+    title = best_record_title(primary)
     summary = cluster["summary"] or clean_spaces(
         primary.get("description", "")
         or primary.get("summary", "")
