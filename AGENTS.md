@@ -48,6 +48,13 @@ must either:
 2. Appear as Additional coverage / Also covered by under a genuinely identical
    event.
 
+Treat supplemental-email records as editor-vetted and presume they are relevant
+and included. Do not apply the automated-feed relevance exclusions to them and
+do not omit them for low importance. If there is any doubt whether a
+supplemental item is the same concrete event as an automated item, keep it as a
+separate story. When it is genuinely the same event, consolidation is allowed
+only if the supplemental URL remains visible as additional coverage.
+
 Never silently discard a required supplemental link. Never merge distinct
 events. Never use a publisher label such as MSN, Yahoo, AOL, Reuters, or another
 publisher name as the headline. Never generate filler such as “Imported from

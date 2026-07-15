@@ -629,6 +629,7 @@ def prompt_messages(
             "published": item.get("published", ""),
             "origin": item.get("origin", ""),
             "required_include": bool(item.get("required_include", False)),
+            "editor_vetted": bool(item.get("editor_vetted", False)),
         }
         for item in articles
     ]
@@ -643,6 +644,9 @@ The records combine:
 2. Supplemental items pasted by the editor from another daily news email.
 
 MANDATORY SUPPLEMENTAL-ITEM RULE
+- Supplemental records are editor-vetted. Presume every record with
+  required_include=true is relevant and included; do not subject it to the automated-feed
+  relevance exclusions or omit it because it seems low importance.
 - Every record with required_include=true MUST be accounted for.
 - A required item must either be the primary article in a distinct story or appear in
   article_ids as genuine same-event coverage of another story.
@@ -652,6 +656,8 @@ MANDATORY SUPPLEMENTAL-ITEM RULE
   write a specific factual headline.
 - Never use generic filler such as "Imported from the supplemental daily news email."
 - Different events must remain separate stories. Merge only true same-event coverage.
+- If there is any doubt whether a required item describes the same concrete event as an
+  automated item, keep the required item as a distinct story.
 
 EDITORIAL SCOPE AND RELEVANCE
 - Produce a useful, fairly comprehensive briefing on:
@@ -1164,6 +1170,7 @@ def generate_briefing_from_records(
     for item in supplemental_records:
         record = dict(item)
         record["required_include"] = True
+        record["editor_vetted"] = True
         record["origin"] = "Supplemental daily email"
         record["search_section"] = record.get("search_section") or "Supplemental email"
         record["published"] = record.get("published") or end.isoformat()

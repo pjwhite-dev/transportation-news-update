@@ -30,6 +30,8 @@ www.example.org/av-permit.
             records[0]["title"],
             "FAA approves expanded BVLOS drone operations",
         )
+        self.assertTrue(all(item["required_include"] for item in records))
+        self.assertTrue(all(item["editor_vetted"] for item in records))
 
     def test_publisher_line_is_not_used_as_pasted_headline(self) -> None:
         pasted = """

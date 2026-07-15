@@ -140,6 +140,81 @@ class AdministrationWinTests(unittest.TestCase):
 
 
 class SupplementalGuardrailTests(unittest.TestCase):
+    def test_prompt_presumes_supplemental_records_are_included(self) -> None:
+        supplemental = record(
+            origin="Supplemental daily email",
+            required_include=True,
+            editor_vetted=True,
+        )
+
+        instructions = news_engine.prompt_messages(
+            [supplemental],
+            datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
+            datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
+        )[0]["content"].casefold()
+
+        self.assertIn("supplemental records are editor-vetted", instructions)
+        self.assertIn("presume every record", instructions)
+        self.assertIn("keep the required item as a distinct story", instructions)
+
+    def test_ai_cannot_mark_required_supplemental_record_irrelevant(self) -> None:
+        supplemental = record(
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        raw_cluster = cluster(relevant=False, exclude_reason="Low importance")
+
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": "",
+                "what_to_watch": [],
+                "clusters": [raw_cluster],
+            },
+            [supplemental],
+        )
+
+        self.assertTrue(validated["clusters"][0]["relevant"])
+
+    def test_same_event_supplemental_url_remains_additional_coverage(self) -> None:
+        automated = record(
+            id="automated-1",
+            title="FAA expands BVLOS drone operations",
+            source="FAA",
+            url="https://www.faa.gov/bvlos-action",
+        )
+        supplemental = record(
+            id="supplemental-1",
+            title="FAA expands BVLOS drone operations",
+            source="Example News",
+            url="https://example.com/bvlos-coverage",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        raw_cluster = cluster(
+            article_ids=["automated-1", "supplemental-1"],
+            primary_article_id="automated-1",
+            canonical_title="FAA expands BVLOS drone operations",
+        )
+
+        validated = news_engine.validate_analysis(
+            {
+                "executive_summary": "",
+                "what_to_watch": [],
+                "clusters": [raw_cluster],
+            },
+            [automated, supplemental],
+        )
+        story = news_engine.cluster_to_story(
+            validated["clusters"][0],
+            {item["id"]: item for item in (automated, supplemental)},
+        )
+
+        self.assertEqual(story["url"], automated["url"])
+        self.assertIn(
+            supplemental["url"],
+            {item["url"] for item in story["also_covered"]},
+        )
+
     def test_publisher_only_ai_headline_falls_back_to_specific_title(self) -> None:
         article = record(
             title="MSN",
