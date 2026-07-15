@@ -137,8 +137,11 @@ Place stories centered on the Department of Defense, a military service,
 defense acquisition, military operations or exercises, bases, warfighters,
 battlefield use, or military-focused contractors in **Military**. This includes
 military UAS, counter-UAS, autonomy, advanced aircraft, procurement, testing,
-deployments, and operational use. Enforce this categorization deterministically
-so military stories are not buried in generic UAS or Federal Actions.
+deployments, and operational use. It also includes conflict reporting such as
+the war in Ukraine, Russian military operations, attacks on warships, naval or
+battlefield strikes, weapons and munitions, and other combat activity. Enforce
+this categorization deterministically so military stories are not buried in
+generic UAS, UAS Security and C-UAS, or Federal Actions.
 
 ## Trump Administration Win eligibility
 
@@ -197,6 +200,11 @@ represented, accounting, or how the briefing was assembled.
 It must also never discuss whether any story is or is not an Administration Win
 or why a story passed or failed the Win test. If a story description or summary
 merely repeats its headline, omit the description entirely.
+Generate the Executive Summary in a separate final AI pass only after all story
+selection, clustering, section placement, summaries, What to Watch items, and
+the regulatory tracker have been compiled. Give that final pass only the
+compiled reader-facing briefing, never the raw intake records or internal Win
+eligibility fields.
 
 When a Win cites a recognized EO and section, append a concise plain-English
 summary of that section, for example: “Section 3, advancing domestic

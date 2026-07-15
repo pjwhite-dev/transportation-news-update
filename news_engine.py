@@ -102,6 +102,9 @@ NEWS_QUERIES = {
         '(military OR defense) (counter-UAS OR counter-drone OR drone contract OR autonomous system)',
         '(warfighter OR battlefield OR combat) (drone OR UAS OR autonomous vehicle)',
         '(defense contract OR military procurement) (drone OR UAS OR aircraft OR autonomy)',
+        '(Ukraine OR Ukrainian OR Russia OR Russian) (drone OR UAS OR unmanned OR autonomous)',
+        '(naval OR warship OR fleet) (drone OR unmanned OR autonomous OR missile)',
+        '(missile OR munition OR "loitering munition" OR weapon) (drone OR autonomous)',
     ],
     "eVTOL Integration Pilot Program and AAM": [
         '"eVTOL Integration Pilot Program"',
@@ -289,7 +292,26 @@ MILITARY_SECTION_PATTERN = re.compile(
     r"ministry of defen[sc]e|pentagon|dod|military|defen[sc]e|army|navy|air force|"
     r"marine corps|marines|space force|armed forces|warfighters?|battlefield|"
     r"combat|defen[sc]e contractor|defen[sc]e acquisition|nato|darpa|afwerx|"
-    r"socom|northcom|diu)\b",
+    r"socom|northcom|diu|warships?|naval|"
+    r"frigates?|destroyers?|battlefront|frontline|war zone|airstrikes?|"
+    r"missiles?|munitions?|weapons?|loitering munition|kamikaze drone|"
+    r"servicemembers?|troops?|soldiers?|warfare|hostilities|invasion|"
+    r"drone strikes?|attack drones?|armed drones?|combat drones?|naval attacks?|"
+    r"combat operations?|"
+    r"anduril|shield ai|aerovironment|general atomics|northrop grumman|"
+    r"lockheed martin|raytheon|l3harris|red cat|kratos)\b",
+    re.IGNORECASE,
+)
+
+MILITARY_CONFLICT_ACTOR_PATTERN = re.compile(
+    r"\b(?:ukraine|ukrainians?|russia|russians?)\b",
+    re.IGNORECASE,
+)
+
+MILITARY_CONFLICT_CONTEXT_PATTERN = re.compile(
+    r"\b(?:drones?|uas|uavs?|unmanned|attacks?|strikes?|hit|struck|sank|sunk|"
+    r"ships?|vessels?|military|combat|war|warfare|battlefield|frontline|"
+    r"weapons?|missiles?|munitions?|invasion|defen[sc]e)\b",
     re.IGNORECASE,
 )
 
@@ -668,11 +690,21 @@ def analysis_schema() -> dict[str, Any]:
     return {
         "type": "object",
         "properties": {
-            "executive_summary": {"type": "string"},
             "what_to_watch": {"type": "array", "items": {"type": "string"}},
             "clusters": {"type": "array", "items": cluster},
         },
-        "required": ["executive_summary", "what_to_watch", "clusters"],
+        "required": ["what_to_watch", "clusters"],
+        "additionalProperties": False,
+    }
+
+
+def executive_summary_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "executive_summary": {"type": "string"},
+        },
+        "required": ["executive_summary"],
         "additionalProperties": False,
     }
 
@@ -714,7 +746,10 @@ def infer_section(record: dict[str, Any]) -> str:
             "source",
         )
     ).lower()
-    if MILITARY_SECTION_PATTERN.search(text):
+    if MILITARY_SECTION_PATTERN.search(text) or (
+        MILITARY_CONFLICT_ACTOR_PATTERN.search(text)
+        and MILITARY_CONFLICT_CONTEXT_PATTERN.search(text)
+    ):
         return "Military"
     if any(term in text for term in (
         "counter-uas", "counter uas", "c-uas", "counter drone", "drone detection",
@@ -804,10 +839,12 @@ EDITORIAL SCOPE AND RELEVANCE
   5. Autonomous vehicles and automated driving.
   6. Civil supersonics and genuinely advanced rail or transportation technology.
   7. Directly relevant Federal actions.
-- Put stories centered on the Department of Defense, a military service, defense acquisition,
-  military operations, bases, warfighters, battlefield use, or military-focused contractors
-  in Military. This includes military UAS, counter-UAS, autonomy, advanced aircraft, contracts,
-  tests, deployments, and exercises; do not bury them in generic UAS or Federal Actions.
+- Put every military-related story in Military, regardless of whether its platform is a drone,
+  ship, aircraft, ground vehicle, missile, or autonomous system. This includes the Department
+  of Defense, military services, defense acquisition and contractors, bases, warfighters,
+  weapons and munitions, military tests and exercises, battlefield or naval operations, combat
+  strikes, and reporting about the war in Ukraine or Russian military operations. Do not put
+  these stories in generic UAS, UAS Security and C-UAS, or Federal Actions.
 - Autonomous Vehicles explicitly includes robotaxis, privately owned automated vehicles,
   autonomous trucking, ADS-equipped commercial motor vehicles, NHTSA and FMCSA actions,
   FMVSS modernization, Part 555 exemptions, recalls, investigations, permits, state and
@@ -845,15 +882,6 @@ HEADLINES AND SUMMARIES
 - If the available description or summary merely repeats the headline, return an empty summary.
 - Select the strongest primary source using this preference: {SOURCE_PREFERENCE}
 - Preserve every required supplemental URL either as primary coverage or "Also covered by."
-
-EXECUTIVE SUMMARY
-- Write 2-3 sentences, 60-100 words.
-- Write a polished, standalone news briefing for a senior executive. Describe the day's
-  overall pattern and most consequential developments using only news facts.
-- Never mention intake methods, records, required or supplemental material, automated feeds,
-  links or accounting, the editorial process, or how the briefing was assembled.
-- Never discuss whether a story is or is not a Trump Administration Win, whether it passed
-  the Win test, or why any story failed or satisfied Win eligibility. Report the news itself.
 
 TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST
 A story may be labeled a win only when ALL of the following are true:
@@ -905,6 +933,10 @@ STALE-NEWS EXAMPLES
 WHAT TO WATCH
 - Return 0-3 concise, supportable next steps, deadlines, or unresolved developments.
 
+Do not write an Executive Summary in this pass. First complete the story selection,
+clustering, section assignments, story summaries, Win determinations, and What to Watch.
+The Executive Summary will be written in a separate final pass from that compiled briefing.
+
 {EO_REFERENCE}
 """.strip()
 
@@ -946,28 +978,29 @@ def estimate_cost(model: str, usage: dict[str, Any]) -> float | None:
     )
 
 
-def analyze_articles(
-    articles: list[dict[str, Any]],
+def request_structured_output(
+    messages: list[dict[str, str]],
     api_key: str,
     model: str,
-    window_start: datetime,
-    window_end: datetime,
+    schema_name: str,
+    schema: dict[str, Any],
+    max_output_tokens: int,
 ) -> tuple[dict[str, Any], dict[str, Any], float | None]:
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is missing.")
 
     payload = {
         "model": model,
-        "input": prompt_messages(articles, window_start, window_end),
+        "input": messages,
         "reasoning": {"effort": "none"},
-        "max_output_tokens": 20000,
+        "max_output_tokens": max_output_tokens,
         "store": False,
         "text": {
             "format": {
                 "type": "json_schema",
-                "name": "transportation_news_analysis",
+                "name": schema_name,
                 "strict": True,
-                "schema": analysis_schema(),
+                "schema": schema,
             }
         },
     }
@@ -1007,6 +1040,23 @@ def analyze_articles(
     raise RuntimeError("OpenAI request failed after retries: " + " | ".join(errors[-4:]))
 
 
+def analyze_articles(
+    articles: list[dict[str, Any]],
+    api_key: str,
+    model: str,
+    window_start: datetime,
+    window_end: datetime,
+) -> tuple[dict[str, Any], dict[str, Any], float | None]:
+    return request_structured_output(
+        prompt_messages(articles, window_start, window_end),
+        api_key,
+        model,
+        "transportation_news_analysis",
+        analysis_schema(),
+        20000,
+    )
+
+
 def administration_win_is_eligible(raw: dict[str, Any]) -> bool:
     """Apply the four mandatory Administration Win eligibility gates."""
     return (
@@ -1027,41 +1077,6 @@ def executive_summary_sentence_is_public(sentence: str) -> bool:
         re.search(r"\badministrat(?:ion|ive)\b", lowered)
     )
     return not (mentions_win and mentions_administration)
-
-
-def sanitize_executive_summary(
-    value: str,
-    clusters: list[dict[str, Any]],
-    lookup: dict[str, dict[str, Any]],
-) -> str:
-    """Remove internal workflow language and provide a factual safe fallback."""
-    sentences = re.split(r"(?<=[.!?])\s+", clean_spaces(value))
-    public_sentences = [
-        sentence
-        for sentence in sentences
-        if sentence
-        and executive_summary_sentence_is_public(sentence)
-    ]
-    if public_sentences:
-        return clean_spaces(" ".join(public_sentences))
-
-    relevant = sorted(
-        (cluster for cluster in clusters if cluster.get("relevant", False)),
-        key=lambda cluster: cluster.get("importance", 1),
-        reverse=True,
-    )
-    titles = [
-        best_record_title(lookup[cluster["primary_article_id"]])
-        for cluster in relevant[:3]
-        if cluster.get("primary_article_id") in lookup
-    ]
-    if not titles:
-        return "Today's briefing covers the most consequential developments in advanced transportation."
-    if len(titles) == 1:
-        return f"The leading development is {titles[0]}."
-    if len(titles) == 2:
-        return f"Key developments include {titles[0]} and {titles[1]}."
-    return f"Key developments include {titles[0]}; {titles[1]}; and {titles[2]}."
 
 
 def validate_analysis(
@@ -1167,9 +1182,6 @@ def validate_analysis(
         )
 
     return {
-        "executive_summary": sanitize_executive_summary(
-            analysis.get("executive_summary", ""), clusters, lookup
-        ),
         "what_to_watch": [
             clean_spaces(item)
             for item in analysis.get("what_to_watch", [])[:3]
@@ -1302,6 +1314,153 @@ def supplemental_link_accounting(
     return len(supplemental_urls), len(supplemental_urls & included_urls)
 
 
+def executive_summary_messages(
+    sections: dict[str, list[dict[str, Any]]],
+    what_to_watch: list[str],
+    regulatory_tracker: list[dict[str, Any]],
+    window_start: datetime,
+    window_end: datetime,
+) -> list[dict[str, str]]:
+    """Build the final-pass prompt from compiled reader-facing material only."""
+    stories: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for display_section in SECTION_ORDER:
+        for item in sections.get(display_section, []):
+            identity = item.get("id") or item.get("url") or item.get("title", "")
+            if identity in seen:
+                continue
+            seen.add(identity)
+            stories.append(
+                {
+                    "topic": item.get("section", ""),
+                    "headline": item.get("title", ""),
+                    "summary": item.get("summary", ""),
+                    "source": item.get("source", ""),
+                    "date": item.get("date_label", ""),
+                }
+            )
+
+    tracker_context = [
+        {
+            "agency": item.get("agency", ""),
+            "action": item.get("action", ""),
+            "comment_deadline": item.get("comment_deadline_label", ""),
+            "status": item.get("status", ""),
+        }
+        for item in regulatory_tracker
+    ]
+    compiled = {
+        "coverage_window": {
+            "start": window_start.isoformat(),
+            "end": window_end.isoformat(),
+        },
+        "final_stories": stories,
+        "what_to_watch": what_to_watch,
+        "regulatory_tracker_context": tracker_context,
+    }
+    developer = """
+You are writing the Executive Summary as the final step of a completed daily
+U.S. advanced-transportation news briefing. The material supplied below is the
+final, authoritative briefing; base the summary only on those reader-facing
+facts.
+
+- Write a polished, standalone briefing for a senior executive in 2-3 sentences
+  and 60-100 words.
+- Lead with the most consequential developments and accurately describe the
+  day's overall pattern. Do not turn a minor item into the lead.
+- Do not introduce facts, causal claims, credit, or conclusions that do not
+  appear in the compiled stories.
+- Do not mention records, links, intake methods, supplemental or automated
+  material, accounting, editorial workflow, prompts, sections, or how the
+  briefing was assembled.
+- Do not discuss whether any item is or is not an Administration Win, or why it
+  passed or failed any eligibility test. Report the underlying news only.
+- The regulatory tracker is background context. Do not elevate a standing
+  deadline into daily news unless the same development appears in final_stories.
+""".strip()
+    user = "Write the final Executive Summary from this compiled briefing:\n" + json.dumps(
+        compiled, ensure_ascii=False
+    )
+    return [
+        {"role": "developer", "content": developer},
+        {"role": "user", "content": user},
+    ]
+
+
+def sanitize_compiled_executive_summary(
+    value: str,
+    sections: dict[str, list[dict[str, Any]]],
+) -> str:
+    """Keep final summary copy public-facing and derive a factual fallback."""
+    sentences = re.split(r"(?<=[.!?])\s+", clean_spaces(value))
+    public_sentences = [
+        sentence
+        for sentence in sentences
+        if sentence and executive_summary_sentence_is_public(sentence)
+    ]
+    if public_sentences:
+        return clean_spaces(" ".join(public_sentences))
+
+    titles: list[str] = []
+    seen: set[str] = set()
+    for section in SECTION_ORDER:
+        for item in sections.get(section, []):
+            title = clean_spaces(item.get("title", ""))
+            if title and title.casefold() not in seen:
+                seen.add(title.casefold())
+                titles.append(title)
+            if len(titles) == 3:
+                break
+        if len(titles) == 3:
+            break
+    if not titles:
+        return "Today's briefing covers the most consequential developments in advanced transportation."
+    if len(titles) == 1:
+        return f"The leading development is {titles[0]}."
+    if len(titles) == 2:
+        return f"Key developments include {titles[0]} and {titles[1]}."
+    return f"Key developments include {titles[0]}; {titles[1]}; and {titles[2]}."
+
+
+def generate_final_executive_summary(
+    sections: dict[str, list[dict[str, Any]]],
+    what_to_watch: list[str],
+    regulatory_tracker: list[dict[str, Any]],
+    api_key: str,
+    model: str,
+    window_start: datetime,
+    window_end: datetime,
+) -> tuple[str, dict[str, Any], float | None]:
+    result, usage, cost = request_structured_output(
+        executive_summary_messages(
+            sections,
+            what_to_watch,
+            regulatory_tracker,
+            window_start,
+            window_end,
+        ),
+        api_key,
+        model,
+        "transportation_news_executive_summary",
+        executive_summary_schema(),
+        1200,
+    )
+    return (
+        sanitize_compiled_executive_summary(
+            result.get("executive_summary", ""), sections
+        ),
+        usage,
+        cost,
+    )
+
+
+def combine_usage(*passes: dict[str, Any]) -> dict[str, int]:
+    return {
+        key: sum(int(usage.get(key, 0) or 0) for usage in passes)
+        for key in ("input_tokens", "output_tokens", "total_tokens")
+    }
+
+
 def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
     end = (window_end or datetime.now(EASTERN)).astimezone(EASTERN)
     start = end - timedelta(hours=24)
@@ -1388,7 +1547,7 @@ def generate_briefing_from_records(
         supplemental.append(record)
 
     combined = deduplicate_articles(automated + supplemental)
-    raw_analysis, usage, cost = analyze_articles(
+    raw_analysis, analysis_usage, analysis_cost = analyze_articles(
         combined, api_key, model, start, end
     )
     analysis = validate_analysis(raw_analysis, combined)
@@ -1407,6 +1566,25 @@ def generate_briefing_from_records(
     supplemental_count, supplemental_accounted_count = (
         supplemental_link_accounting(supplemental, arranged)
     )
+    regulatory_tracker = build_regulatory_tracker(end)
+
+    # The Executive Summary is deliberately the final AI step. It sees the
+    # arranged, reader-facing briefing rather than raw intake records or Win gates.
+    executive_summary, summary_usage, summary_cost = generate_final_executive_summary(
+        arranged,
+        analysis["what_to_watch"],
+        regulatory_tracker,
+        api_key,
+        model,
+        start,
+        end,
+    )
+    usage = combine_usage(analysis_usage, summary_usage)
+    cost = (
+        analysis_cost + summary_cost
+        if analysis_cost is not None and summary_cost is not None
+        else None
+    )
 
     return {
         "generated_at": datetime.now(EASTERN).isoformat(),
@@ -1415,9 +1593,9 @@ def generate_briefing_from_records(
         "model": model,
         "usage": usage,
         "estimated_cost": cost,
-        "executive_summary": analysis["executive_summary"],
+        "executive_summary": executive_summary,
         "what_to_watch": analysis["what_to_watch"],
-        "regulatory_tracker": build_regulatory_tracker(end),
+        "regulatory_tracker": regulatory_tracker,
         "sections": arranged,
         "source_errors": raw_feed.get("source_errors", []),
         "candidate_count": len(combined),
