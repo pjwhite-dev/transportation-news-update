@@ -2,11 +2,18 @@ from __future__ import annotations
 
 import hmac
 import html
+import ipaddress
 import json
+import random
+import re
+import socket
+import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -16,19 +23,21 @@ from news_engine import (
     EO_DISPLAY_NAMES,
     SECTION_ORDER,
     TOPIC_SECTIONS,
-    generate_daily_briefing,
+    clean_spaces,
+    generate_briefing_from_records,
+    stable_id,
 )
 
 st.set_page_config(
-    page_title="News Update",
+    page_title="Advanced Transportation News Update",
     page_icon="📰",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
 ROOT = Path(__file__).resolve().parent
-LATEST_PATH = ROOT / "data" / "latest_briefing.json"
-ARCHIVE_DIR = ROOT / "data" / "archive"
+LATEST_RAW_PATH = ROOT / "data" / "latest_raw_news.json"
+RAW_ARCHIVE_DIR = ROOT / "data" / "raw_archive"
 
 
 def secret_value(name: str, default: str = "") -> str:
@@ -64,18 +73,6 @@ def render_owner_access() -> None:
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
-
-def available_editions() -> list[Path]:
-    paths = sorted(ARCHIVE_DIR.glob("*.json"), reverse=True) if ARCHIVE_DIR.exists() else []
-    if LATEST_PATH.exists() and LATEST_PATH not in paths:
-        paths.insert(0, LATEST_PATH)
-    return paths
-
-
-def edition_label(path: Path) -> str:
-    if path.name == "latest_briefing.json":
-        return "Latest daily edition"
-    return path.stem
 
 
 def safe_url(value: str) -> str:
@@ -216,25 +213,8 @@ def section_html(title: str, items: list[dict]) -> str:
     if not items:
         return ""
     is_wins = title == "Trump Administration Wins"
-    is_top = title == "Top Developments"
     heading_color = "#8c241e" if is_wins else "#173c5e"
-
-    if is_wins or is_top:
-        content = "".join(article_html(item, title) for item in items)
-    else:
-        featured = items[:4]
-        additional = items[4:]
-        content = "".join(article_html(item, title) for item in featured)
-        if additional:
-            compact = "".join(compact_article_html(item) for item in additional)
-            content += f"""
-            <div style="font-size:12px;font-weight:800;color:#48657d;
-                text-transform:uppercase;letter-spacing:.35px;margin:2px 0 9px 0;">
-              Additional Headlines
-            </div>
-            {compact}
-            """
-
+    content = "".join(article_html(item, title) for item in items)
     return f"""
     <div style="margin:0 0 25px 0;">
       <div style="font-size:19px;line-height:1.3;font-weight:800;color:{heading_color};
@@ -287,13 +267,10 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
         font-family:Arial,Helvetica,sans-serif;color:#1f2933;">
       <div style="background:#153a5a;padding:19px 21px 17px 21px;">
         <div style="font-size:29px;line-height:1.15;font-weight:800;color:#ffffff;">
-          News Update
+          Advanced Transportation News Update
         </div>
         <div style="font-size:14px;line-height:1.45;color:#dce8f0;margin-top:5px;">
           {html.escape(date_text)}
-        </div>
-        <div style="font-size:12px;line-height:1.45;color:#dce8f0;">
-          UAS, C-UAS, and Advanced Transportation
         </div>
       </div>
 
@@ -499,36 +476,9 @@ def outlook_section_html(title: str, items: list[dict]) -> str:
         return ""
 
     is_wins = title == "Trump Administration Wins"
-    is_top = title == "Top Developments"
     heading_color = "#8C241E" if is_wins else "#173C5E"
     rule_color = "#B42318" if is_wins else "#CBD6DE"
-
-    if is_wins or is_top:
-        stories = "".join(outlook_story_html(item, title) for item in items)
-    else:
-        featured = items[:4]
-        additional = items[4:]
-        stories = "".join(outlook_story_html(item, title) for item in featured)
-        if additional:
-            stories += f"""
-            <table role="presentation" width="100%" border="0" cellspacing="0"
-                cellpadding="0" style="width:100%;border-collapse:collapse;">
-              <tr>
-                <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;
-                    font-size:10px;line-height:14px;font-weight:bold;color:#48657D;
-                    text-transform:uppercase;letter-spacing:.4px;
-                    mso-line-height-rule:exactly;">
-                  Additional Headlines
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:0;">
-                  {"".join(outlook_story_html(item, title, compact=True)
-                           for item in additional)}
-                </td>
-              </tr>
-            </table>
-            """
+    stories = "".join(outlook_story_html(item, title) for item in items)
 
     return f"""
     <tr>
@@ -662,15 +612,11 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
                 font-family:Arial,Helvetica,sans-serif;">
               <div style="font-size:28px;line-height:32px;font-weight:bold;
                   color:#FFFFFF;mso-line-height-rule:exactly;">
-                News Update
+                Advanced Transportation News Update
               </div>
               <div style="padding-top:6px;font-size:13px;line-height:18px;
                   color:#DCE8F0;mso-line-height-rule:exactly;">
                 {html.escape(date_text)}
-              </div>
-              <div style="font-size:12px;line-height:17px;color:#DCE8F0;
-                  mso-line-height-rule:exactly;">
-                UAS, C-UAS, and Advanced Transportation
               </div>
             </td>
           </tr>
@@ -759,9 +705,8 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
 def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     lines = [
-        "NEWS UPDATE",
+        "ADVANCED TRANSPORTATION NEWS UPDATE",
         end.strftime("%A, %B %d, %Y").replace(" 0", " "),
-        "UAS, C-UAS, AND ADVANCED TRANSPORTATION",
         f"24-hour coverage: {format_datetime(briefing['window_start'])} through {format_datetime(briefing['window_end'])}",
         "",
         "EXECUTIVE SUMMARY",
@@ -863,6 +808,220 @@ def copy_controls(
     """
     components.html(component, height=60)
 
+
+MANUAL_IMPORT_USER_AGENT = (
+    "TransportationNewsUpdate/4.0 manual-intake metadata fetcher"
+)
+URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s<>\"'`]+", re.IGNORECASE)
+
+
+
+SOURCE_ONLY_LABELS = {
+    "msn", "msn.com", "aol", "aol.com", "yahoo", "yahoo finance",
+    "google news", "reuters", "associated press", "ap", "read more",
+    "click here", "article", "link",
+}
+
+
+def normalize_import_url(value: str) -> str:
+    value = html.unescape(value or "").strip()
+    value = value.strip("<>[](){}\"'`")
+    value = re.sub(r"[.,;:!?]+$", "", value)
+    return value
+
+
+def source_from_url(url: str) -> str:
+    try:
+        host = urlparse(url).hostname or ""
+    except ValueError:
+        return "Supplemental source"
+    host = host.lower().removeprefix("www.")
+    brand = host.split(".")[0].replace("-", " ").strip()
+    known = {
+        "msn": "MSN",
+        "aol": "AOL",
+        "finance": "Yahoo Finance",
+        "news": "Google News",
+    }
+    return known.get(brand, brand.title() or "Supplemental source")
+
+
+def is_source_only(value: str, source: str = "") -> bool:
+    cleaned = clean_spaces(re.sub(r"^[•\-–—\s]+", "", value or "")).strip(" :|")
+    if not cleaned:
+        return True
+    lowered = cleaned.casefold()
+    if lowered in SOURCE_ONLY_LABELS:
+        return True
+    if source and lowered == source.casefold():
+        return True
+    if lowered.startswith(("http://", "https://")):
+        return True
+    return len(cleaned) < 8
+
+
+def clean_headline_candidate(value: str, source: str = "") -> str:
+    value = re.sub(r"https?://\S+", " ", value or "")
+    value = clean_spaces(value)
+    value = re.sub(r"^[•\-–—\d.)\s]+", "", value)
+    value = value.strip("<>[](){}\"'` ")
+    if source:
+        value = re.sub(
+            rf"\s*[-|–—]\s*{re.escape(source)}\s*$",
+            "",
+            value,
+            flags=re.IGNORECASE,
+        )
+    return clean_spaces(value)
+
+
+def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
+    same_line = clean_headline_candidate(lines[index].replace(url, ""))
+    context_lines = []
+    for offset in (0, -1, -2, 1):
+        pos = index + offset
+        if 0 <= pos < len(lines):
+            candidate = clean_spaces(lines[pos])
+            if candidate and candidate not in context_lines:
+                context_lines.append(candidate)
+
+    context = " ".join(context_lines)[:1200]
+    if same_line and not is_source_only(same_line):
+        return same_line, context
+
+    for offset in (-1, -2, 1):
+        pos = index + offset
+        if 0 <= pos < len(lines):
+            candidate = clean_headline_candidate(lines[pos])
+            if candidate and not is_source_only(candidate):
+                return candidate, context
+
+    return "", context
+
+
+def first_html_match(document: str, patterns: list[str]) -> str:
+    for pattern in patterns:
+        match = re.search(pattern, document, flags=re.IGNORECASE | re.DOTALL)
+        if match:
+            return clean_spaces(html.unescape(re.sub(r"<[^>]+>", " ", match.group(1))))
+    return ""
+
+
+def fetch_link_metadata(record: dict) -> dict:
+    enriched = dict(record)
+    try:
+        response = requests.get(
+            record["url"],
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 Safari/537.36"
+                )
+            },
+            timeout=18,
+            allow_redirects=True,
+        )
+        response.raise_for_status()
+        document = response.text[:750000]
+        final_url = normalize_import_url(response.url)
+        source = source_from_url(final_url)
+
+        fetched_title = first_html_match(
+            document,
+            [
+                r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\'](.*?)["\']',
+                r'<meta[^>]+content=["\'](.*?)["\'][^>]+property=["\']og:title["\']',
+                r"<title[^>]*>(.*?)</title>",
+            ],
+        )
+        description = first_html_match(
+            document,
+            [
+                r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\'](.*?)["\']',
+                r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']',
+                r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']',
+            ],
+        )
+
+        pasted = clean_headline_candidate(enriched.get("pasted_headline", ""), source)
+        fetched = clean_headline_candidate(fetched_title, source)
+        if pasted and not is_source_only(pasted, source):
+            title = pasted
+        elif fetched and not is_source_only(fetched, source):
+            title = fetched
+        else:
+            title = clean_headline_candidate(enriched.get("pasted_context", ""), source)
+
+        enriched.update(
+            {
+                "url": final_url or record["url"],
+                "title": title[:260],
+                "original_title": fetched_title[:260],
+                "description": description[:1200],
+                "source": source,
+                "fetch_status": "Metadata retrieved",
+            }
+        )
+    except Exception as exc:
+        source = source_from_url(record["url"])
+        pasted = clean_headline_candidate(record.get("pasted_headline", ""), source)
+        context_title = clean_headline_candidate(record.get("pasted_context", ""), source)
+        title = pasted if pasted and not is_source_only(pasted, source) else context_title
+        enriched.update(
+            {
+                "source": source,
+                "title": title[:260],
+                "description": "",
+                "fetch_status": f"Metadata unavailable: {clean_spaces(str(exc))[:160]}",
+            }
+        )
+    return enriched
+
+
+def extract_supplemental_items(raw_text: str, fetch_metadata: bool = True) -> list[dict]:
+    lines = [line.rstrip() for line in (raw_text or "").splitlines()]
+    pattern = re.compile(r"https?://[^\s<>]+")
+    records = []
+    seen = set()
+
+    for index, line in enumerate(lines):
+        # Strip malformed wrappers such as <https://...>.
+        for match in pattern.finditer(html.unescape(line)):
+            url = normalize_import_url(match.group(0))
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            pasted_headline, context = context_for_link(lines, index, match.group(0))
+            record = {
+                "id": stable_id("supplemental", url),
+                "url": url,
+                "title": pasted_headline,
+                "pasted_headline": pasted_headline,
+                "pasted_context": context,
+                "summary": "",
+                "description": "",
+                "source": source_from_url(url),
+                "origin": "Supplemental daily email",
+                "required_include": True,
+                "fetch_status": "Not fetched",
+            }
+            records.append(fetch_link_metadata(record) if fetch_metadata else record)
+
+    return records
+
+
+def raw_feed_text(raw_feed: dict) -> str:
+    lines = []
+    for index, item in enumerate(raw_feed.get("articles", []), start=1):
+        lines.extend([
+            f"{index}. {item.get('title', 'Untitled')}",
+            f"{item.get('source', '')} | {item.get('published', '')}",
+            item.get("url", ""),
+            "",
+        ])
+    return "\n".join(lines)
+
+
 def initialize_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
     if prefix + "initialized" in st.session_state:
@@ -886,7 +1045,8 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
         prefix + "executive_summary", briefing.get("executive_summary", "")
     ).strip()
     edited["what_to_watch"] = [
-        line.strip() for line in st.session_state.get(prefix + "what_to_watch", "").splitlines()
+        line.strip()
+        for line in st.session_state.get(prefix + "what_to_watch", "").splitlines()
         if line.strip()
     ][:3]
     for section, items in list(edited.get("sections", {}).items()):
@@ -895,9 +1055,15 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
             item_id = item["id"]
             if not st.session_state.get(prefix + item_id + "_include", True):
                 continue
-            item["title"] = st.session_state.get(prefix + item_id + "_title", item["title"]).strip()
-            item["summary"] = st.session_state.get(prefix + item_id + "_summary", item["summary"]).strip()
-            item["win_explanation"] = st.session_state.get(prefix + item_id + "_win", item.get("win_explanation", "")).strip()
+            item["title"] = st.session_state.get(
+                prefix + item_id + "_title", item["title"]
+            ).strip()
+            item["summary"] = st.session_state.get(
+                prefix + item_id + "_summary", item["summary"]
+            ).strip()
+            item["win_explanation"] = st.session_state.get(
+                prefix + item_id + "_win", item.get("win_explanation", "")
+            ).strip()
             kept.append(item)
         edited["sections"][section] = kept
     return edited
@@ -905,7 +1071,7 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
 
 def render_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
-    st.text_area("Executive Summary", key=prefix + "executive_summary", height=110)
+    st.text_area("Executive Summary", key=prefix + "executive_summary", height=120)
     st.text_area(
         "What to Watch — one item per line",
         key=prefix + "what_to_watch",
@@ -921,149 +1087,344 @@ def render_editor(briefing: dict, edition_key: str) -> None:
             with st.container(border=True):
                 st.checkbox("Include", key=prefix + item_id + "_include")
                 st.text_input("Headline", key=prefix + item_id + "_title")
-                st.text_area("Summary", key=prefix + item_id + "_summary", height=85)
+                st.text_area("Summary", key=prefix + item_id + "_summary", height=90)
                 if item.get("is_administration_win"):
                     st.text_area(
                         "Why this is a Trump Administration win",
                         key=prefix + item_id + "_win",
-                        height=90,
+                        height=95,
                     )
-                st.caption(f"{item.get('source', '')} · {item.get('date_label', '')}")
+                st.caption(
+                    f"{item.get('source', '')} · {item.get('date_label', '')}"
+                )
 
 
 st.markdown("""
 <style>
-.block-container{max-width:900px;padding-top:1.4rem;padding-bottom:4rem}
+.block-container{max-width:940px;padding-top:1.4rem;padding-bottom:4rem}
 [data-testid="stHeader"]{background:rgba(255,255,255,.94)}
 </style>
 """, unsafe_allow_html=True)
 
 render_owner_access()
-paths = available_editions()
 
-if not paths:
-    st.error("No saved daily briefing exists yet. Run the GitHub Action or use Run now after unlocking.")
-    briefing = None
-    edition_key = "temporary"
-else:
-    labels = {edition_label(path): path for path in paths}
-    selected_label = st.selectbox("Edition", list(labels), label_visibility="collapsed")
-    selected_path = labels[selected_label]
-    briefing = load_json(selected_path)
-    edition_key = selected_path.stem
-
-if owner_authenticated():
-    st.sidebar.divider()
-    st.sidebar.caption("Run now creates a temporary edition for this browser session. The scheduled GitHub Action creates the permanent daily edition.")
-    if st.sidebar.button("Run AI analysis now", use_container_width=True):
-        api_key = secret_value("openai_api_key")
-        model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
-        if not api_key:
-            st.sidebar.error("Add openai_api_key to Streamlit Secrets.")
-        else:
-            with st.spinner("Collecting and analyzing the preceding 24 hours…"):
-                try:
-                    st.session_state["temporary_briefing"] = generate_daily_briefing(api_key, model)
-                    st.session_state["use_temporary"] = True
-                    st.rerun()
-                except Exception as exc:
-                    st.sidebar.error(str(exc))
-
-if st.session_state.get("use_temporary") and st.session_state.get("temporary_briefing"):
-    briefing = st.session_state["temporary_briefing"]
-    edition_key = "temporary_" + briefing.get("generated_at", "now")
-    st.info("Showing a temporary manual run. The next scheduled GitHub Action will create the permanent saved edition.")
-    if st.button("Return to saved daily edition"):
-        st.session_state["use_temporary"] = False
-        st.rerun()
-
-if briefing is None:
-    st.stop()
-
-if not briefing.get("window_end"):
-    st.warning(
-        "The first scheduled edition has not been generated yet. Open the GitHub "
-        "Actions tab and run Daily Transportation News Update, or unlock Owner "
-        "controls and use Run AI analysis now."
+if not LATEST_RAW_PATH.exists():
+    st.error(
+        "No raw 24-hour news feed exists yet. Run the GitHub Action "
+        "'Daily Transportation Raw News Collection' once."
     )
     st.stop()
 
-initialize_editor(briefing, edition_key)
-current = edited_briefing(briefing, edition_key) if owner_authenticated() else briefing
+raw_feed = load_json(LATEST_RAW_PATH)
+if not raw_feed.get("window_end"):
+    st.warning(
+        "The new raw-feed workflow has not run yet. In GitHub, open Actions and "
+        "manually run **Daily Transportation Raw News Collection** once. Then "
+        "refresh this page."
+    )
+    st.stop()
 
-end = datetime.fromisoformat(current["window_end"]).astimezone(EASTERN)
-st.title("News Update")
+end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
+build_key = end.date().isoformat()
+
+st.title("Advanced Transportation News Update")
 st.caption(
-    f"24-hour coverage through {end.strftime('%-I:%M %p ET on %B %d, %Y').replace(' 0', ' ')}"
+    f"Automated raw feed covers the preceding 24 hours through "
+    f"{end.strftime('%-I:%M %p ET on %B %d, %Y').replace(' 0', ' ')}"
 )
 
-preview_tab, edit_tab, status_tab = st.tabs(["Email Preview", "Review & Edit", "Status"])
+build_tab, preview_tab, edit_tab, raw_tab, status_tab = st.tabs(
+    [
+        "Build Today’s Update",
+        "Email Preview",
+        "Review & Edit",
+        "Raw 24-Hour Feed",
+        "Status",
+    ]
+)
+
+with build_tab:
+    st.subheader("1. Automated 24-hour feed")
+    st.write(
+        f"GitHub collected **{raw_feed.get('candidate_count', 0)}** raw candidate "
+        "articles without using OpenAI."
+    )
+    with st.expander("View the automated feed as text"):
+        st.text_area(
+            "Automated feed",
+            value=raw_feed_text(raw_feed),
+            height=320,
+            disabled=True,
+            label_visibility="collapsed",
+        )
+
+    st.subheader("2. Paste the supplemental daily email")
+    paste_key = f"supplemental_paste_{build_key}"
+    st.text_area(
+        "Supplemental email",
+        key=paste_key,
+        height=300,
+        placeholder=(
+            "Paste the complete email here, including headlines, notes, and links. "
+            "Links enclosed in < > or followed by punctuation will be cleaned."
+        ),
+        label_visibility="collapsed",
+    )
+    fetch_metadata = st.checkbox(
+        "Read public page titles and descriptions before the AI pass",
+        value=True,
+        help=(
+            "Recommended. If a page is blocked or paywalled, the pasted headline "
+            "and surrounding text are still preserved."
+        ),
+    )
+
+    left, right = st.columns([0.72, 0.28])
+    with left:
+        if st.button(
+            "Preview and clean supplemental items",
+            use_container_width=True,
+        ):
+            with st.spinner("Cleaning links and reading available page metadata…"):
+                records = extract_supplemental_items(
+                    st.session_state.get(paste_key, ""),
+                    fetch_metadata=fetch_metadata,
+                )
+            st.session_state[f"supplemental_records_{build_key}"] = records
+            if records:
+                st.success(
+                    f"Found {len(records)} unique supplemental link"
+                    f"{'s' if len(records) != 1 else ''}."
+                )
+            else:
+                st.warning("No HTTP or HTTPS links were found.")
+    with right:
+        if st.button("Clear", use_container_width=True):
+            st.session_state.pop(f"supplemental_records_{build_key}", None)
+            st.session_state.pop(f"generated_briefing_{build_key}", None)
+            st.rerun()
+
+    records = st.session_state.get(f"supplemental_records_{build_key}", [])
+    if records:
+        st.markdown("### Supplemental items that will all be included")
+        st.caption(
+            "Edit any weak headline before the AI pass. Every listed URL must appear "
+            "as a story or as true same-event additional coverage."
+        )
+        for index, record in enumerate(records):
+            with st.container(border=True):
+                title_key = f"supp_title_{build_key}_{record['id']}"
+                source_key = f"supp_source_{build_key}_{record['id']}"
+                if title_key not in st.session_state:
+                    st.session_state[title_key] = record.get("title", "")
+                if source_key not in st.session_state:
+                    st.session_state[source_key] = record.get("source", "")
+                st.text_input(
+                    f"Headline {index + 1}",
+                    key=title_key,
+                )
+                st.text_input(
+                    "Source",
+                    key=source_key,
+                )
+                st.markdown(f"[Open link]({record['url']})")
+                if record.get("pasted_context"):
+                    st.caption(record["pasted_context"][:500])
+                st.caption(record.get("fetch_status", ""))
+
+        if owner_authenticated():
+            if st.button(
+                "Build Today’s Advanced Transportation News Update with AI",
+                type="primary",
+                use_container_width=True,
+            ):
+                api_key = secret_value("openai_api_key")
+                model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
+                if not api_key:
+                    st.error("Add openai_api_key to Streamlit Secrets.")
+                else:
+                    edited_records = []
+                    for record in records:
+                        edited = dict(record)
+                        edited["title"] = st.session_state.get(
+                            f"supp_title_{build_key}_{record['id']}",
+                            record.get("title", ""),
+                        ).strip()
+                        edited["pasted_headline"] = edited["title"]
+                        edited["source"] = st.session_state.get(
+                            f"supp_source_{build_key}_{record['id']}",
+                            record.get("source", ""),
+                        ).strip()
+                        edited_records.append(edited)
+
+                    with st.spinner(
+                        "Running one AI editorial pass across the automated feed "
+                        "and all supplemental items…"
+                    ):
+                        try:
+                            briefing = generate_briefing_from_records(
+                                raw_feed,
+                                edited_records,
+                                api_key,
+                                model,
+                            )
+                            st.session_state[
+                                f"generated_briefing_{build_key}"
+                            ] = briefing
+                            # Reset editor state for the new generation.
+                            for key in list(st.session_state):
+                                if key.startswith(f"edit_{build_key}_"):
+                                    del st.session_state[key]
+                            st.success("Today’s Advanced Transportation News Update is ready.")
+                            st.rerun()
+                        except Exception as exc:
+                            st.error(str(exc))
+        else:
+            st.info(
+                "Unlock Owner controls in the sidebar to run the AI editorial pass."
+            )
+    else:
+        st.info(
+            "The supplemental email is optional. To build using only the automated "
+            "24-hour feed, paste nothing and click the button below."
+        )
+        if owner_authenticated() and st.button(
+            "Build from Automated Feed Only",
+            type="primary",
+            use_container_width=True,
+        ):
+            api_key = secret_value("openai_api_key")
+            model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
+            if not api_key:
+                st.error("Add openai_api_key to Streamlit Secrets.")
+            else:
+                with st.spinner("Building today’s update…"):
+                    try:
+                        briefing = generate_briefing_from_records(
+                            raw_feed, [], api_key, model
+                        )
+                        st.session_state[
+                            f"generated_briefing_{build_key}"
+                        ] = briefing
+                        st.rerun()
+                    except Exception as exc:
+                        st.error(str(exc))
+
+briefing = st.session_state.get(f"generated_briefing_{build_key}")
 
 with preview_tab:
-    web_preview_html = build_web_preview_html(current, executive_only=False)
-    outlook_full_html = build_outlook_html(current, executive_only=False)
-    outlook_short_html = build_outlook_html(current, executive_only=True)
-    full_text = build_plain_text(current, executive_only=False)
-    short_text = build_plain_text(current, executive_only=True)
-    subject_line = f"Advanced Transportation News Update — {end.strftime('%B %d, %Y').replace(' 0', ' ')}"
+    if not briefing:
+        st.info(
+            "Build today’s update first. Open **Build Today’s Update**, paste the "
+            "supplemental email, preview the links, and run the AI editorial pass."
+        )
+    else:
+        initialize_editor(briefing, build_key)
+        current = (
+            edited_briefing(briefing, build_key)
+            if owner_authenticated()
+            else briefing
+        )
+        web_preview_html = build_web_preview_html(current, executive_only=False)
+        outlook_full_html = build_outlook_html(current, executive_only=False)
+        outlook_short_html = build_outlook_html(current, executive_only=True)
+        full_text = build_plain_text(current, executive_only=False)
+        short_text = build_plain_text(current, executive_only=True)
+        subject_line = (
+            f"Advanced Transportation News Update — "
+            f"{end.strftime('%B %d, %Y').replace(' 0', ' ')}"
+        )
 
-    st.caption(
-        "Copy for Outlook uses a separate Microsoft Outlook–optimized table layout "
-        "with fixed spacing and inline formatting."
-    )
-    copy_controls(
-        outlook_full_html,
-        full_text,
-        outlook_short_html,
-        short_text,
-        subject_line,
-    )
-    st.download_button(
-        "Download Outlook HTML",
-        data=outlook_full_html,
-        file_name=f"news-update-{end.date().isoformat()}.html",
-        mime="text/html",
-    )
-    st.divider()
-    st.html(web_preview_html)
-
-    with st.expander("Preview the Outlook-optimized layout"):
-        st.html(outlook_full_html)
+        copy_controls(
+            outlook_full_html,
+            full_text,
+            outlook_short_html,
+            short_text,
+            subject_line,
+        )
+        st.download_button(
+            "Download Outlook HTML",
+            data=outlook_full_html,
+            file_name=f"news-update-{build_key}.html",
+            mime="text/html",
+        )
+        st.download_button(
+            "Download briefing JSON backup",
+            data=json.dumps(current, indent=2, ensure_ascii=False),
+            file_name=f"news-update-{build_key}.json",
+            mime="application/json",
+        )
+        st.divider()
+        st.html(web_preview_html)
+        with st.expander("Preview the Outlook-optimized layout"):
+            st.html(outlook_full_html)
 
 with edit_tab:
-    if owner_authenticated():
-        st.caption("Edits affect only this browser session and the copied email; they do not modify the archived GitHub edition.")
-        render_editor(briefing, edition_key)
+    if not briefing:
+        st.info("Build today’s update first.")
+    elif owner_authenticated():
+        initialize_editor(briefing, build_key)
+        st.caption(
+            "Edits affect this browser session and the copied email."
+        )
+        render_editor(briefing, build_key)
     else:
-        st.info("Unlock Owner controls in the sidebar to edit the briefing.")
+        st.info("Unlock Owner controls to edit the generated briefing.")
+
+with raw_tab:
+    st.write(
+        f"**{raw_feed.get('candidate_count', 0)} raw candidates** collected "
+        "without AI during the preceding 24 hours."
+    )
+    for section, count in sorted(
+        raw_feed.get("candidate_counts", {}).items()
+    ):
+        st.write(f"- {section}: {count}")
+    st.text_area(
+        "Raw feed",
+        value=raw_feed_text(raw_feed),
+        height=520,
+        disabled=True,
+        label_visibility="collapsed",
+    )
 
 with status_tab:
-    st.write(f"**Generated:** {format_datetime(current.get('generated_at', ''))}")
-    st.write(f"**Coverage:** {format_datetime(current['window_start'])} through {format_datetime(current['window_end'])}")
-    st.write(f"**Model:** {current.get('model', '')}")
-    usage = current.get("usage", {})
-    if usage:
+    st.write(f"**Raw feed generated:** {format_datetime(raw_feed.get('generated_at', ''))}")
+    st.write(
+        f"**Coverage:** {format_datetime(raw_feed['window_start'])} through "
+        f"{format_datetime(raw_feed['window_end'])}"
+    )
+    st.write(
+        f"**Automated candidates:** {raw_feed.get('candidate_count', 0)}"
+    )
+    if briefing:
         st.write(
-            f"**Tokens:** {int(usage.get('input_tokens', 0)):,} input; "
+            f"**Obvious unrelated automated records filtered before AI:** "
+            f"{briefing.get('automated_filtered_out_count', 0)}"
+        )
+        st.write(f"**AI model:** {briefing.get('model', '')}")
+        usage = briefing.get("usage", {})
+        st.write(
+            f"**AI tokens:** {int(usage.get('input_tokens', 0)):,} input; "
             f"{int(usage.get('output_tokens', 0)):,} output"
         )
-    if current.get("estimated_cost") is not None:
-        st.write(f"**Estimated API cost:** ${current['estimated_cost']:.4f}")
-    st.write(f"**Candidate records reviewed:** {current.get('candidate_count', 0)}")
+        if briefing.get("estimated_cost") is not None:
+            st.write(
+                f"**Estimated OpenAI cost:** ${briefing['estimated_cost']:.4f}"
+            )
+        st.write(
+            f"**Supplemental links:** {briefing.get('supplemental_count', 0)}"
+        )
+        st.write(
+            f"**Supplemental links accounted for:** "
+            f"{briefing.get('supplemental_accounted_count', 0)}"
+        )
+    else:
+        st.info("No OpenAI call has been made in this browser session yet.")
 
-    candidate_counts = current.get("candidate_counts", {})
-    included_counts = current.get("included_counts", {})
-    if candidate_counts:
-        st.markdown("**Candidates collected by search family:**")
-        for name, count in sorted(candidate_counts.items()):
-            st.write(f"- {name}: {count}")
-    if included_counts:
-        st.markdown("**Items displayed by section:**")
-        for name, count in included_counts.items():
-            st.write(f"- {name}: {count}")
-    if current.get("source_errors"):
+    if raw_feed.get("source_errors"):
         st.warning("Some source requests failed:")
-        for error in current["source_errors"]:
+        for error in raw_feed["source_errors"]:
             st.code(error)
     else:
-        st.success("All configured source requests completed.")
+        st.success("All configured raw-news source requests completed.")
