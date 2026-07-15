@@ -76,7 +76,26 @@ Preserve these explicit sections and ordering:
 6. Autonomous Vehicles
 7. Other Advanced Transportation
 8. Federal Actions
-9. What to Watch
+9. Regulatory Deadline Tracker
+10. What to Watch
+
+Place the Regulatory Deadline Tracker at the bottom of the email immediately
+before What to Watch. It is a persistent public-information section, not a list
+of news stories. Each tracker item must show agency, action, official source,
+comment deadline, days remaining when open, and status. After a comment period
+closes, retain its closing date and use a specific pending status such as
+“Pending final rule,” “Pending NHTSA action,” or “Pending petition decision.”
+
+The tracker must include the FAA BVLOS/Part 108 rule, the Section 2209 fixed-site
+UAS restriction rule, the supersonic-overland-flight rulemaking, key ADS-focused
+FMVSS modernization actions, and important Part 555 petitions. Verify dates and
+extensions against the latest official Federal Register notice before updating
+the curated tracker. Give every tracker item its own Include checkbox in Review
+& Edit so the owner can omit individual actions from the email.
+
+Do not add “new since yesterday” or “materially changed” badges. The email is
+already limited to new developments. Do not add By-the-Numbers, Today-at-a-
+Glance counts, or a separate Decision Points Ahead feature.
 
 ## Autonomous Vehicles coverage
 

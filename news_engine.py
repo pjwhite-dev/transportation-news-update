@@ -16,6 +16,8 @@ from zoneinfo import ZoneInfo
 import feedparser
 import requests
 
+from regulatory_tracker import build_regulatory_tracker
+
 EASTERN = ZoneInfo("America/New_York")
 OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
@@ -1203,6 +1205,7 @@ def generate_briefing_from_records(
         "estimated_cost": cost,
         "executive_summary": analysis["executive_summary"],
         "what_to_watch": analysis["what_to_watch"],
+        "regulatory_tracker": build_regulatory_tracker(end),
         "sections": arranged,
         "source_errors": raw_feed.get("source_errors", []),
         "candidate_count": len(combined),

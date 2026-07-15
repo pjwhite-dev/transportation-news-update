@@ -219,6 +219,74 @@ def section_html(title: str, items: list[dict]) -> str:
     """
 
 
+def regulatory_tracker_web_html(items: list[dict]) -> str:
+    if not items:
+        return ""
+
+    rows = []
+    for item in items:
+        is_open = item.get("days_remaining") is not None
+        deadline_prefix = "Closes" if is_open else "Closed"
+        days = str(item["days_remaining"]) if is_open else "—"
+        rows.append(
+            f"""
+            <tr>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;font-weight:700;color:#334e63;">
+                {html.escape(item.get('agency', ''))}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:13px;line-height:1.4;color:#252b31;">
+                <a href="{safe_url(item.get('source_url', ''))}"
+                    style="color:#173c5e;text-decoration:none;font-weight:700;">
+                  {html.escape(item.get('action', ''))}
+                </a>
+                <div style="font-size:10px;line-height:1.35;color:#77818a;margin-top:3px;">
+                  {html.escape(item.get('docket', ''))}
+                </div>
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;color:#4f5f6c;white-space:nowrap;">
+                {deadline_prefix} {html.escape(item.get('comment_deadline_label', ''))}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;text-align:center;color:#4f5f6c;">
+                {days}
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #e1e6ea;
+                  font-size:12px;line-height:1.4;color:#4f5f6c;">
+                {html.escape(item.get('status', ''))}
+              </td>
+            </tr>
+            """
+        )
+
+    return f"""
+    <div style="margin:0 0 25px 0;">
+      <div style="font-size:19px;line-height:1.3;font-weight:800;color:#173c5e;
+          padding-bottom:6px;margin-bottom:12px;border-bottom:2px solid #cbd6de;">
+        Regulatory Deadline Tracker
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0"
+          style="width:100%;border-collapse:collapse;table-layout:fixed;">
+        <tr style="background:#f3f6f8;">
+          <th width="12%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Agency</th>
+          <th width="40%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Action</th>
+          <th width="19%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Comment period</th>
+          <th width="10%" style="padding:7px 8px;text-align:center;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Days</th>
+          <th width="19%" style="padding:7px 8px;text-align:left;font-size:10px;
+              line-height:1.3;color:#5d6b78;text-transform:uppercase;">Status</th>
+        </tr>
+        {''.join(rows)}
+      </table>
+    </div>
+    """
+
+
 def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
@@ -234,6 +302,11 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
         section_html(section, sections.get(section, []))
         for section in visible_sections
     )
+    tracker_markup = ""
+    if not executive_only:
+        tracker_markup = regulatory_tracker_web_html(
+            briefing.get("regulatory_tracker", [])
+        )
 
     watch = briefing.get("what_to_watch", [])
     watch_markup = ""
@@ -281,6 +354,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
       </div>
 
       {section_markup}
+      {tracker_markup}
       {watch_markup}
 
       <div style="font-size:10px;line-height:1.45;color:#7b848c;
@@ -496,6 +570,98 @@ def outlook_section_html(title: str, items: list[dict]) -> str:
     """
 
 
+def regulatory_tracker_outlook_html(items: list[dict]) -> str:
+    if not items:
+        return ""
+
+    rows = []
+    for item in items:
+        is_open = item.get("days_remaining") is not None
+        deadline_prefix = "Closes" if is_open else "Closed"
+        days = str(item["days_remaining"]) if is_open else "—"
+        rows.append(
+            f"""
+            <tr>
+              <td width="70" valign="top" style="width:70px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;font-weight:bold;color:#334E63;">
+                {html.escape(item.get('agency', ''))}
+              </td>
+              <td width="245" valign="top" style="width:245px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:11px;line-height:16px;color:#252B31;">
+                <a href="{safe_url(item.get('source_url', ''))}"
+                    style="color:#173C5E;text-decoration:none;font-weight:bold;">
+                  {html.escape(item.get('action', ''))}
+                </a><br>
+                <span style="font-size:9px;line-height:13px;color:#77818A;">
+                  {html.escape(item.get('docket', ''))}
+                </span>
+              </td>
+              <td width="105" valign="top" style="width:105px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;color:#4F5F6C;">
+                {deadline_prefix} {html.escape(item.get('comment_deadline_label', ''))}
+              </td>
+              <td width="45" valign="top" align="center" style="width:45px;
+                  padding:10px 7px;border-bottom:1px solid #E1E6EA;
+                  font-family:Arial,Helvetica,sans-serif;font-size:10px;
+                  line-height:15px;color:#4F5F6C;">{days}</td>
+              <td width="105" valign="top" style="width:105px;padding:10px 7px;
+                  border-bottom:1px solid #E1E6EA;font-family:Arial,Helvetica,sans-serif;
+                  font-size:10px;line-height:15px;color:#4F5F6C;">
+                {html.escape(item.get('status', ''))}
+              </td>
+            </tr>
+            """
+        )
+
+    return f"""
+    <tr>
+      <td style="padding:0 28px;">
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
+                font-size:18px;line-height:23px;font-weight:bold;color:#173C5E;
+                border-bottom:2px solid #CBD6DE;mso-line-height-rule:exactly;">
+              Regulatory Deadline Tracker
+            </td>
+          </tr>
+          {outlook_spacer(13)}
+          <tr>
+            <td>
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" style="width:100%;border-collapse:collapse;
+                  table-layout:fixed;">
+                <tr bgcolor="#F3F6F8">
+                  <td width="70" style="width:70px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">AGENCY</td>
+                  <td width="245" style="width:245px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">ACTION</td>
+                  <td width="105" style="width:105px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">COMMENT PERIOD</td>
+                  <td width="45" align="center" style="width:45px;padding:7px;
+                      font-family:Arial,Helvetica,sans-serif;font-size:9px;
+                      line-height:13px;font-weight:bold;color:#5D6B78;">DAYS</td>
+                  <td width="105" style="width:105px;padding:7px;font-family:Arial,
+                      Helvetica,sans-serif;font-size:9px;line-height:13px;
+                      font-weight:bold;color:#5D6B78;">STATUS</td>
+                </tr>
+                {''.join(rows)}
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {outlook_spacer(20)}
+    """
+
+
 def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     date_text = end.strftime("%A, %B %d, %Y").replace(" 0", " ")
@@ -507,14 +673,15 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     if not executive_only:
         visible_sections.extend(TOPIC_SECTIONS)
 
-    win_count = len(sections.get("Trump Administration Wins", []))
-    top_count = len(sections.get("Top Developments", []))
-    total_count = sum(len(sections.get(section, [])) for section in visible_sections)
-
     section_markup = "".join(
         outlook_section_html(section, sections.get(section, []))
         for section in visible_sections
     )
+    tracker_markup = ""
+    if not executive_only:
+        tracker_markup = regulatory_tracker_outlook_html(
+            briefing.get("regulatory_tracker", [])
+        )
 
     watch = briefing.get("what_to_watch", [])
     watch_markup = ""
@@ -563,18 +730,6 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
         {outlook_spacer(20)}
         """
 
-    glance_parts = []
-    if win_count:
-        glance_parts.append(
-            f"{win_count} Administration win{'s' if win_count != 1 else ''}"
-        )
-    if top_count:
-        glance_parts.append(
-            f"{top_count} top development{'s' if top_count != 1 else ''}"
-        )
-    glance_parts.append(f"{total_count} total item{'s' if total_count != 1 else ''}")
-    glance = " &nbsp;•&nbsp; ".join(glance_parts)
-
     return f"""<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:v="urn:schemas-microsoft-com:vml"
@@ -622,22 +777,6 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
             </td>
           </tr>
 
-          <tr>
-            <td style="padding:10px 28px 0 28px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0"
-                  cellpadding="0" bgcolor="#F2F5F7"
-                  style="width:100%;border-collapse:collapse;background-color:#F2F5F7;">
-                <tr>
-                  <td style="padding:8px 11px;font-family:Arial,Helvetica,sans-serif;
-                      font-size:10px;line-height:15px;color:#5D6B78;
-                      mso-line-height-rule:exactly;">
-                    <strong>TODAY AT A GLANCE:</strong> {glance}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
           {outlook_spacer(17)}
 
           <tr>
@@ -666,6 +805,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
 
           {outlook_spacer(25)}
           {section_markup}
+          {tracker_markup}
           {watch_markup}
 
           <tr>
@@ -740,6 +880,35 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
                     f"{rel.get('source', '')}: {rel.get('url', '')}" for rel in related[:3]
                 ))
             lines.append("")
+
+    if not executive_only and briefing.get("regulatory_tracker"):
+        lines.extend(["REGULATORY DEADLINE TRACKER", ""])
+        for item in briefing["regulatory_tracker"]:
+            is_open = item.get("days_remaining") is not None
+            deadline_prefix = "Closes" if is_open else "Closed"
+            days = (
+                f"{item['days_remaining']} days remaining"
+                if is_open
+                else "No open comment period"
+            )
+            lines.extend(
+                [
+                    item.get("action", ""),
+                    " | ".join(
+                        value
+                        for value in (
+                            item.get("agency", ""),
+                            item.get("docket", ""),
+                            f"{deadline_prefix} {item.get('comment_deadline_label', '')}",
+                            days,
+                            item.get("status", ""),
+                        )
+                        if value
+                    ),
+                    item.get("source_url", ""),
+                    "",
+                ]
+            )
 
     watch = briefing.get("what_to_watch", [])
     if watch:
@@ -826,6 +995,10 @@ def initialize_editor(briefing: dict, edition_key: str) -> None:
             st.session_state[prefix + item_id + "_title"] = item.get("title", "")
             st.session_state[prefix + item_id + "_summary"] = item.get("summary", "")
             st.session_state[prefix + item_id + "_win"] = item.get("win_explanation", "")
+    for item in briefing.get("regulatory_tracker", []):
+        st.session_state[
+            prefix + "tracker_" + item["id"] + "_include"
+        ] = True
     st.session_state[prefix + "initialized"] = True
 
 
@@ -857,17 +1030,20 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
             ).strip()
             kept.append(item)
         edited["sections"][section] = kept
+    edited["regulatory_tracker"] = [
+        item
+        for item in edited.get("regulatory_tracker", [])
+        if st.session_state.get(
+            prefix + "tracker_" + item["id"] + "_include",
+            True,
+        )
+    ]
     return edited
 
 
 def render_editor(briefing: dict, edition_key: str) -> None:
     prefix = f"edit_{edition_key}_"
     st.text_area("Executive Summary", key=prefix + "executive_summary", height=120)
-    st.text_area(
-        "What to Watch — one item per line",
-        key=prefix + "what_to_watch",
-        height=95,
-    )
     for section in SECTION_ORDER:
         items = briefing.get("sections", {}).get(section, [])
         if not items:
@@ -888,6 +1064,55 @@ def render_editor(briefing: dict, edition_key: str) -> None:
                 st.caption(
                     f"{item.get('source', '')} · {item.get('date_label', '')}"
                 )
+
+    tracker = briefing.get("regulatory_tracker", [])
+    if tracker:
+        st.subheader("Regulatory Deadline Tracker")
+        st.caption(
+            "Uncheck any rulemaking you do not want included in the email."
+        )
+        for item in tracker:
+            with st.container(border=True):
+                st.checkbox(
+                    "Include",
+                    key=(
+                        prefix
+                        + "tracker_"
+                        + item["id"]
+                        + "_include"
+                    ),
+                )
+                st.markdown(
+                    f"**[{item.get('action', '')}]({item.get('source_url', '')})**"
+                )
+                is_open = item.get("days_remaining") is not None
+                deadline_prefix = "Closes" if is_open else "Closed"
+                days = (
+                    f"{item['days_remaining']} days remaining"
+                    if is_open
+                    else "No open comment period"
+                )
+                st.caption(
+                    " · ".join(
+                        [
+                            item.get("agency", ""),
+                            item.get("docket", ""),
+                            (
+                                f"{deadline_prefix} "
+                                f"{item.get('comment_deadline_label', '')}"
+                            ),
+                            days,
+                            item.get("status", ""),
+                        ]
+                    )
+                )
+
+    st.subheader("What to Watch")
+    st.text_area(
+        "One item per line",
+        key=prefix + "what_to_watch",
+        height=95,
+    )
 
 
 st.markdown("""
