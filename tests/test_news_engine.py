@@ -93,6 +93,56 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         self.assertIn("Military", news_engine.TOPIC_SECTIONS)
         self.assertEqual(validated["clusters"][0]["section"], "Military")
 
+    def test_ukraine_conflict_story_is_forced_out_of_uas(self) -> None:
+        article = record(
+            title="Ukraine deploys long-range drones in overnight strikes",
+            summary="Ukrainian forces used unmanned aircraft against military targets.",
+            source="Example News",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "what_to_watch": [],
+                "clusters": [cluster(section="UAS and Drones")],
+            },
+            [article],
+        )
+
+        self.assertEqual(validated["clusters"][0]["section"], "Military")
+
+    def test_russian_ship_attack_is_forced_out_of_uas(self) -> None:
+        article = record(
+            title="Russian ships hit in unmanned naval attack",
+            summary="Unmanned vessels damaged two warships during combat operations.",
+            source="Example News",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "what_to_watch": [],
+                "clusters": [cluster(section="UAS and Drones")],
+            },
+            [article],
+        )
+
+        self.assertEqual(validated["clusters"][0]["section"], "Military")
+
+    def test_civilian_ukraine_rail_story_is_not_forced_into_military(self) -> None:
+        article = record(
+            title="New passenger rail route links Germany, Poland, and Ukraine",
+            summary="The cross-border service will add overnight passenger trains.",
+            source="Example Travel News",
+            origin="Google News RSS",
+            search_section="Other Advanced Transportation",
+        )
+
+        self.assertEqual(
+            news_engine.infer_section(article),
+            "Other Advanced Transportation",
+        )
+
     def test_win_toggle_moves_story_into_and_out_of_win_section(self) -> None:
         story = {
             "id": "military-1",
@@ -202,13 +252,22 @@ class SupplementalGuardrailTests(unittest.TestCase):
             datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
             datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
         )[0]["content"].casefold()
+        summary_instructions = news_engine.executive_summary_messages(
+            {section: [] for section in news_engine.SECTION_ORDER},
+            [],
+            [],
+            datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
+            datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
+        )[0]["content"].casefold()
 
         self.assertIn("actual headline of the selected primary article", instructions)
         self.assertIn("never substitute a quotation", instructions)
-        self.assertIn("standalone news briefing for a senior executive", instructions)
-        self.assertIn("never mention intake methods", instructions)
+        self.assertIn("do not write an executive summary in this pass", instructions)
         self.assertIn("in military", instructions)
-        self.assertIn("never discuss whether a story is or is not", instructions)
+        self.assertIn("war in ukraine", instructions)
+        self.assertIn("standalone briefing for a senior executive", summary_instructions)
+        self.assertIn("final step", summary_instructions)
+        self.assertIn("do not discuss whether any item is or is not", summary_instructions)
 
     def test_ai_cannot_mark_required_supplemental_record_irrelevant(self) -> None:
         supplemental = record(
@@ -347,38 +406,68 @@ class SupplementalGuardrailTests(unittest.TestCase):
         )
 
     def test_executive_summary_removes_internal_intake_language(self) -> None:
-        validated = news_engine.validate_analysis(
-            {
-                "executive_summary": (
-                    "Required supplemental records were included. "
-                    "FAA advanced a new BVLOS action affecting drone operations."
-                ),
-                "what_to_watch": [],
-                "clusters": [cluster()],
-            },
-            [record()],
+        sections = {section: [] for section in news_engine.SECTION_ORDER}
+        sections["Top Developments"] = [
+            {"title": "FAA advanced a new BVLOS action"}
+        ]
+        summary = news_engine.sanitize_compiled_executive_summary(
+            "Required supplemental records were included. "
+            "FAA advanced a new BVLOS action affecting drone operations.",
+            sections,
         )
 
         self.assertEqual(
-            validated["executive_summary"],
+            summary,
             "FAA advanced a new BVLOS action affecting drone operations.",
         )
 
+    def test_final_summary_prompt_contains_only_compiled_reader_fields(self) -> None:
+        story = {
+            "id": "story-1",
+            "title": "Ukraine deploys long-range drones in overnight strikes",
+            "summary": "Ukrainian forces used unmanned aircraft against military targets.",
+            "source": "Example News",
+            "date_label": "Jul. 15, 2026",
+            "section": "Military",
+            "is_administration_win": True,
+            "win_explanation": "Internal Win explanation.",
+            "required_include": True,
+        }
+        sections = {section: [] for section in news_engine.SECTION_ORDER}
+        sections["Trump Administration Wins"] = [story]
+
+        prompt = news_engine.executive_summary_messages(
+            sections,
+            [],
+            [],
+            datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
+            datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
+        )[1]["content"]
+
+        self.assertIn(story["title"], prompt)
+        self.assertIn('"topic": "Military"', prompt)
+        for internal_field in (
+            "is_administration_win",
+            "win_explanation",
+            "required_include",
+            "Trump Administration Wins",
+        ):
+            with self.subTest(internal_field=internal_field):
+                self.assertNotIn(internal_field, prompt)
+
     def test_executive_summary_removes_win_eligibility_commentary(self) -> None:
-        validated = news_engine.validate_analysis(
-            {
-                "executive_summary": (
-                    "None of the stories qualifies as an Administration Win. "
-                    "The Army expanded its autonomous aircraft program."
-                ),
-                "what_to_watch": [],
-                "clusters": [cluster()],
-            },
-            [record()],
+        sections = {section: [] for section in news_engine.SECTION_ORDER}
+        sections["Military"] = [
+            {"title": "The Army expanded its autonomous aircraft program"}
+        ]
+        summary = news_engine.sanitize_compiled_executive_summary(
+            "None of the stories qualifies as an Administration Win. "
+            "The Army expanded its autonomous aircraft program.",
+            sections,
         )
 
         self.assertEqual(
-            validated["executive_summary"],
+            summary,
             "The Army expanded its autonomous aircraft program.",
         )
 
@@ -439,32 +528,33 @@ class SupplementalGuardrailTests(unittest.TestCase):
     def test_executive_summary_has_factual_fallback_if_all_copy_is_internal(
         self,
     ) -> None:
-        validated = news_engine.validate_analysis(
-            {
-                "executive_summary": (
-                    "The supplemental email satisfied link accounting."
-                ),
-                "what_to_watch": [],
-                "clusters": [cluster()],
-            },
-            [record()],
+        sections = {section: [] for section in news_engine.SECTION_ORDER}
+        sections["Top Developments"] = [
+            {"title": "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles"}
+        ]
+        summary = news_engine.sanitize_compiled_executive_summary(
+            "The supplemental email satisfied link accounting.",
+            sections,
         )
 
-        summary = validated["executive_summary"].casefold()
+        summary = summary.casefold()
         self.assertIn("nhtsa modernizes fmvss 108", summary)
         for marker in news_engine.EXECUTIVE_SUMMARY_PROCESS_MARKERS:
             self.assertNotIn(marker, summary)
 
+    @patch("news_engine.generate_final_executive_summary")
     @patch("news_engine.analyze_articles")
     def test_every_distinct_supplemental_url_is_counted_and_represented(
         self,
         analyze_articles,
+        generate_final_executive_summary,
     ) -> None:
         analyze_articles.return_value = (
-            {"executive_summary": "", "what_to_watch": [], "clusters": []},
+            {"what_to_watch": [], "clusters": []},
             {},
             0.0,
         )
+        generate_final_executive_summary.return_value = ("Final summary.", {}, 0.0)
         raw_feed = {
             "window_start": "2026-07-14T04:15:00-04:00",
             "window_end": "2026-07-15T04:15:00-04:00",
@@ -501,6 +591,68 @@ class SupplementalGuardrailTests(unittest.TestCase):
             {item["url"] for item in supplemental}
             <= news_engine.represented_urls(briefing["sections"])
         )
+
+    @patch("news_engine.generate_final_executive_summary")
+    @patch("news_engine.analyze_articles")
+    def test_executive_summary_runs_after_compiled_sections(
+        self,
+        analyze_articles,
+        generate_final_executive_summary,
+    ) -> None:
+        call_order = []
+        self.assertNotIn(
+            "executive_summary",
+            news_engine.analysis_schema()["properties"],
+        )
+
+        def analyze(*args, **kwargs):
+            call_order.append("analysis")
+            return (
+                {"what_to_watch": ["Watch the next agency action."], "clusters": [cluster()]},
+                {"input_tokens": 10, "output_tokens": 2, "total_tokens": 12},
+                0.2,
+            )
+
+        def summarize(sections, what_to_watch, tracker, *args, **kwargs):
+            call_order.append("summary")
+            self.assertEqual(
+                sections["Top Developments"][0]["title"],
+                "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
+            )
+            self.assertEqual(what_to_watch, ["Watch the next agency action."])
+            self.assertTrue(tracker)
+            return (
+                "NHTSA advanced automated-driving safety policy.",
+                {"input_tokens": 3, "output_tokens": 1, "total_tokens": 4},
+                0.1,
+            )
+
+        analyze_articles.side_effect = analyze
+        generate_final_executive_summary.side_effect = summarize
+        raw_feed = {
+            "window_start": "2026-07-14T04:15:00-04:00",
+            "window_end": "2026-07-15T04:15:00-04:00",
+            "articles": [record()],
+            "source_errors": [],
+            "candidate_counts": {},
+        }
+
+        briefing = news_engine.generate_briefing_from_records(
+            raw_feed,
+            [],
+            api_key="test-key-not-used",
+        )
+
+        self.assertEqual(call_order, ["analysis", "summary"])
+        self.assertEqual(
+            briefing["executive_summary"],
+            "NHTSA advanced automated-driving safety policy.",
+        )
+        self.assertEqual(
+            briefing["usage"],
+            {"input_tokens": 13, "output_tokens": 3, "total_tokens": 16},
+        )
+        self.assertAlmostEqual(briefing["estimated_cost"], 0.3)
 
 
 if __name__ == "__main__":

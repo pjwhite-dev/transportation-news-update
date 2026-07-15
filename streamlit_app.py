@@ -1481,8 +1481,8 @@ with build_tab:
                         edited_records.append(edited)
 
                     with st.spinner(
-                        "Running one AI editorial pass across the automated feed "
-                        "and all supplemental items…"
+                        "Compiling the full briefing from the automated feed and "
+                        "all supplemental items, then writing the Executive Summary…"
                     ):
                         try:
                             briefing = generate_briefing_from_records(
@@ -1520,7 +1520,9 @@ with build_tab:
                 if not api_key:
                     st.error("Add openai_api_key to Streamlit Secrets.")
                 else:
-                    with st.spinner("Building today’s update…"):
+                    with st.spinner(
+                        "Compiling today’s briefing, then writing the Executive Summary…"
+                    ):
                         try:
                             briefing = generate_briefing_from_records(
                                 raw_feed, [], api_key, model
