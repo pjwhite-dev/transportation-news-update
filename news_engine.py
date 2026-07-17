@@ -448,6 +448,44 @@ FIFA_SECURITY_LASTING_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+FAA_AGENCY_PATTERN = re.compile(
+    r"\b(?:FAA|Federal Aviation Administration)\b",
+    re.IGNORECASE,
+)
+
+FAA_STANDARDS_ACTION_PATTERN = re.compile(
+    r"\b(?:accept(?:s|ed|ing)?|sign(?:s|ed)?\s+off|"
+    r"announc(?:e[ds]?|ed|ing).{0,50}availability)\b",
+    re.IGNORECASE,
+)
+
+FAA_MOSAIC_STANDARDS_PATTERN = re.compile(
+    r"\b(?:MOSAIC|ASTM|consensus standards?|light-sport|powered[- ]lift)\b",
+    re.IGNORECASE,
+)
+
+NHTSA_ROBOTAXI_RULE_ACTION_PATTERN = re.compile(
+    r"\bNHTSA\b(?=.{0,220}\brobotaxi\b)"
+    r"(?=.{0,220}\b(?:sets?|establish(?:es|ed)?|publish(?:es|ed)?|"
+    r"finaliz(?:e[ds]?|ed|ing)|deadline|rulebook|final rule)\b)",
+    re.IGNORECASE,
+)
+
+NHTSA_FMVSS_ACTION_PATTERN = re.compile(
+    r"\bNHTSA\b(?=.{0,220}\bFMVSS\b)"
+    r"(?=.{0,220}\b(?:ADS|autonomous|automated driving)\b)"
+    r"(?=.{0,220}\b(?:moderniz(?:e[ds]?|ed|ing)|publish(?:es|ed)?|"
+    r"finaliz(?:e[ds]?|ed|ing)|approv(?:e[ds]?|ed|ing)|final rule)\b)",
+    re.IGNORECASE,
+)
+
+FEDERAL_AUTONOMOUS_F16_PATTERN = re.compile(
+    r"(?=.*\bDARPA\b)(?=.*\b(?:U\.?S\.?\s+)?Air Force\b)"
+    r"(?=.*\bF-?16\b)(?=.*\bautonomous\b)"
+    r"(?=.*\b(?:fly|flies|flew|flown|flight)\b)",
+    re.IGNORECASE,
+)
+
 PUBLISHER_ONLY_HEADLINES = {
     "aol",
     "associated press",
@@ -939,7 +977,7 @@ def infer_section(record: dict[str, Any]) -> str:
         return "UAS Security and C-UAS"
     if any(term in text for term in (
         "evtol", "eipp", "advanced air mobility", "air taxi", "powered-lift",
-        "vertiport", "electric aircraft",
+        "powered lift", "vertiport", "electric aircraft",
     )):
         return "eVTOL Integration Pilot Program and AAM"
     if any(term in text for term in (
@@ -976,15 +1014,80 @@ def recognized_administration_win(
 
     if EIPP_PROGRAM_PATTERN.search(text) and EIPP_FIRST_FLIGHT_PATTERN.search(text):
         return {
+            "event_key": "eipp-first-operational-flight",
             "eo_number": "EO 14307",
             "eo_section": "Section 6",
             "win_explanation": (
                 "President Trump turned his Unleashing American Drone Dominance "
                 "order into real-world results as DOT and FAA’s eIPP completed its "
-                "first operational flight. This America-first milestone strengthens "
+                "first operational flight. This huge America-first win strengthens "
                 "U.S. leadership in next-generation aviation, supports high-skilled "
                 "jobs, and accelerates safer medical, cargo, and passenger "
                 "transportation for American communities."
+            ),
+        }
+
+    if (
+        FAA_AGENCY_PATTERN.search(text)
+        and FAA_STANDARDS_ACTION_PATTERN.search(text)
+        and FAA_MOSAIC_STANDARDS_PATTERN.search(text)
+    ):
+        return {
+            "event_key": "faa-mosaic-accepted-standards",
+            "eo_number": "",
+            "eo_section": "",
+            "win_explanation": (
+                "President Trump’s FAA accepted new industry standards for "
+                "light-sport aircraft, including powered-lift designs, turning the "
+                "Administration’s pro-innovation aviation agenda into practical "
+                "results. This huge win gives American manufacturers and pilots a "
+                "clearer path to bring safer, more capable aircraft to market while "
+                "strengthening U.S. leadership in general aviation."
+            ),
+        }
+
+    if NHTSA_ROBOTAXI_RULE_ACTION_PATTERN.search(text):
+        return {
+            "event_key": "",
+            "eo_number": "",
+            "eo_section": "",
+            "win_explanation": (
+                "President Trump’s NHTSA set a firm federal path for the next "
+                "robotaxi safety rulebook, giving American innovators clearer rules "
+                "while putting public safety first. This huge win helps the "
+                "United States lead the driverless-vehicle revolution, supports "
+                "high-tech American jobs, and advances safer transportation for "
+                "families and communities."
+            ),
+        }
+
+    if NHTSA_FMVSS_ACTION_PATTERN.search(text):
+        return {
+            "event_key": "",
+            "eo_number": "",
+            "eo_section": "",
+            "win_explanation": (
+                "President Trump’s NHTSA modernized Federal Motor Vehicle Safety "
+                "Standards for automated-driving vehicles, replacing outdated "
+                "requirements with a clearer path for American innovation. This "
+                "huge win puts safety first, supports high-tech American jobs, and "
+                "helps the United States lead the world in responsible "
+                "driverless-vehicle deployment."
+            ),
+        }
+
+    if FEDERAL_AUTONOMOUS_F16_PATTERN.search(text):
+        return {
+            "event_key": "darpa-air-force-autonomous-f16-flight",
+            "eo_number": "",
+            "eo_section": "",
+            "win_explanation": (
+                "Under President Trump, DARPA and the U.S. Air Force flew a "
+                "frontline F-16 modified for autonomous flight, moving American "
+                "military aviation technology from the laboratory into the air. "
+                "This huge win strengthens U.S. technological leadership, "
+                "gives American warfighters a decisive edge, and reinforces the "
+                "deterrence that keeps the Nation secure."
             ),
         }
 
@@ -998,7 +1101,7 @@ def recognized_administration_win(
         if FIFA_SECURITY_LASTING_PATTERN.search(text):
             explanation = (
                 "President Trump’s Restoring American Airspace Sovereignty agenda "
-                "delivered lasting protection for the American people: counter-drone "
+                "delivered a huge, lasting win for the American people: counter-drone "
                 "technology deployed for the FIFA World Cup will remain available to "
                 "local law enforcement for future mass gatherings. America gains "
                 "safer public events and stronger local defenses against dangerous "
@@ -1009,11 +1112,12 @@ def recognized_administration_win(
                 "President Trump’s Restoring American Airspace Sovereignty agenda "
                 "put counter-drone protections to work for the FIFA World Cup, "
                 "safeguarding American families and visitors at one of the world’s "
-                "largest sporting events. The operation strengthens U.S. control of "
+                "largest sporting events. This huge win strengthens U.S. control of "
                 "its skies and builds lasting federal and local capacity to defeat "
                 "rogue-drone threats."
             )
         return {
+            "event_key": "",
             "eo_number": "EO 14305",
             "eo_section": "Section 9",
             "win_explanation": explanation,
@@ -1028,11 +1132,14 @@ def ensure_recognized_administration_wins(
 ) -> list[str]:
     """Apply narrow EO implementation wins even when the AI omits their flags."""
     recognized_ids: list[str] = []
+    article_lookup = {item["id"]: item for item in articles}
+    recognized_event_clusters: dict[str, dict[str, Any]] = {}
     for record in articles:
         override = recognized_administration_win(record)
         if not override:
             continue
 
+        event_key = override.get("event_key", "")
         existing = next(
             (
                 cluster
@@ -1041,6 +1148,18 @@ def ensure_recognized_administration_wins(
             ),
             None,
         )
+        event_cluster = (
+            recognized_event_clusters.get(event_key) if event_key else None
+        )
+        if existing is not None and event_cluster is not None and existing is not event_cluster:
+            for article_id in existing.get("article_ids", []):
+                if article_id not in event_cluster["article_ids"]:
+                    event_cluster["article_ids"].append(article_id)
+            clusters.remove(existing)
+            existing = event_cluster
+        elif existing is None and event_cluster is not None:
+            existing = event_cluster
+
         if existing is None:
             title = best_record_title(record)
             summary = distinct_story_summary(
@@ -1072,6 +1191,23 @@ def ensure_recognized_administration_wins(
             }
             clusters.append(existing)
         else:
+            if record["id"] not in existing["article_ids"]:
+                existing["article_ids"].append(record["id"])
+            current_primary = article_lookup.get(existing["primary_article_id"], {})
+            if (
+                record.get("origin") == "Federal Register API"
+                and current_primary.get("origin") != "Federal Register API"
+            ):
+                existing["primary_article_id"] = record["id"]
+                existing["canonical_title"] = best_record_title(record)
+                existing["summary"] = distinct_story_summary(
+                    existing["canonical_title"],
+                    clean_spaces(
+                        record.get("description", "")
+                        or record.get("summary", "")
+                        or record.get("pasted_context", "")
+                    ),
+                )[:500]
             existing.update(
                 {
                     "section": infer_section(record),
@@ -1085,6 +1221,8 @@ def ensure_recognized_administration_wins(
                     "exclude_reason": "",
                 }
             )
+        if event_key:
+            recognized_event_clusters[event_key] = existing
         recognized_ids.append(record["id"])
     return recognized_ids
 
@@ -1347,7 +1485,11 @@ A story may be labeled a win only when ALL of the following are true:
 
 Set the four structured win fields carefully:
 - win_event_within_window=true only for a genuinely new event in the 24-hour window.
-- win_direct_administration_nexus=true only when the record itself supports the nexus.
+- win_direct_administration_nexus=true when the record supports the nexus. A new action
+  by a current executive-branch department, agency, military service, or Federal program
+  is itself a direct Trump Administration action; the article does not also have to use
+  President Trump's name. A private, State, local, congressional, judicial, or foreign
+  action does not gain that nexus merely because it aligns with Administration policy.
 - win_concrete_american_benefit=true only for a specific, tangible U.S. result.
 - win_foreign_company_expansion_only=true when the claimed benefit is simply a foreign
   company's U.S. entry, expansion, sales, investment, office, or facility.
@@ -1373,6 +1515,10 @@ HIGH-PRIORITY EO IMPLEMENTATION WINS
 - These examples still require a real implementation action, flight, deployment,
   enforcement result, or lasting operational capability. Generic eIPP explainers,
   unrelated FIFA coverage, security criticism, and private promotion are not wins.
+- Also recognize concrete current actions such as FAA acceptance of aviation standards,
+  a NHTSA automated-driving rule or firm rulemaking milestone, and a DARPA or U.S. military
+  operational technology flight or test when the other gates are supported. Do not reduce
+  these to generic agency news merely because the headline omits President Trump's name.
 
 - A positive private-sector story is not automatically an Administration win.
 - When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section using

@@ -321,6 +321,8 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertIn("eo 14305, section 9", instructions)
         self.assertIn("strongly pro-trump, pro-america voice", instructions)
         self.assertIn("major win for the american people", instructions)
+        self.assertIn("current executive-branch department", instructions)
+        self.assertIn("headline omits president trump", instructions)
 
     def test_all_four_gates_allow_win_without_forcing_eo_citation(self) -> None:
         candidate = cluster(
@@ -393,6 +395,7 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertGreaterEqual(win["importance"], 9)
         self.assertIn("President Trump", win["win_explanation"])
         self.assertIn("American communities", win["win_explanation"])
+        self.assertIn("huge", win["win_explanation"].casefold())
 
     def test_fifa_counter_drone_retention_is_forced_to_airspace_win(self) -> None:
         article = record(
@@ -427,6 +430,181 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertIn("President Trump", win["win_explanation"])
         self.assertIn("American people", win["win_explanation"])
         self.assertIn("future mass gatherings", win["win_explanation"])
+        self.assertIn("huge", win["win_explanation"].casefold())
+
+    def test_current_federal_implementation_actions_are_forced_to_wins(self) -> None:
+        cases = [
+            (
+                record(
+                    id="faa-mosaic-standards",
+                    search_section="Federal Actions",
+                    title=(
+                        "Accepted Consensus Standards for Light-Sport Category "
+                        "Aircraft: Airplane, Glider, Powered Lift, and Gyroplane"
+                    ),
+                    summary=(
+                        "The FAA accepts ASTM standards as a means of compliance "
+                        "for special airworthiness certificates."
+                    ),
+                    source=(
+                        "Transportation Department, Federal Aviation Administration"
+                    ),
+                    origin="Federal Register API",
+                ),
+                "eVTOL Integration Pilot Program and AAM",
+            ),
+            (
+                record(
+                    id="nhtsa-robotaxi-rulebook",
+                    search_section="Trump Administration priorities",
+                    title=(
+                        "NHTSA sets 2028 deadline for new robotaxi safety rulebook"
+                    ),
+                    summary="",
+                    source="Automotive World",
+                    origin="Google News RSS",
+                ),
+                "Autonomous Vehicles",
+            ),
+            (
+                record(
+                    id="nhtsa-fmvss-modernization",
+                    search_section="Autonomous Vehicles",
+                    title="NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
+                    summary=(
+                        "The agency updated a federal motor vehicle safety "
+                        "standard for automated-driving vehicles."
+                    ),
+                    source="NHTSA",
+                    origin="Federal Register API",
+                ),
+                "Autonomous Vehicles",
+            ),
+            (
+                record(
+                    id="darpa-autonomous-f16",
+                    search_section="Military",
+                    title=(
+                        "DARPA and US Air Force fly frontline F-16 modified "
+                        "for autonomous flight"
+                    ),
+                    summary="",
+                    source="FlightGlobal",
+                    origin="Google News RSS",
+                ),
+                "Military",
+            ),
+        ]
+
+        for article, expected_section in cases:
+            with self.subTest(article=article["id"]):
+                validated = news_engine.validate_analysis(
+                    {"what_to_watch": [], "clusters": []},
+                    [article],
+                )
+                win = validated["clusters"][0]
+
+                self.assertTrue(win["is_administration_win"])
+                self.assertEqual(win["section"], expected_section)
+                self.assertEqual(win["eo_number"], "")
+                self.assertIn("President Trump", win["win_explanation"])
+                self.assertIn("huge win", win["win_explanation"].casefold())
+
+    @patch("news_engine.generate_final_executive_summary")
+    @patch("news_engine.analyze_articles")
+    def test_zero_ai_win_flags_cannot_erase_recognized_federal_wins(
+        self,
+        analyze_articles,
+        generate_final_executive_summary,
+    ) -> None:
+        articles = [
+            record(
+                id="faa-mosaic-standards",
+                title="FAA Signs Off on MOSAIC ASTM Standards",
+                summary="",
+                source="AvBrief.com",
+                url="https://example.com/faa-mosaic-coverage",
+                origin="Google News RSS",
+            ),
+            record(
+                id="faa-mosaic-federal-register",
+                search_section="Federal Actions",
+                title=(
+                    "Accepted Consensus Standards for Light-Sport Category "
+                    "Aircraft: Airplane, Glider, Powered Lift, and Gyroplane"
+                ),
+                summary=(
+                    "The FAA accepts ASTM standards as a means of compliance "
+                    "for special airworthiness certificates."
+                ),
+                source=(
+                    "Transportation Department, Federal Aviation Administration"
+                ),
+                url="https://www.federalregister.gov/d/2026-14298",
+                origin="Federal Register API",
+            ),
+            record(
+                id="nhtsa-robotaxi-rulebook",
+                search_section="Trump Administration priorities",
+                title="NHTSA sets 2028 deadline for new robotaxi safety rulebook",
+                summary="",
+                source="Automotive World",
+                origin="Google News RSS",
+            ),
+            record(
+                id="darpa-autonomous-f16",
+                search_section="Military",
+                title=(
+                    "DARPA and US Air Force fly frontline F-16 modified "
+                    "for autonomous flight"
+                ),
+                summary="",
+                source="FlightGlobal",
+                origin="Google News RSS",
+            ),
+        ]
+        analyze_articles.return_value = (
+            {"what_to_watch": [], "clusters": []},
+            {},
+            0.0,
+        )
+        generate_final_executive_summary.return_value = (
+            "Final summary.",
+            {},
+            0.0,
+        )
+        raw_feed = {
+            "window_start": "2026-07-16T08:44:00-04:00",
+            "window_end": "2026-07-17T08:44:00-04:00",
+            "articles": articles,
+            "source_errors": [],
+            "candidate_counts": {},
+        }
+
+        briefing = news_engine.generate_briefing_from_records(
+            raw_feed,
+            [],
+            api_key="test-key-not-used",
+        )
+
+        wins = briefing["sections"]["Trump Administration Wins"]
+        self.assertEqual(len(wins), 3)
+        self.assertEqual(len(briefing["recognized_administration_win_ids"]), 4)
+        self.assertTrue(all(item["is_administration_win"] for item in wins))
+        standards_win = next(
+            item
+            for item in wins
+            if item["title"].startswith("Accepted Consensus Standards")
+        )
+        self.assertEqual(
+            standards_win["also_covered"],
+            [
+                {
+                    "source": "AvBrief.com",
+                    "url": "https://example.com/faa-mosaic-coverage",
+                }
+            ],
+        )
 
     def test_unrelated_fifa_story_is_not_forced_to_win(self) -> None:
         article = record(
@@ -864,7 +1042,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         def summarize(sections, what_to_watch, tracker, *args, **kwargs):
             call_order.append("summary")
             self.assertEqual(
-                sections["Top Developments"][0]["title"],
+                sections["Trump Administration Wins"][0]["title"],
                 "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
             )
             self.assertEqual(what_to_watch, ["Watch the next agency action."])

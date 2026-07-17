@@ -1785,6 +1785,10 @@ with status_tab:
             f"{briefing.get('automated_filtered_out_count', 0)}"
         )
         st.write(f"**AI model:** {briefing.get('model', '')}")
+        st.write(
+            f"**Trump Administration Wins selected by build:** "
+            f"{len(briefing.get('sections', {}).get('Trump Administration Wins', []))}"
+        )
         usage = briefing.get("usage", {})
         st.write(
             f"**AI tokens:** {int(usage.get('input_tokens', 0)):,} input; "

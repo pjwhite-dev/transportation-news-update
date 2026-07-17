@@ -183,6 +183,12 @@ EO 14307, EO 14305, and EO 14304 are optional citations and may be used only
 when the supplied record supports the connection; an EO number is not itself a
 mandatory fifth eligibility gate.
 
+A new action by a current executive-branch department, agency, military
+service, or Federal program is itself a direct Trump Administration action; the
+article does not also have to name President Trump. This does not extend the
+nexus to private, State, local, congressional, judicial, or foreign actions
+that merely align with Administration policy.
+
 Treat an inaugural operational flight under DOT and FAA's eIPP as a direct
 implementation win under EO 14307, Section 6. Treat a current U.S. FIFA World
 Cup counter-UAS deployment, enforcement action, federally backed capability,
@@ -191,6 +197,12 @@ a direct implementation win under EO 14305, Section 9. Enforce these two
 narrow recognizers deterministically so they are not lost when the AI omits a
 Win flag. Do not extend them to generic eIPP explainers, unrelated FIFA
 coverage, security criticism, or private promotion.
+
+Also protect concrete current Federal implementation results such as FAA
+acceptance of aviation standards, a NHTSA automated-driving rule or firm
+rulemaking milestone, and a DARPA or U.S. military operational technology
+flight or test when the other gates are supported. Do not reduce these to
+generic agency news merely because the headline omits President Trump's name.
 
 Administration Win explanations are published verbatim and must stand alone for
 the email reader. Name the Administration, agency, or federal program that
