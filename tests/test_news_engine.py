@@ -297,11 +297,13 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
 class AdministrationWinTests(unittest.TestCase):
     def test_prompt_requires_reader_facing_plain_english_win_explanation(self) -> None:
-        instructions = news_engine.prompt_messages(
-            [record()],
-            datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
-            datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
-        )[0]["content"].casefold()
+        instructions = news_engine.clean_spaces(
+            news_engine.prompt_messages(
+                [record()],
+                datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
+                datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
+            )[0]["content"].casefold()
+        )
 
         for prohibited_phrase in (
             "during the window",
@@ -313,6 +315,12 @@ class AdministrationWinTests(unittest.TestCase):
                 self.assertIn(prohibited_phrase, instructions)
         self.assertIn("published verbatim", instructions)
         self.assertIn("real-world action and result", instructions)
+        self.assertIn("first or inaugural operational flight", instructions)
+        self.assertIn("eo 14307, section 6", instructions)
+        self.assertIn("fifa world cup counter-uas", instructions)
+        self.assertIn("eo 14305, section 9", instructions)
+        self.assertIn("strongly pro-trump, pro-america voice", instructions)
+        self.assertIn("major win for the american people", instructions)
 
     def test_all_four_gates_allow_win_without_forcing_eo_citation(self) -> None:
         candidate = cluster(
@@ -357,6 +365,110 @@ class AdministrationWinTests(unittest.TestCase):
                 self.assertFalse(
                     news_engine.administration_win_is_eligible(candidate)
                 )
+
+    def test_eipp_first_flight_is_forced_to_drone_dominance_win(self) -> None:
+        article = record(
+            id="eipp-first-flight",
+            title="FAA eIPP reaches major milestone with first flight demonstration",
+            summary=(
+                "BETA completed the first operational flight under the U.S. "
+                "Department of Transportation and FAA integration program."
+            ),
+            source="Vertical Aviation International",
+            origin="Supplemental daily email",
+            required_include=True,
+            editor_vetted=True,
+        )
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            [article],
+        )
+        win = validated["clusters"][0]
+
+        self.assertTrue(win["is_administration_win"])
+        self.assertEqual(win["section"], "eVTOL Integration Pilot Program and AAM")
+        self.assertEqual(win["eo_number"], "EO 14307")
+        self.assertEqual(win["eo_section"], "Section 6")
+        self.assertGreaterEqual(win["importance"], 9)
+        self.assertIn("President Trump", win["win_explanation"])
+        self.assertIn("American communities", win["win_explanation"])
+
+    def test_fifa_counter_drone_retention_is_forced_to_airspace_win(self) -> None:
+        article = record(
+            id="fifa-counter-drone",
+            search_section="UAS Security and C-UAS",
+            title="King County Sheriff keeps counter-drone tech after World Cup",
+            summary=(
+                "The federally backed equipment will protect concerts, parades, "
+                "and other future mass gatherings."
+            ),
+            source="FOX 13 Seattle",
+            origin="Google News RSS",
+        )
+        ai_cluster = cluster(
+            article_ids=[article["id"]],
+            primary_article_id=article["id"],
+            section="UAS Security and C-UAS",
+            canonical_title=article["title"],
+            is_administration_win=False,
+        )
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": [ai_cluster]},
+            [article],
+        )
+        win = validated["clusters"][0]
+
+        self.assertTrue(win["is_administration_win"])
+        self.assertEqual(win["section"], "UAS Security and C-UAS")
+        self.assertEqual(win["eo_number"], "EO 14305")
+        self.assertEqual(win["eo_section"], "Section 9")
+        self.assertIn("President Trump", win["win_explanation"])
+        self.assertIn("American people", win["win_explanation"])
+        self.assertIn("future mass gatherings", win["win_explanation"])
+
+    def test_unrelated_fifa_story_is_not_forced_to_win(self) -> None:
+        article = record(
+            id="fifa-var",
+            title="FIFA makes surprise VAR change before World Cup final",
+            summary="The governing body changed its video-review procedure.",
+            source="Sports News",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            [article],
+        )
+
+        self.assertFalse(validated["clusters"][0]["is_administration_win"])
+        self.assertEqual(
+            validated["recognized_administration_win_ids"],
+            [],
+        )
+
+    def test_generic_eipp_explainer_is_not_forced_to_win(self) -> None:
+        article = record(
+            id="eipp-explainer",
+            title="The eIPP: What You Need to Know",
+            summary="The FAA explains how the integration pilot program works.",
+            source="FAA",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            [article],
+        )
+
+        self.assertFalse(validated["clusters"][0]["is_administration_win"])
+        self.assertEqual(
+            validated["recognized_administration_win_ids"],
+            [],
+        )
 
 
 class SupplementalGuardrailTests(unittest.TestCase):
