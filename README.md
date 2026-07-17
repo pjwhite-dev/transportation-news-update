@@ -9,12 +9,14 @@ A public Streamlit page that produces a daily, AI-assisted briefing covering the
 - eVTOL Integration Pilot Program and advanced air mobility
 - Autonomous vehicles
 - Other advanced transportation, including civil supersonics and rail innovation
+- International advanced-transportation developments
 - Federal actions
 - Verified Trump Administration wins tied to relevant policy actions and executive orders
 
-The finished edition includes an Executive Summary, Trump Administration Wins, Top
-Developments, topic sections, a Regulatory Deadline Tracker, What to Watch, and a
-**Copy for Outlook** button.
+The finished edition includes an Executive Summary, a compact sectioned
+Headlines at a Glance index, Trump Administration Wins, Top Developments, topic
+sections, a Regulatory Deadline Tracker, What to Watch, and a **Copy for
+Outlook** button.
 
 ## Repository files
 
@@ -60,7 +62,9 @@ The authenticated owner then starts the Streamlit editorial build. OpenAI first
 selects, clusters, categorizes, and summarizes the stories and drafts What to
 Watch. Only after that briefing and the regulatory tracker are compiled does a
 separate final AI pass write the Executive Summary from the finished
-reader-facing material.
+reader-facing material. Deterministic coverage checks keep credible AV,
+advanced rail/supersonic, and international developments from disappearing when
+the raw feed contains suitable records.
 
 GitHub scheduled workflows can occasionally run a few minutes late. The generated briefing
 always labels its exact 24-hour coverage window.

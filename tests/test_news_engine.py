@@ -129,7 +129,7 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
         self.assertEqual(validated["clusters"][0]["section"], "Military")
 
-    def test_civilian_ukraine_rail_story_is_not_forced_into_military(self) -> None:
+    def test_civilian_ukraine_rail_story_is_international_not_military(self) -> None:
         article = record(
             title="New passenger rail route links Germany, Poland, and Ukraine",
             summary="The cross-border service will add overnight passenger trains.",
@@ -140,8 +140,141 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
         self.assertEqual(
             news_engine.infer_section(article),
-            "Other Advanced Transportation",
+            "International",
         )
+
+    def test_foreign_robotaxi_story_is_international(self) -> None:
+        article = record(
+            title="Madrid approves a new commercial robotaxi service",
+            summary="Spanish regulators cleared the driverless deployment.",
+            source="Example News",
+            origin="Google News RSS",
+            search_section="Autonomous Vehicles",
+        )
+
+        self.assertEqual(news_engine.infer_section(article), "International")
+
+    def test_latin_america_is_not_mistaken_for_the_united_states(self) -> None:
+        article = record(
+            title="Brazil approves a new high-speed rail corridor",
+            summary="The project would be the fastest passenger line in Latin America.",
+            source="Example News",
+            origin="Google News RSS",
+            search_section="Other Advanced Transportation",
+        )
+
+        self.assertEqual(news_engine.infer_section(article), "International")
+
+    def test_us_robotaxi_story_remains_autonomous_vehicles(self) -> None:
+        article = record(
+            title="California approves Waymo robotaxi expansion",
+            summary="The U.S. deployment will add driverless service in two cities.",
+            source="Example News",
+            origin="Google News RSS",
+            search_section="Autonomous Vehicles",
+        )
+
+        self.assertEqual(news_engine.infer_section(article), "Autonomous Vehicles")
+
+    def test_credible_sector_candidates_are_restored_if_ai_omits_them(self) -> None:
+        articles = [
+            record(
+                id="av-1",
+                search_section="Autonomous Vehicles",
+                title="California approves Waymo robotaxi expansion",
+                summary="The U.S. deployment will add driverless service.",
+                source="Example News",
+                origin="Google News RSS",
+            ),
+            record(
+                id="rail-1",
+                search_section="Other Advanced Transportation",
+                title="U.S. Department of Transportation backs high-speed rail test",
+                summary="The new test will evaluate advanced passenger rail technology.",
+                source="U.S. Department of Transportation",
+                origin="Google News RSS",
+            ),
+            record(
+                id="international-1",
+                search_section="Other Advanced Transportation",
+                title="India launches its first hydrogen train",
+                summary="The passenger service uses hydrogen fuel cell technology.",
+                source="Example News",
+                origin="Google News RSS",
+            ),
+        ]
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            articles,
+        )
+        relevant_sections = {
+            item["section"]
+            for item in validated["clusters"]
+            if item["relevant"]
+        }
+
+        self.assertTrue(
+            {
+                "Autonomous Vehicles",
+                "Other Advanced Transportation",
+                "International",
+            }
+            <= relevant_sections
+        )
+        self.assertEqual(
+            set(validated["coverage_floor_sections"]),
+            {
+                "Autonomous Vehicles",
+                "Other Advanced Transportation",
+                "International",
+            },
+        )
+
+    def test_market_and_stock_noise_does_not_fill_empty_sections(self) -> None:
+        articles = [
+            record(
+                id="noise-av",
+                search_section="Autonomous Vehicles",
+                title="Autonomous Vehicle Chassis Market Forecast Through 2035",
+                source="Market Reports",
+                origin="Google News RSS",
+            ),
+            record(
+                id="noise-rail",
+                search_section="Other Advanced Transportation",
+                title="High-Speed Rail Fasteners Market Insights and CAGR",
+                source="Market Reports",
+                origin="Google News RSS",
+            ),
+        ]
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            articles,
+        )
+
+        self.assertEqual(validated["coverage_floor_sections"], [])
+        self.assertEqual(validated["clusters"], [])
+
+    def test_search_bucket_alone_does_not_fill_an_empty_sector(self) -> None:
+        articles = [
+            record(
+                id="query-collision",
+                search_section="Autonomous Vehicles",
+                title="Amazon executive discusses quantum computing",
+                source="Stock News",
+                origin="Google News RSS",
+            ),
+        ]
+
+        validated = news_engine.validate_analysis(
+            {"what_to_watch": [], "clusters": []},
+            articles,
+        )
+
+        self.assertEqual(validated["coverage_floor_sections"], [])
+        self.assertEqual(validated["clusters"], [])
 
     def test_win_toggle_moves_story_into_and_out_of_win_section(self) -> None:
         story = {
@@ -265,6 +398,9 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertIn("do not write an executive summary in this pass", instructions)
         self.assertIn("in military", instructions)
         self.assertIn("war in ukraine", instructions)
+        self.assertIn("minimum sector coverage", instructions)
+        self.assertIn("strongest new autonomous vehicles", instructions)
+        self.assertIn("international story", instructions)
         self.assertIn("standalone briefing for a senior executive", summary_instructions)
         self.assertIn("final step", summary_instructions)
         self.assertIn("do not discuss whether any item is or is not", summary_instructions)

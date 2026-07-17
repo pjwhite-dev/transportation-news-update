@@ -1,10 +1,18 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
+import json
+from pathlib import Path
 import unittest
 
 from regulatory_tracker import build_regulatory_tracker
 from streamlit.testing.v1 import AppTest
+
+
+def active_feed_context() -> tuple[str, dict]:
+    raw_feed = json.loads(Path("data/latest_raw_news.json").read_text())
+    edition_key = datetime.fromisoformat(raw_feed["window_end"]).date().isoformat()
+    return edition_key, raw_feed
 
 
 class FeedOnlyButtonVisibilityTests(unittest.TestCase):
@@ -54,7 +62,10 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
 
     def test_tracker_is_visible_and_selectable_before_build(self) -> None:
         app = self.load_app()
-        tracker = build_regulatory_tracker(date(2026, 7, 15))
+        edition_key, raw_feed = active_feed_context()
+        tracker = build_regulatory_tracker(
+            datetime.fromisoformat(raw_feed["window_end"])
+        )
 
         self.assertIn(
             "Regulatory Deadline Tracker",
@@ -63,13 +74,16 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         checkbox_keys = {item.key for item in app.checkbox if item.key}
         for item in tracker:
             self.assertIn(
-                f"build_2026-07-15_tracker_{item['id']}_include",
+                f"build_{edition_key}_tracker_{item['id']}_include",
                 checkbox_keys,
             )
 
     def test_legacy_briefing_gets_tracker_before_what_to_watch(self) -> None:
         app = self.load_app()
-        tracker = build_regulatory_tracker(date(2026, 7, 15))
+        edition_key, raw_feed = active_feed_context()
+        tracker = build_regulatory_tracker(
+            datetime.fromisoformat(raw_feed["window_end"])
+        )
         sections = {
             section: []
             for section in (
@@ -81,16 +95,17 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
                 "eVTOL Integration Pilot Program and AAM",
                 "Autonomous Vehicles",
                 "Other Advanced Transportation",
+                "International",
                 "Federal Actions",
             )
         }
         app.session_state["owner_authenticated"] = True
         app.session_state[
-            "build_2026-07-15_tracker_bvlos-part-108_include"
+            f"build_{edition_key}_tracker_bvlos-part-108_include"
         ] = False
-        app.session_state["generated_briefing_2026-07-15"] = {
-            "window_start": "2026-07-14T04:15:00-04:00",
-            "window_end": "2026-07-15T04:15:00-04:00",
+        app.session_state[f"generated_briefing_{edition_key}"] = {
+            "window_start": raw_feed["window_start"],
+            "window_end": raw_feed["window_end"],
             "executive_summary": "Summary",
             "what_to_watch": ["Watch this"],
             "sections": sections,
@@ -102,12 +117,12 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         checkbox_keys = {item.key for item in app.checkbox if item.key}
         for item in tracker:
             self.assertIn(
-                f"edit_2026-07-15_tracker_{item['id']}_include",
+                f"edit_{edition_key}_tracker_{item['id']}_include",
                 checkbox_keys,
             )
         self.assertFalse(
             app.session_state[
-                "edit_2026-07-15_tracker_bvlos-part-108_include"
+                f"edit_{edition_key}_tracker_bvlos-part-108_include"
             ]
         )
         subheaders = [item.value for item in app.subheader]
@@ -118,6 +133,7 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
 
     def test_every_story_has_editable_administration_win_controls(self) -> None:
         app = self.load_app()
+        edition_key, raw_feed = active_feed_context()
         sections = {
             section: []
             for section in (
@@ -129,6 +145,7 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
                 "eVTOL Integration Pilot Program and AAM",
                 "Autonomous Vehicles",
                 "Other Advanced Transportation",
+                "International",
                 "Federal Actions",
             )
         }
@@ -154,9 +171,9 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
             }
         ]
         app.session_state["owner_authenticated"] = True
-        app.session_state["generated_briefing_2026-07-15"] = {
-            "window_start": "2026-07-14T04:15:00-04:00",
-            "window_end": "2026-07-15T04:15:00-04:00",
+        app.session_state[f"generated_briefing_{edition_key}"] = {
+            "window_start": raw_feed["window_start"],
+            "window_end": raw_feed["window_end"],
             "executive_summary": "The Army completed a new aviation test.",
             "what_to_watch": [],
             "sections": sections,
@@ -165,18 +182,18 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         }
         app.run()
 
-        win_key = "edit_2026-07-15_military-story_is_win"
+        win_key = f"edit_{edition_key}_military-story_is_win"
         self.assertIn(win_key, {item.key for item in app.checkbox if item.key})
 
         app.session_state[win_key] = True
         app.run()
 
         self.assertIn(
-            "edit_2026-07-15_military-story_eo_number",
+            f"edit_{edition_key}_military-story_eo_number",
             {item.key for item in app.selectbox if item.key},
         )
         self.assertIn(
-            "edit_2026-07-15_military-story_eo_section",
+            f"edit_{edition_key}_military-story_eo_section",
             {item.key for item in app.text_input if item.key},
         )
 
