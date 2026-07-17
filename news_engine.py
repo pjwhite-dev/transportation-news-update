@@ -226,7 +226,7 @@ EO_SECTION_SUMMARIES = {
     },
     "EO 14305": {
         "Section 3": (
-            "protecting the public and sensitive sites from unlawful UAS activity"
+            "protecting the public and mass gatherings from unlawful UAS activity"
         ),
         "Section 4": (
             "coordinating Federal airspace-security work through a dedicated task force"
@@ -238,7 +238,7 @@ EO_SECTION_SUMMARIES = {
             "expanding protections for borders, airports, facilities, and military assets"
         ),
         "Section 9": (
-            "expanding counter-UAS capacity, training, and operational coordination"
+            "building Federal and local counter-UAS capacity for major events"
         ),
     },
     "EO 14304": {
@@ -396,6 +396,55 @@ RECOGNIZED_EDITORIAL_SOURCE_PATTERN = re.compile(
     r"\b(?:associated press|reuters|washington post|new york times|"
     r"wall street journal|bloomberg|politico|axios|cnn|cnbc|bbc|"
     r"the guardian|financial times)\b",
+    re.IGNORECASE,
+)
+
+EIPP_PROGRAM_PATTERN = re.compile(
+    r"\b(?:eipp|e(?:lectric|vtol).{0,20}integration pilot program|"
+    r"evtol integration pilot program)\b",
+    re.IGNORECASE,
+)
+
+EIPP_FIRST_FLIGHT_PATTERN = re.compile(
+    r"\b(?:(?:first|1st|inaugural).{0,180}(?:operational\s+)?flight|"
+    r"(?:flight operations|operational flights?).{0,80}"
+    r"(?:begin|began|commenc|launch|start)|"
+    r"(?:begin|began|commenc|launch|start).{0,80}"
+    r"(?:flight operations|operational flights?))",
+    re.IGNORECASE,
+)
+
+FIFA_WORLD_CUP_PATTERN = re.compile(
+    r"\b(?:fifa(?: world cup)?|world cup)\b",
+    re.IGNORECASE,
+)
+
+FIFA_AIRSPACE_SECURITY_PATTERN = re.compile(
+    r"\b(?:counter[- ](?:drone|uas)|c-uas|counter uas|drone detection|"
+    r"drone mitigation|unauthorized drones?|rogue drones?|airspace security|"
+    r"no drone zones?|temporary flight restrictions?|tfrs?)\b",
+    re.IGNORECASE,
+)
+
+FIFA_SECURITY_ACTION_PATTERN = re.compile(
+    r"\b(?:deploy(?:s|ed|ing)?|protect(?:s|ed|ing)?|secur(?:e[ds]?|ing)|"
+    r"keep(?:s|ing)?|kept|retain(?:s|ed|ing)?|seiz(?:e[ds]?|ed|ing)|"
+    r"enforc(?:e[ds]?|ed|ing)|fund(?:s|ed|ing)?|grant(?:s|ed)?|"
+    r"equip(?:s|ped|ping)?|train(?:s|ed|ing)?|establish(?:es|ed|ing)?|"
+    r"designat(?:e[ds]?|ed|ing)|implement(?:s|ed|ing)?|"
+    r"use[ds]?|using|award(?:s|ed|ing)?)\b",
+    re.IGNORECASE,
+)
+
+FIFA_SECURITY_NEGATIVE_PATTERN = re.compile(
+    r"\b(?:unprepared|not ready|little progress|falls short|falling short|"
+    r"behind schedule|security gap|security gaps)\b",
+    re.IGNORECASE,
+)
+
+FIFA_SECURITY_LASTING_PATTERN = re.compile(
+    r"\b(?:keep(?:s|ing)?|kept|retain(?:s|ed|ing)?|future|after the world cup|"
+    r"concerts?|parades?|lasting|permanent)\b",
     re.IGNORECASE,
 )
 
@@ -912,6 +961,134 @@ def infer_section(record: dict[str, Any]) -> str:
     return "UAS and Drones"
 
 
+def recognized_administration_win(
+    record: dict[str, Any],
+) -> dict[str, str] | None:
+    """Identify narrow, well-documented implementation wins the AI may miss."""
+    text = record_content_text(record)
+    title = clean_spaces(record.get("title", ""))
+    if (
+        not title
+        or headline_is_publisher_only(title, record.get("source", ""))
+        or LOW_QUALITY_AUTOMATED_PATTERN.search(title)
+    ):
+        return None
+
+    if EIPP_PROGRAM_PATTERN.search(text) and EIPP_FIRST_FLIGHT_PATTERN.search(text):
+        return {
+            "eo_number": "EO 14307",
+            "eo_section": "Section 6",
+            "win_explanation": (
+                "President Trump turned his Unleashing American Drone Dominance "
+                "order into real-world results as DOT and FAA’s eIPP completed its "
+                "first operational flight. This America-first milestone strengthens "
+                "U.S. leadership in next-generation aviation, supports high-skilled "
+                "jobs, and accelerates safer medical, cargo, and passenger "
+                "transportation for American communities."
+            ),
+        }
+
+    if (
+        not record_is_international(record)
+        and FIFA_WORLD_CUP_PATTERN.search(text)
+        and FIFA_AIRSPACE_SECURITY_PATTERN.search(text)
+        and FIFA_SECURITY_ACTION_PATTERN.search(text)
+        and not FIFA_SECURITY_NEGATIVE_PATTERN.search(text)
+    ):
+        if FIFA_SECURITY_LASTING_PATTERN.search(text):
+            explanation = (
+                "President Trump’s Restoring American Airspace Sovereignty agenda "
+                "delivered lasting protection for the American people: counter-drone "
+                "technology deployed for the FIFA World Cup will remain available to "
+                "local law enforcement for future mass gatherings. America gains "
+                "safer public events and stronger local defenses against dangerous "
+                "or unlawful drones."
+            )
+        else:
+            explanation = (
+                "President Trump’s Restoring American Airspace Sovereignty agenda "
+                "put counter-drone protections to work for the FIFA World Cup, "
+                "safeguarding American families and visitors at one of the world’s "
+                "largest sporting events. The operation strengthens U.S. control of "
+                "its skies and builds lasting federal and local capacity to defeat "
+                "rogue-drone threats."
+            )
+        return {
+            "eo_number": "EO 14305",
+            "eo_section": "Section 9",
+            "win_explanation": explanation,
+        }
+
+    return None
+
+
+def ensure_recognized_administration_wins(
+    clusters: list[dict[str, Any]],
+    articles: list[dict[str, Any]],
+) -> list[str]:
+    """Apply narrow EO implementation wins even when the AI omits their flags."""
+    recognized_ids: list[str] = []
+    for record in articles:
+        override = recognized_administration_win(record)
+        if not override:
+            continue
+
+        existing = next(
+            (
+                cluster
+                for cluster in clusters
+                if record["id"] in cluster.get("article_ids", [])
+            ),
+            None,
+        )
+        if existing is None:
+            title = best_record_title(record)
+            summary = distinct_story_summary(
+                title,
+                clean_spaces(
+                    record.get("description", "")
+                    or record.get("summary", "")
+                    or record.get("pasted_context", "")
+                ),
+            )
+            existing = {
+                "cluster_id": stable_id(
+                    "recognized-administration-win",
+                    record["id"],
+                ),
+                "article_ids": [record["id"]],
+                "primary_article_id": record["id"],
+                "section": infer_section(record),
+                "relevant": True,
+                "importance": 9,
+                "canonical_title": title,
+                "summary": summary[:500],
+                "is_administration_win": True,
+                "eo_number": override["eo_number"],
+                "eo_section": override["eo_section"],
+                "win_explanation": override["win_explanation"],
+                "confidence": "high",
+                "exclude_reason": "",
+            }
+            clusters.append(existing)
+        else:
+            existing.update(
+                {
+                    "section": infer_section(record),
+                    "relevant": True,
+                    "importance": max(9, existing.get("importance", 1)),
+                    "is_administration_win": True,
+                    "eo_number": override["eo_number"],
+                    "eo_section": override["eo_section"],
+                    "win_explanation": override["win_explanation"],
+                    "confidence": "high",
+                    "exclude_reason": "",
+                }
+            )
+        recognized_ids.append(record["id"])
+    return recognized_ids
+
+
 def coverage_floor_score(
     section: str,
     record: dict[str, Any],
@@ -1183,6 +1360,20 @@ STALE-NEWS EXAMPLES
   implementation milestone, or operational launch during the window may qualify if the
   other conditions are met.
 
+HIGH-PRIORITY EO IMPLEMENTATION WINS
+- Do not overlook the first or inaugural operational flight under DOT and FAA's eIPP.
+  It is direct implementation of President Trump's EO 14307, Section 6, and should be
+  presented as a major America-first win for U.S. aviation leadership, high-skilled jobs,
+  useful transportation services, and faster commercialization of advanced aircraft.
+- Do not overlook a current U.S. FIFA World Cup counter-UAS deployment, enforcement
+  action, security operation, federally backed capability, or decision to retain that
+  equipment for future public events. It is direct implementation of President Trump's
+  EO 14305, Section 9, which explicitly builds Federal and SLTT counter-UAS capacity for
+  the FIFA World Cup and other major sporting events.
+- These examples still require a real implementation action, flight, deployment,
+  enforcement result, or lasting operational capability. Generic eIPP explainers,
+  unrelated FIFA coverage, security criticism, and private promotion are not wins.
+
 - A positive private-sector story is not automatically an Administration win.
 - When applicable, use exactly EO 14307, EO 14305, or EO 14304 and identify the section using
   the form "Section 3" or "Section 4(a)" so the app can add its plain-English section summary.
@@ -1191,6 +1382,10 @@ STALE-NEWS EXAMPLES
   name the Administration, agency, or federal program that acted; state what it actually
   did; and explain the specific benefit for U.S. capability, jobs, manufacturing, safety,
   security, deployment, or regulatory progress.
+- Use a strongly pro-Trump, pro-America voice for a supported Win. Confidently credit
+  President Trump's leadership, describe why the action is a major win for the American
+  people, and connect the result to safer communities, American jobs and innovation,
+  national leadership, or control of U.S. airspace. Keep every factual claim supportable.
 - Use active voice and ordinary language. If the event is a contract or purchase, say who
   awarded or ordered what, who will provide it, and what American mission it supports.
 - Never say "during the window," "within the coverage window," "the record shows,"
@@ -1455,6 +1650,10 @@ def validate_analysis(
             }
         )
 
+    recognized_win_ids = ensure_recognized_administration_wins(
+        clusters,
+        articles,
+    )
     coverage_floor_sections = ensure_minimum_section_coverage(clusters, articles)
 
     return {
@@ -1466,6 +1665,7 @@ def validate_analysis(
         "clusters": clusters,
         "required_count": len(required),
         "required_accounted_count": len(required),
+        "recognized_administration_win_ids": recognized_win_ids,
         "coverage_floor_sections": coverage_floor_sections,
     }
 
@@ -1883,5 +2083,8 @@ def generate_briefing_from_records(
         "supplemental_accounted_count": supplemental_accounted_count,
         "candidate_counts": raw_feed.get("candidate_counts", {}),
         "included_counts": included_counts,
+        "recognized_administration_win_ids": (
+            analysis["recognized_administration_win_ids"]
+        ),
         "coverage_floor_sections": analysis["coverage_floor_sections"],
     }

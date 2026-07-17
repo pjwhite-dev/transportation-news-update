@@ -183,6 +183,15 @@ EO 14307, EO 14305, and EO 14304 are optional citations and may be used only
 when the supplied record supports the connection; an EO number is not itself a
 mandatory fifth eligibility gate.
 
+Treat an inaugural operational flight under DOT and FAA's eIPP as a direct
+implementation win under EO 14307, Section 6. Treat a current U.S. FIFA World
+Cup counter-UAS deployment, enforcement action, federally backed capability,
+or retention of World Cup counter-drone equipment for future public events as
+a direct implementation win under EO 14305, Section 9. Enforce these two
+narrow recognizers deterministically so they are not lost when the AI omits a
+Win flag. Do not extend them to generic eIPP explainers, unrelated FIFA
+coverage, security criticism, or private promotion.
+
 Administration Win explanations are published verbatim and must stand alone for
 the email reader. Name the Administration, agency, or federal program that
 acted; state what it did; and explain the specific American result in ordinary,
@@ -191,6 +200,12 @@ active language. Never expose internal editorial tests with phrases such as
 “concrete benefit,” or “clear federal procurement action.” For contracts and
 purchases, say who awarded or ordered what, who will provide it, and which
 American mission it supports.
+
+For a supported Win, use a strongly pro-Trump, pro-America voice. Confidently
+credit President Trump's leadership and explain why the result is a major win
+for the American people through safer communities, American jobs and
+innovation, national leadership, or stronger control of U.S. airspace. Keep
+every factual claim supportable.
 
 ## Relevance exclusions
 
