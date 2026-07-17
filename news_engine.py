@@ -59,6 +59,7 @@ TOPIC_SECTIONS = [
     "eVTOL Integration Pilot Program and AAM",
     "Autonomous Vehicles",
     "Other Advanced Transportation",
+    "International",
     "Federal Actions",
 ]
 
@@ -138,6 +139,13 @@ NEWS_QUERIES = {
         '(maglev OR "autonomous rail" OR "automated train") United States',
         '(FRA OR FTA OR DOT) (rail technology OR advanced rail OR passenger rail)',
         '("advanced transportation technology" OR "smart transportation") United States',
+    ],
+    "International": [
+        '("autonomous vehicle" OR robotaxi OR driverless) (Europe OR China OR India OR Japan OR Canada)',
+        '(eVTOL OR "advanced air mobility" OR "air taxi") (Europe OR Asia OR Middle East OR Canada)',
+        '("high-speed rail" OR "hydrogen train" OR maglev) (Europe OR China OR India OR Japan)',
+        '(drone OR UAS) (European Union OR United Kingdom OR Canada OR Japan) (rule OR operations OR deployment)',
+        '("advanced transportation" OR "smart mobility") (Europe OR Asia OR Latin America)',
     ],
 }
 
@@ -312,6 +320,82 @@ MILITARY_CONFLICT_CONTEXT_PATTERN = re.compile(
     r"\b(?:drones?|uas|uavs?|unmanned|attacks?|strikes?|hit|struck|sank|sunk|"
     r"ships?|vessels?|military|combat|war|warfare|battlefield|frontline|"
     r"weapons?|missiles?|munitions?|invasion|defen[sc]e)\b",
+    re.IGNORECASE,
+)
+
+INTERNATIONAL_MARKER_PATTERN = re.compile(
+    r"\b(?:africa|asia|australia|australian|austria|brazil|brazilian|britain|"
+    r"british|canada|canadian|china|chinese|europe|european|finland|finnish|"
+    r"france|french|germany|german|india|indian|indonesia|italy|italian|"
+    r"japan|japanese|korea|korean|mexico|mexican|netherlands|norway|norwegian|"
+    r"poland|polish|saudi arabia|singapore|spain|spanish|sweden|swedish|"
+    r"switzerland|taiwan|taiwanese|united arab emirates|uae|united kingdom|"
+    r"uk|vietnam|vietnamese|london|madrid|paris|berlin|tokyo|dubai|kolkata)\b",
+    re.IGNORECASE,
+)
+
+DOMESTIC_MARKER_PATTERN = re.compile(
+    r"\b(?:united states|u\.s|"
+    r"(?<!latin )(?<!south )(?<!central )(?<!north )america(?:n)?|"
+    r"department of transportation|transportation dept(?:artment)?|"
+    r"faa|nhtsa|fmcsa|fra|fta|amtrak|penn station|california|texas|new york|"
+    r"new jersey|washington,\s*d\.c|d\.c)\b",
+    re.IGNORECASE,
+)
+
+COVERAGE_FLOOR_SECTIONS = (
+    "Autonomous Vehicles",
+    "Other Advanced Transportation",
+    "International",
+)
+
+SECTION_COVERAGE_PATTERNS = {
+    "Autonomous Vehicles": re.compile(
+        r"\b(?:autonomous vehicles?|automated vehicles?|automated driving|"
+        r"self-driving|driverless|robotaxis?|ads-equipped|autonomous trucks?|"
+        r"waymo|zoox|nhtsa|fmvss|part 555|vehicle-to-everything|v2x)\b",
+        re.IGNORECASE,
+    ),
+    "Other Advanced Transportation": re.compile(
+        r"\b(?:civil supersonic|commercial supersonic|quiet supersonic|x-59|"
+        r"boom supersonic|overture|hermeus|high-speed rail|bullet train|"
+        r"hydrogen train|hydrogen fuel cell train|maglev|autonomous rail|"
+        r"automated train|digital train|advanced rail)\b",
+        re.IGNORECASE,
+    ),
+}
+
+INTERNATIONAL_TRANSPORT_PATTERN = re.compile(
+    r"\b(?:drones?|uas|uavs?|unmanned aircraft|evtol|advanced air mobility|"
+    r"air taxis?|autonomous vehicles?|automated vehicles?|automated driving|"
+    r"self-driving|driverless|robotaxis?|autonomous trucks?|high-speed rail|"
+    r"bullet trains?|hydrogen trains?|hydrogen fuel cell trains?|maglev|"
+    r"autonomous rail|automated trains?|civil supersonic|commercial supersonic|"
+    r"quiet supersonic)\b",
+    re.IGNORECASE,
+)
+
+LOW_QUALITY_AUTOMATED_PATTERN = re.compile(
+    r"\b(?:stock|shares?|investors?|valuation|market size|market forecast|"
+    r"market report|market landscape|market insights|market growth|cagr|"
+    r"price target|buy or sell|top \d+|consumer list|game guide|personal injury "
+    r"lawyer)\b",
+    re.IGNORECASE,
+)
+
+SUBSTANTIVE_ACTION_PATTERN = re.compile(
+    r"\b(?:announce[ds]?|approve[ds]?|authorize[ds]?|begin[ns]?|"
+    r"deploy(?:s|ed|ing)?|expand(?:s|ed|ing)?|launch(?:es|ed|ing)?|"
+    r"order[eds]?|permit(?:s|ted)?|propose[ds]?|support(?:s|ed|ing)?|"
+    r"regulat(?:e[ds]?|ion)|rulemaking|test(?:s|ed|ing)?|trial(?:s|ed)?|"
+    r"operate[ds]?|service|law|contract|investigation|recall)\b",
+    re.IGNORECASE,
+)
+
+RECOGNIZED_EDITORIAL_SOURCE_PATTERN = re.compile(
+    r"\b(?:associated press|reuters|washington post|new york times|"
+    r"wall street journal|bloomberg|politico|axios|cnn|cnbc|bbc|"
+    r"the guardian|financial times)\b",
     re.IGNORECASE,
 )
 
@@ -738,19 +822,67 @@ def best_record_title(record: dict[str, Any]) -> str:
     return clean_spaces(record.get("url", "Untitled supplemental item"))
 
 
-def infer_section(record: dict[str, Any]) -> str:
-    text = " ".join(
-        str(record.get(key, ""))
-        for key in (
-            "title", "summary", "description", "pasted_context", "search_section",
-            "source",
+def record_text(record: dict[str, Any]) -> str:
+    return clean_spaces(
+        " ".join(
+            str(record.get(key, ""))
+            for key in (
+                "title", "summary", "description", "pasted_context",
+                "search_section", "source",
+            )
         )
-    ).lower()
-    if MILITARY_SECTION_PATTERN.search(text) or (
-        MILITARY_CONFLICT_ACTOR_PATTERN.search(text)
-        and MILITARY_CONFLICT_CONTEXT_PATTERN.search(text)
+    )
+
+
+def record_content_text(record: dict[str, Any]) -> str:
+    """Reader-facing record text, excluding search-bucket metadata."""
+    return clean_spaces(
+        " ".join(
+            str(record.get(key, ""))
+            for key in (
+                "title", "summary", "description", "pasted_context", "source",
+            )
+        )
+    )
+
+
+def record_is_military(record: dict[str, Any]) -> bool:
+    text = record_text(record)
+    return bool(
+        MILITARY_SECTION_PATTERN.search(text)
+        or (
+            MILITARY_CONFLICT_ACTOR_PATTERN.search(text)
+            and MILITARY_CONFLICT_CONTEXT_PATTERN.search(text)
+        )
+    )
+
+
+def record_is_international(record: dict[str, Any]) -> bool:
+    title = clean_spaces(record.get("title", ""))
+    if (
+        INTERNATIONAL_MARKER_PATTERN.search(title)
+        and not DOMESTIC_MARKER_PATTERN.search(title)
     ):
+        return True
+
+    text = record_content_text(record)
+    if DOMESTIC_MARKER_PATTERN.search(text):
+        return False
+    return bool(
+        INTERNATIONAL_MARKER_PATTERN.search(text)
+        or (
+            record.get("search_section") == "International"
+            and INTERNATIONAL_TRANSPORT_PATTERN.search(text)
+        )
+    )
+
+
+def infer_section(record: dict[str, Any]) -> str:
+    text = record_text(record).casefold()
+    if record_is_military(record):
         return "Military"
+    if record_is_international(record):
+        return "International"
     if any(term in text for term in (
         "counter-uas", "counter uas", "c-uas", "counter drone", "drone detection",
         "drone mitigation", "airspace sovereignty", "unauthorized drone",
@@ -778,6 +910,125 @@ def infer_section(record: dict[str, Any]) -> str:
     if record.get("origin") == "Federal Register API":
         return "Federal Actions"
     return "UAS and Drones"
+
+
+def coverage_floor_score(
+    section: str,
+    record: dict[str, Any],
+) -> int | None:
+    """Score a credible record for deterministic minimum sector coverage."""
+    title = clean_spaces(record.get("title", ""))
+    text = record_content_text(record)
+    if (
+        not title
+        or headline_is_publisher_only(title, record.get("source", ""))
+        or LOW_QUALITY_AUTOMATED_PATTERN.search(title)
+        or record_is_military(record)
+    ):
+        return None
+
+    is_international = record_is_international(record)
+    if section == "International":
+        if not is_international or not INTERNATIONAL_TRANSPORT_PATTERN.search(text):
+            return None
+    else:
+        pattern = SECTION_COVERAGE_PATTERNS[section]
+        if is_international or not pattern.search(text):
+            return None
+
+    score = 4 if record.get("search_section") == section else 0
+    if SUBSTANTIVE_ACTION_PATTERN.search(text):
+        score += 4
+    if DOMESTIC_MARKER_PATTERN.search(text):
+        score += 3
+    if any(
+        agency in record.get("source", "").casefold()
+        for agency in (
+            "department of transportation", "nhtsa", "federal railroad",
+            "federal transit", "faa", "amtrak",
+        )
+    ):
+        score += 4
+    if RECOGNIZED_EDITORIAL_SOURCE_PATTERN.search(record.get("source", "")):
+        score += 3
+    if title.endswith("?"):
+        score -= 1
+    return score
+
+
+def best_coverage_floor_record(
+    section: str,
+    articles: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    candidates = [
+        (score, record.get("published", ""), record)
+        for record in articles
+        if (score := coverage_floor_score(section, record)) is not None
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda item: (item[0], item[1]))[2]
+
+
+def ensure_minimum_section_coverage(
+    clusters: list[dict[str, Any]],
+    articles: list[dict[str, Any]],
+) -> list[str]:
+    """Keep credible AV, advanced-transportation, and international news visible."""
+    ensured: list[str] = []
+    for section in COVERAGE_FLOOR_SECTIONS:
+        if any(
+            cluster.get("relevant", False) and cluster.get("section") == section
+            for cluster in clusters
+        ):
+            continue
+
+        record = best_coverage_floor_record(section, articles)
+        if not record:
+            continue
+
+        existing = next(
+            (
+                cluster
+                for cluster in clusters
+                if record["id"] in cluster.get("article_ids", [])
+            ),
+            None,
+        )
+        if existing:
+            existing["relevant"] = True
+            existing["section"] = section
+            existing["importance"] = max(5, existing.get("importance", 1))
+            existing["exclude_reason"] = ""
+        else:
+            title = best_record_title(record)
+            summary = distinct_story_summary(
+                title,
+                clean_spaces(
+                    record.get("description", "")
+                    or record.get("summary", "")
+                ),
+            )
+            clusters.append(
+                {
+                    "cluster_id": stable_id("coverage-floor", section, record["id"]),
+                    "article_ids": [record["id"]],
+                    "primary_article_id": record["id"],
+                    "section": section,
+                    "relevant": True,
+                    "importance": 5,
+                    "canonical_title": title,
+                    "summary": summary[:500],
+                    "is_administration_win": False,
+                    "eo_number": "",
+                    "eo_section": "",
+                    "win_explanation": "",
+                    "confidence": "medium",
+                    "exclude_reason": "",
+                }
+            )
+        ensured.append(section)
+    return ensured
 
 
 def prompt_messages(
@@ -838,7 +1089,8 @@ EDITORIAL SCOPE AND RELEVANCE
   4. eIPP, eVTOL, powered-lift, and advanced air mobility.
   5. Autonomous vehicles and automated driving.
   6. Civil supersonics and genuinely advanced rail or transportation technology.
-  7. Directly relevant Federal actions.
+  7. International advanced-transportation developments.
+  8. Directly relevant Federal actions.
 - Put every military-related story in Military, regardless of whether its platform is a drone,
   ship, aircraft, ground vehicle, missile, or autonomous system. This includes the Department
   of Defense, military services, defense acquisition and contractors, bases, warfighters,
@@ -852,6 +1104,11 @@ EDITORIAL SCOPE AND RELEVANCE
   to automated driving.
 - Place AV-specific Federal actions, including FMVSS and NHTSA/FMCSA ADS actions, in the
   Autonomous Vehicles section rather than the generic Federal Actions section.
+- Put substantive non-U.S. commercial, regulatory, operational, and technical
+  developments in International. This includes foreign drone, eVTOL, AV, advanced-rail,
+  and civil-supersonic news. International military and conflict stories still belong in
+  Military. Do not move a U.S.-centered story into International merely because it mentions
+  a foreign company, comparison, supplier, or market.
 - Include substantive operational, commercial, technical, regulatory, state, research,
   manufacturing, contract, deployment, safety, and enforcement developments.
 - Be strict about relevance. Exclude health policy, medicine, pharmaceuticals, HHS, NIH,
@@ -864,6 +1121,18 @@ EDITORIAL SCOPE AND RELEVANCE
   must be marked relevant=false and excluded.
 - The voice may be confidently pro-American and Administration-forward, but credit President
   Trump or his Administration only where a direct, supportable connection exists.
+
+MINIMUM SECTOR COVERAGE
+- Review the full candidate set. Do not let a large volume of UAS, military, or supplemental
+  material crowd out other advanced-transportation sectors.
+- An editorial section may be empty only when the supplied records contain no substantive,
+  credible new development for it.
+- When credible candidates exist, include at least the strongest new Autonomous Vehicles
+  story, the strongest new Other Advanced Transportation story, and the strongest new
+  International story. Prefer concrete deployments, government actions, safety developments,
+  tests, contracts, launches, and operational milestones.
+- This is not permission to include stock promotion, generic market reports, consumer lists,
+  unrelated keyword collisions, or stale recaps merely to fill a section.
 
 CLUSTERING
 - Cluster only records covering the same concrete event, announcement, rule, deployment,
@@ -1107,8 +1376,13 @@ def validate_analysis(
 
         section = raw.get("section", "")
         inferred_section = infer_section(lookup[primary])
-        if inferred_section == "Military":
-            section = "Military"
+        if inferred_section in {
+            "Military",
+            "International",
+            "Autonomous Vehicles",
+            "Other Advanced Transportation",
+        }:
+            section = inferred_section
         elif section not in TOPIC_SECTIONS or (
             section == "Federal Actions"
             and inferred_section == "Autonomous Vehicles"
@@ -1181,6 +1455,8 @@ def validate_analysis(
             }
         )
 
+    coverage_floor_sections = ensure_minimum_section_coverage(clusters, articles)
+
     return {
         "what_to_watch": [
             clean_spaces(item)
@@ -1190,6 +1466,7 @@ def validate_analysis(
         "clusters": clusters,
         "required_count": len(required),
         "required_accounted_count": len(required),
+        "coverage_floor_sections": coverage_floor_sections,
     }
 
 
@@ -1606,4 +1883,5 @@ def generate_briefing_from_records(
         "supplemental_accounted_count": supplemental_accounted_count,
         "candidate_counts": raw_feed.get("candidate_counts", {}),
         "included_counts": included_counts,
+        "coverage_floor_sections": analysis["coverage_floor_sections"],
     }

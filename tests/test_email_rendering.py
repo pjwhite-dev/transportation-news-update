@@ -30,6 +30,11 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
             order.index("Military"),
             order.index("eVTOL Integration Pilot Program and AAM"),
         )
+        self.assertLess(
+            order.index("Other Advanced Transportation"),
+            order.index("International"),
+        )
+        self.assertLess(order.index("International"), order.index("Federal Actions"))
 
     def test_duplicate_description_is_not_rendered(self) -> None:
         current = briefing()
@@ -54,7 +59,87 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
             ("plain", streamlit_app.build_plain_text(current)),
         ):
             with self.subTest(format=name):
-                self.assertEqual(rendered.count(title), 1)
+                self.assertNotIn(title + ".", rendered)
+
+    def test_headlines_at_a_glance_follow_summary_and_mirror_sections(self) -> None:
+        current = briefing()
+        av_title = "California approves Waymo robotaxi expansion"
+        international_title = "India launches its first hydrogen train"
+        current["sections"]["Top Developments"] = [
+            {
+                "id": "av-1",
+                "title": av_title,
+                "summary": "The deployment will add driverless service.",
+                "source": "Example News",
+                "url": "https://example.com/av",
+                "date_label": "Jul. 15, 2026",
+                "published": "2026-07-15T03:00:00-04:00",
+                "section": "Autonomous Vehicles",
+                "is_administration_win": False,
+                "also_covered": [],
+            }
+        ]
+        current["sections"]["International"] = [
+            {
+                "id": "international-1",
+                "title": international_title,
+                "summary": "The train uses hydrogen fuel cells.",
+                "source": "Example News",
+                "url": "https://example.com/international",
+                "date_label": "Jul. 15, 2026",
+                "published": "2026-07-15T02:00:00-04:00",
+                "section": "International",
+                "is_administration_win": False,
+                "also_covered": [],
+            }
+        ]
+
+        groups = dict(streamlit_app.sectioned_headline_groups(current))
+        self.assertEqual(
+            [item["title"] for item in groups["Top Developments"]],
+            [av_title],
+        )
+        self.assertEqual(
+            [item["title"] for item in groups["International"]],
+            [international_title],
+        )
+
+        web = streamlit_app.build_web_preview_html(current)
+        outlook = streamlit_app.build_outlook_html(current)
+        plain = streamlit_app.build_plain_text(current)
+        for name, rendered in (("web", web), ("outlook", outlook), ("plain", plain)):
+            with self.subTest(format=name):
+                lowered = rendered.casefold()
+                self.assertLess(
+                    lowered.index("executive summary"),
+                    lowered.index("headlines at a glance"),
+                )
+                self.assertIn(av_title, rendered)
+                self.assertIn(international_title, rendered)
+        self.assertIn("font-size:12px", web)
+        self.assertIn("font-size:11px", outlook)
+
+    def test_legacy_session_story_is_recategorized_as_international(self) -> None:
+        current = briefing()
+        story = {
+            "id": "madrid-av",
+            "title": "Madrid approves a new commercial robotaxi service",
+            "summary": "Spanish regulators cleared the driverless deployment.",
+            "source": "Example News",
+            "url": "https://example.com/madrid-av",
+            "date_label": "Jul. 15, 2026",
+            "published": "2026-07-15T02:00:00-04:00",
+            "section": "Autonomous Vehicles",
+            "importance": 5,
+            "is_administration_win": False,
+            "also_covered": [],
+        }
+        current["sections"]["Autonomous Vehicles"] = [story]
+
+        streamlit_app.ensure_current_story_sections(current)
+
+        self.assertEqual(current["sections"]["Autonomous Vehicles"], [])
+        self.assertEqual(current["sections"]["International"], [story])
 
     def test_eo_display_includes_plain_english_section_summary(self) -> None:
         citation = streamlit_app.eo_display(

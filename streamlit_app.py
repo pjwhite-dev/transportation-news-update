@@ -223,6 +223,63 @@ def compact_article_html(item: dict) -> str:
     """
 
 
+def sectioned_headline_groups(briefing: dict) -> list[tuple[str, list[dict]]]:
+    """Mirror final editorial sections with each story represented once."""
+    groups: list[tuple[str, list[dict]]] = []
+    seen = set()
+    for display_section in SECTION_ORDER:
+        items = []
+        for item in briefing.get("sections", {}).get(display_section, []):
+            identity = item.get("id") or item.get("url") or item.get("title", "")
+            if identity in seen:
+                continue
+            seen.add(identity)
+            items.append(item)
+        if items:
+            groups.append((display_section, items))
+    return groups
+
+
+def headlines_web_html(briefing: dict) -> str:
+    groups = sectioned_headline_groups(briefing)
+    if not groups:
+        return ""
+
+    group_markup = []
+    for section, items in groups:
+        headlines = "".join(
+            f"""
+            <li style="margin:0 0 4px 0;">
+              <a href="{safe_url(item.get('url', ''))}"
+                  style="color:#294f6d;text-decoration:none;">
+                {html.escape(item.get('title', 'Untitled'))}
+              </a>
+            </li>
+            """
+            for item in items
+        )
+        group_markup.append(
+            f"""
+            <div style="margin:0 0 9px 0;">
+              <div style="font-size:10px;line-height:1.35;font-weight:800;
+                  color:#5c7182;text-transform:uppercase;letter-spacing:.35px;
+                  margin-bottom:3px;">{html.escape(section)}</div>
+              <ul style="margin:0;padding-left:17px;font-size:12px;
+                  line-height:1.4;color:#294f6d;">{headlines}</ul>
+            </div>
+            """
+        )
+
+    return f"""
+    <div style="border:1px solid #dbe4ea;background:#fafcfd;
+        padding:11px 13px 7px 13px;margin:0 0 23px 0;">
+      <div style="font-size:11px;line-height:1.35;font-weight:800;color:#244d6b;
+          letter-spacing:.25px;margin-bottom:8px;">HEADLINES AT A GLANCE</div>
+      {''.join(group_markup)}
+    </div>
+    """
+
+
 def section_html(title: str, items: list[dict]) -> str:
     if not items:
         return ""
@@ -316,6 +373,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
     end_text = format_datetime(briefing.get("window_end", ""))
 
     sections = briefing.get("sections", {})
+    headline_markup = headlines_web_html(briefing)
     visible_sections = ["Trump Administration Wins", "Top Developments"]
     if not executive_only:
         visible_sections.extend(TOPIC_SECTIONS)
@@ -375,6 +433,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
         </div>
       </div>
 
+      {headline_markup}
       {section_markup}
       {tracker_markup}
       {watch_markup}
@@ -394,6 +453,79 @@ def outlook_spacer(height: int) -> str:
         f'<tr><td height="{height}" style="height:{height}px;'
         f'line-height:{height}px;font-size:0;">&nbsp;</td></tr>'
     )
+
+
+def headlines_outlook_html(briefing: dict) -> str:
+    groups = sectioned_headline_groups(briefing)
+    if not groups:
+        return ""
+
+    group_rows = []
+    for section, items in groups:
+        headline_rows = "".join(
+            f"""
+            <tr>
+              <td width="13" valign="top" style="width:13px;padding:1px 0 4px 0;
+                  font-family:Arial,Helvetica,sans-serif;font-size:11px;
+                  line-height:16px;color:#5C7182;">&#8226;</td>
+              <td valign="top" style="padding:0 0 4px 0;
+                  font-family:Arial,Helvetica,sans-serif;font-size:11px;
+                  line-height:16px;mso-line-height-rule:exactly;">
+                <a href="{safe_url(item.get('url', ''))}"
+                    style="color:#294F6D;text-decoration:none;">
+                  {html.escape(item.get('title', 'Untitled'))}
+                </a>
+              </td>
+            </tr>
+            """
+            for item in items
+        )
+        group_rows.append(
+            f"""
+            <tr>
+              <td style="padding:0 0 3px 0;font-family:Arial,Helvetica,sans-serif;
+                  font-size:9px;line-height:13px;font-weight:bold;color:#5C7182;
+                  text-transform:uppercase;letter-spacing:.3px;
+                  mso-line-height-rule:exactly;">{html.escape(section)}</td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 8px 0;">
+                <table role="presentation" width="100%" border="0" cellspacing="0"
+                    cellpadding="0" style="width:100%;border-collapse:collapse;">
+                  {headline_rows}
+                </table>
+              </td>
+            </tr>
+            """
+        )
+
+    return f"""
+    <tr>
+      <td style="padding:0 28px 0 28px;">
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" bgcolor="#FAFCFD"
+            style="width:100%;border-collapse:collapse;background-color:#FAFCFD;
+            border:1px solid #DBE4EA;">
+          <tr>
+            <td style="padding:11px 13px 7px 13px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0"
+                  cellpadding="0" style="width:100%;border-collapse:collapse;">
+                <tr>
+                  <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:10px;line-height:14px;font-weight:bold;color:#244D6B;
+                      letter-spacing:.3px;mso-line-height-rule:exactly;">
+                    HEADLINES AT A GLANCE
+                  </td>
+                </tr>
+                {''.join(group_rows)}
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {outlook_spacer(23)}
+    """
 
 
 def outlook_related_html(item: dict) -> str:
@@ -698,6 +830,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     end_text = format_datetime(briefing.get("window_end", ""))
 
     sections = briefing.get("sections", {})
+    headline_markup = headlines_outlook_html(briefing)
     visible_sections = ["Trump Administration Wins", "Top Developments"]
     if not executive_only:
         visible_sections.extend(TOPIC_SECTIONS)
@@ -833,6 +966,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
           </tr>
 
           {outlook_spacer(25)}
+          {headline_markup}
           {section_markup}
           {tracker_markup}
           {watch_markup}
@@ -876,6 +1010,14 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
     ]
 
     sections = briefing.get("sections", {})
+    headline_groups = sectioned_headline_groups(briefing)
+    if headline_groups:
+        lines.extend(["HEADLINES AT A GLANCE", ""])
+        for section, items in headline_groups:
+            lines.extend([section.upper(), ""])
+            lines.extend(f"• {item.get('title', '')}" for item in items)
+            lines.append("")
+
     visible = ["Trump Administration Wins", "Top Developments"]
     if not executive_only:
         visible.extend(TOPIC_SECTIONS)
@@ -1094,7 +1236,7 @@ def ensure_regulatory_tracker(briefing: dict, as_of: datetime) -> dict:
 
 
 def ensure_current_story_sections(briefing: dict) -> dict:
-    """Add Military and recategorize legacy in-session stories without AI."""
+    """Recategorize legacy in-session stories for deterministic topic rules."""
     stories = []
     seen_ids = set()
     for items in briefing.get("sections", {}).values():
@@ -1104,7 +1246,12 @@ def ensure_current_story_sections(briefing: dict) -> dict:
                 continue
             seen_ids.add(item_id)
             inferred = infer_section(item)
-            if inferred == "Military" or item.get("section") not in TOPIC_SECTIONS:
+            if inferred in {
+                "Military",
+                "International",
+                "Autonomous Vehicles",
+                "Other Advanced Transportation",
+            } or item.get("section") not in TOPIC_SECTIONS:
                 item["section"] = inferred
             stories.append(item)
     briefing["sections"] = arrange_sections(stories)

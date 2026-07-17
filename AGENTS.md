@@ -86,9 +86,10 @@ Preserve these explicit sections and ordering:
 6. eVTOL Integration Pilot Program and AAM
 7. Autonomous Vehicles
 8. Other Advanced Transportation
-9. Federal Actions
-10. Regulatory Deadline Tracker
-11. What to Watch
+9. International
+10. Federal Actions
+11. Regulatory Deadline Tracker
+12. What to Watch
 
 Place the Regulatory Deadline Tracker at the bottom of the email immediately
 before What to Watch. It is a persistent public-information section, not a list
@@ -131,6 +132,13 @@ AV-specific federal actions normally belong in **Autonomous Vehicles**, not the
 generic **Federal Actions** section. Enforce this in deterministic validation,
 not only in the AI prompt.
 
+When credible records exist, the editorial pass must include at least one
+substantive Autonomous Vehicles development and at least one substantive civil
+supersonic, high-speed rail, hydrogen rail, maglev, automated rail, or other
+genuinely advanced-transportation development. Enforce this with deterministic
+fallbacks that continue to reject stock promotion, market reports, consumer
+lists, and keyword collisions.
+
 ## Military coverage
 
 Place stories centered on the Department of Defense, a military service,
@@ -142,6 +150,17 @@ the war in Ukraine, Russian military operations, attacks on warships, naval or
 battlefield strikes, weapons and munitions, and other combat activity. Enforce
 this categorization deterministically so military stories are not buried in
 generic UAS, UAS Security and C-UAS, or Federal Actions.
+
+## International coverage
+
+Place substantive non-U.S. commercial, regulatory, operational, and technical
+advanced-transportation developments in **International**. This includes
+foreign drone, eVTOL, autonomous-vehicle, advanced-rail, and civil-supersonic
+news. International military and conflict stories remain in **Military**.
+Do not classify a U.S.-centered story as International merely because it
+mentions a foreign company, supplier, comparison, or market. When a credible
+international candidate exists, keep at least one International story in the
+briefing.
 
 ## Trump Administration Win eligibility
 
@@ -192,6 +211,12 @@ Preserve the **Review & Edit** tab. The authenticated editor must be able to:
   story into or out of the Win section accordingly.
 - Edit Administration Win explanations and optional EO/section citations.
 - Edit the Executive Summary and What to Watch.
+
+Directly below the Executive Summary, render **Headlines at a Glance** in a
+smaller font. It must contain only linked headlines, grouped under the same
+editorial sections used by the final arranged briefing. Build it dynamically
+from that final briefing so supplemental items are included and story Include
+checkboxes and headline edits are reflected automatically.
 
 The Executive Summary must read as a polished, standalone news briefing for a
 senior executive. It must never expose intake or editorial-process language such
@@ -245,8 +270,9 @@ Before handing off a change, run:
 Regression coverage must include owner-authenticated and unauthenticated
 feed-only button visibility, malformed and duplicate supplemental URL handling,
 publisher-only headline rejection, unrelated HHS/psychedelic filtering, AV
-categorization, Administration Win eligibility, and end-to-end supplemental
-link accounting.
+categorization and coverage fallback, International categorization, the
+sectioned headline index, Administration Win eligibility, and end-to-end
+supplemental link accounting.
 
 Never request, print, expose, or commit secrets. Do not push, open a pull
 request, or merge without the repository owner’s explicit approval.
