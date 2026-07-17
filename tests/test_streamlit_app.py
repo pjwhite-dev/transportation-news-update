@@ -60,6 +60,61 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
         )
         self.assertNotIn("UAS, C-UAS, and Advanced Transportation", rendered_text)
 
+    def test_status_reports_administration_wins_selected_by_build(self) -> None:
+        app = self.load_app()
+        edition_key, raw_feed = active_feed_context()
+        sections = {
+            section: []
+            for section in (
+                "Trump Administration Wins",
+                "Top Developments",
+                "UAS and Drones",
+                "UAS Security and C-UAS",
+                "Military",
+                "eVTOL Integration Pilot Program and AAM",
+                "Autonomous Vehicles",
+                "Other Advanced Transportation",
+                "International",
+                "Federal Actions",
+            )
+        }
+        sections["Trump Administration Wins"] = [
+            {
+                "id": "faa-win",
+                "title": "FAA accepts new powered-lift standards",
+                "summary": "The agency accepted new aviation standards.",
+                "source": "FAA",
+                "url": "https://www.faa.gov/example",
+                "published": raw_feed["window_end"],
+                "date_label": "Jul. 17, 2026",
+                "section": "eVTOL Integration Pilot Program and AAM",
+                "importance": 9,
+                "confidence": "high",
+                "is_administration_win": True,
+                "eo_number": "",
+                "eo_name": "",
+                "eo_section": "",
+                "eo_section_summary": "",
+                "win_explanation": "President Trump’s FAA delivered an aviation win.",
+                "also_covered": [],
+            }
+        ]
+        app.session_state[f"generated_briefing_{edition_key}"] = {
+            "window_start": raw_feed["window_start"],
+            "window_end": raw_feed["window_end"],
+            "executive_summary": "The FAA accepted new aviation standards.",
+            "what_to_watch": [],
+            "sections": sections,
+            "usage": {},
+            "model": "test",
+        }
+        app.run()
+
+        self.assertIn(
+            "**Trump Administration Wins selected by build:** 1",
+            [item.value for item in app.markdown],
+        )
+
     def test_tracker_is_visible_and_selectable_before_build(self) -> None:
         app = self.load_app()
         edition_key, raw_feed = active_feed_context()
