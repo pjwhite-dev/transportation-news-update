@@ -34,6 +34,7 @@ def cluster(**overrides: object) -> dict:
         "importance": 8,
         "canonical_title": "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
         "summary": "NHTSA issued an automated-driving safety action.",
+        "innovative_uas_use": "",
         "is_administration_win": False,
         "win_event_within_window": False,
         "win_direct_administration_nexus": False,
@@ -92,6 +93,99 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
         self.assertIn("Military", news_engine.TOPIC_SECTIONS)
         self.assertEqual(validated["clusters"][0]["section"], "Military")
+
+    def test_defense_counter_uas_technology_is_forced_into_cuas_section(self) -> None:
+        article = record(
+            title="U.S. Army awards contract for new counter-UAS interceptors",
+            summary=(
+                "The service ordered detection and mitigation systems to protect "
+                "domestic installations."
+            ),
+            source="U.S. Army",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+
+        validated = news_engine.validate_analysis(
+            {
+                "what_to_watch": [],
+                "clusters": [cluster(section="Military")],
+            },
+            [article],
+        )
+
+        self.assertEqual(
+            validated["clusters"][0]["section"],
+            "UAS Security and C-UAS",
+        )
+
+    def test_counter_uas_use_in_ukraine_remains_military(self) -> None:
+        article = record(
+            title="Ukraine deploys counter-UAS systems against Russian attacks",
+            summary=(
+                "The battlefield systems intercepted drones during active combat."
+            ),
+            source="Example Defense News",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+
+        self.assertEqual(news_engine.infer_section(article), "Military")
+
+    def test_pentagon_drone_defense_test_is_cuas_without_acronym(self) -> None:
+        article = record(
+            title="Pentagon tests a new drone defense laser",
+            summary="The system detects and defeats drones around U.S. installations.",
+            source="Department of Defense",
+            origin="Google News RSS",
+        )
+
+        self.assertEqual(
+            news_engine.infer_section(article),
+            "UAS Security and C-UAS",
+        )
+
+    def test_innovative_civil_uas_use_gets_short_deterministic_label(self) -> None:
+        article = record(
+            search_section="UAS and Drones",
+            title="Drones begin delivering blood to remote hospitals",
+            summary="The service transports medical supplies to rural communities.",
+            source="Example Aviation News",
+            origin="Google News RSS",
+        )
+
+        self.assertEqual(news_engine.infer_section(article), "UAS and Drones")
+        self.assertEqual(
+            news_engine.infer_innovative_uas_use(article),
+            "Delivering critical medical supplies",
+        )
+
+    def test_innovative_uas_label_is_removed_from_cuas_story(self) -> None:
+        article = record(
+            title="FAA tests counter-UAS detection at an airport",
+            summary="The test evaluates drone detection technology.",
+            source="FAA",
+            origin="Supplemental daily email",
+            required_include=True,
+        )
+        validated = news_engine.validate_analysis(
+            {
+                "what_to_watch": [],
+                "clusters": [
+                    cluster(
+                        section="UAS and Drones",
+                        innovative_uas_use="Detecting unsafe airport drones",
+                    )
+                ],
+            },
+            [article],
+        )
+
+        self.assertEqual(
+            validated["clusters"][0]["section"],
+            "UAS Security and C-UAS",
+        )
+        self.assertEqual(validated["clusters"][0]["innovative_uas_use"], "")
 
     def test_ukraine_conflict_story_is_forced_out_of_uas(self) -> None:
         article = record(

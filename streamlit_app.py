@@ -18,9 +18,11 @@ from news_engine import (
     TOPIC_SECTIONS,
     arrange_sections,
     canonical_eo_section,
+    clean_innovative_uas_use,
     distinct_story_summary,
     eo_section_summary,
     generate_briefing_from_records,
+    infer_innovative_uas_use,
     infer_section,
 )
 from regulatory_tracker import build_regulatory_tracker
@@ -182,6 +184,17 @@ def article_html(item: dict, section_name: str) -> str:
         f'margin-bottom:6px;">{summary}</div>'
         if summary else ""
     )
+    innovative_uas_use = clean_innovative_uas_use(
+        item.get("innovative_uas_use", "")
+    )
+    innovation_html = (
+        '<div style="background:#fff2cc;border-left:3px solid #d6b656;'
+        'padding:7px 9px;margin:8px 0;font-size:12px;line-height:1.4;'
+        'color:#493c00;"><strong>Innovative UAS use:</strong> '
+        + html.escape(innovative_uas_use)
+        + "</div>"
+        if innovative_uas_use else ""
+    )
 
     return f"""
     <div style="padding:0 0 14px 0;margin:0 0 14px 0;
@@ -191,6 +204,7 @@ def article_html(item: dict, section_name: str) -> str:
         <a href="{url}" style="color:#173c5e;text-decoration:none;">{title}</a>
       </div>
       {summary_html}
+      {innovation_html}
       {win}
       <div style="font-size:11px;line-height:1.4;color:#707b84;">
         {source}{f' &nbsp;•&nbsp; {date_label}' if date_label else ''}
@@ -440,8 +454,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
 
       <div style="font-size:10px;line-height:1.45;color:#7b848c;
           border-top:1px solid #dfe4e8;padding-top:9px;margin-top:22px;">
-        Public-source, AI-assisted news update. Review summaries, links,
-        executive-order citations, and Administration attributions before distribution.
+        Public source, AI-assisted news update.
       </div>
     </div>
     """
@@ -660,6 +673,31 @@ def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> 
         </tr>
         """
 
+    innovative_uas_use = clean_innovative_uas_use(
+        item.get("innovative_uas_use", "")
+    )
+    innovation_html = ""
+    if innovative_uas_use:
+        innovation_html = f"""
+        <tr>
+          <td style="padding:9px 0 0 0;">
+            <table role="presentation" width="100%" border="0" cellspacing="0"
+                cellpadding="0" bgcolor="#FFF2CC"
+                style="width:100%;border-collapse:collapse;background-color:#FFF2CC;
+                border-left:4px solid #D6B656;">
+              <tr>
+                <td style="padding:8px 11px;font-family:Arial,Helvetica,sans-serif;
+                    font-size:11px;line-height:16px;color:#493C00;
+                    mso-line-height-rule:exactly;">
+                  <strong>Innovative UAS use:</strong>
+                  {html.escape(innovative_uas_use)}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        """
+
     return f"""
     <table role="presentation" width="100%" border="0" cellspacing="0"
         cellpadding="0" style="width:100%;border-collapse:collapse;">
@@ -674,6 +712,7 @@ def outlook_story_html(item: dict, section_name: str, compact: bool = False) -> 
         </td>
       </tr>
       {summary_html}
+      {innovation_html}
       {win_html}
       <tr>
         <td style="padding:9px 0 0 0;font-family:Arial,Helvetica,sans-serif;
@@ -714,7 +753,7 @@ def outlook_section_html(title: str, items: list[dict]) -> str:
             cellpadding="0" style="width:100%;border-collapse:collapse;">
           <tr>
             <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
-                font-size:18px;line-height:23px;font-weight:bold;color:{heading_color};
+                font-size:18pt;line-height:22pt;font-weight:bold;color:{heading_color};
                 border-bottom:2px solid {rule_color};
                 mso-line-height-rule:exactly;">
               {html.escape(title)}
@@ -784,7 +823,7 @@ def regulatory_tracker_outlook_html(items: list[dict]) -> str:
             cellpadding="0" style="width:100%;border-collapse:collapse;">
           <tr>
             <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
-                font-size:18px;line-height:23px;font-weight:bold;color:#173C5E;
+                font-size:18pt;line-height:22pt;font-weight:bold;color:#173C5E;
                 border-bottom:2px solid #CBD6DE;mso-line-height-rule:exactly;">
               Regulatory Deadline Tracker
             </td>
@@ -871,7 +910,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
                 cellpadding="0" style="width:100%;border-collapse:collapse;">
               <tr>
                 <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;
-                    font-size:18px;line-height:23px;font-weight:bold;color:#173C5E;
+                    font-size:18pt;line-height:22pt;font-weight:bold;color:#173C5E;
                     border-bottom:2px solid #CBD6DE;
                     mso-line-height-rule:exactly;">
                   What to Watch
@@ -919,9 +958,9 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
             <td bgcolor="#153A5A"
                 style="padding:23px 28px 21px 28px;background-color:#153A5A;
                 font-family:Arial,Helvetica,sans-serif;">
-              <div style="font-size:28px;line-height:32px;font-weight:bold;
+              <div style="font-size:26pt;line-height:31pt;font-weight:bold;
                   color:#FFFFFF;mso-line-height-rule:exactly;">
-                Advanced Transportation News Update
+                Advanced Transportation Update
               </div>
               <div style="padding-top:6px;font-size:13px;line-height:18px;
                   color:#DCE8F0;mso-line-height-rule:exactly;">
@@ -980,9 +1019,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
                   <td style="padding:10px 0 0 0;font-family:Arial,Helvetica,sans-serif;
                       font-size:9px;line-height:14px;color:#7B848C;
                       mso-line-height-rule:exactly;">
-                    Public-source, AI-assisted news update. Review summaries, links,
-                    executive-order citations, and Administration attributions before
-                    distribution.
+                    Public source, AI-assisted news update.
                   </td>
                 </tr>
               </table>
@@ -1000,7 +1037,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
 def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
     end = datetime.fromisoformat(briefing["window_end"]).astimezone(EASTERN)
     lines = [
-        "ADVANCED TRANSPORTATION NEWS UPDATE",
+        "ADVANCED TRANSPORTATION UPDATE",
         end.strftime("%A, %B %d, %Y").replace(" 0", " "),
         f"24-hour coverage: {format_datetime(briefing['window_start'])} through {format_datetime(briefing['window_end'])}",
         "",
@@ -1033,6 +1070,11 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
             summary = distinct_story_summary(title, item.get("summary", ""))
             if summary:
                 lines.append(summary)
+            innovative_uas_use = clean_innovative_uas_use(
+                item.get("innovative_uas_use", "")
+            )
+            if innovative_uas_use:
+                lines.append(f"Innovative UAS use: {innovative_uas_use}")
             if item.get("is_administration_win"):
                 lines.append("WHY THIS IS A TRUMP ADMINISTRATION WIN")
                 citation = eo_display(item)
@@ -1090,6 +1132,9 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
         lines.extend(["WHAT TO WATCH", ""])
         lines.extend(f"• {item}" for item in watch)
         lines.append("")
+    while lines and not lines[-1]:
+        lines.pop()
+    lines.extend(["", "Public source, AI-assisted news update."])
     return "\n".join(lines)
 
 
@@ -1177,6 +1222,9 @@ def initialize_editor(briefing: dict, edition_key: str) -> None:
                 st.session_state[prefix + item_id + "_summary"] = item.get(
                     "summary", ""
                 )
+                st.session_state[prefix + item_id + "_innovative_uas_use"] = (
+                    item.get("innovative_uas_use", "")
+                )
                 st.session_state[prefix + item_id + "_is_win"] = bool(
                     item.get("is_administration_win", False)
                 )
@@ -1209,6 +1257,9 @@ def initialize_editor(briefing: dict, edition_key: str) -> None:
                     item.get("eo_section", "")
                 ),
                 prefix + item_id + "_win": item.get("win_explanation", ""),
+                prefix + item_id + "_innovative_uas_use": item.get(
+                    "innovative_uas_use", ""
+                ),
             }
             for key, value in defaults.items():
                 if key not in st.session_state:
@@ -1247,12 +1298,20 @@ def ensure_current_story_sections(briefing: dict) -> dict:
             seen_ids.add(item_id)
             inferred = infer_section(item)
             if inferred in {
+                "UAS Security and C-UAS",
                 "Military",
                 "International",
                 "Autonomous Vehicles",
                 "Other Advanced Transportation",
             } or item.get("section") not in TOPIC_SECTIONS:
                 item["section"] = inferred
+            if item["section"] == "UAS and Drones":
+                item["innovative_uas_use"] = clean_innovative_uas_use(
+                    item.get("innovative_uas_use", "")
+                    or infer_innovative_uas_use(item)
+                )
+            else:
+                item["innovative_uas_use"] = ""
             stories.append(item)
     briefing["sections"] = arrange_sections(stories)
     return briefing
@@ -1326,6 +1385,15 @@ def edited_briefing(briefing: dict, edition_key: str) -> dict:
                     prefix + item_id + "_summary", item["summary"]
                 ),
             )
+            if item.get("section") == "UAS and Drones":
+                item["innovative_uas_use"] = clean_innovative_uas_use(
+                    st.session_state.get(
+                        prefix + item_id + "_innovative_uas_use",
+                        item.get("innovative_uas_use", ""),
+                    )
+                )
+            else:
+                item["innovative_uas_use"] = ""
             item["is_administration_win"] = bool(
                 st.session_state.get(
                     prefix + item_id + "_is_win",
@@ -1385,6 +1453,11 @@ def render_editor(briefing: dict, edition_key: str) -> None:
                 st.checkbox("Include", key=prefix + item_id + "_include")
                 st.text_input("Headline", key=prefix + item_id + "_title")
                 st.text_area("Summary", key=prefix + item_id + "_summary", height=90)
+                if item.get("section") == "UAS and Drones":
+                    st.text_input(
+                        "Innovative UAS use (optional, a few words)",
+                        key=prefix + item_id + "_innovative_uas_use",
+                    )
                 is_win = st.checkbox(
                     "Trump Administration Win",
                     key=prefix + item_id + "_is_win",
