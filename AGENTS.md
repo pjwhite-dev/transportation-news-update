@@ -141,15 +141,23 @@ lists, and keyword collisions.
 
 ## Military coverage
 
-Place stories centered on the Department of Defense, a military service,
+Place counter-UAS technology and capability stories in **UAS Security and
+C-UAS**, including detection, tracking, identification, jamming, mitigation,
+interceptors, directed energy, acquisition, contracts, tests, deployments,
+training, and capability-building. This applies even when a Defense agency,
+military service, or defense contractor is involved, unless the story centers
+on active combat.
+
+Place other stories centered on the Department of Defense, a military service,
 defense acquisition, military operations or exercises, bases, warfighters,
 battlefield use, or military-focused contractors in **Military**. This includes
-military UAS, counter-UAS, autonomy, advanced aircraft, procurement, testing,
+non-C-UAS military UAS, autonomy, advanced aircraft, procurement, testing,
 deployments, and operational use. It also includes conflict reporting such as
 the war in Ukraine, Russian military operations, attacks on warships, naval or
 battlefield strikes, weapons and munitions, and other combat activity. Enforce
 this categorization deterministically so military stories are not buried in
-generic UAS, UAS Security and C-UAS, or Federal Actions.
+generic UAS or Federal Actions. A C-UAS story about battlefield use, war,
+Ukraine, Russia, strikes, or other active combat remains in **Military**.
 
 ## International coverage
 

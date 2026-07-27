@@ -323,6 +323,76 @@ MILITARY_CONFLICT_CONTEXT_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+COUNTER_UAS_TECHNOLOGY_PATTERN = re.compile(
+    r"\b(?:counter[ -]?uas|c-uas|counter[ -]?uav|counter[ -]?drone|"
+    r"anti[ -]?uas|anti[ -]?drone|drone killer|drone defen[cs]e|"
+    r"defen[cs]e against drones?|defeat(?:ing|s|ed)? drones?|"
+    r"detect(?:ing|s|ed)? drones?|uas detection|drone detection|drone tracking|"
+    r"drone identification|drone mitigation|drone interdiction|"
+    r"drone neutralization|drone interceptor|drone jammer|"
+    r"unauthorized drones?|airspace sovereignty|countering unmanned aircraft)\b",
+    re.IGNORECASE,
+)
+
+ACTIVE_CONFLICT_PATTERN = re.compile(
+    r"\b(?:war in ukraine|russia(?:n)?(?:'s)? war|battlefield|battlefront|"
+    r"frontline|war zone|combat operations?|active combat|hostilities|invasion|"
+    r"airstrikes?|drone strikes?|naval attacks?|battlefield strikes?|"
+    r"attacks? on warships?|missile attacks?|under fire)\b",
+    re.IGNORECASE,
+)
+
+INNOVATIVE_UAS_USE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
+    (
+        re.compile(
+            r"\b(?:medical|medicine|vaccine|blood|organ|healthcare)\b.*"
+            r"\b(?:deliver(?:y|ing|ed|s)?|transport(?:s|ed|ing|ation)?|shipment)\b|"
+            r"\b(?:deliver(?:y|ing|ed|s)?|transport(?:s|ed|ing|ation)?|shipment)\b.*"
+            r"\b(?:medical|medicine|vaccine|blood|organ|healthcare)\b",
+            re.IGNORECASE,
+        ),
+        "Delivering critical medical supplies",
+    ),
+    (
+        re.compile(r"\b(?:search and rescue|missing persons?|locate survivors?)\b", re.IGNORECASE),
+        "Finding people during search and rescue",
+    ),
+    (
+        re.compile(r"\b(?:wildfires?|forest fires?|fire mapping)\b", re.IGNORECASE),
+        "Mapping wildfires for emergency crews",
+    ),
+    (
+        re.compile(
+            r"\b(?:bridge|rail|railroad|powerline|power line|pipeline|"
+            r"infrastructure|wind turbine)\b.*\b(?:inspect|inspection|monitor)\b|"
+            r"\b(?:inspect|inspection|monitor)\b.*\b(?:bridge|rail|railroad|"
+            r"powerline|power line|pipeline|infrastructure|wind turbine)\b",
+            re.IGNORECASE,
+        ),
+        "Inspecting critical infrastructure",
+    ),
+    (
+        re.compile(r"\b(?:precision agriculture|crop monitoring|monitoring crops?)\b", re.IGNORECASE),
+        "Monitoring crops with precision",
+    ),
+    (
+        re.compile(r"\b(?:wildlife|conservation|habitat|environmental monitoring)\b", re.IGNORECASE),
+        "Supporting wildlife and conservation",
+    ),
+    (
+        re.compile(r"\b(?:disaster response|emergency response|damage assessment)\b", re.IGNORECASE),
+        "Supporting faster disaster response",
+    ),
+    (
+        re.compile(
+            r"\b(?:last[ -]?mile delivery|package delivery|cargo delivery|"
+            r"deliver(?:ing|s|ed)? goods|remote communities)\b",
+            re.IGNORECASE,
+        ),
+        "Delivering goods to hard-to-reach places",
+    ),
+)
+
 INTERNATIONAL_MARKER_PATTERN = re.compile(
     r"\b(?:africa|asia|australia|australian|austria|brazil|brazilian|britain|"
     r"british|canada|canadian|china|chinese|europe|european|finland|finnish|"
@@ -830,6 +900,13 @@ def analysis_schema() -> dict[str, Any]:
             "importance": {"type": "integer", "minimum": 1, "maximum": 10},
             "canonical_title": {"type": "string"},
             "summary": {"type": "string"},
+            "innovative_uas_use": {
+                "type": "string",
+                "description": (
+                    "Optional 3-9 word reader-facing phrase for a specific, "
+                    "innovative civil UAS use; blank for other stories."
+                ),
+            },
             "is_administration_win": {"type": "boolean"},
             "win_event_within_window": {"type": "boolean"},
             "win_direct_administration_nexus": {"type": "boolean"},
@@ -851,6 +928,7 @@ def analysis_schema() -> dict[str, Any]:
         "required": [
             "cluster_id", "article_ids", "primary_article_id", "section",
             "relevant", "importance", "canonical_title", "summary",
+            "innovative_uas_use",
             "is_administration_win", "win_event_within_window",
             "win_direct_administration_nexus", "win_concrete_american_benefit",
             "win_foreign_company_expansion_only", "eo_number", "eo_section",
@@ -944,6 +1022,54 @@ def record_is_military(record: dict[str, Any]) -> bool:
     )
 
 
+def record_is_active_conflict(record: dict[str, Any]) -> bool:
+    """Keep wars, strikes, and battlefield events in Military."""
+    text = record_content_text(record)
+    return bool(
+        ACTIVE_CONFLICT_PATTERN.search(text)
+        or (
+            MILITARY_CONFLICT_ACTOR_PATTERN.search(text)
+            and MILITARY_CONFLICT_CONTEXT_PATTERN.search(text)
+        )
+    )
+
+
+def record_is_counter_uas_technology(record: dict[str, Any]) -> bool:
+    """Separate C-UAS capabilities from military conflict reporting."""
+    return bool(
+        COUNTER_UAS_TECHNOLOGY_PATTERN.search(record_content_text(record))
+        and not record_is_active_conflict(record)
+    )
+
+
+def clean_innovative_uas_use(value: str) -> str:
+    value = clean_spaces(value)
+    value = re.sub(
+        r"^innovative\s+uas\s+use\s*:\s*",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    ).strip(" .:;,-")
+    if not value:
+        return ""
+    return " ".join(value.split()[:9])[:75].rstrip(" .:;,-")
+
+
+def infer_innovative_uas_use(record: dict[str, Any]) -> str:
+    """Return a short public-facing label for a concrete civil UAS use."""
+    if (
+        record_is_military(record)
+        or record_is_counter_uas_technology(record)
+        or infer_section(record) != "UAS and Drones"
+    ):
+        return ""
+    text = record_content_text(record)
+    for pattern, label in INNOVATIVE_UAS_USE_PATTERNS:
+        if pattern.search(text):
+            return label
+    return ""
+
+
 def record_is_international(record: dict[str, Any]) -> bool:
     title = clean_spaces(record.get("title", ""))
     if (
@@ -966,15 +1092,12 @@ def record_is_international(record: dict[str, Any]) -> bool:
 
 def infer_section(record: dict[str, Any]) -> str:
     text = record_text(record).casefold()
+    if record_is_counter_uas_technology(record):
+        return "UAS Security and C-UAS"
     if record_is_military(record):
         return "Military"
     if record_is_international(record):
         return "International"
-    if any(term in text for term in (
-        "counter-uas", "counter uas", "c-uas", "counter drone", "drone detection",
-        "drone mitigation", "airspace sovereignty", "unauthorized drone",
-    )):
-        return "UAS Security and C-UAS"
     if any(term in text for term in (
         "evtol", "eipp", "advanced air mobility", "air taxi", "powered-lift",
         "powered lift", "vertiport", "electric aircraft",
@@ -1182,6 +1305,7 @@ def ensure_recognized_administration_wins(
                 "importance": 9,
                 "canonical_title": title,
                 "summary": summary[:500],
+                "innovative_uas_use": infer_innovative_uas_use(record),
                 "is_administration_win": True,
                 "eo_number": override["eo_number"],
                 "eo_section": override["eo_section"],
@@ -1334,6 +1458,7 @@ def ensure_minimum_section_coverage(
                     "importance": 5,
                     "canonical_title": title,
                     "summary": summary[:500],
+                    "innovative_uas_use": infer_innovative_uas_use(record),
                     "is_administration_win": False,
                     "eo_number": "",
                     "eo_section": "",
@@ -1406,12 +1531,16 @@ EDITORIAL SCOPE AND RELEVANCE
   6. Civil supersonics and genuinely advanced rail or transportation technology.
   7. International advanced-transportation developments.
   8. Directly relevant Federal actions.
-- Put every military-related story in Military, regardless of whether its platform is a drone,
-  ship, aircraft, ground vehicle, missile, or autonomous system. This includes the Department
-  of Defense, military services, defense acquisition and contractors, bases, warfighters,
-  weapons and munitions, military tests and exercises, battlefield or naval operations, combat
-  strikes, and reporting about the war in Ukraine or Russian military operations. Do not put
-  these stories in generic UAS, UAS Security and C-UAS, or Federal Actions.
+- Put counter-UAS technology and capability stories in UAS Security and C-UAS. This includes
+  detection, tracking, identification, jamming, mitigation, interceptors, directed energy,
+  acquisition, contracts, tests, deployments, training, and capability-building. Use this
+  section even when a Defense agency, military service, or defense contractor is involved,
+  provided the story centers on the C-UAS capability and is not an active combat event.
+- Keep war and conflict reporting in Military, including the war in Ukraine, Russian
+  military operations, battlefield and naval operations, combat strikes, attacks, weapons
+  use, and C-UAS used in active combat.
+  Also put non-C-UAS military applications, procurement, operations, exercises, tests, and
+  defense technology in Military. Never put war reporting in UAS Security and C-UAS.
 - Autonomous Vehicles explicitly includes robotaxis, privately owned automated vehicles,
   autonomous trucking, ADS-equipped commercial motor vehicles, NHTSA and FMCSA actions,
   FMVSS modernization, Part 555 exemptions, recalls, investigations, permits, state and
@@ -1466,6 +1595,10 @@ HEADLINES AND SUMMARIES
 - If the available description or summary merely repeats the headline, return an empty summary.
 - Select the strongest primary source using this preference: {SOURCE_PREFERENCE}
 - Preserve every required supplemental URL either as primary coverage or "Also covered by."
+- For a UAS and Drones story that presents a specific, genuinely innovative civil use of a
+  drone, set innovative_uas_use to a concrete 3-9 word phrase, such as "Delivering critical
+  medical supplies" or "Mapping wildfires for emergency crews." Leave it blank for generic
+  regulation, manufacturing, financing, military, combat, counter-UAS, security, and eVTOL.
 
 TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST
 A story may be labeled a win only when ALL of the following are true:
@@ -1718,6 +1851,7 @@ def validate_analysis(
         section = raw.get("section", "")
         inferred_section = infer_section(lookup[primary])
         if inferred_section in {
+            "UAS Security and C-UAS",
             "Military",
             "International",
             "Autonomous Vehicles",
@@ -1735,6 +1869,14 @@ def validate_analysis(
             eo_number = ""
 
         includes_required = any(article_id in required for article_id in ids)
+
+        innovative_uas_use = clean_innovative_uas_use(
+            raw.get("innovative_uas_use", "")
+        )
+        if section != "UAS and Drones":
+            innovative_uas_use = ""
+        elif not innovative_uas_use:
+            innovative_uas_use = infer_innovative_uas_use(lookup[primary])
 
         validated_win = administration_win_is_eligible(raw)
 
@@ -1756,6 +1898,7 @@ def validate_analysis(
                 "importance": max(1, min(10, int(raw.get("importance", 1) or 1))),
                 "canonical_title": clean_spaces(raw.get("canonical_title", "")),
                 "summary": clean_spaces(raw.get("summary", "")),
+                "innovative_uas_use": innovative_uas_use,
                 "is_administration_win": validated_win,
                 "eo_number": eo_number,
                 "eo_section": eo_section,
@@ -1787,6 +1930,7 @@ def validate_analysis(
                 "importance": 3,
                 "canonical_title": title,
                 "summary": description[:500],
+                "innovative_uas_use": infer_innovative_uas_use(record),
                 "is_administration_win": False,
                 "eo_number": "",
                 "eo_section": "",
@@ -1856,6 +2000,9 @@ def cluster_to_story(
         "id": cluster["cluster_id"],
         "title": title,
         "summary": summary,
+        "innovative_uas_use": clean_innovative_uas_use(
+            cluster.get("innovative_uas_use", "")
+        ),
         "source": primary.get("source", "Source"),
         "url": primary.get("url", ""),
         "published": primary.get("published", datetime.now(EASTERN).isoformat()),
@@ -1958,6 +2105,7 @@ def executive_summary_messages(
                     "topic": item.get("section", ""),
                     "headline": item.get("title", ""),
                     "summary": item.get("summary", ""),
+                    "innovative_uas_use": item.get("innovative_uas_use", ""),
                     "source": item.get("source", ""),
                     "date": item.get("date_label", ""),
                 }

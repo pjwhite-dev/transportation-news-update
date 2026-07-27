@@ -61,6 +61,63 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
             with self.subTest(format=name):
                 self.assertNotIn(title + ".", rendered)
 
+    def test_innovative_uas_use_is_highlighted_in_story_formats(self) -> None:
+        current = briefing()
+        current["sections"]["UAS and Drones"] = [
+            {
+                "id": "medical-delivery",
+                "title": "Drones begin delivering blood to remote hospitals",
+                "summary": "The service connects rural communities to medical care.",
+                "innovative_uas_use": "Delivering critical medical supplies",
+                "source": "Example Aviation News",
+                "url": "https://example.com/medical-delivery",
+                "date_label": "Jul. 15, 2026",
+                "section": "UAS and Drones",
+                "is_administration_win": False,
+                "also_covered": [],
+            }
+        ]
+
+        web = streamlit_app.build_web_preview_html(current)
+        outlook = streamlit_app.build_outlook_html(current)
+        plain = streamlit_app.build_plain_text(current)
+        for rendered in (web, outlook, plain):
+            self.assertIn("Innovative UAS use:", rendered)
+            self.assertIn("Delivering critical medical supplies", rendered)
+        self.assertIn("background:#fff2cc", web)
+        self.assertIn('bgcolor="#FFF2CC"', outlook)
+
+    def test_outlook_title_heading_sizes_and_footer_match_requested_copy(self) -> None:
+        current = briefing()
+        current["sections"]["UAS Security and C-UAS"] = [
+            {
+                "id": "cuas-1",
+                "title": "Airport tests a new counter-UAS sensor",
+                "summary": "The trial evaluates drone detection technology.",
+                "source": "Example News",
+                "url": "https://example.com/cuas",
+                "date_label": "Jul. 15, 2026",
+                "section": "UAS Security and C-UAS",
+                "is_administration_win": False,
+                "also_covered": [],
+            }
+        ]
+
+        outlook = streamlit_app.build_outlook_html(current)
+        web = streamlit_app.build_web_preview_html(current)
+        plain = streamlit_app.build_plain_text(current)
+
+        self.assertIn("Advanced Transportation Update", outlook)
+        self.assertIn("font-size:26pt", outlook)
+        self.assertIn("font-size:18pt", outlook)
+        self.assertNotIn("font-size:18px", outlook)
+        for rendered in (web, outlook, plain):
+            self.assertIn("Public source, AI-assisted news update.", rendered)
+            self.assertNotIn("Review summaries, links", rendered)
+        self.assertTrue(
+            plain.endswith("Public source, AI-assisted news update.")
+        )
+
     def test_headlines_at_a_glance_follow_summary_and_mirror_sections(self) -> None:
         current = briefing()
         av_title = "California approves Waymo robotaxi expansion"
@@ -140,6 +197,31 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
 
         self.assertEqual(current["sections"]["Autonomous Vehicles"], [])
         self.assertEqual(current["sections"]["International"], [story])
+
+    def test_legacy_defense_cuas_story_moves_out_of_military(self) -> None:
+        current = briefing()
+        story = {
+            "id": "army-cuas",
+            "title": "Army awards contract for counter-UAS interceptors",
+            "summary": "The systems will detect and mitigate unauthorized drones.",
+            "source": "U.S. Army",
+            "url": "https://example.com/army-cuas",
+            "date_label": "Jul. 15, 2026",
+            "published": "2026-07-15T02:00:00-04:00",
+            "section": "Military",
+            "importance": 5,
+            "is_administration_win": False,
+            "also_covered": [],
+        }
+        current["sections"]["Military"] = [story]
+
+        streamlit_app.ensure_current_story_sections(current)
+
+        self.assertEqual(current["sections"]["Military"], [])
+        self.assertEqual(
+            current["sections"]["UAS Security and C-UAS"],
+            [story],
+        )
 
     def test_eo_display_includes_plain_english_section_summary(self) -> None:
         citation = streamlit_app.eo_display(
