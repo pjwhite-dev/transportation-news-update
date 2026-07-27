@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hmac
 import html
+import importlib
 import json
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,20 @@ from zoneinfo import ZoneInfo
 
 import streamlit as st
 import streamlit.components.v1 as components
+
+import news_engine as _news_engine
+
+# Streamlit Cloud can rerun this file after a git update while retaining an
+# older imported module in the worker process. Reload once when a newly added
+# helper is absent so a multi-file deployment cannot fail during collection.
+_REQUIRED_NEWS_ENGINE_HELPERS = (
+    "clean_innovative_uas_use",
+    "infer_innovative_uas_use",
+)
+if not all(
+    hasattr(_news_engine, name) for name in _REQUIRED_NEWS_ENGINE_HELPERS
+):
+    importlib.reload(_news_engine)
 
 from news_engine import (
     DEFAULT_OPENAI_MODEL,

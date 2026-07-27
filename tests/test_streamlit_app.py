@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
+import importlib
 import json
 from pathlib import Path
 import unittest
 
+import news_engine
 from regulatory_tracker import build_regulatory_tracker
 from streamlit.testing.v1 import AppTest
 
@@ -59,6 +61,27 @@ class FeedOnlyButtonVisibilityTests(unittest.TestCase):
             for item in collection
         )
         self.assertNotIn("UAS, C-UAS, and Advanced Transportation", rendered_text)
+
+    def test_cloud_rerun_guard_restores_new_news_engine_helpers(self) -> None:
+        helper_names = (
+            "clean_innovative_uas_use",
+            "infer_innovative_uas_use",
+        )
+        original_helpers = {
+            name: getattr(news_engine, name) for name in helper_names
+        }
+        try:
+            for name in helper_names:
+                delattr(news_engine, name)
+            import streamlit_app
+
+            importlib.reload(streamlit_app)
+
+            for name in helper_names:
+                self.assertTrue(hasattr(news_engine, name))
+        finally:
+            for name, helper in original_helpers.items():
+                setattr(news_engine, name, helper)
 
     def test_status_reports_administration_wins_selected_by_build(self) -> None:
         app = self.load_app()
