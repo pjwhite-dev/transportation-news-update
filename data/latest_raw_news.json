@@ -1,8 +1,547 @@
 {
-  "generated_at": "2026-08-05T09:57:23.262502-04:00",
-  "window_start": "2026-08-04T09:56:58.496761-04:00",
-  "window_end": "2026-08-05T09:56:58.496761-04:00",
+  "generated_at": "2026-08-05T11:52:10.686667-04:00",
+  "window_start": "2026-08-04T11:51:37.500458-04:00",
+  "window_end": "2026-08-05T11:51:37.500458-04:00",
   "articles": [
+    {
+      "id": "859a53fd0c1a1d73",
+      "search_section": "Other Advanced Transportation",
+      "title": "Best rail-friendly hikes in Yorkshire perfect for the holidays",
+      "summary": "",
+      "source": "Yorkshire Post",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOM05MX09FaHlrV2xXTVRaNGszMDB3bmlMb0pJQ0xvQk44dW5XSVYxRzNjSHZpWjhlWWU4TjQ2QS1BalVlNE5lWENLSGwwc2VZY3BXNktRUXdsY3JyQ2pNSkpyY1dMSnRLQ3Zha0JGazNuVThWT0hpc3Z2MzF0LTlqNms5QUE3ajNuZ1FYbXhMUk1EMlZqbFhTQ3lRUTRXS2ZNMkNJWmt3SVlfMEtPdmNuZGRtX0U?oc=5",
+      "published": "2026-08-05T11:45:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "75b9151d67703d1a",
+      "search_section": "Military",
+      "title": "Can ‘Russia’s Amazon’ Survive Ukraine’s Drone Campaign?",
+      "summary": "",
+      "source": "The Moscow Times",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPXzdCZ2dyYTI3VGdKeHcyQlRoRjdGbVNMU2t2UkpnN0xEVEQ3c3BUSk5nZFVCSHZCdk9rRWgtLUNmYWNpRzMtbzhwazlRWmtLVGZqTk55eHBWV3huVUhTOXZPeGJTZ0Uxc3VaajB6bmphLVVJdWN3QVdfeEJzRHJqUDlnQUo0NjJ3WnJ0WXV6U0pjWGFWR0hYWkhMb3FhNE0y?oc=5",
+      "published": "2026-08-05T11:33:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b66e53f78d0c1510",
+      "search_section": "Military",
+      "title": "Fire Breaks Out at Roscosmos Main Research Center Near Moscow",
+      "summary": "",
+      "source": "UNITED24 Media",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPLVZKNmt6OGFYVmttSWZLVndUZWN5UUxGdE4xSzVCUDRfWkY1UlV1SUs2cHVscG4xYjB0VFZaLVNmQVFtdDJfenpzRFl2Nzlid29rbzJlQU94N1laOEVPUU4zZHlsbFpyR0JEWnhvNkkxWUlnRE1Pdzl6ckcycl9OQ2tPSDVKc2M1TG1qd3dhUEhmMlRkU2tzM0xhYVdoV2ll?oc=5",
+      "published": "2026-08-05T11:29:34-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b7f873b3616b6bcd",
+      "search_section": "Autonomous Vehicles",
+      "title": "Zoox starts paid robotaxi rides in Las Vegas after U.S. safety clearance",
+      "summary": "",
+      "source": "Traders Union",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNYi15cTkyNXViMTlIVE9xWjdLNUtHdkFzNmJtc3dnTVZLcWJUbTJKOFk4RmYtd0E1cVlzZms0SGJRZXVva2N5VkpiZFd3bmpMck00bmp4R2MtNUV0aXI4d3g5WVotMVkxRXF2Q05DMmhYYjNIYnU0T1R4M0dGaFJ0Zm5tYkhOelBZbW44bDR5Tk4?oc=5",
+      "published": "2026-08-05T11:28:33-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b646ff185eb8c4c9",
+      "search_section": "Autonomous Vehicles",
+      "title": "Amazon’s Zoox to start paid robotaxi rides in Vegas next week",
+      "summary": "",
+      "source": "KELO-AM",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPRWpubnRYOHVBb1NBbDUweXJYRDduWGFEc19pMF9UYm9KMGplZmFfTzNvSEw5NFRUMGxrc2ZaYV9SR0Vma1IwajAyRHhId2FtZmJTMTR6OHZ2bGlRUlNLOU5aM2ZrRndTX24zVFlfc2lXdzdlckNQNTFpNUwxR1UySjRQRHR3aE5ES3R5M0p0cUY4Q0U?oc=5",
+      "published": "2026-08-05T11:28:31-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "71eee981956eb7cc",
+      "search_section": "Autonomous Vehicles",
+      "title": "Amazon's Zoox to Start Paid Robotaxi Rides in Vegas Next Week",
+      "summary": "",
+      "source": "U.S. News & World Report",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQemlVZ1BNZHp1WUdhS0ZCV25IVk5tck5LSDJYUHhLV1NYSlRCd3hMeEhVa3RBVlhPTnFBVXoxdTVpeGFNLUhnaGxKOU43TXNKcEtBbDJoWlR4UGtETFhibHFXb0RpMUVSQzRzZkszX19UQWdUX0p2VUNZWUpUWndFQ0k3Z3Z5eUlOaWkxZUhqMnhnckZaNHBwTjFLSmQ3SW1kYjlsMlVFdHFGSzRTV0xjajcwRFl3Q0Q1?oc=5",
+      "published": "2026-08-05T11:19:36-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "92b1a3c09be08a1e",
+      "search_section": "International",
+      "title": "Ahmedabad Bullet Train Links Gain Metro Support",
+      "summary": "",
+      "source": "urbanacres.in",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE0teWN1ZEJKSmtiY1lsNllTbl9SLXBUNGw1NDQzVjhIa1lxa3JzUjdYbmNlbVhWbk9obG40VWlNZXhEbnI3UUxFSFE1aV9SXzV1Y0lpcl9Yd1VUaXN5QVVYbFFhTWlvQnVCanEzR2REMnZleFVPWDcyRktn?oc=5",
+      "published": "2026-08-05T11:15:55-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "d782b3cf6449270d",
+      "search_section": "Autonomous Vehicles",
+      "title": "Tesla (TSLA) Q2 2026 Earnings Call Transcript",
+      "summary": "",
+      "source": "The Globe and Mail",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPY3hUVUo2cjUtT3AxSkJDcHUtanZBdjhfaEIyNG9GUC14bXVmVkJCenE0aDkxVzN1X1pUeUkxWWZPMzNtcnl6VHo0Q1dHWVhSRUtRazI2TjlTMzRhanlKSS10eENycHdkbTNwREZ6T2JfMmNFQzdrUllkUFBpT1B2NlhxQmdwQ2xLSWx1d2UySE9QZXpWWDZGWmlOMUlMb25xZV9nLXNYS0dlYjVZMU85Rm5kNTZqOVpobjdaTTdTeTc3YjI5VjB3?oc=5",
+      "published": "2026-08-05T11:15:31-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "dae0b5ccfdf3789d",
+      "search_section": "Military",
+      "title": "Drone strikes force halt in Russian and Turkish Black Sea sailings",
+      "summary": "",
+      "source": "TradeWinds News",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQQ2dvR2t4anpqUjAwM3lydlprc3FHLTBQQTUwMU5IaVh0WUk4WHl2a0lNMVNLSXFYVHBVaEN4eVdrQTJwQnRPYWdrSnZ3QVNnVnp3cThXSC1VUmF2YlNQWGY5V3pWOGRQREZqRE5fSTdFTkRFX2VfMzFrVWtHU1dMTGltVEpYQjMtcFBvY1NyQmg1NkJJUFE1dEVabUUxaVg2cFE2ME9lUlpVNUxmd0hpZFpZOTQ4bDZ4c0dSbA?oc=5",
+      "published": "2026-08-05T11:14:47-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "ed731546af445de9",
+      "search_section": "International",
+      "title": "Ahmedabad Bullet Train Network Builds Regional Momentum",
+      "summary": "",
+      "source": "urbanacres.in",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQVjlVS2JUQVZFNWJlcVp1MXJRajlQZ3ViMXAyVk9RcWJhaTUyM1hLQkR2ZEJxLWpoSXZsYlJHbEdKWGZfTzlRYWpUQW1SNXZMQzRWNGduV2h6WnRRTk4weV9aOHlsZ1pacWo5eXRGZnFmb2J5cHVTT0FiYmQxNFB0a0tlWFY?oc=5",
+      "published": "2026-08-05T11:14:25-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "abb20d7061eb67fc",
+      "search_section": "Military",
+      "title": "Moment Russian drone 'hunted' man in market",
+      "summary": "",
+      "source": "Sky News",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPekl6YlhCTG1YeXlJaTN3OGdJd2JEN0FmdFFnbXozNnExM0Nfb1dIMnI5ZWMyb1FQWHVlVWo5WEE5UXQwanZPV0xOeHVyU0ZtYkNBUkJkb0N3QnJocUpBR3R5ek90X3Y3blhibjNIbmRsMXFwS1pjYWRUQm1lVWRiQW1LSHowWUwza1lLNnVKRklIT3dLRDhPcEN6WnNKUQ?oc=5",
+      "published": "2026-08-05T11:10:06-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "8dc2c245d2154136",
+      "search_section": "Autonomous Vehicles",
+      "title": "Amazon's Zoox to start paid robotaxi rides in Vegas next week",
+      "summary": "",
+      "source": "Reuters",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQNDFDVHdZTjdQQVlOaEd2b1ZVU2ZEYW1lQzJNb0ZwTTBhREp5Y25jSkROQ3AxSlhRN0d3MzlobnYzNHpTMGhwUHBieVNPdDZzYkNVM3FjdHFDZDBuZVdjcDdNdDVSV1pKN09jSllrUWxXQl9ZZk15WThkSXpDUllHWEtGQXpldXdXMFdfbDZBNExGTGkyczVaX1FFeC1yb2d2aVFQVkpXU3dFNEwyY1BrV3dGdVh6eC0ySU1UQg?oc=5",
+      "published": "2026-08-05T11:09:21-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "65bb1dc2a024719f",
+      "search_section": "UAS and Drones",
+      "title": "How Drone Delivery Is Moving Closer to Pharma's Last Mile",
+      "summary": "",
+      "source": "Pharmaceutical Commerce",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNLTNpREdhREFybkJreGFUMlhVUTNqakEzQXFFY2VVekZQenJsT0Z6Z0RRaE9pN2szdE93amxiUXVxS1FmamJnNkExcUt1TUJfYVdKVjFWbENPSzA0VVBRZVItcTNrekJWQWxoRnNFMEtfVHlncWNuR0NWdHIzcTZPaE1VLWpaOEZaN2QySnlJZllqSUNSbnlLSmhjY01oOUtBblVB?oc=5",
+      "published": "2026-08-05T11:07:33-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "282136727d6a3247",
+      "search_section": "Autonomous Vehicles",
+      "title": "Zoox to start charging for robotaxi rides in Las Vegas",
+      "summary": "",
+      "source": "TechCrunch",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPQlN3S0tZYTk1Zk8xXzVvaWZuUTdWQmJEZk4xZFlJSVNZc0FkV1VuQ05OQkd1SU5vM2RnemVwbFAxVGRrc1Z0aERZaFNzVE1xYnRFdWxOeEFObUtSNVhORGtJU2xCM3RPQjdXZFVEMGZ6VWFSbzd2V19xa3drai1XRHJDQzYzUlBlNWFyLWplc21oSWc?oc=5",
+      "published": "2026-08-05T11:06:42-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "16b79e9061accdd1",
+      "search_section": "UAS and Drones",
+      "title": "From Car Factories to Drone Factories: France’s Manufacturing Push Reflects a Global Shift",
+      "summary": "",
+      "source": "Dronelife",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBQRUlPcldxbzhWSVZ2Y3lxZ3phWWVFaFBEZFpKeDFuMUZpemJoRnhfSkk1SkptVXNqQjFsWnBqRC1BNmZac0l4M2I3X0Q2UDd4OFlRRUxES1FhbU9ZT3BXYnFra0Q0RVRqT2pSOWFaeGt1SzlNVHc?oc=5",
+      "published": "2026-08-05T11:06:05-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "bc3f49171016dc28",
+      "search_section": "Autonomous Vehicles",
+      "title": "Amazon’s Zoox Starts Charging For Driverless Robotaxi Rides In Las Vegas",
+      "summary": "",
+      "source": "Finimize",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPVXZJcl9QT0tQUk1SV2JiMWZRN2d2QXlPay0zMFZxY3ZCb0p5VnowM2g4azNWTTFQT2NhdXA2R1dDMFZnZWJGeFpJUVQxMldQRVJYRi1hbmtuMXRmX29CWnBHYzFzc0QzS3ROVFU2QnB0eFNjYWdNMzFjTV9nSHRsdkpTekNLSjc3ei0tSXRmNFotb0RPQWhkbjFlaG42b015Y0E?oc=5",
+      "published": "2026-08-05T11:05:11-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "e1f347ef23946920",
+      "search_section": "Other Advanced Transportation",
+      "title": "D-Wave Demonstrates Major Hardware Breakthrough for Quantum Error Correction, Advancing the Path to Practical, Fault-Tolerant Gate-Model Quantum Computing",
+      "summary": "",
+      "source": "Business Wire",
+      "url": "https://news.google.com/rss/articles/CBMiswJBVV95cUxNWjNwN3lheVRUeEVBeFFNdnloV0prQ2RBUlpja3RrajhaZEZYYkhZeVVvbGZ6LVpISGtSMEZCTWE4dTBHWXhvNVlMbjVDWGx3VmtrbnlZWUdQZ0VoYWtNaGVYU2tsNGtZcERzb01LODVHLU1IZVhpbElrLU1WNkxvZlZSS29ZaUhMaXlPNWVZNkFBdXM4ZHpBTkliNXVBLWJla1R5Y0Q4aTA1Z1BYSnhoVHhqWVRZZHRhTlRRNW9najl3bkx5d1JJcUp2ekNnWkpfYUVmZ0hMR1FWaHZUdktfNjAzQ1hlSjFETnU3bk4zRHZXRXNMYkVXWkFsQVc1b1BNWkZTTXF6THVEVzRfU2JjWFA5dDh4Z3RkdVE5bTBIQm1CXzRsaXRCRW1FNmdDMGhpMzNJ?oc=5",
+      "published": "2026-08-05T11:05:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "e33dd1b03d57b0fc",
+      "search_section": "International",
+      "title": "Mumbai Bullet Train Station Work Progresses At Vadodara",
+      "summary": "",
+      "source": "urbanacres.in",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOclFPWlVJYnpOeTF5ckdYb0RaOTYwU0pjNmt2bzZZN0RiS3RySUVBT2w0UjVsMTdUd1NrWm45bDg3X1pjUERmYzQyajBpZThUZXM3VmJLWVJJZW1QTUVuUDNNQXhabDVvZG9HQld2bTJFSmhuNU1tQXVFV3lmVkVrZUNFbGI?oc=5",
+      "published": "2026-08-05T11:05:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "4a313b5b8fc56073",
+      "search_section": "Trump Administration priorities",
+      "title": "Russian drone factory director badly injured in car explosion",
+      "summary": "",
+      "source": "The Tribune-Democrat",
+      "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxOWWVTRDBLM3JFNWpRenVwUG1iaUttY0xDMF91Rl91WTd1UGp3NHJpUGZRQVVGSDJqM0ZvdTdwR01qWnlTYlNsMzQtekt3ODBVS3FRZkFMWEE0cWJ5QUFTejc3Z2haV2g4X2U3UjA0SlE1S2tnVm1lZDVzWVJVM29QZmZLcWN3RjRYSjl0VktWS1pHQmk3QUU4VHNCUkVJbUFNc3ozd1N6bEUxczZyVTJOWDIyMVJXRk1KQ0RfemZsT1NHQ2pWM2JUQWJaWkxCZU96Vk1kVW0wNE9SYUVNempYNHVhTjZrNG8?oc=5",
+      "published": "2026-08-05T11:03:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "bc763f1339b253ca",
+      "search_section": "UAS Security and C-UAS",
+      "title": "AeroVironment: The Most Misunderstood Drone Stock (NASDAQ:AVAV)",
+      "summary": "",
+      "source": "Seeking Alpha",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPYmpCSmEySjNHOWxEazBsWVlBS1BNV2hLMmVzaXp4b1loSnVRRWs5cHF6c2U2akdjYzY1SlRWTWlpcHVSMENtaHQ0RUZVSVFyTjc0RFc1cjVDTjd1TE5UbmtQeFI5Tjc0eE5KOWhld19IWHI5MTZ2N3FDRFQ3R01oSkZWVjA5b0lqWi1vQ2JDOG9xRG8?oc=5",
+      "published": "2026-08-05T11:02:29-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "cbfe605f7631bf98",
+      "search_section": "Autonomous Vehicles",
+      "title": "Studying “Fault” In Robotaxi Crashes; Tesla’s Not Getting Hit Enough",
+      "summary": "",
+      "source": "forbes.com",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQUnE4NXlzQ1FiWE96Nk80aVItWGdWdmtsU01ScFJPM0g1Y2t1aHlQN1E5d1ByU3J1YVhfRVlrak5NMl9SWWptMEFYS0ZSUUxfbVZuTGVFSUwtT3YtQWZUbGRzbW5qUzdfNUQwc0p0QzZDbmlkd1lTVmVoTThqdlF6NExWUXZPendhNGFKRURvQ2FKQkVxemhYZ3pYZ2U3dGRUWHJ4eTVsNlVnbHpVa2tiRTVDbjQxUUlVelAw?oc=5",
+      "published": "2026-08-05T11:00:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "0371b54423ad0135",
+      "search_section": "Other Advanced Transportation",
+      "title": "These transit systems, blasted by Trump officials, are actually among the safest",
+      "summary": "",
+      "source": "The Washington Post",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPRmNRaWxFNmJaSGs1eW5xVFR4SS1qTnZXVXpEdFBQN2hFbFFMUDJZT3J6ZHo4cml3OV9MaVhXYm1PWk85Sk1hcXk2cXVtVTRPa29MN0Ntd3hhM1hhUTI5OW1wcXZBS0QwamJXeTNQN1U0bHFISnJiZGtRdWk3T3NaeWQxNGNfam5WaXRHMHprUjVPV1FBa01IWXVRaGJzTUszZngxaDhaN1lNSnlCNTlvMGpuZzN0SmlmaU9wVy1GV2x5aklv?oc=5",
+      "published": "2026-08-05T10:58:27-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "ff86aed907ce88d8",
+      "search_section": "Military",
+      "title": "Russian drone factory director seriously injured in car explosion",
+      "summary": "",
+      "source": "CBS News",
+      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBlY2U1b2VLNXJtTk5wNE41d3FOZm40aEhEY3BNbE81azI0aDU2ZUcxdjQ0bjBWczdtSjlDellPeGtIRXY5eS1kalZwaXJyRVpwVTVIakJOVzJVRGUxb0lxalZYSVJwWndETjVfbnA1N2d3THdsVm91N3ZfZkRYUQ?oc=5",
+      "published": "2026-08-05T10:57:40-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "7cd2e0871a82e942",
+      "search_section": "UAS and Drones",
+      "title": "Russian Missile and Drone Strikes Kill 17 People in Ukraine",
+      "summary": "",
+      "source": "Democracy Now!",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNQWFwY0tJSmpTM0xkUmZWZWxtSnZpNEwtblZIdjlxcDVGUElvMUMtckpYSkFBbWpFdGpQWjlPVFgxZFV1aDI0ZVNZNlE4TF9aTXVzT2E4dS1WamFhMjFvczI3OEFFSkJiM2p2a19tVlFJbDBQa1Z6bUZTMDBzdE1wQk9sU2VQeXdKZWJ1YUdDdFNBcUtxWS1oOUhmRzlrZXVxM0lHU3RmSUx2aEk?oc=5",
+      "published": "2026-08-05T10:55:35-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "8ff47b5e4962f386",
+      "search_section": "Military",
+      "title": "Russian missile and drone barrage in Ukrainian capital region kills 17",
+      "summary": "",
+      "source": "CBC",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9CeUdHTWp5LTczenUybXowMVRROGQtTWgzdlp6SXI4VEMxUU5PT21TVzdSU3pUQlFnZm9TOXBOM1dkQkRCSGplT1ZlWkF4TTFwaExBRWxRc2VDeEJ4cG5meml3SGR4YWdpWWMteEdCNlgtdm1VLUE?oc=5",
+      "published": "2026-08-05T10:53:17-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "63e2b1b6cab9b12c",
+      "search_section": "Military",
+      "title": "The Dystopian Future Dawns in Kherson",
+      "summary": "",
+      "source": "The Atlantic",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQRUtER1VObElNOV9BZVlFNHFRU3QzRS1TY0luMU1ZU09vYWJraUxINTJWYjFGN010MTJIb052cDAxVEJsbzlycE02VXQ3cGZCNTVZeVEzOWN1V3pTVXNxYzNGZmFVRVNlcnhhaUw2RW5DSXJjT1FYZXI0SE1HQkJDMw?oc=5",
+      "published": "2026-08-05T10:45:23-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "88f1511247b10bef",
+      "search_section": "Military",
+      "title": "Video: Russian Missile and Drone Attack on Kyiv Kills at Least 17",
+      "summary": "",
+      "source": "The New York Times",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOSWhuMUhKT1p1RTJMaHRSNkdRYXUzd0o2ZmctUEp4dnh6Q0loM1pyb2VNamJYWXA2WmxrMzJ0cW8wTXhiRnZiRWpTelB5NUg3ZmYxWDg3UWhLdzlROE1DbFdNX3BXLVFCMVlUd2UyY0VVVEFrNHB3NVcxSWN3aE1ZWnkwRnNjUGFWc2NCdEdsdlAtUFRYa2pZWmtsWlM3b0UyVU5NNVEyeTQ?oc=5",
+      "published": "2026-08-05T10:42:05-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "cf47f086dc731f93",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Aurelius Systems Raises $40 Million Series A to Scale Counter-Drone Defense Platform",
+      "summary": "",
+      "source": "citybiz",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOX0twc3B1TVpNV1NjWVVzQWR0VEQ2YjkyNWtBNEJMdnRzUE85dmQwQXlfMGxXNjlOR3ZfalhMV0d4NmtRdmExbnJNck9EY2l6UUlDcjhxaEZFa0FfMHBUSFIzZWVBREVjdDczeWVYXzF4c0d4SVo2ak5WT1JZN0RlUEx6Q0pscEFpMURkT2hvNThiZFZONUhrdHFlR19NNGJDcEMyc2Fkd1VhWEJPZ1hoUUtyVnp0eHVnQUROdEdONA?oc=5",
+      "published": "2026-08-05T10:39:19-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "1921ae9bf3b2972f",
+      "search_section": "Trump Administration priorities",
+      "title": "The Office of Strategic Capital Signs $820 Million Conditional Loan Commitment with Perfor",
+      "summary": "",
+      "source": "U.S. Department of War (.gov)",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOWEEyVnJ3dHRIbDJzRGhFLWIyYmV6SkxuTVVBdE5IU1VwNFRBMWFDUUpEWmduaUxWWE1Oel9QekNqNHZqSzNxbjI2ZTZLR21MM1duZ2ItS1F5M2JpRm5WQTBkUFA5Y3NRMTVPd0Y5TkduVFdmZ1BhLWVMdlpJNE5GVWhGX3lRZlJEWkpOMnJLVnZSWVpOVXFxN3NoNzY1S08zVjh5TV9MbVBZbGJuT29sUjRmdi03MTBZdUkyMzVuczZpWkMtT1dYMVNjM3N5QzRoNmltMQ?oc=5",
+      "published": "2026-08-05T10:37:52-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "029b59ad939be9e7",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Pentagon Unveils Improved Digital Shop for Counter-Drone Systems",
+      "summary": "",
+      "source": "The Defense Post",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxPWWVpWUFTOUZVT2ZNMWpDVFV1akhJWXNTQ3psa2Z4T0xSTTVJM0dMMFBBREl6NWhFckJyTnRmSXhBTTlpaEFWMHdxOU1TNVpITEFGSFB3cGY0VV9xbzAxT3gtTW5NaG1JVDF5RjltYlRvNTgzMHU2bjUxU0s0WDJ2NDZ1S0vSAYQBQVVfeXFMT1llaVlBUzlGVU9mTTFqQ1RVdWpISVlzU0N6bGtmeE9MUk01STNHTDBQQURJejVoRXJCck50Zkl4QU05aWhBVjB3cTlNUzVaSExBRkhQd3BmNFVfcW8wMU94LU1uTWhtSVQxeUY5bWJUbzU4MzB1Nm41MVNLNFgydjQ2dUtL?oc=5",
+      "published": "2026-08-05T10:33:20-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b1861f982be2a04d",
+      "search_section": "Military",
+      "title": "Could drone attacks by both sides be war crimes? How far could Putin go? | Ukraine Q&A",
+      "summary": "",
+      "source": "Sky News",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNZUlsdVdmSVloY0Z3YVZDNjc2NVNqWWdndUNSakxGdVZxWERKX2xUNTREU2ZsVk1IQXNTaDhoRTE4UHotcWpGU2JEd2VfcnZXMnpxTmZDV1dTbnVJakpQandGYTVqNWVkUUtJQW45bDJHMVVHM2J3NjBQZXNiTDdYUVBOOURLaGtYVXJwcHJjWW5qQ1NiRktJSFRZemJUVk9LR1FVaGdYQzdhVW5wc1F1bEMyeUpaM2NQRnlYeQ?oc=5",
+      "published": "2026-08-05T10:31:54-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "9753e53c3c044961",
+      "search_section": "Military",
+      "title": "Human ‘safari’: Video shows civilian hunted by attack drone in Ukraine",
+      "summary": "",
+      "source": "NBC News",
+      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQeFhZTEloS2h2UDVTdjF0WjRTMmotWTRvZE5hd1lkUGhiMjJPRXlMSkZOUzlZamNZcFFQRjNUS1oxV3BiYXkwQTJ2b2o3OW9nZHMzLVpsWmRGZjZiZjFSRkw0SHFjeUZEOU81d0JpdlRhSHpjR2VoX0N6SEgxNl9ZMm52V0NyVjRYV3NvSWlFSkdlalpaTE5EaFcwaEJYWUFVZElMa1NUbk1nQUFBU2Qw?oc=5",
+      "published": "2026-08-05T10:31:51-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "edc8ff903fe80440",
+      "search_section": "Military",
+      "title": "Uber Plans to Invest $10 Billion Over Time in Autonomous Vehicle Fleet Expansion",
+      "summary": "",
+      "source": "The Information",
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOdHRGZzB1TjB5ZU5PWU4tZEJibThHbWNiS1IycEFKYzVVeC1IZThnWWJ3Q0xHREd6RGxIM2ZjM0lxOHhQeDFuRUNmTzNrdEpFYjRSY2Rwd3RIQmdHYVZ6aXM5R0poZHhMMnp6Y3ZKeVFYNE9sUHB4SXRtcS1TRU9mRUJkS1dVYWlJUmdOWVhoRlR5OWhUbjQzc3kwNndRbFVQOWNPTldoRXFzQXdyTkE?oc=5",
+      "published": "2026-08-05T10:26:34-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "55dcf79810e7e970",
+      "search_section": "Military",
+      "title": "Russian drone factory director badly injured in car explosion",
+      "summary": "",
+      "source": "AP News",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPaXJoY204ZmVSTl9SS3ZLS2luVnFtTmh1REZPZElkbmVxR0tvcjIycnFVYlA4UDE2UE55ZnpPbjhvQnZzTjBMd1JzRnhmRy1KdHBfU2VUaWc4MW5iLTBOTjd2UndhNDVzWnJObHppQUVkMmJ0eDVyTmMyRVh2dXplSUdCeUZXbGVWVDRFbmhIQ1RJMG1jWWsybUNKUE5obk5PMHRNQWR4STJtS0JUXzdMLWYzcFNRNlhl?oc=5",
+      "published": "2026-08-05T10:24:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "901653f84179cc6a",
+      "search_section": "Military",
+      "title": "Leonardo CEO says M-346 upgrades are fueling demand as Italian group presses bid in high-stakes U.S. Navy trainer contest",
+      "summary": "",
+      "source": "Defence Industry Europe",
+      "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxQWG5yZDlHc2pOX09Vc3lueTJ4NmxKb3BBY1NoZ0xJVHBuM25Ka0xIQXpqQ2d4b2djeHAyZFBJRUtSZG1mSTk2ZU40ckVvejRIcUlGZlRCcUxYLVNZQU9CaXgyVDFtVW56QVBaelNKVDFjVTROX0JyWE9UY2hLWTdfZ2txN2NkamhjcFJuQXRTR051U3RpV2NOQlJhZ1VnRjNVV2toTTZVZDZOQjQ0R0hjdU9nTGxnamVjM0dndzZVbUtUdHVkemlTS19URVNTV25VRmwwaVRzcU4yWE9yN3VWazFTWQ?oc=5",
+      "published": "2026-08-05T10:17:09-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "bc6723f314cf12ae",
+      "search_section": "Military",
+      "title": "Head of Russian Drone Factory Badly Injured in Car Explosion",
+      "summary": "",
+      "source": "Newser",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOMUJMc3dobVVVRzhhWjhGOXJCR19VR1ZWT0dmdVNVOUFqT0ExOW5yNmFqUEJJRUJlbEMtSDBjVUo2NXo1ZEc4elpLRlR5dU5hOUtyVE1zNVVNdHJtZ1l1aVU4THZlSjdjckl6bVE1RzBJV1I2c19fQzBKS21ZZUlOX3RnbC0yU0xGMl9adElMb0lDMGFwSlhhZWQweGZhR2RIQU5z?oc=5",
+      "published": "2026-08-05T10:15:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "c9eadb4e643f39cb",
+      "search_section": "UAS Security and C-UAS",
+      "title": "India’s Air Defence Sector Set to Become $15–20 Billion by 2030",
+      "summary": "",
+      "source": "t.co",
+      "url": "https://news.google.com/rss/articles/CBMiO0FVX3lxTE1QUUxpd2tkTlFnc2o2LWNGck9RZXNFRkVTbm9xNGhxTWNNWnd0WDFxSzFoRnYtZEI3VXdn?oc=5",
+      "published": "2026-08-05T10:07:32-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "9abdfbcb874f4858",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Pentagon Launches Counter-Unmanned Aircraft Systems Marketplace to Streamline Defense Acquisitions",
+      "summary": "",
+      "source": "SSBCrack",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQZGlsVUNDczlvMjNyNkM5NUhhN3U5N0NNMmd1X2poRnl2M1RkVzZQNmNwejYzRzNnX0pCWDZkeWVhUWFuMTdZWHdTa3h5cnFISUJ3a18yYVp6UDBqRjJNbXZ6LS1nd2Q1UlVfa3daN1dnRHZPM1d5YXI4ZzRORVZmMkI3bXA2RDRyRGZib3F0d0RVcERRRjNsMU9uenZVWE1hTlJNTnh2dDFndVc2ZUtDdEVTN1JQMmtmVG14bVVhRXNWVDQ?oc=5",
+      "published": "2026-08-05T10:06:43-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b6a835970af1d275",
+      "search_section": "Military",
+      "title": "Rheinmetall Unveils GMF140 Next-Gen 6,000-Tonne Frigate for North America",
+      "summary": "",
+      "source": "navalnews.com",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPWGwtWkNWZE9NMFZIdUN2MGtaM1c4YzhSakFGNkRKdjVKSW01Y0tlUkpaUWRJS1FtRHBjcHl2Z1VKVVBJaDRGQzBSNHpOSWUwQ1NjZF9uQlYyRGp0dy04bDUxbk9wTWlNTzZXbWMzVnUzZVNBbHNCTlo5MVp5NjFpQUlwMnpRcUE?oc=5",
+      "published": "2026-08-05T10:06:33-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "12f1d1ceb867e6d6",
+      "search_section": "UAS and Drones",
+      "title": "Drone incident at Leipzig airport. What is known? ᐉ News from Fakti.bg - World",
+      "summary": "",
+      "source": "fakti.bg",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQT3pyd1p3MFVldmN2TllfaFBaZ1Fxd0NEd0ktNDRaR0Z4N0NOZGg4VmJxcWhKaEFMSzgxUnd4LTRhM3NFbTA0cEh0OGpaTjh5MVZmcFIyVFpLYjNWV0tZNTNYbzdzT3otZkd5LUVxc1dBbElhRWV6S0dhOVRzeUN4U1BBX1ZaQ25k?oc=5",
+      "published": "2026-08-05T10:06:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "d9fc06f07f9376fb",
+      "search_section": "UAS and Drones",
+      "title": "A Defining Year for Autonomy Policy: Where AUVSI’s Advocacy Stands in 2026",
+      "summary": "",
+      "source": "AUVSI",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNWDFtM0Q2LXFCckZYVWtDSTZNYUZJcm1jaW9IWVhYcDc1dnFOWGgxdVgwZGlmQ2RJZTFoQk1LeWY3Zm5kWmIzUVBjV0lCaldEQlZYTTN1RndpdFVGLUlOT3NnOUtIMmt1bXhmZTZtVi1WbXJabllza1d5ODlwM0o3N3k0aVVVcTZVRmhORVQxTFR1MmNvSDR2T2hvOA?oc=5",
+      "published": "2026-08-05T10:04:49-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "1e80fbda59fd6814",
+      "search_section": "Military",
+      "title": "Ukraine’s Frontline Combat Rewards Program Drives $1 Billion in Military Tech Orders",
+      "summary": "",
+      "source": "UNITED24 Media",
+      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOM2NvcDE5YVFweDRlTXlHLWFwclF2STY1dGtUQ04yS2dMN05jcmF3Z0RhaEE5M1UtTFJQMm55Si1mejJEOWk3M21JMXdjS08yb091TVZhTHZ2UUdnNm9oWWJOUkZhMTlBQXBIQTRoaV9nb2xEek5zQ3R6T282TnNoQXJsNEpOOU14Rm8zVERmMjF5aFhWN3R5WDJOTjRPRGxFX2tBU2cxMTR4bGpiNWRnY3RyUm83dWEwTHlvdk1DX1BRVVNqM0hWXw?oc=5",
+      "published": "2026-08-05T10:04:45-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "a81d54d5949036e3",
+      "search_section": "Military",
+      "title": "Exclusive: Aeon Enters Drone Dominance With a New Fuze Line",
+      "summary": "",
+      "source": "Tectonic Defense",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQeTlELUFZdURmNXgtNURvcjFNTW9hOFlKcERJS0tJeWdXaHc5ZFFwXy1NOEp3Vlo2cWNtUW5fbzlSRERsd0JFakQzbTJkc1JFNmUzY0VTS3BudmtTU1hQYnRXQXBMRzRWUXZQY1M2eUgzMkkyWmJuZ0Zkc3llWElCZFA1ZkU2S2dQVWxldnJ4VUJpMFF3WUE?oc=5",
+      "published": "2026-08-05T10:04:14-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "eef38015f7909f88",
+      "search_section": "UAS and Drones",
+      "title": "SPARC AI Expands U.S. Operations with Dedicated Federal and Public Safety Team",
+      "summary": "",
+      "source": "BNN Bloomberg",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQbHhvaTZCNWZtOUdTMGpqT0kyV3ppY3kwSWZzTUJYU3dXMHJBOTFjeXIzeUE4bGNtTGNFUmVKWm53VHgzalRqQ2VxdDVFZ0hvVUkwc2djeEVwdktHN2llSHdUWkFuS1d1T18zU3k2cE1wRWowUFBIcjV5d3Z1RFRqaDhBd0JQT3NsbGRBaGlnQmd2QzVvSTNxWXZob0xZQkZqR3N3WG1VR2N0ZzRRLXljY1VCdjFHYXZCZDU3VUMwNmJFUU1nUzJnMzF1UQ?oc=5",
+      "published": "2026-08-05T10:02:39-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "cba1bad076f86a42",
+      "search_section": "Military",
+      "title": "Sen. Tammy Baldwin pushes Pentagon to release probe of Iranian attack that killed 6 U.S. troops in Kuwait",
+      "summary": "",
+      "source": "CBS News",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPYkFwTVRDb28tMFhMMlFJQjJJQjFtelF1WFhTN1NBcHp4aDNwdkllb25SbGxnd2VsSkVaclZHN045RWV5cjhmY1BXSVl2TVk2YVp2SXE5LVFPLUdEYU51eTFHWU1wOXltNlVVWjNiOF80dFY4NFhoQlZydHRXQUo0LVV3bnIyd0xfalNZSWw2bExPZlE?oc=5",
+      "published": "2026-08-05T10:00:15-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "759e1683b3bcb200",
+      "search_section": "Autonomous Vehicles",
+      "title": "Uber doubles down on robotaxi plans, shares fall on weak profit forecast",
+      "summary": "",
+      "source": "Reuters",
+      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQZ3J1dFMxT25JMzZ3LVQ5aXllS29CSHFoa1RCd3V0bGV0eWxIUTFrMUtRNE1rRG5IcGd5YzVqeGlLOTU0T3JiZjZqTnU2TmR4UXUzWTEtbHJCRDhadlFTRHQwTG0yQktJR09nQWNKYkNSNF8zYTMxdnpGeUFtLWdTZzVyYnJiOThiUHN0ajZFVXJKelF1dzRSQUNYd1A1N1I3ZDQ3Zkc2WlpzSGJ1LTNzZHFNaGZJbGphUW1XNURUaUs2LWpEWWFTSlEteUg3aGtxVUp4Q2pUTnY?oc=5",
+      "published": "2026-08-05T09:57:04-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "f160d79dd5280a3c",
+      "search_section": "Autonomous Vehicles",
+      "title": "Uber doubles down on robotaxi plans, shares fall on weak profit forecast",
+      "summary": "",
+      "source": "The Lufkin Daily News",
+      "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxNcm5sSUlXZlNxa0MtSWtlN01UbkFldTJpdWYydHNOTFBXcFFWUkFYcVZYd2d0ZXZZbmRCaUdIc0dhbDYtcU9OM25xbFpka1VidmpqeW1NX2paeU1RYWZKaGkyNnhQRFZHUGpWT1N5RVI5d0ROZUlteG5xWEEyNGZQbUx3ZFltbUZjZng0a1VabzJnN3p5eG0yb3FUSFlZcURraUlfU0dEWGZZeGltU0EtcEg3Y3ZiZ2t1emlUbVFiOGtTT2tlSTJXdzBwSXBYV2JQckpSamx0dXA0cF9RdUVfRkU4dUtSd0N6Yi1CZUdRVHpWZVVMdHFVeXRnblllTi1S?oc=5",
+      "published": "2026-08-05T09:56:15-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "f5469b0f678caa78",
+      "search_section": "Military",
+      "title": "Blast destroys car of Russian drone maker, wounding him and killing his driver",
+      "summary": "",
+      "source": "Reuters",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQUTNobFJPUzR2Tk4wd0V5NnVmWUNjT2dTYWVjOXVMYnFyQ1VhX2NkQTlmSEFWalVfc2lLUHpCQ2hNOUk5di1LeE50UmhkT3FHQjNud2RBd2FoTEFOZTExTW8zalZlMGx3RHc3LXo4VU43MHhsOXRHUmZVaGNYd0F4ak9kcktaX21ITllCcWNOMERtRUZ2cW1sV0RPMFlXcmZfSmJJWU42QWZGR211TzAzTUpfME12SVo5Nmg0?oc=5",
+      "published": "2026-08-05T09:51:49-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "54f2b5437ed26a88",
+      "search_section": "UAS and Drones",
+      "title": "Building Safer Drone Operations: Managing Fatigue, Workload, and Human Performance",
+      "summary": "",
+      "source": "Dronelife",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52aV9nbEJ1RmlUVmxaQ2tDSGtManBpWnQyVldfUXRlVy10TURQUUJSaS1PcmpCNkJXNzIzMVRJVW42NFc2a2doM2tpQjRFZlFudEV4M0lHaTRSZGFrWXhhRUdONkZIMzJlQXllU1R4VU5acUY4eHhwdzJyYXFlaWM?oc=5",
+      "published": "2026-08-05T09:51:48-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
     {
       "id": "f9808ce8103d2f6c",
       "search_section": "Military",
@@ -16,12 +555,23 @@
     },
     {
       "id": "0992ecb9e97ac167",
-      "search_section": "UAS Security and C-UAS",
+      "search_section": "UAS and Drones",
       "title": "CSG takes strategic stake in Canada’s North Vector Dynamics",
       "summary": "",
       "source": "Defence Industry Europe",
       "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxOZElya3hjN0NSMnFZWDhWYTdXMG16ME84UEdiV19IZlpEQjgzYVpIT082a3VMWFAwVUFmMkNscEJnMDRlcXZ5ZEJsQXpEbzVFQmlRdzdJdGZUZGtVSDI4YW8yTEpDWVpISWRNVVdSbFNMRzAwX0FJa1B5d2NZdmExa29NMHlsb0VnTzlYckY3a0h0dG8yNEVKNkthanZqbXhXOXRla0FuQ3RKdFB5V0FxUWFHUlk1VDVodldncTNsVmtWSEZYaENESTd2aUdLdGFmZ3JaaFAyRURTWlFjQXNLWDlCZ0ZjZHhaRG5wQ2l2aG1QZFB2MEdF?oc=5",
       "published": "2026-08-05T09:46:04-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "69475f7b316d7129",
+      "search_section": "Military",
+      "title": "Video shows moment drone burst into fireball on Russian beach",
+      "summary": "",
+      "source": "AOL.com",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxORDFnOGJZbUQwS1NLa0VBX2JZTUc1ZkI0Z3Bvcmlid1R6d3o5Q3pLS09yMW5naFFwMkV5U3JCVndGSEVYMFc4N0RlYXlIUHBadEdxZ0dnaTZXN19wMFZvSTBPTFJ4MWhIdl9OTXRwOV8zM0VMUWFUTnRybGlCUUNjWQ?oc=5",
+      "published": "2026-08-05T09:42:28-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -59,6 +609,28 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "fce631527eb24ee1",
+      "search_section": "Military",
+      "title": "The Pentagon’s $820 million bet on America’s drone factories",
+      "summary": "",
+      "source": "manufacturing-today.com",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNdFYtNjRtc0dEMUlKS2JRX19FWjZhWmFrLWo0bzRLRDJXeVRlVlhRcFN6Z1lJVkowZnMySG1jSzc0Y0VZaGhMMWtmcXZZbkV3SEhxRGtLS0NEY0lpSEo4LTN1dEdCM2FpMWZ2NW40TVBoS0hBM1hHWDVFYXI2VDhoWW10M3Y5Q2YtVFI3T0ExdmVvTm9JbThSNTZDUQ?oc=5",
+      "published": "2026-08-05T09:34:36-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "f848b3ba07ce7a64",
+      "search_section": "Autonomous Vehicles",
+      "title": "China Antennas & Accessories - Market Analysis, Forecast, Size, Trends and Insights",
+      "summary": "",
+      "source": "IndexBox",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQQVBIeUNKSXFLMzJEZjRhdE9GajdpQURXVWRZeGc4cjlnMHJwTGVKd2l4ME1ja2NjSFJpbUNnb0M3QWpXdFhBVlBDanJjUENEbXpUTEg5dTJHWFItdWR5bFMwZ2Fwb2ZBWWtVR0R2S2swRzlFeXhudmgyMVM1NTlGSFNyT0txQk5TRFVVSENjcVFSVGNkSGtsb2hmcms2cVdaNUJZSm4zTTAxTmc?oc=5",
+      "published": "2026-08-05T09:32:53-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "ac2b92cf9557385a",
       "search_section": "Military",
       "title": "Head of Russian drone factory Tkachuk reportedly injured in car explosion",
@@ -70,24 +642,35 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f4794426425c1c56",
+      "id": "5cff4db4b868c67c",
       "search_section": "Military",
-      "title": "Blast destroys car of Russian drone maker, wounding him and killing his driver",
+      "title": "ASAP Military Supplies Expands Access to Military Parts and NSN Components for Defense Procurement Needs",
       "summary": "",
-      "source": "The Detroit News",
-      "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOc05jaTBPUElxRmFXdXZxeDdQblFFSWYtVVFIdkduWXpOUnR3VnBuYVFQdENGNExaclpvbGd1RVFYM21aUnBqLVZ0dHpwaHR1NzB1OEpTUm1qVU0za3NYZktnN2hKd0Z4Q1NSdmFYZURFaG5yRE0yc3owOUJ4OVdtMHpwZVZ2WjVURFpfTUdOdDZPLUthQXBFY3VSMHZvdXdjQ1dHTE13S19NTHRsUlZ2Snk4WmpGVV9EbE83U1huOVdOVG1zMGpKWnB2SmxMekJwSUp2V0dB?oc=5",
-      "published": "2026-08-05T09:28:00-04:00",
+      "source": "issuewire.com",
+      "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxNRnZDS1pnbXVQcEZfNnhlVDM5T2xLREtQTl91d3ctNDF6MkNVSWpFR0Z1UTRLajRCV3NkcXhqLURBMFBPX0owbFRXdGpoRFl0S2JKb2tRRDluNDJaaUdIc2JLclp3Qk5oeHdvLTdNSHpDUUp4UTRGa1FWbVdrVkxUY25Lc2dqd0h2cmpPam40SXZURmlld2hIQklIMmh6LXJsbk1RaEJuVlBtQUJZaTJHbjRsNmU3b2FRX0V1Mm5tQ1RGX1JuT3dxbWNfMjRvLU14dFBWVlR0c3ZDTG00MlRtOA?oc=5",
+      "published": "2026-08-05T09:29:08-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
       "id": "301d945dba0ed00a",
-      "search_section": "Military",
+      "search_section": "Trump Administration priorities",
       "title": "Head of drone manufacturer critically injured in car bomb in Russia",
       "summary": "",
       "source": "The Guardian",
       "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQUnloOFN4MkM5QTNMOE9rU2o5X09fM0EzWnBPbVQyUkNKTl95Q2Njb3FGampXaVlTWmgtYnpqMzRxNXB5SDVjRF9QbDNCc2RHUVRVc2xsX0FBTVhGUUZQM1d0OWNobjZadW9QN3RaR09OSnlaUTBUOWpydDV0ajNneFJkTlJ6Yld0ZE4yV21jTmRFTEZzcE5Ddnd0bXNfQzBjUnVIcEpENjdLWXFVN2RLNjNn?oc=5",
       "published": "2026-08-05T09:26:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "432e67cf9b06163b",
+      "search_section": "Military",
+      "title": "Upyr Drone Manufacturer Targeted in Explosion in Russia",
+      "summary": "",
+      "source": "Мілітарний",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOYXY5eFFxekNlc1VMWVBGektuV0pHNU5sckd5M1ZhRmNKUTU4Ml9vTFY5NzMwckpNdVJmaV8tZ1FIdWtHV2NSN2xzQXZnVVJFZDdxZm04ckduOW9HeTZGcWVsVXFPNUhBVnBXcFZ5aGxTRlhLUnY5R2hwbE05cjZpZllxRjVsNS0zYjkwXzVERGc?oc=5",
+      "published": "2026-08-05T09:24:49-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -103,24 +686,101 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "3e42d2ea7f1e4c68",
+      "id": "7a678de27ec1b96a",
+      "search_section": "International",
+      "title": "Uber to launch 1.2 lakh driverless cabs with $10 billion investment, what happens to human drivers?",
+      "summary": "",
+      "source": "India Today",
+      "url": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxNOGxnX1V0c0tIbHY3TWR5YnhEanZBek5aQmRPb0tQaWo2b2xMcDZST1VRUDdLMlJ2WTFvaGxWcko2bllhVDVGRkNySm5yempXdUJkX09ZWlNlNDBmYmo1NGFicVh4bjN5cTZBQUFkbjZNMk1RMkJySVRBV1AtU05wYVF2bTNxWUlRdllLTXYtZ29QRExqSGVranBTa1M0djFFZEdJd0hpQWw3Zmt4aUdIV1lCcXlWRTUwZUN4ZW1PekhKdHBGR1ExZDBhUWZ1OFlfVTRMWWdWVTg4S0cxMk9rREtiS3lfaWtFenEzOHhLb1RrcEhJR2NNRnB30gH6AUFVX3lxTE04bGdfVXRzS0hsdjdNZHlieERqdkF6TlpCZE9vS1BpajZvbExwNlJPVVFQN0syUnZZMW9obFZySjZuWWFUNUZGQ3JKbnJ6ald1QmRfT1laU2U0MGZiajU0YWJxWHhuM3lxNkFBQWRuNk0yTVEyQnJJVEFXUC1TTnBhUXZtM3FZSVF2WUtNdi1nb1BETGpIZWtqcFNrUzR2MUVkR0l3SGlBbDdma3hpR0hXWUJxeVZFNTBlQ3hlbU96SEp0cEZHUTFkMGFRZnU4WV9VNExZZ1ZVODhLRzEyT2tES2JLeV9pa0V6cTM4eEtvVGtwSElHY01GcHc?oc=5",
+      "published": "2026-08-05T09:22:04-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "35376546a37c2a78",
+      "search_section": "Military",
+      "title": "MicroVision Launches MOVIA(TM) Air Product Family to Accelerate Growth in Aerospace, Defense, and Drone Markets",
+      "summary": "",
+      "source": "Voice of Alexandria",
+      "url": "https://news.google.com/rss/articles/CBMitwJBVV95cUxNcDIwMnFyUk1iX2I2RDM0N2x3MkxOM09SaGFWWTB4NWdZX3VGNjBFVnRkV19YMDVUYk9EUndCdHVXend0SlByNHBkTnl0YWJSSjRXNjZuS09sZFg5M3ZETURNODhLLThTTnpWdjdJaUF6aVNHWC0zSlhHdERaSlcyNk4ybXd4RDdJNUs3Z2ZicEtMV2x3UDhoakxiS0ttZVlxZU8xNXdFaHZXaHdNbVdqWHZuS216M1dEYnY0cUhlYVFlVndId0JUTVhrRFJReWpGa2pvbFJ5R1JFN1BPMVkzZ09udWJXN2NKY1JOVkI0M2ROc3FickJpdUhiRnJ2bVRsSW1ZZXZmVmpoS2dzOXBNc0FyZTVmb0FUQ3E5Y3EtdHg0TldCRHhNZndoenBnWGppQ19feU9EYw?oc=5",
+      "published": "2026-08-05T09:21:31-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "d38d325800c72f44",
+      "search_section": "International",
+      "title": "Uber forecasts weak quarterly profit, doubles down on robotaxi investment plans",
+      "summary": "",
+      "source": "ET Auto",
+      "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxOa0I1N2puUmQxdkRNNkRqeUJlVVZqNDB3VXM5QzRJV2ZkMlpVQWlRb25VSmx0c2hjXzN6YXZ1Ty1oUEU0OFFLX0F4ckZ5N0RUcUlOMUl5M2ZYcXRHeC1Fb2hrRHpUV0FLMkZsblExbEVCN0lGMVFmb2E4cWJSUnQ5bTluNk5ua0x6bGM3ZG1lU1M5MGNGRHgwWlQ2eW4wYzVNU0FhMlZjX1p2MVVuNTVUQVc0QXJMZVFQMXVzZ0o3Q2JDcUluSndmZjduWFZaZlJORDg2cWJnNzFmdHZZUUhJV1RLTWVMZ9IB5gFBVV95cUxOa0I1N2puUmQxdkRNNkRqeUJlVVZqNDB3VXM5QzRJV2ZkMlpVQWlRb25VSmx0c2hjXzN6YXZ1Ty1oUEU0OFFLX0F4ckZ5N0RUcUlOMUl5M2ZYcXRHeC1Fb2hrRHpUV0FLMkZsblExbEVCN0lGMVFmb2E4cWJSUnQ5bTluNk5ua0x6bGM3ZG1lU1M5MGNGRHgwWlQ2eW4wYzVNU0FhMlZjX1p2MVVuNTVUQVc0QXJMZVFQMXVzZ0o3Q2JDcUluSndmZjduWFZaZlJORDg2cWJnNzFmdHZZUUhJV1RLTWVMZw?oc=5",
+      "published": "2026-08-05T09:21:15-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "8936dd160096eb50",
+      "search_section": "UAS and Drones",
+      "title": "DHL Cargo Aircraft Makes Precautionary Emergency Landing in Hannover After Mid-Air Collision Near Leipzig",
+      "summary": "",
+      "source": "Aviation News.eu",
+      "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNb0IxNEFjeTFfREFaRXJnSy1QT2ZmaVNUNEFiWUZ2Q0dDaTRUTUcyaVZEVHBlam5wWFRhM0l3TVd5NVFxZGpUOXVDazRhWThHZHFSLUlDQl94dFBwMGxZQ2ZnRUlrblUzeldabS0tX3RQdDQ4UXN3ajhCbXVKSF9wQkwtS2cxYUF6R010WVBpemJXZkpZUFc4U2JfRkViNGRZMW8zZnpiX0xDN1dLeUsyeUdhdlA3X2FlVVBaN0RuRHN2Ym52c3RxVGRHcWhCZk41OHRKQkVqSTJZWlE?oc=5",
+      "published": "2026-08-05T09:20:47-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "75d5c98574ea95a2",
+      "search_section": "Military",
+      "title": "US Air Force says F-47 fighter has reached 'unprecedented maturity'; from AI-powered drones, to stealth te",
+      "summary": "",
+      "source": "The Economic Times",
+      "url": "https://news.google.com/rss/articles/CBMi5AJBVV95cUxQcGNOaWF0SkR6bU9lM21RaGxVdlV6ZzVvVUY3X2xMZGVBSTEyRGwwTEpXS2dXcmJURHJuVDZUODA4anJoLTRzazdBZ1RKLVcya3ZlVzRpaXY1bmZvZmMzdHF5NjRZS3UyM0hVYVBGOFBodWdQaW90OFd5Qm53TFZDNi1tNXRqZENCeWVtSzZVejItTTFOX1AtS2lQN0I0R0sydnBxVVlFQ092Yk1NYjlhd3BjQllKZFVnaEpmSng4NnFuNlhtRkVpa3VlbVhZY0dsQXdndFBYQXYxZFNtTEcyTVdnaHFJYjVmYmNURGZMYzliaTVpcnFSczhXNXJEeGRSbzkwRm9zMEhFVUdWdUJZZzlvM0tvcndaY1hoX2N6QXpLT1RNWlhBRXdoYU5fcXFmaV93dnJRVUxiUFpGNEpPRldWc2x4WFg4MlU0bHQwcTRHRDlJaVRYdzlGYjE0aTdTLWE4WtIB5AJBVV95cUxQcGNOaWF0SkR6bU9lM21RaGxVdlV6ZzVvVUY3X2xMZGVBSTEyRGwwTEpXS2dXcmJURHJuVDZUODA4anJoLTRzazdBZ1RKLVcya3ZlVzRpaXY1bmZvZmMzdHF5NjRZS3UyM0hVYVBGOFBodWdQaW90OFd5Qm53TFZDNi1tNXRqZENCeWVtSzZVejItTTFOX1AtS2lQN0I0R0sydnBxVVlFQ092Yk1NYjlhd3BjQllKZFVnaEpmSng4NnFuNlhtRkVpa3VlbVhZY0dsQXdndFBYQXYxZFNtTEcyTVdnaHFJYjVmYmNURGZMYzliaTVpcnFSczhXNXJEeGRSbzkwRm9zMEhFVUdWdUJZZzlvM0tvcndaY1hoX2N6QXpLT1RNWlhBRXdoYU5fcXFmaV93dnJRVUxiUFpGNEpPRldWc2x4WFg4MlU0bHQwcTRHRDlJaVRYdzlGYjE0aTdTLWE4Wg?oc=5",
+      "published": "2026-08-05T09:20:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "fe1d53cd42b6af1b",
       "search_section": "International",
       "title": "Hydrogen Rail Push For Haryana Gains Momentum In Rajya Sabha; MP Seeks Expansion To Jind-Panipat, Jind-Hisar",
       "summary": "",
-      "source": "thedailyjagran.com",
+      "source": "The Daily Jagran",
       "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxNU2dBNC1VY3FiTG5VbjRNTE14SDNDRDEwcGNVd09tN0lRZFJpTWNCRENkNWdSMy1EQnRQSzFjbmxqejhuOVlMQmhfTVpwV0EzWnhsWTlxalNmQ3ZtTUhpOUhjMW1PdExFX0tURWRtb0loa1NDbzVPSk9rS2NCQkZvbU9fS0MtQU5tM3FmdGdGRlYwUmR0cGVUQVZERmRfXzJ5cEFjZEtuQ2N5VUFfUVFUT0MxSTZWV0xoaUEyeF9sclZhZ01IVkl3eFlvbmpMdUtzYWV0eW1oaGlxNWVEUUpSN2hOWkZRZG8?oc=5",
       "published": "2026-08-05T09:20:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "5da86f67a41d5af5",
-      "search_section": "Military",
-      "title": "Drone ‘Carrying Explosives’ Found Near Ukrainian Aircraft at German Airport",
+      "id": "279bdec1c7ae295f",
+      "search_section": "Trump Administration priorities",
+      "title": "Alarm as explosive drone found near Ukrainian plane at German airport",
       "summary": "",
-      "source": "The European Conservative",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQcElqb3VkQW9TMlhrNVVTVFJJVVJQbE9yNXo1WHNpdmpXemNUSHJxdm5DbS1CcUNDSTVTTW4xZk9FY0dlT0hHVWhiYXJzRkkya1FtY0lsdGRRVTFmZk1qLTVlV2xmelFzcW9ETy1qOGN3Y2dyeUVwMFVoZVlyMDl1aFdXV2I2TkFuS2RrczdZbENFNnRpUlI0MDJXTUMzWnduLU96aVF0cDZ2M3ZFblJqUGdUcUo4ckViZExSVHBBSmhhMFR6QTlF?oc=5",
-      "published": "2026-08-05T09:17:32-04:00",
+      "source": "breitbart.com",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOZEtYSjF1bnFySUREdE1IcTBsOHJvSHFacVRPQ3Job3N6Nk1tT3V4SGdBVTdZMGc0SzN2ajh0ZDB3TWMtSW91LWY2U0xSTDZ2MVBUTmI2MGRaZms5S0REXzQtZlhyVi00LXVkbWdWeDhVX1gzSHQ4WHdxMEhvZDN3MjNaOHlLZXF2UEVPS2NYTzU1RWNvRU1qQkJ0VlRvN0xkb25n0gGoAUFVX3lxTE5yTmd2ak9acC1nOERiQU14N1lPd3JIOG5WenF2YzJ6ZzZZbDZyNWdWeW9SZVBQUy1xdldxT1dPN0lqajV0WUFvZ3ZIcnYySHpCMlVaQXFvOUp0c09NZzdqTWpXM2ZRSmNwVm42N2Q1bnpNUVl4QTczOERWMng5VTBTcWRRWTV0Tk9IQ0Zta25acmNHdVlGTWduMkUyYTkzYzZqTnJVUkNDag?oc=5",
+      "published": "2026-08-05T09:19:10-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "f67ba359613040ad",
+      "search_section": "Military",
+      "title": "Drone carrying explosives found at German airport, police say",
+      "summary": "",
+      "source": "BBC",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5tRnlVVHAtTjQyLUlpd0stck83MWdDR3RLYXVpUWVXUFM5LXJKTnhwZF9nRFpyOXM5M0xJbTRkRUlJOWRWUFZmRXdOeTVBYVlvbzFDdHllQkNBdw?oc=5",
+      "published": "2026-08-05T09:14:28-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "288f861ed936958d",
+      "search_section": "Military",
+      "title": "Why ONDS, RCAT And Other Drone Stocks Are Surging In Overnight Trading",
+      "summary": "",
+      "source": "Stocktwits",
+      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQTzBPVlRrNkFSM3Zhd2luYi16OHN5ak80blQ4MmxXNTJTVERlSEVRakVDRC1fZ0hFRXZybjdCNXhPaUFYNE5JeEo5SHppYkFiTUh2Y1c0ZTZxcm9kMFd1UURMR01rTlJ2elFRNTdfYXREaWRYYTVzVDFhdUFPRm9BRW1XMXl0M040eUo2TFhseFlsNjgzM0liLU94WDBfZWp2YzVMVWk4aTg1MUdoSENKNkxBWXVEakItU2FLckgzcWwxNzVDU0h6d3BoR1YyZw?oc=5",
+      "published": "2026-08-05T09:14:07-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -136,24 +796,35 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "aafb59d91c5e26db",
-      "search_section": "Military",
-      "title": "Ukraine Knocks Out 13 Russian-Controlled Energy Facilities in Just 48 Hours",
+      "id": "00af8aa22a488caa",
+      "search_section": "Autonomous Vehicles",
+      "title": "Why Is Uber Technologies Stock Falling Wednesday? - Uber Technologies (NYSE:UBER)",
       "summary": "",
-      "source": "UNITED24 Media",
-      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQZFZuWGZxQkRRSlB2d0VYcmRiSC1zU21lWkVyLXRBclUxMndUenhaTXZ5ckpMV1J0ZTVlMk5KQlA3NjFLRWMzbV9leGN6aWlYR0xldVRMcjBTSDRHRl8zcUFKZXRHLVdzWE5HYlRabWxsVUdkaXVvSjRSRENEMEx6YVZBcXJRU19oaGllLVZ4dTgwSkVmS1ppalQwRGR5WXF3U2lVczhLenU1dUdVcDB1ZmpzUmhsd0lzUXRjRGZUQQ?oc=5",
-      "published": "2026-08-05T09:13:36-04:00",
+      "source": "Benzinga",
+      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNX3hjeHByN3RyWGFLY2tfb1ZwREhRSFZCN2pOdVM4bS1wNlpjWGpTU2RlWktjR2ZXZ1EtaUcyVGd0WGZXWTdHOHhzYlA3Y2tDZUZfandJaHlNYXhqX05qakxmMnJfZE9fUzBEWHAxemhlSEEzakdNeEM0UXl5RV93dGpEYmZ1SU1OeEF4emYzdm5hQXB0UXVBT0lKc0Q4eGxhbVN2WE1uUlBENVVkRnBRQXV1WXQ5YXlGNXJRZ3ZUeTZMZHJhOG9uUjhaNm1FZw?oc=5",
+      "published": "2026-08-05T09:13:25-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "8bcae2eb84f809f0",
+      "id": "8a4bb6e5d51cc328",
       "search_section": "Military",
       "title": "Yekaterinburg Drone Maker CEO Wounded in Car Explosion",
       "summary": "",
-      "source": "themoscowtimes.com",
+      "source": "The Moscow Times",
       "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOTllVdGQzbzlWRzVNemRYXzJIU2Z3MTlBU0RBYjZtMnVwUDlEbkdCVU9lVG1CLWY3eXByeTh6TjFKZk5HdEs5NjF2clI3bDZfS0Z4SWpFQ1hlNF9wZ256elRfVHB1Q1Zlc3pPVVltbTIzcEVWd3dZcGR5YnpubDNIRmhKWkNGOS12R1Vqa2Qwb0xaeHhqV1Y0ZmwtRDVzWnlfLVRCcEhn?oc=5",
       "published": "2026-08-05T09:12:01-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "ba8f3cd9f4dbbf4f",
+      "search_section": "Military",
+      "title": "Putin’s Fiery Drone Humiliation Spreads to New Region in Raging Crisis",
+      "summary": "",
+      "source": "The Daily Beast",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQc1JEbGhmMmFybV9DMFRNdHl6eDB2VFpKRGVEcGRSUV9VLU9JWjdEYS1hRjE3ZjBFRy1BSmptanZvREJ1MEFURV85bW16V1pmV0d1cHJjY3ZuZkt3Q2s4MC1xRGhaQ1JTQmt6bFlud0JZMkhpNDUtMWdHX0Y3WU11Z1ZPMDJzemtKc3dDT0lvOFRrbGxJb3k3bW5TUjNDbGZoYnc?oc=5",
+      "published": "2026-08-05T09:07:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -191,6 +862,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "a82fd69629888213",
+      "search_section": "Military",
+      "title": "Japan Bets Combat Drones Can Hold The Line With China",
+      "summary": "",
+      "source": "DroneXL",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNSFZndDNjcGFIdFpxcUV5X0Z1RF9naFNld1ROTV96NF96TmVrQm1EbFRUdy1ZZjRRY2tGMk9xcXRvMDd0S1JtOVA3aXFPMDlFY2Y0MFhjN0lMVzBsWU5rR2I3bFl0ZFVFZkJDRFNvWW9sSElmcFRUdXV4U0lTVktxelRTdkZoUW5ySVE?oc=5",
+      "published": "2026-08-05T09:03:39-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "35c3384665b15259",
       "search_section": "Military",
       "title": "Ukrainian firefighters put out warehouse fire after Russian missile and drone attack on Kyiv region",
@@ -198,17 +880,6 @@
       "source": "Yahoo News Canada",
       "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNZ2N1N3VIU2c4TXo1ejRWdGIzYkZRVk9hdFdkNnpnQVkxVXZCbi1neXJMai02M25jT1hha1FNeldUMWVzRFNTZll0WW9HWHhyRVQ5ZjZKSXpFeGotMUN6c0NRQ0VxeUdwUFh3aVoxdUdRNGJVZTRHOUhKNmIzTWFvZGdTTGZWZkV3b3c?oc=5",
       "published": "2026-08-05T09:03:13-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "28e1023814923018",
-      "search_section": "Military",
-      "title": "Ukrainian firefighters put out warehouse fire after Russian missile and drone attack on Kyiv region",
-      "summary": "",
-      "source": "Yahoo",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPRnA5NF9uZGlKbnp1Y2l3bUhZRUVfQmt5SXJPM2FnZ3Q5RDdzaVRGZWFIQUdUbEx4YUt2c3NPVlNwVVZxZExOa0hzWGxNa05CdWdrTWZPM1E4TUlKLXZ0X2xheUd4eXp4LXBEeWVwQmRXektlZDA1MWw3NDA3dlhVeTdCUWp1bFF6NTBHclNBLTJFZU9z?oc=5",
-      "published": "2026-08-05T09:03:11-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -268,24 +939,35 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "6fdf84e77762a838",
+      "id": "b8950dbf57cc6f29",
       "search_section": "Military",
       "title": "Jet-powered combat drone aces live-fire tests using hidden internal weapons bay",
       "summary": "",
-      "source": "Interesting Engineering",
+      "source": "interestingengineering.com",
       "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5FWUdqamZBVXFfdXJyZUxEWi15bHFaSVBmTVoyZU1PNTFYOXRFelpXTkxzdS1sQzZiTkVZNkVBNlgtM2tMdVplWE9tYWc1QnkyQ1haeTkzaV8ydm5HQW82cks3eV9ZU3pRUnl5Z0NHblBHcFk5aHJjNFo2OTVrLVU?oc=5",
       "published": "2026-08-05T08:59:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "2911ac68ec72fa3e",
+      "id": "0bb01f67486c7e1a",
       "search_section": "International",
       "title": "China finalizes the excavation of the longest high-speed railway tunnel in the world, under the Yangtze River.",
       "summary": "",
-      "source": "informat.ro",
+      "source": "Informat.ro",
       "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOczVOdm40dFNyLUdYUkdzbTBtR3pKMldlaThMMHR0SmdIZ0RrMVRNaDh5eXZtMVRtdFpLZ3k0OHRVbk9qODB5dGhGeldzRF9JVGhpSk1DNVJQaERwYklDRDMyRU5sRmt3b2RxUjlvRmdvQTBDS0xXYklkYlZ6cGZ5aDc3U3g1OHJsMWJZQXdraXlFdWg0cUVxWHcxRkY4LVo5V2pBOHpTZnJsQk14eVdqN1VxRWpIMGlMVk53dUwwOA?oc=5",
       "published": "2026-08-05T08:58:41-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "4b7227432c0eb068",
+      "search_section": "International",
+      "title": "Self-driving Ubers to be launched in London within weeks",
+      "summary": "",
+      "source": "Yahoo",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPLTlvY0ItN1FVS1lnVlRUNTJtaXBIbF9FNUhTbnhwNjljM2lJeVd1QmlkT2NzQmk1ZDl3Ql80QUtiQ2lhWktwZkd2ZG8ySTBKNmZCc1U1OThleEdDazd5emV0c1Z4UjNHWmZ5Y1FVR1doV1ZxYXZkZDFpeFB4Qm9ydTd2N1J3MVZZZ3FnUG1SNnQ3NERScXc?oc=5",
+      "published": "2026-08-05T08:57:55-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -301,13 +983,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "73d1689ec1fe2d67",
-      "search_section": "UAS and Drones",
-      "title": "Caddo Sheriff's Office trains with updated drone technology in search-and-rescue techniques",
+      "id": "4a7682571c1da1df",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Hidden Level Secures $100M US Military Contract for Passive Drone Detection",
       "summary": "",
-      "source": "shreveportbossieradvocate.com",
-      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNTU5ndzRnekxXWFJqdFJOdUxZaDlOeXRrX2hFUkpKVnJ2TnlCWU00OU94VGcySVJ2X2FwamFIM19nWHN4OW9ZN0dTVEtncVhIMk9lQWd3dDF6ZE1na2pVOWt6UHBLNlJWTDczU0tfdC1Kd0xtdm03YkpjU3FEbEk3UXBnWHVwbWFYSkczYVI2OTFIaDBQSXlMUXhvZS1Ccm80MEdiU1VuV096NUp1Nms4dWFUS2lqbEZtSURWSWJXNmFMbG1PYThISkFrekw?oc=5",
-      "published": "2026-08-05T08:55:00-04:00",
+      "source": "The Defense Post",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNaGZxVDdpb3R2ZGV6RjZsSk9EWjRQbXRKX0hGV3dRUC1hRC1sVVJwUEh4dWl0Sl9ISGRIeDlSRGhra2Roa2loMWhXMTY5ZTQ3UVNLYXo0UHRjUHE5R05SRnRKclNtNXBBdGFjcFlQVWVISzVoNDZVUHZuRlM2clF4NWthdDhOUdIBhgFBVV95cUxNaGZxVDdpb3R2ZGV6RjZsSk9EWjRQbXRKX0hGV3dRUC1hRC1sVVJwUEh4dWl0Sl9ISGRIeDlSRGhra2Roa2loMWhXMTY5ZTQ3UVNLYXo0UHRjUHE5R05SRnRKclNtNXBBdGFjcFlQVWVISzVoNDZVUHZuRlM2clF4NWthdDhOUQ?oc=5",
+      "published": "2026-08-05T08:55:45-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -319,17 +1001,6 @@
       "source": "Devbhoomi News",
       "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE1BWXNIZTJDZUVQZ0tZUjJ5SkhraFgxcEdfQ0hUQU0waEdlZWdWMTQ4MEE4RUVsZ1NycGJjVUZSWnB3NzZLQUtpYTNCTQ?oc=5",
       "published": "2026-08-05T08:53:36-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "aefe7fdf018887cf",
-      "search_section": "Trump Administration priorities",
-      "title": "Russian drone factory director badly injured in car explosion",
-      "summary": "",
-      "source": "NBC News",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPSXRjenMtOXRwcGNMR3BJY0VyLXFQZEctVkUtLXNSWUpyUEZUUkM0Zy1XVnhVbUxjd0ktU2RBTVJDdGdLblpDVDlRbDNiTTk3MWk0a2EzMkNpcjlINjJNc2xaX2h6MUdfUUx1aGw0N0dPWFBjd2ZrdnZFQVJwaTNUU1hRb2RRNFNQV2g1QkY5ZWRBZGxDSEZJaGFMUVkwVGdWMkY5UWs5MlpmZw?oc=5",
-      "published": "2026-08-05T08:52:44-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -367,46 +1038,46 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "ec417a351df6b6af",
-      "search_section": "Military",
-      "title": "Fire hits Russia's Ufa refinery after drone attack",
+      "id": "20e92eb83d2d985e",
+      "search_section": "International",
+      "title": "World-record Yangtze tunnel to carry 350 km/h high-speed trains",
       "summary": "",
-      "source": "qcintel.com",
-      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNRzhNVDl3UWVhT3VmX29Pd1NpdWU1a05wWExEYkRXMXpoY0szeV92ZEF5Rll4elJ3MlBOV1ZCZWF0S1lwZU5rU1NiSGxndE9xLW85c0N2LURvOGFBTFBYSUVPaGJHbUpwMTgwUDFtampna2hfTkpFc0dqTENWaHI1SGdSRVQyWU1kNHhPX3haYXNFcUUza1dCeQ?oc=5",
-      "published": "2026-08-05T08:45:38-04:00",
+      "source": "thetraveler.org",
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPaks3VE4wRkdhSFdPS3d1aVFaNmwxaFM5aWJUSjg1S1RMZlB5SE9vYS04RjRraTVYRUJmaWRVb2tkakpVcTFhZDNEaDBCeV92S1RCd3FYQXhqLTdHTkY2VFNXX0JzUGZLQnE0N3ZnOVZYenlQMm96Wms3T1hSS2FNaUJKVzFhSnJHb0VlNWpYSHRISU9aNFVZ?oc=5",
+      "published": "2026-08-05T08:47:27-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "fa8dda42b125ec35",
+      "id": "915f0173b3c80414",
       "search_section": "Military",
-      "title": "Russian drone factory director badly injured in car explosion",
+      "title": "Exclusive License Lets BiomX Develop and Distribute Drone Testing Solutions",
       "summary": "",
-      "source": "ClickOnDetroit | WDIV Local 4",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNdkxzZkJGSVVzWWFOTGstdnNLYWFvMS1uQUQzdThyajVpSTN5cjc5Vi1UMi0xeXlJNWtBVXVSRTc3UmcycTM0alA5QkJsNXlVOWpmemd1c0FvbHZuZndoYnluRjYtZ0pJb1JMZmJZRnVfb3FYZmpKZzRhNFJhOTlxOXpDaDJHME9NTmV2OC1wU0stcXlUbXB5aVpWc1RySTYzM3RrS1pQUmVTdW40bFZVUGp5ZkFQakZF?oc=5",
-      "published": "2026-08-05T08:44:41-04:00",
+      "source": "Stock Titan",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNMHNDaVFyenpHcHRkRXpnMVJsOXRIeDNfOHlndmFWTGRNbW1wc0dhd25BQjVSejZvMy1NcXRmY0FRdHZNMVM3Y0EzcXZycFZaVGlFdlJ6MDFRQ0M0V05iTmFtRjFwZEhfSXZTZWxmYW84dDB4RVdXWVNmby1hd2dqRmN6VGtwQTZJdmJxZFh1eFVhQ2NBMl9WaUIzaV9SS2J4OUl3SWJjdnZ6WDk1ZmQ1amxMSF9RdzBFTE9GLQ?oc=5",
+      "published": "2026-08-05T08:45:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "5bac061f5e3efeb4",
-      "search_section": "Military",
-      "title": "Russian drone factory director badly injured in car explosion",
+      "id": "53e2784c4dac404d",
+      "search_section": "Autonomous Vehicles",
+      "title": "‘Leicester Square, please guv’: Self-driving taxis cleared for London streets ‘later this summer’",
       "summary": "",
-      "source": "Goshen News",
-      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPX2NPUF9Jd3NVVXk1N25jQUlSMFdKSFlJbl9rMFFaTk10a1JHN21mWGRNYTBqZGN6T0d2X0ZDdVFDUjVvQ3Q5aGU3dXdyM2RoWTV6N1pyY1BmMGNzdGYyaGNfaWdya3Z3TG1LRUh2Uzk0NEhPdXRFZklLNldSbDBEcUlfcEZ3U0tYRVF3TFd2Ylc0cHVrYWFXSGp4TjBRRzJqVlZadVJWX3VtaTRrRXNsczczTkhkcTVQcXJVQmY1dEFyTjZzNEVxa3MtYm80aEVLZGZ0WjVpaHUwWGNGZE9vS3FDcTQ1VVROZUI4NFFR?oc=5",
-      "published": "2026-08-05T08:43:28-04:00",
+      "source": "The Guardian",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOU3FqeWkzbUdsUFFwMi00eFFZakl6QXI2eU1lNTA3RDlWU0hVLVFoOVREVUhGRlJDTzV4WklucThPRnA5M29fbW5LT3h0UFF5UjB1YjVEOWpCb2huVmtFNnU1eTJhQXJHU0xTZFlMeUI0ZXNxeWsxNjh1SHA2SDRKUmktczZjZ2p5Wk5Pbi1lWWszeldNQmlaY1dZZTc0TUhjcVo1YjJlQzdKdWF5?oc=5",
+      "published": "2026-08-05T08:45:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "85969f91ac9da71a",
-      "search_section": "Military",
-      "title": "Russian drone factory director badly injured in car explosion",
+      "id": "ba337ec63fe3bd00",
+      "search_section": "Trump Administration priorities",
+      "title": "Russian FPV drone boss 'critical' after car bomb assassination attempt",
       "summary": "",
-      "source": "The Independent",
-      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPWV9rd3Y0TzZFOWp4NklOeVRQdmlzcF9CT0ZiRG1oYmh6Wkp0UW9TTk9IXzJEVS1jbzhUOC1SWXRkcU9Pa2ZTbVZJT3F3UkNaNmNMcXdYS3FyT3llUnR1dEdJdFN4NXA2WVJPbkRpeXlSQVp2SHNVWlFtNW1udWhsZWhMRUtPWDg3dExIdGJtM28?oc=5",
-      "published": "2026-08-05T08:43:00-04:00",
+      "source": "Daily Express",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOSmVSWUI5cElSaHM4ZUY4M2stbUw5d2VzX0pLWGJUR29lSktvQzZsV3ZDbndjNkxvRlFSZmZkSEI2cnppZlRCY3hTdi05ZHhBYXdkTjFfbEZ4dTh2MGtGcGEwUG0zZGNxaGxEeDhIMzFrX0NfaTZHelhwaUtBUWJXV2VmNGcyRVdEQnVSMlZZMnlOaXp0VEtENnVzX2FNd03SAaQBQVVfeXFMTWlseTBWSWU2d0ZaYVZlQVZXNXlFN3RTMXBBM052dlBzNTUyLWhMd3ZNdW5VN1BZeVozZUdHaFh5UzhNUFJiT3RBZnJyN3lSQVR6UUJIT2dNME9VSE9Ndk42Sjd2SGNsdU9YQXZ5aEpxTlJJLUZwbkI4XzNUMVFJUUIyRzdnWVFfdEdLbDNhblhJS2w1dUExSmMyeVhkWkRPTERXMVc?oc=5",
+      "published": "2026-08-05T08:45:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -422,24 +1093,35 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "102b94e6946d6fbd",
-      "search_section": "UAS and Drones",
-      "title": "China-US trade war: Beijing restricts drone exports",
+      "id": "5c0395fdd0036ecf",
+      "search_section": "International",
+      "title": "Bolt, Stellantis, Pony.ai to launch autonomous vehicle test program in Luxembourg",
       "summary": "",
-      "source": "avionews.it",
-      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNTDgxTS1wbFA4b2hrSE1CSXJjN1lmSXVnc1A4QUdpYjVKZTZ2NDBQS0FkOXhCR3NhaFRfX1ktRENSck5BX2l5QVRSYk1qeVJodjlfaURLRDU1MmhtbnU5T3VORXN1X2wwcWczWm50R1FvRzJKN0FxdnM3ekUwSUg2VmtuaGxMQ3E3bXRRMW9GaVpfVjRJdUU3TzFpOA?oc=5",
-      "published": "2026-08-05T08:35:57-04:00",
+      "source": "95 KQDS",
+      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNTHVEWF9sM2dadEFPRERpRDg0Vmhva1NvcERHZ2M1dXJhUEk1X2M3c1lLVTFVZlAwSUNaaG9JRTlQNGdmZGJnZmlhbG5rdENzdGVGTXlTUl9RZU1rdmRsUnQzdHhiSC1QVG90cW10QlBVazNabkZJU0RON2JRWmpsclVET0xKX3AxMUY2U0gzbkV0SnZ1bktTM0l5UjhqRjZfZnJBZ01yUUdBV2FiYTRJ?oc=5",
+      "published": "2026-08-05T08:40:08-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "3b36237f146073b2",
-      "search_section": "Military",
-      "title": "Head of Russian drone maker 'fighting for life' after car explosion",
+      "id": "aaff75d1dc3772a1",
+      "search_section": "Autonomous Vehicles",
+      "title": "Mobility Fintech Moove Secures $250m Series C Funding, Joins Unicorn Club",
       "summary": "",
-      "source": "Anadolu Ajansı",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPUVVjWjk4Y3ZUQmYyb3JRdEVoVHFxNkE3SWE0UDhqYUJOektLRVJDQ0xwMF9wa0JCM0RlQ0V4czV5Mm9lUl9DTk5BOXE1STRPSHd5bkxxaFY3Vk4zamF0bC1WZkFTeTNWTlgtelZyYjI3czVqX3FzdHNOTWZIbG1GZWlqLTQtUF82OVNJSUVOSEktUi1LMWtoaDhmejRXY0V3c0U2YVY1Ymd0QQ?oc=5",
-      "published": "2026-08-05T08:34:30-04:00",
+      "source": "Business Post Nigeria",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOS2Iyb0xvVExzem9XbU5DcG11RURLZXd0V0ZyV0RJTXhCd2JyV1ZWQTkyTjhXSEdzR01PSXU4STZRQ1RjdjB6Vlp0c3FON3JVa2ZlWi05NzJDM0VxY2RiWWdqZ2JCUXBzdlctUGhieU94VjlKNUtiNFBQMzVjUFdhX05yc0RHOS1VeXc4R3VIMC1JSEpLME9lREY3dWg3djhZQzFz?oc=5",
+      "published": "2026-08-05T08:38:15-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "8ce3e1435e6df730",
+      "search_section": "UAS and Drones",
+      "title": "China-US trade war: Beijing restricts drone exports",
+      "summary": "",
+      "source": "AVIONEWS",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNTDgxTS1wbFA4b2hrSE1CSXJjN1lmSXVnc1A4QUdpYjVKZTZ2NDBQS0FkOXhCR3NhaFRfX1ktRENSck5BX2l5QVRSYk1qeVJodjlfaURLRDU1MmhtbnU5T3VORXN1X2wwcWczWm50R1FvRzJKN0FxdnM3ekUwSUg2VmtuaGxMQ3E3bXRRMW9GaVpfVjRJdUU3TzFpOA?oc=5",
+      "published": "2026-08-05T08:35:57-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -510,17 +1192,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "30691736650f5e71",
-      "search_section": "Military",
-      "title": "Russian drone factory chief wounded in car blast: state media",
-      "summary": "",
-      "source": "Arab News PK",
-      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE51RVUwTWFuNU1xNTBCLVVVanJfMk4zNXpqRVFxUlZaWk1BWG1PR1pYWTZqTXNFMUdMbGV5eVJUR2IyOGdXS0JrcjloT3h5VVRaVDFQQQ?oc=5",
-      "published": "2026-08-05T08:24:48-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "e7756ac2a520f14c",
       "search_section": "International",
       "title": "Mubadala backs growth of Moove autonomous vehicle business",
@@ -528,17 +1199,6 @@
       "source": "Arabian Gulf Business Insight | AGBI",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPdnZrMmhjdWFQTTY3ckhiT0F2bHhEMEh5Qm1NTmFzY3oxcHZaNlA0NmFzelJqdWF5T3k3QkVEVVh1SWtDQ2Q5N2R0OTJRZl8tSHZFY1BPdUJ4R1p3Zml2bVUxODVHdEM3Q3dvWXB3NUk0bTBzSlBjdzR5UVk0S2t3MTJZcnN2Mm9fQUl4UW1UUEd4anlOMDB1dQ?oc=5",
       "published": "2026-08-05T08:23:51-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "74aeb6290324ebf6",
-      "search_section": "Military",
-      "title": "Russian missile and drone barrage in Ukrainian capital region kills 17",
-      "summary": "",
-      "source": "oskaloosa.com",
-      "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxQYWg1WWRidk5ya2k3NXZQQ0dKM2xJV1diSTExc3dQbFoyZEdhWTRxVXZUdmVmejNOeW9qMWVvTnRBcXBGYXJRMTdRLTZsdmszdXpqaTlIRzVCV3VnejcwUXpBTHdyWTFBeUlxblZid1FheVVQYVhoUDJSWFZGSmNhM2pzZllZQWUtdUVfazBpSW9SWTQyZTlHemU1aWx1YTlxdzF4VklFaTVZSTNNMmU2M2luSlQwc0Q1eG03Z3FwX2ItaW5FbVM0cXB3VVplUWZxS3JUYmxOODdhd1Y1c1dza19BaVZ2UThfYnNFa01CaXRmVW1SLUg3Qw?oc=5",
-      "published": "2026-08-05T08:21:29-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -554,24 +1214,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "919682b7c199751c",
-      "search_section": "Military",
-      "title": "X-62 VISTA flies autonomous target intercept during Edwards tests",
+      "id": "28b1b09094ec7424",
+      "search_section": "Autonomous Vehicles",
+      "title": "Ocean Power Technologies among six firms selected for Navy ocean mapping",
       "summary": "",
-      "source": "Aerospace Testing International",
-      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPM3d0TVpsdTVPZ0JNUG5fdG5yQXlDdU9aQW15bHBwVWUxRVNvWjUxTXBhS1huNTZsRkpZOTFRWHFadWRUeFg0VE5DSjI1dFBEQzhjcHVweU1rQWdmcjk1SzJ3S1dQSUhwcnpPUkE1TF9fY09RREYwaENZQjA4X3lkNy00QnNRaWllbElsLXJyZHNTOVRPUzNvZ2VoeEhwaklsdUp3RzFXU0o0S0o1QnhZLUxFTHhFQ1JlaUkxQzVB?oc=5",
-      "published": "2026-08-05T08:14:10-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "a50e0520ddf9b691",
-      "search_section": "Military",
-      "title": "Explosive drone found near Ukrainian plane at German airport, sparking alarm, collision",
-      "summary": "",
-      "source": "The Times of Israel",
-      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQUDBPWTJ6STBrUnR2UWI4TUUyd2VmblZBNlZVbnQ2VGlKbTZpY1JrRGZkWEszNkV4c01DYVJrZWRodzh0ZW5xbkZKakE5TDBFbURWTGk5amhoclhZMUtzeEp2dUh6Q0ZGNHZyVkFPdFF1a29XMC1hWk9pbFhpbm5FRnlfeW8wMEZoQVBzQXdPVVJRc3RBdFVHVjRQREg5MThTc2ZVUk04NWoxU1VILXN5bW9QZXpGTnlMZ1dPVmNyNDZIUUNINmZXUkhIbw?oc=5",
-      "published": "2026-08-05T08:13:48-04:00",
+      "source": "Stock Titan",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQejRBNzhxU25yWGQ2Z01Senh5NmVlckVaY2UwWEJKQU5DeFZ6cEd4dXZUMmY1Skl2RFNMUDEtWE1yRGNlYlVVU09BSVQyTUZhYm1acUFKdTRxS3U4dHQ4REFteUxyVks3bXVPTFhrZEhIdnlfY1kwRGV0WFB0S1FwMDJtdmh1c3hsNklYWDhyYWJ6UWZJakRmTmVYWVVxbWM0ZXBfN3o3bGVnZnIzQjBmNjNyemVaV090RDFNbFNmbw?oc=5",
+      "published": "2026-08-05T08:15:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -583,17 +1232,6 @@
       "source": "Tempo.co English",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQemJMZ1NsTjFoNkd2ZFpBSmZQSWh4WVBRTy1DOERlekhUT1M0d2puNzVCSHczeHYzNUZBQkoxU0FENFgtaTI1bXVFTmx5Z3MxQmdJSWQyMEpfQ3Q4c0dsRHRTRDR6elF3RjFfQm5EUTQ2WEcwcVhvQVhPNEZDaWtNMERxZ0w3T0VhSHJ5UHRR?oc=5",
       "published": "2026-08-05T08:08:32-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "2f6f3403859a095b",
-      "search_section": "Military",
-      "title": "UK Startup Gives Drone Frames a Second Job: Storing Power",
-      "summary": "",
-      "source": "The Defense Post",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFB5QUF1SjFWU1VMZ2tCVUNyTkZ3cEN1NlJzWXJPOGFSRXBhUnZjRmxFZkpoV3Ffc2xYVGp0bnc4WFNsb21FeV9pRndYamhiaC1pQkhUTkxPZFQ0VU1hT0k0eEVERGZWYTJWb0ZBVXhB0gFzQVVfeXFMTXlVTjg1czRwQnRjSVFBLWJQNjJuQUFPcjJ5MWMybjZZRndTQ2hGY25tQmIwOTRRclJaOWstRG9xMVQzbTlzOHlOZEc2QklubGxLTzl1WDZOTU4zaUUzMVFpVV9xWWt0QlozdTktV0FSOWp3SQ?oc=5",
-      "published": "2026-08-05T08:08:09-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -620,17 +1258,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "4901a02b9e10220a",
-      "search_section": "Military",
-      "title": "Russian drone factory director badly injured in car explosion",
-      "summary": "",
-      "source": "AP News",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPaXJoY204ZmVSTl9SS3ZLS2luVnFtTmh1REZPZElkbmVxR0tvcjIycnFVYlA4UDE2UE55ZnpPbjhvQnZzTjBMd1JzRnhmRy1KdHBfU2VUaWc4MW5iLTBOTjd2UndhNDVzWnJObHppQUVkMmJ0eDVyTmMyRVh2dXplSUdCeUZXbGVWVDRFbmhIQ1RJMG1jWWsybUNKUE5obk5PMHRNQWR4STJtS0JUXzdMLWYzcFNRNlhl?oc=5",
-      "published": "2026-08-05T08:02:00-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "873e6199fca414c0",
       "search_section": "Autonomous Vehicles",
       "title": "Uber Forecasts Weak Quarterly Profit, Doubles Down on Robotaxi Investment Plans",
@@ -653,6 +1280,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "79e5ae0fea1a3a84",
+      "search_section": "UAS and Drones",
+      "title": "The Economics of Attritable Autonomy A Structural Audit of M",
+      "summary": "",
+      "source": "weddings.lavenderhotels.co.uk",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQU2FtNzR6cFdRSkVYbC1aM1BRcnItRzJxSVNPNU9jeXh1YnZXOVI4NWhBWEpDcDBCYU5LRWR5MUE3bFliMThmX2x6N3gzYkF6dmYtV0Y0aU9HczR6b3h1NS01bDdWeHl5M21UdzdjdHdRNFFSeVFzVHJlSEZHNEhZNUVsTTNyOUpFU3NwY2s4dEJob0ZieWVLYmpCLWFWeVhYREItdTh3?oc=5",
+      "published": "2026-08-05T07:59:11-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "6a8cb776ed482d74",
       "search_section": "Other Advanced Transportation",
       "title": "The surprising detour of the Silk Road, the world’s original superhighway",
@@ -660,28 +1298,6 @@
       "source": "National Geographic",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQNzJmNE9XNkNCWllwQ3VVTFJmRjJ4WnNSMHQ0eUxyWUc5aElFYkpSVV9DQ2t1cXF2aTZXZnBNS3ZWQktGM1NuYkw2OEc0Nzl4VTRUU1FRZlcyNnJ6YU1mX3puN2tIcFFVT1k0ek9DUkg5MG9HcTB0X0FOaGV4TUZMTWNpeTREdmRyVzgtS2lB?oc=5",
       "published": "2026-08-05T07:57:58-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "3f402764392c0092",
-      "search_section": "Military",
-      "title": "Russian 'Drone Safari' Attack on Civilian Classified as War Crime",
-      "summary": "",
-      "source": "조선일보",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNYzhHdlVIS0wtT2VKTDRSZWJzRmJCakFqWEZnU3J4YVVnQVpPTTVId2ctSzlNS2J1S1Nrd0dhTG5qU2VfanhIcC1ZQ0hmLVhkRXVVeGFKUV95NFFvUUw3cDZ4UXphU0d0c3VEZ3hySXFyZmxJdkpOQ25QT2pGWm9CY1pCaEI?oc=5",
-      "published": "2026-08-05T07:54:19-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "772ee445bb7b0bbc",
-      "search_section": "Military",
-      "title": "Russian secret services plotted assassination of German drone manufacturer chief",
-      "summary": "",
-      "source": "Українська правда",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBoMlhVTFY2MkFFaEJyOEUwRC10RkJDeERzNXc5OG5vNjNhakU0NDk3eVItdlJCX1ZqVnE4T3N0aDU2WERJcEN0Zjk1YWFHOUo0MFlqVWlpMWFNV1RzNGwtQk9lSU3SAXBBVV95cUxNMzdPckNXdjctOUMwbF8zTTc2a2JkbWFBVHBPaHRyNDAxcHBrWG14VWtwNmREczM0ZlFESTZUUnJPTnFzYUVCazNkYWtIaEp2OFVxd2J2LXNvbmpiTGJISlU1aEEzQUQzV0EwbGFRWVB4?oc=5",
-      "published": "2026-08-05T07:52:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -697,46 +1313,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "8c7548fe41f10198",
-      "search_section": "Military",
-      "title": "US Air Force tests AI-powered jet in autonomous air intercept flights",
-      "summary": "",
-      "source": "Caliber.Az",
-      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQQk1MOE5hNEZ4clRFM1FDTE54NHA4Mk1WVExNQUJGeXhXcWhfdlhpbEUyOEdLMVJMcjZtZ0xjWFk3WG1PVGRRWW5fN1R0U2gxODNLWS1jNXBiUE8tNlBldEN4Y3UyQmdMVTFSelE4QUM4MDF0Ti1BT3dCQXk4MzlIaE1jWVRTdVJONkoxa256SGUxdDRCejdXeEx0TkU?oc=5",
-      "published": "2026-08-05T07:48:15-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "8466bb077abd64f1",
-      "search_section": "Military",
-      "title": "Romania Fits Nearly a Fleet’s Worth of Roles Into One Ground Robot",
-      "summary": "",
-      "source": "The Defense Post",
-      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9pRC1pWTJBUUFLRWdNWjVuVjYxdm5ZdmM2aEJ4OUlQYzViUm05blRSc0Y4aHViSk9sbkVoSHR1eDFBWXFNU3dFUjBqME4wS1V1WHNxREF6YWZMYmwydVMwcEpTeVpqZDVRYzdweXVpUE1hNjJQ0gF6QVVfeXFMTjlBYldzMW1UNGpGUFhZb3laUENLbzd5REFxLU1UaVY3MUZyUUdsVHJYUUtNTmZIaHo2TVA3SzNLcXVwQ250SUVtMDlGZjFKOHRUZmhlYnJwT2draUd4cVFuLUFiMnM3UnhMS2VWMlZXaHpPYUtKUnVrSHc?oc=5",
-      "published": "2026-08-05T07:48:14-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "ff8cb1ca0a9dcc9d",
       "search_section": "International",
       "title": "Ramesh Awasthi Demands Kanpur's Inclusion in Delhi–Varanasi Bullet Train Project, Raises Issue in Lok Sabha",
       "summary": "",
       "source": "Republic World",
-      "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxOV0ZseXJHRGlzMUVOU21fSG9FdjVjTU5oSklRSXRhNV90M1JvLVBzQ1RVaDliaVI1ZGJMekN6S2stNzNLbnd1SWpKdVc3S0h3ZFZKVnA5Y0JpQXB1eFR6eG5YanZsWnFuenJWUlRlOTNEMmNfZGZPZVQ2cTZBUHczUHlRR2ZaanFoSk1zYi1BNGdPMnhDbXpNVDdCcmJDNkRvVGRaSkJlUnFtd3A5dWtQX1h0UkQ4WFZ4dTdZTXVEWWVzTnYyanBqaTU5QWZfYWt5b0RLazIyRWE2NlVKZGVJZFhRRDJzV09PeF9WQ3FoNUp5d3ltVUHSAfYBQVVfeXFMTldGbHlyR0RpczFFTlNtX0hvRXY1Y01OaEpJUUl0YTVfdDNSby1Qc0NUVWg5YmlSNWRiTHpDektrLTczS253dUlqSnVXN0tId2RWSlZwOWNCaUFwdXhUenhuWGp2bFpxbnpyVlJUZTkzRDJjX2RmT2VUNnE2QVB3M1B5UUdmWmpxaEpNc2ItQTRnTzJ4Q216TVQ3QnJiQzZEb1RkWkpCZVJxbXdwOXVrUF9YdFJEOFhWeHU3WU11RFllc052Mmpwamk1OUFmX2FreW9ES2syMkVhNjZVSmRlSWRYUUQyc1dPT3hfVkNxaDVKeXd5bVVB?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxPN3hxY0VzWVNDdldQVzZvMTRNZ0hLMlRkQXIwWWNmZHlXLVpNb1lIUVN5WEtUM2ZuX0Q2VHc5Xzdoc1lsak5ERDU1c3JLSzNjbG15bXVXOVBKejZoVzNHejFvem9UZnRPa3FDSF9xbUVhYW44OTlyeUM3ZGd1b29HNTNWdTdjWjkxamNkakZvZk9ITmN5eTk3S3pmekxnbXNwdV9ZOV9SeDFDV0o5akJZbzRhdnJTVmZMeHlrcTBnM0J3UEREYnJyV091ODQtWnUyQTI1R29JNER6dnRXT3dCZmZkXzUyM2JBTmNHTUtUV0LSAfYBQVVfeXFMTldGbHlyR0RpczFFTlNtX0hvRXY1Y01OaEpJUUl0YTVfdDNSby1Qc0NUVWg5YmlSNWRiTHpDektrLTczS253dUlqSnVXN0tId2RWSlZwOWNCaUFwdXhUenhuWGp2bFpxbnpyVlJUZTkzRDJjX2RmT2VUNnE2QVB3M1B5UUdmWmpxaEpNc2ItQTRnTzJ4Q216TVQ3QnJiQzZEb1RkWkpCZVJxbXdwOXVrUF9YdFJEOFhWeHU3WU11RFllc052Mmpwamk1OUFmX2FreW9ES2syMkVhNjZVSmRlSWRYUUQyc1dPT3hfVkNxaDVKeXd5bVVB?oc=5",
       "published": "2026-08-05T07:45:58-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "ab8acb3f347f1396",
-      "search_section": "Military",
-      "title": "Royal Navy demonstrates Wildcat helicopter controlling aerial drones",
-      "summary": "",
-      "source": "Navy Lookout",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQbzl6VHpaaWhYMHQwVFlwVEQ5cVV2dzFFNHktQ2NxOExURHJfTE85c0Uwd1pDcWJmazJ1NHlYRFU1bjlrVlRIQnlEcS1sMmNVVHNfaVg4TTVENmlTNTlBV2cwR1laNHlJSkFRU0ZITy1ucXlzLVZudEpJaW1JeEdMaFlSbUxFeDQ0NWhfZlpiM1BvR3BINm5UWkpRd0NWdw?oc=5",
-      "published": "2026-08-05T07:43:45-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -752,13 +1335,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "c0cb499fbd0aa514",
-      "search_section": "Military",
-      "title": "AI-Driven X-62 Intercepts Crewed Jets in Test",
+      "id": "df5fab20f88c2299",
+      "search_section": "Autonomous Vehicles",
+      "title": "Uber doubles down on robotaxi plans, shares fall on weak profit forecast",
       "summary": "",
-      "source": "RealClearDefense",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPZ3U2X3Fockk4SHdPODlBX0RCb0U0VnFtSkZ6N2xkNUJadTNpaU0wSjBHTGQtUUlYQnpVaVNlZTZYRW9aMlNocUdIbWxxdVAyOVFVMWMzVm5KUkdsd19lSmJYaW9STFQ5dHpfMEw0TUZ2WVpMQnRFT1JFV3hCTWo0TjE0Z3Y2dGlKNkpfWGVpN05pbXFPaHVUMXJkNkJnTUhPOWZCVA?oc=5",
-      "published": "2026-08-05T07:41:27-04:00",
+      "source": "CTV News",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOTUs5ZVhzYURCRG01NktTTjQydmpLYllnd0dHVGx4djVEZjJ1WkRNODlmemFzR3pVdWgzRUtkRUV3TkFCR3JDeFZFZ0JXdWpnT1N4MGRfSHlQd1pOam9NZFNlTXdTbGoyRll6R2pHMlphbFZTTC1XM0FoLTAyU0xzVHViMHJtNmNmc1ZUMEZ3dUNJcElDQjY5Ul9tNXpnMW5rdmY3NjdfV2VvRXZHVjFHcU5LeDBCUEZSSXVZ?oc=5",
+      "published": "2026-08-05T07:36:22-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -774,17 +1357,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "8716a4e7b9fd471b",
-      "search_section": "Military",
-      "title": "27-Year-Old AI Researcher Is Building Software to Detect Drone Swarms That Can't Be Jammed",
-      "summary": "",
-      "source": "PRLog",
-      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPOVNlWG5LT0c1Vjd6cDdyYXExSUswZGFGRGFlQWRpTzRUZWNPWWNWSWJlNDZEYWlFUnVBeFFxZE5CTWhldVBXaWZxWGdmdnVhQnZaWGU2VTAybXkwTVhCd0NKRHJUQVZlZmxnUkMtUURMcEFkaFJWUWs4YTNpRC1oSFZaZ3kzTE05ajNlUmxocFA3N2pYdWNmbEw4TFN6TmxwcnViYlZCMzZTTEJZZ1R5ZnV4b3pfbDRCZF9YanVMNlE3NG8?oc=5",
-      "published": "2026-08-05T07:35:34-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "7f80e08e0cb70703",
       "search_section": "Autonomous Vehicles",
       "title": "Uber Issues Weak Profit Outlook, Pledges Over $10 Billion for Robotaxi Push",
@@ -792,28 +1364,6 @@
       "source": "finance.biggo.com",
       "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1SVXNZZW5pdWdlVjN6QjdFSGY1bkxjTTczWVZ4N1VYUVY4RXFyUjdudUpKeURxTEZDc0pkRXZRSVB5c0pTSkF5ZHZwdFRzOUhsTTA0d0cwWndqUTlOSXdKX1FPM1BmNlEwSFlZdGpRa2NOUXo1a0E?oc=5",
       "published": "2026-08-05T07:35:00-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "cb4234de23a87478",
-      "search_section": "Other Advanced Transportation",
-      "title": "Mitsubishi Electric launches S-EIV-X rail energy inverter",
-      "summary": "",
-      "source": "Engineering.com",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPRkNmREYyeDFtSlFBdW83bkROMzlqeERZU0JuNzJJR3lJcldxNlFzX0lkQ1g0bmV0X1pYX0V0MnBVc2xOdUp3Umw3Y2R5amRmVmJGRm1Xd0V4YXFTbm9vQWxMdnRWU1ZvTFZIbTFOUm1IOWJJSVV3bHlKMlY0bGlYMUxwa0V4UlQ2TElRVEFLWQ?oc=5",
-      "published": "2026-08-05T07:34:16-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "12e7adf1d4ad7e6d",
-      "search_section": "Military",
-      "title": "South African aerospace firm unveils new aerial vehicles intended to solve a challenging security problem that affects ‘many nations’",
-      "summary": "",
-      "source": "Business Insider Africa",
-      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxOUHl2NGRpc0llX0U2QnpLMnI3YXlybjRlWHlPU25NSEVJT21Pd1ROX0hmd29CcWlzd0Q2YlVRZkFvYVhWYzZhTjB2UnFVTktNUFR0ZW11OEw3U3NZSkVHdXdJM0ZwQUF4NU5ORGZOWnNfU1lxSm8wMVJYeDMxX1lCLVZudENLLXh5Y1V6ZjNtMWw0OUhHcnVuOUNIeGN2NWMyWVQ1M201WldhRXl5Ymd1U2tjSjFzazkwNU5pVTh4SmJUMU9fYTlfQnVBQTNYZw?oc=5",
-      "published": "2026-08-05T07:30:12-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -829,28 +1379,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "9b1d68304e1a7692",
-      "search_section": "Military",
-      "title": "Russian missile and drone attack on Kyiv leaves 14 dead",
-      "summary": "",
-      "source": "operativmm.az",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNelV6bFlLUFJCVWdoTnU3eVlkQll1SE5QLWNkOE5JYVViNEpvWWo4NW9BSEJBbUxvWmR3NVgxOGxJMkkxUUl4dVBpVzZOUFE0M3NJR0hkYkVtVERTR0VPd2ppc05yQ0ZnUTJPc040d18zZ2lQd0hrcUwtaTE4UlJrVVg0S2gzVFlTSzRScURIMXA5MTN0M2c?oc=5",
-      "published": "2026-08-05T07:26:54-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "fc50156ce45ad4bf",
-      "search_section": "Military",
-      "title": "Car Bomb Rocks Russia’s FPV Drone Program, Seriously Injuring Key Developer",
-      "summary": "",
-      "source": "UNITED24 Media",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOR0ZZMG5vVzc2cVZUZzRiU3hZTGRaNll6TDRCd3REajV2MUtWTVFKQjVWaFdsWlYtOTdxLTR0UzNGY2RzcGJESFcxZVF0elA4cVpjVUJLbVBYUXBxOEVHQUZXOE9fc1BuUmhfR2EtWDgyOVM2QzRtZUdjYm1wVnlDYTFMbjZBemE2Y3hwUlNPUWJPdk1CcW9lczdnQkxhUnJzc25SUUJJdWFaN2VmZ3lmdzcza3M4b2pzZm80Ug?oc=5",
-      "published": "2026-08-05T07:26:18-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "3d4deb3267b2705d",
       "search_section": "International",
       "title": "Uber and Wayve get TfL approval for supervised robotaxi service in London",
@@ -858,50 +1386,6 @@
       "source": "Zag Daily",
       "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNWFBneW5XR2dXeWM0THVQU3IyeUNMNjM0TUJGX251X3ZGZTdtdUFVcTBPa0JTc2xDWmlLeHljdDNsQTRjS0dtVDlSMkF5Umk5eXpnVFE5MDhnUDFrdEVjZmswRjJUVE16Y1FyRU9hNU5WOExrVTdxbWhoYlA0LUFqMEEya0FGT0dhdmkxWU5NOXpZakdEcWplbXd6eFlpZmZoeDNMYzN0Njk?oc=5",
       "published": "2026-08-05T07:23:08-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "1686cd6361ab0379",
-      "search_section": "Military",
-      "title": "Russian missile and drone barrage in Ukrainian capital region kills at least 17",
-      "summary": "",
-      "source": "Southend Echo",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQQzZ0Y18wTmxoZUZod3JyVUhJY2RuZzlNenNuRDI4aEhkS0I4MlBfV0dyRkttSlBSZURGbnMzazNMTUxmVUdRbDFROXBVczYzRE83SjJCZXBEeGJZSEVEdUVNVE9KWjZnam1hZjdQMFBCcWZsS1diVzg3YV9SVV9ySEVFWjBCWHZFd2ItcjFZQnVtQmxsV3lab2RlYzcwUHhCc0M1QU9Oamg2TW9jajJlWk9pZGM2WEJ6VFpseUNFVWxyWF9iNUlz?oc=5",
-      "published": "2026-08-05T07:22:31-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "2c4d71cff300ed8a",
-      "search_section": "Military",
-      "title": "Russian missile and drone barrage in Ukrainian capital region kills at least 17",
-      "summary": "",
-      "source": "Brentwood Live",
-      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQVG8td2FLUGxCMU44ckpQd2J3S3N4LUJTVWFIWUFHdnFtUnR3bG1TZmZ1WGZPVUl6ODlGd0lmVUwwVUx3WklOeDNfYUFmZ2RDdm9pVWNGeWtIUFAzS09uNXRQREdrNDRqR0pWMF9xYTZ5dGdDbk1pekNDekNadUthT0lFTnBQRkE0bVQtcGFVV0lPM1dxRHFGeDd2TFdHakVTdzN3OGtRelVGZE9JOUlnWllpUHJXN2o5TVNXUUc4MEQzNkluWVFMcmlB?oc=5",
-      "published": "2026-08-05T07:22:31-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "e3181a64464dd127",
-      "search_section": "Military",
-      "title": "Russian missile and drone barrage in Ukrainian capital region kills at least 17",
-      "summary": "",
-      "source": "London Now",
-      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNTmZqUjdwanFMX2Z4enZBb0V2OWd4cmZ5R1F1S3VVQXRuaWRWWHg3MUgzOGwxLVM4X2oyc1lPWW1WYlhVMmx6dTAxMmVkZkx0RTZSellPMk8wYktVVDdUcU9LSHdBN2xGb2NiQUdvV2V2M3QtRWZWQUxUM1FQemN5RGpFbTdxaW4xZ3dveFlNZVBpTUdRaUFjN2RTVkhWY0N3U2dwN3RrWVRzMUpYazh5WUZPSW1HejdEdEtmZ3Q3NVBHbXNTb0E3Yg?oc=5",
-      "published": "2026-08-05T07:22:31-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "2597b72bfd95d3cc",
-      "search_section": "UAS and Drones",
-      "title": "SPARC AI Expands U.S. Operations with Dedicated Federal and Public Safety Team",
-      "summary": "",
-      "source": "GlobeNewswire",
-      "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxPY1hyNHdXa0doWXplR0FIeXJLRDdMcDc5Y2FUbFREMHpocW43TDV0UGNoVWFHUEZPZFhDSnJRY2xuMmhQLTIzRkxRUGRiVTc4UDhGSmZkQ3BQcmh5LWJscGZ2Wnltby1NMGVucnM5aUNoQzItYmhTdXhvOGFnZXVteXhOZkVxSFBMQVAtSWhxbzV4T0ZNdGxoSXNCdlBaNGtycXVuLUpBRENOTFMzSXQ4RnRubEhGcmtrT3BJX05WNXdtdGVuTFBFMFVyNE9fdktoSFdkcVVRV0lDOXBNMkFaWjRQWQ?oc=5",
-      "published": "2026-08-05T07:19:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -928,17 +1412,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "1c101a578896bd85",
-      "search_section": "Military",
-      "title": "Kyiv Hit by Deadly Russian Missile and Drone Attack, 15 Killed",
-      "summary": "",
-      "source": "Pratidin Time",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOZUJKNnZJZGNFQTJZaGhYejNTUVNnVXNFcmxWNEhEdDVocHRLWVlvSHFOa2trY0NyOUpPbXVoa052cWw2QVR4Q2lHNGRTWm9uMU5FNW5UR0VnTzNoczk2WnFZNjhrV08tWVlUZGtGb3ZhWHk4b1NVakhFSzZtSjRJRGs1d05seHg1czZTUGFVVGUza1ZLUXF3NXRWR1FSUlRkbVcyZV9ieG7SAagBQVVfeXFMTmVCSjZ2SWRjRUEyWWhoWHozU1FTZ1VzRXJsVjRIRHQ1aHB0S1lZb0hxTmtra2NDcjlKT211aGtOdnFsNkFUeENpRzRkU1pvbjFORTVuVEdFZ08zaHM5NlpxWTY4a1dPLVlZVGRrRm92YVh5OG9TVWpIRUs2bUo0SURrNXdObHh4NXM2U1BhVVRlM2tWS1FxdzV0VkdRUlJUZG1XMmVfYnhu?oc=5",
-      "published": "2026-08-05T07:13:30-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "ea18fced1c5c232a",
       "search_section": "Autonomous Vehicles",
       "title": "Uber commits $10bn to expand robotaxi network as cash flow strengthens",
@@ -950,11 +1423,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cd875858f45f047c",
+      "id": "bedb4abe7970987f",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Archer Aviation’s Midnight Aircraft Completes California Pilot",
       "summary": "",
-      "source": "Airport Industry-News",
+      "source": "airportindustry-news.com",
       "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNWG0tc0dLZEhPbnZOdGhvRXg0Z0JPU0J5cDBpaTdUcXdBR1lIMXFhamdiR0U2QnZVRDJQVjZsX3JvSVFRVGxGZGlRbmU2WXJtNG1Cd2FKUW5kaUxqcUNtajhwa2tRUzRUWnltemVTUmJIZGQxLTZXVFAtUTgzTGNDY3pfWXNIWjB6cDF6eXpKekZtLVZHUzNUaEFJMA?oc=5",
       "published": "2026-08-05T07:13:02-04:00",
       "date_label": "Aug. 5, 2026",
@@ -994,22 +1467,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "2ff505a3c6cfcec6",
-      "search_section": "Autonomous Vehicles",
-      "title": "Uber forecasts weak quarterly profit, doubles down on robotaxi investment plans",
-      "summary": "",
-      "source": "Reuters",
-      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQZ3J1dFMxT25JMzZ3LVQ5aXllS29CSHFoa1RCd3V0bGV0eWxIUTFrMUtRNE1rRG5IcGd5YzVqeGlLOTU0T3JiZjZqTnU2TmR4UXUzWTEtbHJCRDhadlFTRHQwTG0yQktJR09nQWNKYkNSNF8zYTMxdnpGeUFtLWdTZzVyYnJiOThiUHN0ajZFVXJKelF1dzRSQUNYd1A1N1I3ZDQ3Zkc2WlpzSGJ1LTNzZHFNaGZJbGphUW1XNURUaUs2LWpEWWFTSlEteUg3aGtxVUp4Q2pUTnY?oc=5",
-      "published": "2026-08-05T07:02:06-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "6e3ccbe8f0ef2340",
+      "id": "5a2abdd0ea29d35b",
       "search_section": "International",
       "title": "Maiden voyage for India’s first hydrogen train signals the country’s ambitions in this area",
       "summary": "",
-      "source": "chemistryworld.com",
+      "source": "Chemistry World",
       "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNWnJkN1diOEZhcFl4bGlFbTBpQmZtWGExSDdLb0FJZ3N1UzA1Vnc1a1p5TGVaMkFkb29KWk1yTVNYWUJWdnJfZ21aZ09RS19GM1pjX2VNWk4yZjJ3VjAzMkpBRmJFZVdZQktTSmptT2JXMjlIaFp5RGN5OURrZkpKVjhYRTVEZDA4dTNaMFNxLTlUdTZIaHBvbVJ0eXpZRkZEVGpuTUlIeTA5cFNOb3JyU1V4TlhzUW9Zc2c3YmpoSjZyUTlRa1NyR2xjbU1PSHpIdExfa1ZCQWE?oc=5",
       "published": "2026-08-05T06:58:07-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1038,6 +1500,28 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "f7ca79eee5f2a43c",
+      "search_section": "Autonomous Vehicles",
+      "title": "Rivian (RIVN) Faces Chinese EV Cost Pressure As Uber Robotaxi Plans Advance",
+      "summary": "",
+      "source": "simplywall.st",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPbGRZd2JPRUxxWHdWN21JU0dsanJlRzExT25oZ3FGZ2V0ZXNEQlBKcTJpalhVOVQxelRqMlQzV212NnFmREptUmk3VFRzdk82eDNjNEtmczBKeW1DU3FpSzVxa1MxYThTYVB0Z1ZsSTNDbDl5bGdSa1FhWDlrNWpPb0pOaHVhVG5FaE5WZWNYTFg0ZlFudF9JOUp3SG5IRjZidHhPbmxRNmdxVGk1YU1Xd2FkeWJCZmVSQnQtWXkyMHh0REFJcXk3ODB3ZTB0aXdjUjZoRdIB2gFBVV95cUxOQTZxTktnUXhUb09yV2JWOE12QUpJaGJBZkp4QmZfSkFGdlYxQ3NGMmxYUVM4YlRZSUpCbXVLa0NBb3c1SkhnWEgwS1RrTW1ocGlWR1hWaE5jOE9oVEdjamxXZThMRjJHSDExeVVpeW5ONXNIWHB1WTJoUU9taU1tWmNYZ1NETURYRWFxNHBOTkZTaVIyYlVOcTU1dE1qaDNqZWNfa0FQaGFEMlh5dnR2OEdwRElPSDZNYmFZSmpONVpCLTlPR19CVDhBN2ROUzg0QkdlY3ppajc5Zw?oc=5",
+      "published": "2026-08-05T06:42:09-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "92cd04acaafa5f9f",
+      "search_section": "International",
+      "title": "Uber Heads Into Earnings With Fresh AV Win – Wayve’s London Approval Puts Robotaxi Ambitions In Focus",
+      "summary": "",
+      "source": "Stocktwits",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQRVZJYm1EckE4SzRlX0sxR1RhUlhiOGQ4aTZyRHZ4V1R6OGY2czBoZTZ2ZHl4aW9lUkNQNENXMDZkOGc2QXZoZUpRRGxSaG54a2ZYNlhDekg2SG53cXZ2TVBpVUZWNTFaZXg0a09QMnZiMThWVTBlSkNUbjUycGp1R1JtUmtZcGhuRFRHWVdsbHRvdGhWVTYyQVIzZldnUHN4WUozNDNleEh6RjNMUXRQR3BTTlN4NW8?oc=5",
+      "published": "2026-08-05T06:39:16-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "1ea8a9dbed4f8a42",
       "search_section": "Trump Administration priorities",
       "title": "China hits back at US FCC bans with sanctions and drone curbs",
@@ -1060,6 +1544,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "19d3c6c3efc23b83",
+      "search_section": "Other Advanced Transportation",
+      "title": "Apple Crosses $10 Billion In Annual Sales In India For The First Time",
+      "summary": "",
+      "source": "Free Press Journal",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQLWVCV0VJdk1tdDBZRkVWY3hQenAwQ0NwRVpUV0JYZ3ZDOUVFakNSNi1yV29FZE1nakVZeUxtZjFrblpPOVZ3c2xzeXE3eFJvWjVEeTRZZlVIZ2xhNG1zR3VEaXI2TVJLYmc4ZFlWNFNGbmg2bWJUZ3FWMlAyRnJjTjJ6TkRLMjhJX3pXWnZhV2tMOXNKN2hZVU1wM21YVk9xSFR6aGZCRGPSAa4BQVVfeXFMTzNVSzhmV3JPcDA5bWxMY09EcEcyZlJIbWVISmt1dEd2TV9xUmNaZmMwZHVyV2N2cXI5QXpNbzJKbW9oRzFmUXpNRk43a3J4eG5aNWFOcWc0cDRramRGaVZub25mc2Q5SDBjQjFnWnNnWEhpX255VFNTOWJKWXJpZmxzZGhwLWRBeXNLOWpST1F2cF9fWWV0OEpnYnZaNmw1T0pjSFNmVEpUZm9zanRn?oc=5",
+      "published": "2026-08-05T06:27:26-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "7e8d0a508ef92a9b",
       "search_section": "Other Advanced Transportation",
       "title": "dwproton-11.0-10 released with a fix for Honkai: Star Rail",
@@ -1071,22 +1566,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "35931ed3cd509227",
+      "id": "7b425910f437841c",
       "search_section": "Other Advanced Transportation",
       "title": "California HSR and High Desert Corridor sign coordination MOU",
       "summary": "",
-      "source": "RAILMARKET.com",
+      "source": "railmarket.com",
       "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNb0c4eTNTdmI4LU1yVHpVMW9kM0xmdE9oaDkxXzVmaWFTUkg3LUpoRHZhVnZYLXJQb2VLX0NDd2l6Q1gzVEdETWNjcXlla012eVlrUmlVR2tDM3BpYlFkb3RoWno2cG9hLWxkQ25Nd2xiczA5WnlZdXBCbFk4T0F4eEdPNGZDRFctV05sR3AxM3NHRFVvbk4yc291dkd5NS1HN1JWZms3anB5VnpEdTNr?oc=5",
       "published": "2026-08-05T06:15:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "1cd0f1f1c6b69bb8",
+      "id": "c1ed18fa1d311f01",
       "search_section": "Trump Administration priorities",
       "title": "Horrifying video shows Russian drone chasing vegetable seller before exploding",
       "summary": "",
-      "source": "dagens.com",
+      "source": "Dagens.com",
       "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOT2tfOGhoc1hhejcybHU5U1E1UWF4ZWo3QnJVaFJDNDNNVHVaQ0xnemRWTkV6dXBUckVGdmF4c0ozSEpWMnZoazRpLVlvUUhOQkRHckEwaVVNX0RneVFTcnBvR0gyRkhjM0FTak8zVDRPVXlOQ0YyU0V2X0JlZkdpRmpVLU1WSTRZR1l0UlVRY1A3Z1cyUWpfcVVJV1F3bHZ4WUxxWTV6R0w?oc=5",
       "published": "2026-08-05T06:14:53-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1214,17 +1709,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "fa9527241fef761b",
-      "search_section": "Other Advanced Transportation",
-      "title": "NATO Nation’s BIG Snub To Trump; Turkey To Host Hamas Ops As Qatar Tightens Screws",
-      "summary": "",
-      "source": "The Times of India",
-      "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxNcm5saFpMajRjUUdVT3RBUnBQWnp6OG5HNVMtanJTdk9HNmhLaG0tX0ZVSFlnVXozNFpzUXBKU2JaQXhkeHlCNm1yMlZhcW1RN0tpMXNhb0J6VmlzSXN3eXdvMDZjeTZGZlVPS19qdkdHSlVtTkxyZEgybWxfOVJ0ZVRvZ3dTVXpOTGRlaG1tUHRSbkMzNFRXOHlSaEN6bVFLWjhLUDM4WlU0bVFhdFVja29obFhjVEluNXI1QnlybzItM2RMQTI3azhiY2R3MGRCcjJoNjM4RjdXTEFlZVZHd0VaQnh4QWJrQzVQNloxZDNwQTdlMThnV9IB-AFBVV95cUxNcm5saFpMajRjUUdVT3RBUnBQWnp6OG5HNVMtanJTdk9HNmhLaG0tX0ZVSFlnVXozNFpzUXBKU2JaQXhkeHlCNm1yMlZhcW1RN0tpMXNhb0J6VmlzSXN3eXdvMDZjeTZGZlVPS19qdkdHSlVtTkxyZEgybWxfOVJ0ZVRvZ3dTVXpOTGRlaG1tUHRSbkMzNFRXOHlSaEN6bVFLWjhLUDM4WlU0bVFhdFVja29obFhjVEluNXI1QnlybzItM2RMQTI3azhiY2R3MGRCcjJoNjM4RjdXTEFlZVZHd0VaQnh4QWJrQzVQNloxZDNwQTdlMThnVw?oc=5",
-      "published": "2026-08-05T05:36:59-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "bb802926fde8c5b6",
       "search_section": "UAS Security and C-UAS",
       "title": "Counter-drone expert takes charge of Army air-defense brigade for Japan, Guam",
@@ -1247,6 +1731,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "9154fb5a1c1e5237",
+      "search_section": "International",
+      "title": "China's Robotaxi Commercialization Landscape Advances to a New Stage: CaoCao MobilityBuildout",
+      "summary": "",
+      "source": "TechBullion",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOQTVVZGRMcmgzWXBJSTFHcEVSRXN6S05tWXdBblRXaHZYUEd3TGFsRkNSeXhsa1k5akl1REg0anVmVUw1TUFhdlJiN1NfaXByWjBCOGRiZjgzd2VRMGhBaFVKVDAwakJXVGZ4X0lza2RxOFhqaFB3My12OFlHUmhOYWZxRWh0UUNuTEEzODQtMS0tb3pZLXVWdmJJa213Q3cwdjdzTk5ISkFqVlc4U3F2YVRiRURwcEE?oc=5",
+      "published": "2026-08-05T05:23:21-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "1b8d1fa8170eb738",
       "search_section": "Trump Administration priorities",
       "title": "China hits US with sanctions, drone export curbs ahead of Xi visit",
@@ -1258,11 +1753,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "feb6c965293d41ea",
+      "id": "53ec304824c5ec5f",
       "search_section": "UAS Security and C-UAS",
       "title": "Defense officials target 2027 for integrated counter-drone network",
       "summary": "",
-      "source": "focustaiwan.tw",
+      "source": "Focus Taiwan",
       "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE91SXg5elY4UVdDRXFJNlZValhSZEtTMkRRZmZVMG5mNEVmOWRCbWQ5Z0t4eXlqMEN5MDZpSUtFUENnSmliZUljUHJtR0U0LWxMSk1QcjlMWQ?oc=5",
       "published": "2026-08-05T05:15:00-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1335,33 +1830,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "06e1e5db56d7ed4e",
+      "id": "78fa37cc964f2610",
       "search_section": "UAS Security and C-UAS",
       "title": "Majority of Organizations Lack Drone Mitigation Due to Legal Restrictions",
       "summary": "",
-      "source": "securitymagazine.com",
+      "source": "Security Magazine",
       "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOck9XX0hwTVlVWVh3c0RBT29DanRlSWtjd2NoWU80Sk1sZEpCNEFxVUJPcnhUNFFfZ1dMSjVKWExRaHRVcGJXaldpMUNQYVhSNFRCSTFabkZpVzNyc0g0Z0Ytc0NFQnB4RU1SODhTWlM1VGhnNVBuVDlWcXVsOXdLU2Z0UmwzUmFrR2tBT2xqUzRKT2dTOXl4MHYyRUUtR2MyYUVLZk9YWmo5XzlpcnpsczZiWVhHYlNDcTh1ZVNBNA?oc=5",
       "published": "2026-08-05T05:00:00-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "bb6685c3c3b5dd36",
-      "search_section": "Other Advanced Transportation",
-      "title": "Travellers warned rail upgrades will affect journeys across two August weekends",
-      "summary": "",
-      "source": "Doncaster Free Press",
-      "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxNUkJwcjQwUFJYZUx4bnloRllGU3h3cTNOUXJjYUdHeEJlUTlJSE1xajBCa2FUam1LLWlmVnl1NWVfSVdaWmFZTEVIZnp5WF9lb3pLYm1KcDZjekc2Q3dmbTYwbWU5Z3lURkY1ZS1HSk5xeUo0TFFnU0YwUDJNNWZCMVVZTzVMY0o3WkIyOG9MUWlFeGo5SlN0eVdZWWVDYXRZbTgySnZ3eDRPTlVtSWg0SDlfODc2dHRlRG5iRUVWeW9jTGlpNVdUV0NueHpmckpRTEY4bWNn?oc=5",
-      "published": "2026-08-05T04:59:00-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "fa24141eede8e8f0",
+      "id": "ff2ccd462a623c78",
       "search_section": "Other Advanced Transportation",
       "title": "Britain’s Rail Workforce Will Shape the Future of Uniform Design",
       "summary": "",
-      "source": "Business Lancashire",
+      "source": "businesslancashire.co.uk",
       "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPQjFkckNTZEYxOHlwdmVLYk1oWXlnRmRoNm8tMUkwWlp2UmQ5LWdtblhIUGluR0daRHZFdkQ3Qm5KdFlQeVhua1NJMEVTOHR3MmduUWNmOGtpWlUtTFpBS2NYU29uZW1icWV1V2d5bGdnc2pnS3ZEMXZtODh6dndhV2I0TG1LUy10UzVlOGRscllYVk40d2l0OGdIUldENHMwTF9PVWV1UlFMc3c4VGdjb2pn?oc=5",
       "published": "2026-08-05T04:55:12-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1412,13 +1896,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "82c2703dd82224e9",
-      "search_section": "Trump Administration priorities",
-      "title": "The Office of Strategic Capital Signs $820 Million Conditional Loan Commitment with Perfor",
+      "id": "602a71bccabeb91d",
+      "search_section": "UAS Security and C-UAS",
+      "title": "12 Companies Win Spots on DHS $1.5B Counter-Drone IDIQ",
       "summary": "",
-      "source": "U.S. Department of War (.gov)",
-      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOWEEyVnJ3dHRIbDJzRGhFLWIyYmV6SkxuTVVBdE5IU1VwNFRBMWFDUUpEWmduaUxWWE1Oel9QekNqNHZqSzNxbjI2ZTZLR21MM1duZ2ItS1F5M2JpRm5WQTBkUFA5Y3NRMTVPd0Y5TkduVFdmZ1BhLWVMdlpJNE5GVWhGX3lRZlJEWkpOMnJLVnZSWVpOVXFxN3NoNzY1S08zVjh5TV9MbVBZbGJuT29sUjRmdi03MTBZdUkyMzVuczZpWkMtT1dYMVNjM3N5QzRoNmltMQ?oc=5",
-      "published": "2026-08-05T04:37:51-04:00",
+      "source": "ExecutiveBiz",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPeGR1ZGNYV2ptWVdvaVBoc3BVV2pCWHQyVlVkd1JQZTVhaWFRQWZTSTVTSXl6QmZhNGJUSEJnUnlKNXBDMTJ5RlpwRHNhM1dOX3Z2TkYxUldMY09QR3Z0S2lPYTRmWlFKUk9rcDVQZVVodThJMUJJb2hwWnlVemJMRmVhQQ?oc=5",
+      "published": "2026-08-05T04:41:29-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -1434,24 +1918,24 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cee28074a2a08748",
+      "id": "c690918ae773f5f6",
       "search_section": "UAS Security and C-UAS",
       "title": "The U.S. Planned to Use Kurdish Militias to Destabilise Iran: Iranian Special Forces Just Assassinated Their Leaders",
       "summary": "",
-      "source": "Military Watch Magazine",
+      "source": "militarywatchmagazine.com",
       "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQTlp4dUU3YW9Bd2czazl6YUdoVzlWQ1NXaFhRUzEtU1VOY0Zrcmx2UGphYkRXN2pQMFdSanMteFR5dG16Y083dXBaOXpubTdjdlljRG5pZEZGbFltby0tZTd3VzBQV2dWWDhWVk9IZlJJdmZJbmoyQzV5b1J1WGxfVElZT1MtUFhRUGhwcUVReEFIRG85Vm9RSmFSVFU?oc=5",
       "published": "2026-08-05T04:31:53-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "64b7efa990851efe",
+      "id": "c9bfb73eca2b8d0c",
       "search_section": "Other Advanced Transportation",
       "title": "Bullet Train Power Line Gets Mangrove Clearance in India",
       "summary": "",
-      "source": "Railway Supply",
+      "source": "railway.supply",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOd2ZuZGNYb2s0b1VaRG1SY19IV091RHdOamtpalhGT3Y3Qmhacy11LXdvT0hqdHJCbGpqYmJWckRxUW1WdnVINk15MDhVOWVLN1VjdXR6SkJ4ZHpTZFlRSXJVd3VjVUZ4SEppaGxFdVZtMV9BQ0tMRERZSG9aZW1SNTd6UEZINC0wTElMSQ?oc=5",
-      "published": "2026-08-05T04:31:25-04:00",
+      "published": "2026-08-05T04:30:58-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -1467,33 +1951,44 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "9fa52b2433894f8f",
+      "id": "a6cb565b98661b6c",
       "search_section": "Other Advanced Transportation",
       "title": "Building Cyber Resilience Into Rail",
       "summary": "",
       "source": "Railway-News",
       "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBLdkZrb1g4QkRXWHYtcThpWUhHR20ycDBmSWJic2VTbWp4VWFFOHl6dWpIV01LT09uNDZZdzRubFhXc2pjdkxhTk9TanZJYy0xRXc5Vm1YUTl0S2RjUEhqREV4NlYzUmtHQlNDWG14ejdkMGJQYmdpU09rZw?oc=5",
-      "published": "2026-08-05T04:27:22-04:00",
+      "published": "2026-08-05T04:26:38-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "d89b8aa16fca3ab0",
+      "id": "156e7b73dadfffa2",
       "search_section": "Other Advanced Transportation",
       "title": "Mastercard Closes BVNK Deal: $30B Stablecoin Rail, Open USD",
       "summary": "",
-      "source": "FinanceFeeds",
+      "source": "financefeeds.com",
       "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOa1A3TUtKNkhLeTlaZ1JhRzhKNnBiMUJVZ1hXQzF2b2lMa01GNTZWS0E4Q1RVMmJjaHRHM1JfMHFSQzM0bnJ6ajBMRzJvZHZLVGRmdHZ4Z2EyZWRETm9qWUsweDUwQ2lxeDNtM2RfXzRUaUdvTHlVb1VXLUVtb2tXTVg2cGlFRmlISjZrYjVWOGQzWHZJc0tFdzhGYS1CdFlBVjhiMkRWa3k?oc=5",
       "published": "2026-08-05T04:21:35-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "0067e0db71d5bbb7",
+      "id": "d5a96e287c2489b1",
+      "search_section": "UAS and Drones",
+      "title": "700 drones confiscated during FIFA World Cup security operation",
+      "summary": "",
+      "source": "DroneDJ",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9rNUcyUkpiR1NabHhUS0N1LXlqSkNTZ0ZtNEFBSXA3ZElhTFMzUWFKc1RUZE0zc0NfU2FHeGhMLV9ndTJkdkVFeXVhclB1U0hwbTROQTVaNXRtU1ZyR2JrTEZaQTQ3cUhlTkhZ?oc=5",
+      "published": "2026-08-05T04:18:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "d2c6836aa350cb95",
       "search_section": "UAS and Drones",
       "title": "Drone find at German airport leads to flight disruption. A runway is still closed",
       "summary": "",
-      "source": "NewsBreak: Local News & Alerts",
+      "source": "newsbreak.com",
       "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQMUlRUDBXYUhleFFNQmdNaXVaQXQxc21tdFE0b242aTF2YXk3ek1JRm1Dd2xUUDJkSGlwdEg4R2xBOERqdUtGS0tqZFVncnFLNWl0c0xpRXlNd3BNV2U4WWlLX1U3U0JBVFBocFR3T25laTNHbjRkaW1WOGVqRDdaaU9UdlFSRzFOV2U2ZGlFMHltb1dMeFhFaVh1SXRJMzNDRGZhWUowaWQ3UU1FQkxqZ3l2Ulhjbmc2WU1kaGNoeUNPV0Q1N3pkTU5MTy1JUEN4X19r?oc=5",
       "published": "2026-08-05T04:11:22-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1507,17 +2002,6 @@
       "source": "EnterpriseAM",
       "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBCcFdtSjE1bW5pMlREMHVqWTYwcW1xajViLWZvTmU1MUk0MUZiX2pPay12Nm5RS0tzdmJjYU9VY2hjUi10enNsYk1qcEZqc3FQc3dEZE1CaTJRYTJvVWc?oc=5",
       "published": "2026-08-05T04:10:18-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "fd6e9e130b47e092",
-      "search_section": "International",
-      "title": "World-record Yangtze tunnel to carry 350 km/h high-speed trains",
-      "summary": "",
-      "source": "thetraveler.org",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPaks3VE4wRkdhSFdPS3d1aVFaNmwxaFM5aWJUSjg1S1RMZlB5SE9vYS04RjRraTVYRUJmaWRVb2tkakpVcTFhZDNEaDBCeV92S1RCd3FYQXhqLTdHTkY2VFNXX0JzUGZLQnE0N3ZnOVZYenlQMm96Wms3T1hSS2FNaUJKVzFhSnJHb0VlNWpYSHRISU9aNFVZ?oc=5",
-      "published": "2026-08-05T04:09:15-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -1566,11 +2050,33 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "62cfd962ed34b0e9",
+      "id": "fe699c1cbd1d861d",
+      "search_section": "Other Advanced Transportation",
+      "title": "Class 99 on GBRf intermodal freight rail service",
+      "summary": "",
+      "source": "railmarket.com",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQZ3I1aWNSZHk0cExBUWJvMXJpSTFMMDBzME01VlAxeVZ3YXB5UTgtRmxKVmV6d0taZnZwb2NCbEV2Q3pJcHJpYU9TREtSbzRzSjJMemItYWh3U0xWLUdiRHc2cmJNcGRWWTE3Q1B3N3dpb2Z5SklTMTlwS3Fuam9RQzRGUGVycDJic09hOWFJeUxpd1pqU3o5TE9KS2twOWVIakE?oc=5",
+      "published": "2026-08-05T04:00:00-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "058c5d7625389f39",
       "search_section": "Autonomous Vehicles",
       "title": "Zoox Robotaxi Approval Clears Paid Driverless Rides",
       "summary": "",
-      "source": "FOX 56 News",
+      "source": "FOX4KC.com",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPb3FOMXZOUGZDRGVyWnlLTzJ6OThQdFp0UEVDWHJLVGp3NUw0QkRIYklqNFlRdkFCVFkzSy1sZzFsNTBlQmlnWm94M2ZtRVh0Z1YwYjhITkdvTmhiUkFvcG9ubWNSanNmd1k4d1o0ZDNzdmpjWDlrd2hYQ2R2b05RVUE5YmlWT0NCc0HSAY8BQVVfeXFMTVJ6eE1ZNEVQTkZYVGRsU1NQNExsRnRINnFxam5TQkpzVjB4Q2tPQngtdEVNY2pDMjlKY0RwLUJlc0U2M3JmMWc3Nm4xOTR1T1hnM2VkbDNfQlhPb09lUHlUaEdrYVViSExWVUNhZUdrWmg0Q0MzNTV4bTF1YlZud1p0eXk1TC15YTJDaVVZMnc?oc=5",
+      "published": "2026-08-05T03:58:01-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b3b711b26b670087",
+      "search_section": "Autonomous Vehicles",
+      "title": "Zoox Robotaxi Approval Clears Paid Driverless Rides",
+      "summary": "",
+      "source": "fox56news.com",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPSmZscnNGVk9rY205VlRKbFZ3QWtNSUxmSHJKYkJpanBWYzhDMmtnN0NKNlZPOG1vcHh3dXRVZnhDVTFSR2JLSFFIVUx3d0wzNGFnNklib2RKZG5QTXkxVjVWZXkzTFR2Y2d1MGx3dDliZkJiNUJaVnBSR3dUQ2JZR1l3c0dZTGxVOUI5OXNR0gGTAUFVX3lxTE5JNDZYbVRISTBfSHh0TjRrWFNuUlAxbGVBTXZFMHJ6Sjk1MGtFMmRCMFdvaHlPbTVoNUhXdjB1MHhfNVBZTVdoemJLU0tCZkZrZ1duU0FtZk53dnNHdl9xTDBOREs1QllteUd2Q0luanNVQUQ5NGprcEFDclZVN0RjZE9jRTM3QVpmb1NEVGdoUDNRYw?oc=5",
       "published": "2026-08-05T03:57:45-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1610,6 +2116,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "7ac69905927a5d80",
+      "search_section": "Autonomous Vehicles",
+      "title": "Arrow McLaren adds autonomous trucking pioneer Aurora as official partner",
+      "summary": "",
+      "source": "Gulf Today",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNenZQSkNLV0lwcXNSNmRpa1BraTN6ZmN3Nm9XYlV2V3hQSkc0VGJtUFoxM2labmY5NFN3enJXODF3WW1HRW1vanh5akNWdmZXeGJ2ajFKb2c3YUJ3Z0NiTk1DcDFkaHhEUWVEY2xsTWkzc1dRa2FmNkxJa0phUF9IX2lPc2JJZVRCY1ljSm9FZ3VUVVpSUjJjLTlPLTl0SUpISENnWDZWMUo0UTJ0c3Z1T1EtRjM0QQ?oc=5",
+      "published": "2026-08-05T03:45:03-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "ad424321b1f1414b",
       "search_section": "International",
       "title": "World record beneath the Yangtze River: 11.3 km of tunnelling for 350 km/h trains",
@@ -1632,22 +2149,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "882edec6e63ef8a7",
-      "search_section": "Trump Administration priorities",
-      "title": "Bolt, Stellantis, Pony.ai to launch autonomous vehicle test program in Luxembourg",
-      "summary": "",
-      "source": "101 WIXX",
-      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQaFZ3aVVqb3VJanJ2cUw3aWd2SU1SM0E4LUc1dFA3MGJ5OWVrUktqQ1lTcjFzX2NFYmZYYXpDR0tLQ1A2QVVFa3pLMFV3ZVZuVXR3S1VrWEpNM3lwT0lCLURmY2U1TVp6dEx3QW9wVHdWUENCRnA2Zmt0MGRiMXJ5UnRLeWVRSjU2dy1kYlE3WURIVTRJZWYzUWdFaXcwZzluOWdpWFVRX3BWMzJF?oc=5",
-      "published": "2026-08-05T03:27:39-04:00",
-      "date_label": "Aug. 5, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "c7dea40499178701",
+      "id": "c64de8494ba00f55",
       "search_section": "Autonomous Vehicles",
       "title": "China draws up safety rules for autonomous vehicles",
       "summary": "",
-      "source": "e.vnexpress.net",
+      "source": "VnExpress International",
       "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOaDlOaURGR3QzNzZQSHVETnExMHQtTjVzQUdXdWN5OFI3blNwd2k5b0Z6Ym5DdkE2a0EyRmJ2SXJvekZoX0FrTFAzWDhsODMyUll3b2pTZkM1cndFQ0U0RmR6ZDZYOFk3b0FVS3BONmtnMGxtRm1icXhGSjZpOGhoaWFXLWFVMm1sbDVVbkc4MWRSeVZpRU5YNXNxV254dFht?oc=5",
       "published": "2026-08-05T03:19:30-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1720,11 +2226,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "b6d8e00c33fbe0ea",
+      "id": "1ea44e262e35e727",
       "search_section": "UAS Security and C-UAS",
       "title": "Why is the Pentagon betting big on laser weapons now?",
       "summary": "",
-      "source": "Firstpost",
+      "source": "firstpost.com",
       "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPRGE0TjYyWUNqZGVJV0x4OFNHc2JCY3NHMUhFbVUzcGQxcGJjNzRwSXhsZ1cySjh0U3E5OTdkZ0ZlUHdsWlpRZEg1M1NPTDVrQ1NvRFEtZXl1SWVtRTE2LVJyQnZNWXZ4dlBJQ0ZmZ0pBNWRpLS1ZZEFuMTktOWxVT1A2bGs4U0lJNjVPRjA1VGQtNFlPbzh4V2U2bkhicnZJYXZQMWJxbXNCbjlMUmFYNlFtb9IBuAFBVV95cUxNd1RPVmtUUXRuSzdmOFF0WFg0SGJadUd4NDI4MVNBcXBhaTdVblB1R0pyRFU3TjdaVjNDak13Z2tRbzBEME5HS2RUbEZfZkVYYlQzelE2ZFk5NGFKdXdiaG5IQzRjbTNwektzdkNRVEFSQjg1X05rNzJVZkNQLVJncVEtRkF2VzhTeVhzMDN4ei1zU2J0eGpXTTJNNEdqenJvMDhtcEUzSnItVnloTE16ZnRwMGRvNGlp?oc=5",
       "published": "2026-08-05T02:42:43-04:00",
       "date_label": "Aug. 5, 2026",
@@ -1804,6 +2310,28 @@
       "source": "The Kathmandu Post",
       "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPSEN4VlJXVDh6aW56eDBfZVlNLVlyTjdjTlRfTWY0V01EWVZyZ1ZibmZJeXpMOXFzUmE4UG1DVVpmbTZqcDdWQllUekNoZU9IOF9yOTFjZVhBUW9IcDZwRXNXU3N0cEp4dExKaERYQUxpMlFQd2pnM1lZd0wxRU5QV2NPSnpFekItNFR5TXQyTjU2QmQ0ODdZVHMwMlJDWXg2NUFZeWlTT1ZlOWt2dHVvMlN1YUlXU21iXzVj?oc=5",
       "published": "2026-08-05T01:45:32-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "24ea3c44b8a7e34f",
+      "search_section": "Other Advanced Transportation",
+      "title": "Mbta Completes Red Line Infrastructure Work",
+      "summary": "",
+      "source": "megaproject.com",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQUTl4RWNWcGFaUzJUSDIxUmpWYVA0aGtON0JiZllrY1RoTmdlaEdjX3lNOG5Tc2pvYXBmUEhUbFdsNzFJOXVoaldSUVc4UUxlRUk4S2p4YWVVM2N4Ml9QTWttaEF5OTRhWmVYX1VhUGtGUXlyTGdNM1Z2MmFtVnRhVUFIZkdIb00?oc=5",
+      "published": "2026-08-05T01:41:11-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "e6f78fce46627fdc",
+      "search_section": "Other Advanced Transportation",
+      "title": "Fra Issuing New Noise Emission Guidance For High-Speed Trains",
+      "summary": "",
+      "source": "megaproject.com",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPaE5aYXhySzU3eVdGbUY4N01iUWNfWUViT3RPTnZockM0bWtqdkNES0tfanZnQndQMjQ5cFl5c3p3NlFUeVk4M2pUR1BCU0ZoNjZmRlFLMkJnZDU1NDEyMk5JU3p3bHpuODZzbURaV3paaVByS2ZRSXlCRVRlellFbmtmODhXc1VMVVJWUlFzNzdrb2xBZ1BCRW1HV0UzX3M?oc=5",
+      "published": "2026-08-05T01:40:56-04:00",
       "date_label": "Aug. 5, 2026",
       "origin": "Google News RSS"
     },
@@ -1907,6 +2435,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "740d3c59771d6547",
+      "search_section": "Other Advanced Transportation",
+      "title": "Fra Proposes Updated Noise Standards To Support Us High-Speed Rail",
+      "summary": "",
+      "source": "megaproject.com",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNNi0zZUl6OGlERnBUWEZMSlBqRVd3dVdXUnFmTXN4ZzdVdzBlTWxoV3NwMTZEZ3NKVXNYaUh5N0dtWXRZMDlDSWg0SzFsTWJhR1FyUUZiaVByMzdpYnpUWnllRjhRTHZmZ1RmR3JZbnFUblZGYURMOEdJcUdra2JTNjJXYkpsZnNjRUtlVGh1SUdmLVFQcEJid3YtUExBTExCZjdoczdB?oc=5",
+      "published": "2026-08-05T00:33:43-04:00",
+      "date_label": "Aug. 5, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "b349d59f6abf4e97",
       "search_section": "UAS Security and C-UAS",
       "title": "OUST Stock Hits 52-Week High Today — What Is The Counter-Drone Partnership With ARGUS About?",
@@ -1995,11 +2534,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "b872c447e11fcf66",
+      "id": "a60baf826b2da618",
       "search_section": "Autonomous Vehicles",
       "title": "Zoox Robotaxi Approval Clears Paid Driverless Rides",
       "summary": "",
-      "source": "NEWS10 ABC",
+      "source": "news10.com",
       "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPaVZZdFdCMno5by1VcV9SbmNaUzlpTHZCZDZRRlZINVNzZ1hkdlRsVElwWFc1M0hWQ3MwQlF2VmxNRDloX3VpekNpeGJjT2xQZ0wzTWUwaTIyMmpWN1UwQTBUbE9EODItWFlQbVMyR0ZTVFJIYUQ1R1o4MlhKV0FJc3R2RWI2U2d1ZUV1d0tVRkRqUkxq0gGUAUFVX3lxTE9pVll0V0IyejlvLVVxX1JuY1pTOWlMdkJkNlFGVkg1U3NnWGR2VGxUSXBYVzUzSFZDczBCUXZWbE1EOWhfdWl6Q2l4YmNPbFBnTDNNZTBpMjIyalY3VTBBMFRsT0Q4Mi1YWVBtUzJHRlNUUkhhRDVHWjgyWEpXQUlzdHZFYjZTZ3VlRXV3S1VGRGpSTGo?oc=5",
       "published": "2026-08-04T23:58:08-04:00",
       "date_label": "Aug. 4, 2026",
@@ -2083,24 +2622,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "0145a08210ab0cc4",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo Launches Robotaxi Service in Dallas",
+      "id": "945d6dec9f204d65",
+      "search_section": "Trump Administration priorities",
+      "title": "Iran and Oman draft waterway deal while Trump rejects Tehran's control and transit fees",
       "summary": "",
-      "source": "CleanTechnica",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQQU9mM3NqWUk0LTdDWTR5Smgwb0lXR0NzbGwtUFVTdGQ0NkFiOVVNM3pmOTEtdlhoWjFfVHJGTFBMTlJzZEw2enktWHA0Y1dnWGI0UzN1SGo2SWhyRlA0cEktSlhlMDVoR1RxX25vSGtza0lHV2d0a21hallWenpodkY0ZVJxdw?oc=5",
-      "published": "2026-08-04T23:17:22-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "fff48339d49abf3e",
-      "search_section": "Autonomous Vehicles",
-      "title": "CaoCao Inc., Dazhong Transportation plan Shanghai Robotaxi partnership",
-      "summary": "",
-      "source": "Gasgoo",
-      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQVV9TMlkwanJrWGRWWWhSSTlxMHlrQi1YM0NFMlEwaTRYQnpKZk00VWpGem5sZFFoTHVsMk1DekJPT3MtUEZCUFA1VXNfZWh0a2JoN3F5VE12V1VyanBxRlZEUGhmdnRtWWJQVmlOaU5BV0dQT2QxWGItN29sZlQwZ1ByNldWbDctZWlCSnE3eDd3R0VLRXpHc3JINzNVNXdtRG8xWG53dXRiZXhXX0J3Q0VoeHBEdDlWMXd5QnlObUpaZUd5aFBlMw?oc=5",
-      "published": "2026-08-04T23:13:39-04:00",
+      "source": "Inbox.eu",
+      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOTzZVVnFZLUd4VnpSbWNIc21uSG9wX0tvUXMtV1ZtcFotSkpoVm1vOTN3UnFXSGlDZ255UzVuSzVJbVQwM1JtUmJSTXoxckY5WXYzYk8wM3lqOHNPOXdRZkpQbHlnZ1V0ZXo4SDE5YUVpbnZiUnV1X1JsMnAxTm5tSk1MSlRDMmRDc0pJLWx4SlhCZC1IbFpmYi1ydml4NnlRbHVDd1RtU3ZpTndkWllVNktxSXdvVGc4QllNYVdlb09YV1FjUG1lNg?oc=5",
+      "published": "2026-08-04T22:54:57-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2112,28 +2640,6 @@
       "source": "Techiexpert.com",
       "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOTVBzLVg1MWEwNy1pVU9xTGFVM0VTUVpTelpFdkFNNkZIdFgtbVdhenhDRVFJNXBpMlJiS2dDREstT1BLWGU2cF9SaWE4SVF0X2lONVZUZjREYXdiNzNiN2lSTFJqbk1weHR2UU5rZXhkbUNqYnBHVV9QNVV4TWFsQkJRcjM?oc=5",
       "published": "2026-08-04T22:53:51-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "82099422042cfef7",
-      "search_section": "International",
-      "title": "Tesla’s cabin camera estimates driver age in latest software update [2026.8.6]",
-      "summary": "",
-      "source": "driveteslacanada.ca",
-      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPTFREbk5GaVZfaFVGakhDTUhvRUJaMkFqUFhZUFpuQXpkQ2tkX3J5R3pVUDFJTGlRbkwtYU5DRjNrbEktZjBvV0RFWFhSN0xET0RQTnRLMXBieUJhdDBzUy1TcF9tT25sZ1RrWVZwUzBxQ2l5WV9lQ19qSUVNZEVjTjdpLUtzNlRkSXRQUGpIdDhjVUFnWTZXLXBrdVB5WWxJdWxtbjY2WlZxWnFLMEE?oc=5",
-      "published": "2026-08-04T22:49:24-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "985b84b973ec5745",
-      "search_section": "International",
-      "title": "Haryana launches India’s first hydrogen train as part of green energy push",
-      "summary": "",
-      "source": "The News Mill",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOWXZyaDlmVUw3U2ZYVk9iNGF6eHpWMWp2VHBIM09iUV96YzFJdmlOazVtc3M5b3dSOTFSUXhYYjdWUlotZl9YNmRwUE5Gd0d3SGVsaUh6eWNVeDFtb1BUTklwYzhieDZ5d2huTHAzOVhZX0lhODBNRzMxS29rX2pLSkdaakIwQUJYWVNkRW90Zjc2ZUxsNjRqbzJZT2gycHZhOWJFeHktcUNGUQ?oc=5",
-      "published": "2026-08-04T22:47:09-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2237,12 +2743,23 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "a07759602fe6c4e5",
+      "id": "07de56a515fe113a",
       "search_section": "International",
-      "title": "Haryana enhances security for PM Modi's hydrogen train inauguration",
+      "title": "PM Modi highlights hydrogen train launch and healthcare advances in India",
       "summary": "",
       "source": "The News Mill",
-      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQLS1BTFgyQkdtRW1paWlxSGl6aFRYSjJhU3lvTWVvUFgzaEVhU09sWEJ2aFJES3FGcW9xbDRHZFd4bmZpSENzSVNTWWFVaExpbjJnb3ZDTE14RVZSMFo2ejJPUi15REQtVFJlZ2lVMGVpNHBfZks2RXNRZFlHMS05d0JaN1hYOXJDOG9RNWZpUjhtNFAxZXVRWnYya1Z6bXR3RzVWSUdKSlRXeDM4ZUhTUGFiczBQWWY1VzNKenl3SnY?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPdkhHTG9qX0NPRk05RDVncmxPYjJKSzAtTjZ4STg3bUNId0llTVNrT1E4bno0Wk9mTGNVWVVCam1KRVI4MVh2ZlZiclRnWWxGYkZweF9uUXZOaklVNWJKVDFaU1B6ZWRWWUhmUEowZUxxNVZRTWNITlFPN05JNGt2YUN3MnZlc0NjanhSU09ONHFKam9MTk03S3Bsd082SU5iMk9mcDJGNkMxdw?oc=5",
+      "published": "2026-08-04T21:32:41-04:00",
+      "date_label": "Aug. 4, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "e3ad023364fad248",
+      "search_section": "International",
+      "title": "PM Modi launches India’s first hydrogen train from Jind in Haryana",
+      "summary": "",
+      "source": "The News Mill",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOZkJyNWRTV3Z4LUFKTmluOG9lRW42Sm5qYnV1ajE5ZUhyQW5DQVJLOGRXRjI1U2p2d2pfZGVmY00tRVhjLXdqVjVLN3lLYTBGV1p5VThINzlLMTJoNDRDZWVPZk8wa2hPWjNIT05paVdJV1dCekRvNWVnaXhuNXBTMmdQdkt0YlVaRkozaTFBRkp0WkQ5MDQ0OXhReHM1eXM?oc=5",
       "published": "2026-08-04T21:32:41-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
@@ -2303,35 +2820,24 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "830253890da0ac65",
+      "id": "60c5e8c789830973",
       "search_section": "International",
       "title": "China unveils safety standard for autonomous driving systems",
       "summary": "",
-      "source": "People's Daily Online",
+      "source": "en.people.cn",
       "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE0wR0t2LXRfdV9sOWlKdUFFZnZSWjlGWVZjV2tzN3JqdDdWRjdONWNNTWItLVZmZlJSTmxzeVBrVnlsSEdXUU8tTUFpRXhpZ2RPX1JPLVhzRG9ISDRFTWFMQVFRR2o?oc=5",
       "published": "2026-08-04T20:35:00-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "6964918dcb9ae571",
+      "id": "70945743c62c413c",
       "search_section": "UAS and Drones",
       "title": "Russia and Ukraine trade drone attacks with multiple people killed in each country",
       "summary": "",
-      "source": "Lawrence Journal-World",
+      "source": "ljworld.com",
       "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPek10UE5MZlEtblp1aFZEeDJmNFg3Wl96ZVBsRUdkUVpYVE9qdWliMXlmbUE3VndENE9ISkZaMHE2MHc0NW10SXZvdzdaZzZuN3RBTmNDanJ0dWpiZ1ZINzJiS2R3VWRzV2drQ1FLdnNCU21KbGVUWURqOUEzdW9YeFdITWJpZ3N1Tmc3QTljN1Z5ZmNzS0hJSU9uTUNST0h6YzFIY3dBVVBDYVRVZ3VBZkFmSUlEZG15azRzcUtxOHc4dEhWMkltS24tbXhOeFB3MGc?oc=5",
       "published": "2026-08-04T20:33:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "d21ab37b58b40691",
-      "search_section": "Other Advanced Transportation",
-      "title": "TorchMedia Adds Parramatta Light Rail To Transit Portfolio",
-      "summary": "",
-      "source": "bandt.com.au",
-      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPcXIySDdKVndLYUZ3eWpUUmJHZGJ0QVdqczUtT2FGX1ktSFpZemVZQlJmRGNvenlRaVM5cHZDcUZqZ0FDMThwNXZwajllTEJOekZtRWlBdGRHQ05SckEwRlJvQkcyMUczVW9HMjRTVy1ZaHNOOVRSTUxGdkE5ODcyX0Qtd29ZVHdoQ2JTSg?oc=5",
-      "published": "2026-08-04T20:17:20-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2369,22 +2875,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cd5c7a0ace9352c9",
-      "search_section": "Trump Administration priorities",
-      "title": "Chilling video shows drone ‘safari’ attack",
-      "summary": "",
-      "source": "NBC News",
-      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQMzByc1lOMnIyaXpZaWhPNWZJSjJZVzVaRWNZaF9JNDhzMVI3VXN4cnZ1Z09Kc3B0WE02S2tjTGxibzE4a19NSm5hejVfaFJ4MmxDejVSSkFtaWhlTXZjYWVIZ0VtRWR5WU53REw5T1NJWl9RZWdaQkZsenN5NjF1N1phQkYwcmQyczJrOVJ6ZURXT1kxMklqMUQ0RkY?oc=5",
-      "published": "2026-08-04T19:06:49-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "a69b2de7e0383144",
+      "id": "18d97331cfbe8c3c",
       "search_section": "UAS and Drones",
       "title": "Fortem Lands DHS Prime Contractor Slot on $1 Billion + Counter-Drone Contract",
       "summary": "",
-      "source": "techbuzznews.com",
+      "source": "TechBuzz News",
       "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1zX21JZVFZZXNMM2VieXVZOWlKUlZKVnpEQW5VTk1NTGt2ejliWUdwX3I1UU1YbEJPenhKeXlJenlYUkVJRlF5ekVBUXczdWlWd01sS2ppYkFLMzB3ZUlwZDRiamFyX3lOTkFSTjBuZUJQcG5uYnQ0?oc=5",
       "published": "2026-08-04T19:06:38-04:00",
       "date_label": "Aug. 4, 2026",
@@ -2402,28 +2897,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "297c3b80229f266b",
-      "search_section": "Autonomous Vehicles",
-      "title": "Oxa to develop global autonomous vehicle hub in Dubai",
-      "summary": "",
-      "source": "Smart Cities World",
-      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPYTVaR012RF96bzMwWVhPZEppNy0zZmZJYW91R25IQWtkanlDVHlRa2VIeXktLU9NX2twb2c0Zm93OGRUZEdFS1BRaGQwMUJBNXpwaUdQemlmY1VLOXlRZjdNaU91cXR1aXVqOEE3YUVQWmxVWkR2eUNzQXNWMVR3enVzZVpmRUlRclJ6VlR2Q01ReUwyVFZabHVQVjc3Vkdod3JqUEhqTFRmbnAyLTNEdmZUa1JqRE1FUFo2ekZVUmxzZEFo?oc=5",
-      "published": "2026-08-04T19:00:34-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "c6520b4c8657d955",
-      "search_section": "Other Advanced Transportation",
-      "title": "Middle East train travel surges as UAE, Saudi Arabia expand regional rail routes",
-      "summary": "",
-      "source": "Travel Daily Media",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPLTc3NHpLcFlfMkw1a3FqbjFDeURuXzRjQjdjcnE5ajlOLURVeXpZYVc1MHZsYmtJaXBmWTZqcExBX1NYRUV0cUdaeFIxUVlFdGJDU2dtSUdJZktYVk9yTTE4Qk5ybmdjX3FlR1FCTTh3SkdSVGF6dkNObHpUeHRPTlBDMmxOMGZqakZOVjljdE9kUHBUSTdvX0dybllSRDBlc3dsY2ZpYzZaOFJQeWZRV0czWQ?oc=5",
-      "published": "2026-08-04T19:00:19-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "6a91eb3769932e85",
       "search_section": "International",
       "title": "Protesters rally outside Waymo's facility demanding driverless vehicles to be banned",
@@ -2435,24 +2908,24 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "e49f96e0838a412b",
-      "search_section": "Other Advanced Transportation",
+      "id": "78c097df44a39f7b",
+      "search_section": "International",
       "title": "Taiwan’s high-speed railway rolls out first new train",
       "summary": "",
-      "source": "RAILMARKET.com",
+      "source": "railmarket.com",
       "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNdTYwcTlPMjg5eDBSRnFTeDRUbUJJQ3lmdUpOS2loSkVoaEYzWlNJalhsMDF2S0swd2VPdUxxYzFwRHdIak1nM3NzLUpzdEdhT0l4N1dQX1dOVTloZnMydVlpcXVJWk9UOEhMelpXOEw5ODJ1QUtpalItV0xCZjdnbWEzUUp2bEh1bUptQVRVWXJEZDZRRUhzS1RQWnhlaWxwaXJ3?oc=5",
       "published": "2026-08-04T19:00:00-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "5a50ffcfcb990dd2",
-      "search_section": "Autonomous Vehicles",
-      "title": "No Steering Wheel, No Pedals: Zoox Wins Historic U.S. Approval",
+      "id": "d63a2b4e81a90204",
+      "search_section": "International",
+      "title": "Waymo weighs ending Uber robotaxi role as app control battle intensifies",
       "summary": "",
-      "source": "Autoblog",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOb2VGR1FYdWxrazJPWVRSdTg0LTNnR1RfNWFrbHU4OXJOa0lZdkY0RXJXa1BOZTY0MW1EeW9uTlZhdkVuZmZyWEpzYkhUdmZrQU1UUGl4dWdYTEpTTGkyU19raG8yak1wWjNpY2d0M2JJYkpBN2taN001QWZsVmtEYXZSTGVYcVU3MG9DOXdBemtBVjg?oc=5",
-      "published": "2026-08-04T18:20:00-04:00",
+      "source": "digitimes",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQYUY0Mm84T1QzOUFnWWxXZWhBbldyR1FVX2puZFlhZk9NOTI0VEJEaU9yTy1nWmtwd0RSTUZ4TmFxei1qZXd5MlVOemNidjU1azl2eEFWZDg4Q3NVZHVhcl90RkZqVlc0dkxuNmp4UFNWRG5zSnhTSjVnb21iYzZuaExtbVl3aEZzZlFGOGs5N3Z2N00?oc=5",
+      "published": "2026-08-04T18:22:14-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2501,11 +2974,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "8bf63eee41402e64",
+      "id": "def961f8c6e7e104",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Galveston's Scholes International Airport to host electric plane tests",
       "summary": "",
-      "source": "galvnews.com",
+      "source": "The Daily News | Texas' Oldest Newspaper",
       "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNbHZkd3F1d1NnTXVhQmZRYU9oektpTUs4d1hZVHhtVjFEbGJjdnh6clN1eS00RVNzS3pGa3F6N1F0aEh1MDVlclUyOXZlQjJYWG56ZW8wZ0xLd3VQOGJvVUMyb0VPcV9UUDVwVFZvMXdEUFhrdmJiR01WTUxzanBibEt0QjVoMjI2eEw3WlhfcEhWRlBDS3FrWEViWmNrdk9iaElNazg1WkZNYmZxeDdmX1ZubGstazBaY2pyZkdiOU5fb1J0cW9JTWZKaXgxUndEZUpXeGZXeDdSSm1lcmlHcVp5dw?oc=5",
       "published": "2026-08-04T18:00:00-04:00",
       "date_label": "Aug. 4, 2026",
@@ -2541,39 +3014,6 @@
       "source": "Inside Unmanned Systems",
       "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQLWxOWkg5aHFDVUZxZ0ZNWVRSc096ZWwyZExkMUkxbjA5eGh6TmI5MldjWS1jeDFvanFQV2ZOV1ZuMHpBWGs4YWNFdmxVbnpvRC1xU0VKS2VVV1FjNUNZSFZsb09PbEZqOVRyT2JneHAwVjFicnFZNWY4YTY2WTBZajVkaEdsdl84MzhJLXNPSW05SHRuYldEalJrSnlIYjRIMFE?oc=5",
       "published": "2026-08-04T17:30:37-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "f4fa7abd31ed0103",
-      "search_section": "Autonomous Vehicles",
-      "title": "New robotaxi safety study finds Waymo crashes 68% less than people",
-      "summary": "",
-      "source": "CBS News",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPcFlLYjh6RmxkX2t5UmVMS0k2TGJYNWQyX0lJVXdJcFBGVFQ5bm5iQTUxNWNxOUxLWHljWncxNXFpNHlCb3F6WTl1STRRcUY5aER3ZlY2VXRhWG0xZUhGUVBaeUsxUlozQTRSZHJxd3lySmtVRmg5Vllpb3llYWduWFBzOEhUZEMxVVlyMU1aRFVnTWtzc1VjMlhJQVJrYjB1Q3VIUA?oc=5",
-      "published": "2026-08-04T17:30:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "964af933710ac48d",
-      "search_section": "Autonomous Vehicles",
-      "title": "Tesla's Santana Row Showroom Reinvented Around FSD: 6 Details That Matter",
-      "summary": "",
-      "source": "BASENOR - Tesla Accessories",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOUVBQSGpNcXJoVGhqVGlpUjNkd0wxOXhOUlRIc2VsRmtTLWZSU3ZlZW5TMGNyX3VkUWxKVDZDRHFiWURYeS1hTzlhcXU2aXJPZ2hxd3loZUxrcXRxb0tHSlF5NVJ6elhwTnhyanpBbk45N1ZwRThEcjhHMUgta0pObTJuRDlUMG41VWx5Rm4waDlxcm5LaTd6T3NVeWFNMHFjcHFCZ3p2ZGgtdw?oc=5",
-      "published": "2026-08-04T17:24:57-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "d5233a458a900bc9",
-      "search_section": "Autonomous Vehicles",
-      "title": "Lucid Announces Operational Reset and Second Quarter 2026 Results",
-      "summary": "",
-      "source": "Morningstar",
-      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPV2lfUGJ0c2NJanFSUXlIUkRJMUpRRXNKX1VqY1lvSFNOc0RZUGpuUDFxTHpYNTZTNFhVbDBnUkxFaEd6ZVJIbnF5c2tmb21IZ29MV3JoVkZ3Q3lnbmtoS1hmNXR2cWh4X0F5VTFScWhHbDlHOVp3dTRsenNqOTA4SS1aMl93S3Vaakd4S3NFdy1Dbk9Fd3hETDlPbHFGTkZ0Vk5rWUljWVlnS1Z6dFJaMzVXNnJqY0FfSnJfY2JjcjQ4ZFVk?oc=5",
-      "published": "2026-08-04T17:17:38-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2688,24 +3128,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "54f37d299ddb5fcc",
-      "search_section": "Autonomous Vehicles",
-      "title": "The lidar robotaxi debate continues, updated by Waymo’s Dolgov",
-      "summary": "",
-      "source": "Fierce Sensors",
-      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOSHBGYXlSNnFCcXlDVlBiemYyM3dldmwwUUFyY0tEZlhobHQzMjNBc0k3V1g3OXg2bmRUQlJBc2dnWDBFYTAtWUZYaUhPTmNibEptdWU4dTU1Mk1GM3lwb1NWcDdLRVpRNmR3SG5OSXpzcHRzUFozZHNYWnVoc0t5SXZtX3I4RmJXSFdsV3pma0FVSDF0dkFRUnlodWJ1TXM?oc=5",
-      "published": "2026-08-04T16:24:40-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "b79bdea36c6d830c",
+      "id": "36bf42ada3826310",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Joby vs Archer: how the two leading eVTOL stocks compare By Investing.com",
       "summary": "",
       "source": "Investing.com Canada",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOeGN6SHJSMjNPVk5HNlNsQVd3c09YbGNZMzZrOW5sTUF6eXlKM3VoQ29XSWdIc1FzQjNOOTc2UkFiQ1A0TExLRlBxMUFNMDBFb1pDUUdpLW93UGdWak43dElKRUhJaHc4UVMtZ1lOSVktNjRUTE9BSEV0TFNGbmdGVmo3ZUU5N2RHX0FPdEM4NjhQZjNnZndhTFJfSUplaXk1cVdNcDk0RkRPb2dIQXlCQ3pBSWdUZ0U?oc=5",
-      "published": "2026-08-04T16:18:30-04:00",
+      "published": "2026-08-04T16:24:37-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2754,35 +3183,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "883e3d97702dab4f",
-      "search_section": "Autonomous Vehicles",
-      "title": "300+ autonomous semi trucks planned to roll out in North Carolina by 2027",
-      "summary": "",
-      "source": "CDLLife",
-      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNU3JDUjg5cjUzNzYtYlQ2eF9uZ0cxX3ZKeE5KcFVJOTJWUHZxeXVvX2I3V3d1Qks4bE4yQXB3T1ZZcnVPYXZaaGxTdGFWbkFqUGI1djN5RDZKMVVwYjhMTjJVajc4aE5hd1hCWHpJbDBUU2EyLTJZWHFqWWVfT0J1OTQxTnI5ZDU1TzBtcXpYQXJRZDRXTHVwQW92dUxkSEU?oc=5",
-      "published": "2026-08-04T16:09:31-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "58a2b2aba31f48f9",
+      "id": "7325d1351f31cca0",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Joby Teams With Travis Kalanick and Atoms to Build U.S. Vertiport Network",
       "summary": "",
       "source": "AeroXplorer",
       "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ24zemcyZU9QWEpBVlp2VTJKanJGcVZJV1pQUTNyTW4wSjZGR2YxeW1LSVhYUzdKdWsyeG1fa2JTdW04SW9VZE81Vi00YkYwRDNabnpJdEpILUd2SE5BclRmZ1AxU0RWazJPRG9RVG1idWN3aGRlam92akpWNjBHTkIyR3Y0cWlxZ2FhRWVBaXQ2RXRKaDhOcXlXS3Q3aFFGTWgwR256RQ?oc=5",
-      "published": "2026-08-04T16:09:30-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "7100a4a08051eac1",
-      "search_section": "Other Advanced Transportation",
-      "title": "Bedford Fire Department Provides Assistance at Narrow Gauge Rail Trail",
-      "summary": "",
-      "source": "The Bedford Citizen",
-      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPNzQzZy1nb0dkV3ZidE5sQ3FZWXdzUTQyNDIxNVc3Q18weWpob0R2Z3JBaFJBdWQtYUdpZ3UwLTl3QzJZOVY5S2NFZ3UydGxabWN1TldMX3k3VWxQLUhvS2oxSFBqcTVJZ2kxZDhRbTJEUkplRWF4aGJoTTg1T2pzUjdQNERPbUxQNzZYN0UxOTc0QnpqUEJEMFdIS3lqYUVRcTJaSDRMM253X0dnN1E?oc=5",
-      "published": "2026-08-04T16:02:12-04:00",
+      "published": "2026-08-04T16:03:32-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2798,13 +3205,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "65f03293284818d4",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo Opens Up to All Riders in Dallas",
+      "id": "b6f5bdb66bfdd127",
+      "search_section": "Trump Administration priorities",
+      "title": "Something Ten Drone Operators Did in an Estonian Exercise Should Worry NATO: They Wiped Out a Force of Several Thousand",
       "summary": "",
-      "source": "CNET",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9nNk9LWFR2QU9oRGF5UUJTazYwVDl4LUhiSWxGTjRsZllWTWRwajM4ODVNN3RERlpUTkY5ZzlieTQ4VjNfbDluZHVxQm5DaUZLdGVaYlQwY2pPQW8xbFpHQmFIZE15dEZJUWhrZDc5UGJXOU0?oc=5",
-      "published": "2026-08-04T15:55:09-04:00",
+      "source": "National Security Journal",
+      "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxNZ0ppNENZdGYydWpneWUtSnVIbGxMaWYzbVlBcldsWUdCb052MGc3ZGJfY0xlaTVkN2hHVkdMRHo0MXNoZFlWdVhSYmJqLTVxRzcwdkNkbE5BNnBUVnBwcjVBT0RYZ1Vld3NtUEpFc3BFRWd6VW91OG5QTjYwWUhwUGhPZGl2SlluZHlMMlhLNkdPY1VLaEp0UGtiUk9yMXpBdVFiemEzX3gxZjNWcDMzWmZpT2VoVjdGaFJnaVFtcTktY0FWeEJkWDdpa2loNFNYOTgyOWtWU1EyX0xCTGJNMVA0NlpFVUNubmxV?oc=5",
+      "published": "2026-08-04T15:57:04-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2831,17 +3238,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cb38a4597a5e54da",
-      "search_section": "Autonomous Vehicles",
-      "title": "Zoox unveils production-ready robotaxi for U.S. expansion",
-      "summary": "",
-      "source": "The Robot Report",
-      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOYzJFNWNBQlVvVktFci12QnA4bUhEVFR0UFRNOUFtekJSRmRTTGZ4ZzYyX3V2VXZCNG9HV1RVV1RBaWNyMzdZMTRvUDhpNTZGVmM4S2o4d2xKajd1ZTBENTR6b3I0LXVNZEU3Y04wc0o4Yno3QjZDeXFXMTVEZWx1cEVwMWJ5TlNTTGFNLTR1cDFWUQ?oc=5",
-      "published": "2026-08-04T15:45:26-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "f7f283d319b7a931",
       "search_section": "Other Advanced Transportation",
       "title": "Buttigieg Says Higher Taxes Would Help America Build High-Speed Rail. Here's Why That's So Ironic.",
@@ -2860,28 +3256,6 @@
       "source": "Agrolatam",
       "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPVVIyb0lhd25JalV4Rm5JZVF5WUdpbzdVZnlwQUhfTWg1V3FqcWNtUWJBWlZoeGMzLXUxM0g1WVBrRU1DaTFtbDNOaTRfdkN0YUdhTkYxZGVNblJqLUd1SDY4WDJoSUhtMDZNWnpsWFZmTXd3RWdHT0ZLOEhWbFJQR3lqbGUyQQ?oc=5",
       "published": "2026-08-04T15:43:14-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "e033635dfc087c00",
-      "search_section": "Trump Administration priorities",
-      "title": "Street vendor targeted by Russian drone",
-      "summary": "",
-      "source": "Nine.com.au",
-      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOV21hTUdYVy0tVG5HbFduNUFIcDBteXZaZ19WOG9GcGNiT1VDX1J5SzFOYjNLSGR3REFZdi1uQm5QRU5ZdDRzRkk4SlZfcWdjSl9qNWhmdXRGazdxazhGTUx3a2ZyeXpIVDl5ZVd6dGJpZFhwUnlrRTFwc0NXZ3Zpb3EtOFlweWNIam0yWi0tcnIyWS1SXzFZSllyYWc3QzMyOE4yU2NXd2pRaVE?oc=5",
-      "published": "2026-08-04T15:37:27-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "a29ebe26ea2e7d30",
-      "search_section": "Autonomous Vehicles",
-      "title": "Tesla Stock TSLA Resumes Bullish Trend as China EV Sales Soar for 9th Month and Robotaxi Optimism Returns",
-      "summary": "",
-      "source": "FXLeaders",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxQMlMxMXFvdmdlaC0yOXI3dVg2RDcwV0R3NHQtaEFrZDE5WXFUekhIRVYwN1VpVldQNnhSMzVJM1p4bFl5MHI0QjlhXy1hcGpfOTlEWnh5UlFmTEcxS2t1a2pyOUs2MUI0S1plb3ZyNGhqRHgwaWdUbFdVSGJyVGR4dFJ6aDB1QUU0LXQwRnVfVG9lZDQyajFVdUE4R0VtZ0dzWkxkaEtncGNRSnNrSVBmQ2MwLXlOaHBRZHZpRTNDdWhqRFd3VlpYME5UYnZFb24ta2J1S1pBV2hPNkZKcFFYVXdB?oc=5",
-      "published": "2026-08-04T15:36:27-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2915,17 +3289,6 @@
       "source": "akingump.com",
       "url": "https://news.google.com/rss/articles/CBMihwJBVV95cUxQRi1sWWo4SVFtcndxbDhwNDFjRHJjYjEyakZabGtRUFlSeEdzek14YkVBVEVBRlplMzROZWxlMEpCaXBoODJYTU1DbWhiTWgyZ05pU0JEQjR4UUlSOGw1NlYtS082ME9mNjhEcG1GMFF3TWRMMWRjeXdyOEhCQUZxc1JmUERQemZfdFpjVDFYSHVyOHg0b2NLekMwamNQT3gyTXBDOW9rYWpkaTFtcUNMUmRpMk1tOVRxVlB5V3JzbHphU2VxSy0tTFlBQmpSenhUaDhrcC1wT1lGbDY3eTBjaXJKcFlXUnB6SDV1WmJfRlM0c2EyZHpjQmloZU1xTnFzT0Zsb2JEZw?oc=5",
       "published": "2026-08-04T15:24:39-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "00c0cfb7ffad6f39",
-      "search_section": "Autonomous Vehicles",
-      "title": "ATS 2026: Automated Driving Is Changing",
-      "summary": "",
-      "source": "Mobility Engineering Technology",
-      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPXzNVN3dLekJxMS1ZLVFORXIzdUc4LUtUYnpaM1dlbjBpR1JBeWkwMzNQaHl2cC1SVFhuWF9hWEhSaEdPa1RUM21UUmRFZE9qNS1tc3liQXBhbXdTOV80cklzbFY3RWRZYk53SHlqU3BzUDJ3ZUlob0phandSYmRPNmZxdVphLThsM1U0ODg2a3N2MkpZOHVYbU1aYVQtRFJJZlpYSmlrZ280UVFxcHJz?oc=5",
-      "published": "2026-08-04T15:11:39-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -2985,28 +3348,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "11d0047895a5bf61",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo drops Dallas waitlist, opens robotaxis to everyone",
-      "summary": "",
-      "source": "The Tech Buzz",
-      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNTGpmOU5NcGRhTllZZkNBQ1pQRFoxSEdQU3A5ajF0VGZCVkVabmY2UVdqUklaU0p5cmJOekZIb2k0bjVHa1dMZFpaNDgwc3RUUF9LZ0RkbFo1eHJJaVprR2E0cUhtRjdITGxsTWxLQlpvX01VVVd1dGM0Q1U4UG9ndFJNNGg1SlhaeTlqaEw0TUZNUQ?oc=5",
-      "published": "2026-08-04T14:44:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "2f89e5432ee79de9",
-      "search_section": "Autonomous Vehicles",
-      "title": "Rare Tesla Cybercab robotaxi turns heads on public street in California",
-      "summary": "",
-      "source": "The Cool Down",
-      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOdG5oU3lsX28wR3R3OXNmd0ZFTGtsY3dBVVJjYkpuQk9nZ1dpU2xHdW5ma3kzcThjd0oxeFUwTGxfUGhKX25EcU9GVUhXRXp5MVRjdnhlbXNLdlE3VjN6UTFsZWZFY0ZSaHpXcDU3bEYwSm5DU29pOVJMVHNYbS1mUHhOa0J5Wnc?oc=5",
-      "published": "2026-08-04T14:37:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "48b4839026068e6c",
       "search_section": "Other Advanced Transportation",
       "title": "CID Traces Mumbai, Rajasthan Links In MPs ₹42 Crore Chit Fund Scam",
@@ -3040,17 +3381,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "d9f3b96a4b46e806",
-      "search_section": "International",
-      "title": "Uber’s Robotaxi Ambition to Face Scrutiny as Shares Languish",
-      "summary": "",
-      "source": "Bloomberg.com",
-      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPX2gzbzdKQXA5cXk0dVY1cU9URmpLaGR6b2YzYzdtUW9kTG5sUk5COU1VOEM0OWxPNllEb0M2VW1qanVMWjRtcU83MzFLcGtKY1NVQ1doaThRTmw4bk9MejhHUTFOSjdSeEN5OTF2ektyMWVWakNCaE50MjNabVFCTEQyZjVpUUNDZS04bEJpcm5CenlMTDVRaVRmWGp4SlpFRWdvQlBDQm1SdlJrX0ZyNw?oc=5",
-      "published": "2026-08-04T14:10:23-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "283cf26caec7c8d4",
       "search_section": "UAS and Drones",
       "title": "Walmart (WMT) Buys Vibe And Expands Into Weight Loss Drugs And Drone Delivery",
@@ -3062,57 +3392,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "129547bff4a520ea",
+      "id": "edf0dcd7b381a144",
       "search_section": "UAS Security and C-UAS",
       "title": "Army expected to add counter-drone laser weapons to base defenses",
       "summary": "",
-      "source": "taskandpurpose.com",
+      "source": "Task & Purpose",
       "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5JTHRZeXRsSjBseU1ZNER0dThRUkozSXN5X2l3OC1mSzEyTHpNWmU3aFUzWDVxei0yMHp6MktvT2p4cXdORUkwa0lQZjg2RDh4cUVuT3gydktpUlZXZENJ?oc=5",
       "published": "2026-08-04T14:05:10-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "1e9affa64da90082",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo Opens Its Robotaxi Service to Everyone in Dallas",
-      "summary": "",
-      "source": "Zamin.uz",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxON2QwUXhRYnJ0YTlobmRleWExN2VIV0R0NFNSOGRjUVZiSS1ReE5ISXR0MVJFTVpGMVNXTEJqSHl4RnVhS0VPUVFxeW9nVmRnMWdNNWZHdE1STUhpSEo5ZjFzYWlicVRVNDlNTnZDS2xXZnA3Z0ZxQ0Q2a0lNcHpBMEx4bDVscWlGbDdpeHZZWWdWbERybkRYZm93ZVdFZw?oc=5",
-      "published": "2026-08-04T13:59:51-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "1b66b4eefb1dad4f",
-      "search_section": "Autonomous Vehicles",
-      "title": "TechCrunch Disrupt 2026 Cuts Standard Pass Price by $100 This Week",
-      "summary": "",
-      "source": "Межа. Новини України.",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE8tX2g0Mi1rV09nRks4WVo5STJ6NEMwU2tSMy1vTDRiYWRaR3hDOEoxWkVfM0dObkdoM19GNko0RE1BQWhGcDBaLUJtWGtXYjM0bXBBNlRNdVl3Wi1aYnNhOUM3cDliZFVlTFk2S0J3?oc=5",
-      "published": "2026-08-04T13:57:18-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "9f9ea3be42bc02d0",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo opens Dallas robotaxi service to all riders, airport trips remain unavailable",
-      "summary": "",
-      "source": "Межа. Новини України.",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9TczBNUjcwbm1aUmFqa2o3c3hTQzlzaElkNlNLMTROaXNRRjdaMTVMVVVKZTJEX0VxS2dKZm9jcTdhRXE5TTdja1h6UWxZQWVaQUpLZ0JIejVkMzNTMDV3dDZEYXpQOW8?oc=5",
-      "published": "2026-08-04T13:57:17-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "6686f19481740f13",
-      "search_section": "Other Advanced Transportation",
-      "title": "India Rejects Trump's F-35 Offer, Makes Bold Choice To Bet Big On AMCA For 5th Gen Fighter Jets",
-      "summary": "",
-      "source": "The Times of India",
-      "url": "https://news.google.com/rss/articles/CBMihgJBVV95cUxQa2xyY29EaDc2dUR6aXl1RUpTUGZ2Y084SjVqMGd2Mmt4SzQ5OEpCS1dpeWNJeGp5WWROdVlLeXViemRnZkFNODFaelB4N3otRDlTdUlFUWdJa3U3S19QYnBKZWd0MWM4TzAzVHM2WXItc3Q1OW5EZXdSVjl5bVdoNDlaMGhyMEsyb25seTZoa24yLTdEbFRxN0YyMjByYjlzbEtRbXFPNDNWUmtCT3dKY0t2RzdKbERhVnJCR29zbFVNUVBQb1EwS21BZHJxWEprcXp2WEpMWnJHUjFJSW9GT3RGR1NDYU1ORl9hZ3RJTkUwdXpiWkk0WmRIcGhYLU9XTUg1enNn0gGGAkFVX3lxTFBrbHJjb0RoNzZ1RHppeXVFSlNQZnZjTzhKNWowZ3Yya3hLNDk4SkJLV2l5Y0l4anlZZE51WUt5dWJ6ZGdmQU04MVp6UHg3ei1EOVN1SUVRZ0lrdTdLX1BicEplZ3QxYzhPMDNUczZZci1zdDU5bkRld1JWOXltV2g0OVowaHIwSzJvbmx5NmhrbjItN0RsVHE3RjIyMHJiOXNsS1FtcU80M1ZSa0JPd0pjS3ZHN0psRGFWckJHb3NsVU1RUFBvUTBLbUFkcnFYSmtxenZYSkxackdSMUlJb0ZPdEZHU0NhTU5GX2FndElORTB1emJaSTRaZEhwaFgtT1dNSDV6c2c?oc=5",
-      "published": "2026-08-04T13:42:39-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -3135,6 +3421,17 @@
       "source": "scanx.trade",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNbVo5R0VsOERBS3BIeUlkZ29teEo3MGJDdGs4Zmkya1BkT1NSd2RVOHZTN1ZEMFJrSnpDVU9aWVE4TXY3T2dMMDNSQVRicUNVVDlHZHdYWWVXRDIwaVhpWml2WkFFMENSMUhPbDc1Y01XcE50cEFuenROV1FDTkk2dmxkVGdWMHZkbzFUSEh1Z09mZkFqc2JjU3daQ3UyQVhQODZ4ZEw3eHpNMmJuRld1VlZqQ2NUM2s?oc=5",
       "published": "2026-08-04T13:29:30-04:00",
+      "date_label": "Aug. 4, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "dccd0409e6fb945d",
+      "search_section": "International",
+      "title": "Italy Deploys Eurofighters to Support U.S.-Led War Effort Against Iran",
+      "summary": "",
+      "source": "militarywatchmagazine.com",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPNEdkdzNwTWNSYzN2eDFfczN0dF9zSTBfZmlIM01NOUI3RDRsbFNmT3ZTS1RxQ1JFYlozeHNhTWxXZDNjQkVHNjRWc1QxdFpfMmJCOFBsbm42OXpxTVk5RVh4aHcybzBXbE54bXlfYmJkUTFWVVIzS0g0Wnl3MTF3Y2RBaExpX3hPM0ptN2lKM3JiWXNuYW43aUp1WUlsalltMDRLaUdkcVh5RXlBTHYyOA?oc=5",
+      "published": "2026-08-04T13:24:56-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -3194,17 +3491,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "a853dad01eb31f02",
-      "search_section": "Trump Administration priorities",
-      "title": "Anthropic names global affairs chief to tackle AI policy as Trump tensions persist",
-      "summary": "",
-      "source": "The Economic Times",
-      "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxNU21MVG91aFBESFZ2eVBpWjhKNWV2TmhWTkEwMWNlNGluWDNkQkhGcng5VVlHZnBaRndVbzB3ak9rVFhpV2E5SEFUaG12TFRiWEtRXzhaQ1IyeWtlVDFSSFpQR1YwWmZJbEh4STFnWkFuYWRvQ3NHbV9iNkFtN1dpTFM1YW9uc0NwVmVKbEZla3o1VDVIQjRsYTVXNm9vUEY2MXFWS0VQYXJDTVZzZjdCZlBGMzZJRGdaYmp2dkprMkpBeW1NQkJTd044ck1PemZpanliaERlenByUzI4YWRqTUZpQ1dNMWZSc041WdIB7AFBVV95cUxNU21MVG91aFBESFZ2eVBpWjhKNWV2TmhWTkEwMWNlNGluWDNkQkhGcng5VVlHZnBaRndVbzB3ak9rVFhpV2E5SEFUaG12TFRiWEtRXzhaQ1IyeWtlVDFSSFpQR1YwWmZJbEh4STFnWkFuYWRvQ3NHbV9iNkFtN1dpTFM1YW9uc0NwVmVKbEZla3o1VDVIQjRsYTVXNm9vUEY2MXFWS0VQYXJDTVZzZjdCZlBGMzZJRGdaYmp2dkprMkpBeW1NQkJTd044ck1PemZpanliaERlenByUzI4YWRqTUZpQ1dNMWZSc041WQ?oc=5",
-      "published": "2026-08-04T12:59:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "a0b919ec9bedf338",
       "search_section": "UAS and Drones",
       "title": "Advancing Air Traffic Management through Distributed Simulation: An Overview of the VISORS Project",
@@ -3223,17 +3509,6 @@
       "source": "The Daily Galaxy",
       "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE5zMUk2YkZZc1RYd3JwVEtxOFFEa3dUWTJ1VmpWa0xZQWEzRDBUbXJNXzJWbkVsOEY0TEdud2FlV01iaG55VXFtSW5meGY4VmV2NnRUNVZTMEZUTm5jalJnM015V2VuenJOMUR3VjRfcXR4YnhZWFlNczEtZktyQQ?oc=5",
       "published": "2026-08-04T12:50:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "b8620935f659f76d",
-      "search_section": "UAS and Drones",
-      "title": "Most RI police departments now fly drones",
-      "summary": "",
-      "source": "WPRI.com",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPVDhaaVBmMW05Vnh2eFl0VldrOXhaeXd4Wmp2XzhOR3N0ZjlNMXg2VkNvRVBsSi1lRXV6SFdoREVnLWo1YkVMSGhWbnhUcktIZV90MHk0WUVNdWgwbzU5VE5mQVdKQ2dWU3dEVVhRTkNFOWFQRXBXdG9DcExwM3Z3VXlYc9IBgwFBVV95cUxPVDhaaVBmMW05Vnh2eFl0VldrOXhaeXd4Wmp2XzhOR3N0ZjlNMXg2VkNvRVBsSi1lRXV6SFdoREVnLWo1YkVMSGhWbnhUcktIZV90MHk0WUVNdWgwbzU5VE5mQVdKQ2dWU3dEVVhRTkNFOWFQRXBXdG9DcExwM3Z3VXlYcw?oc=5",
-      "published": "2026-08-04T12:40:57-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -3260,28 +3535,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "7bc84afa2a83ae85",
-      "search_section": "International",
-      "title": "Tesla Sends Out Free 2-Month FSD Trials in Europe",
-      "summary": "",
-      "source": "Not a Tesla App",
-      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNQVJZM3EtNWdsQm8yazFzMElTaFJlM1pJY2xmczRoVzRJQUpsR3M2Q2ZHbWFMemZ6UW42ejFwYUgzT3YyeHZkdXkySzAwNDdub095WXB6MU11R1hPQldkbnRjQzVjSENDZDFzYzFLNEJ1ZHhiYlY3QndpZzdQRlZWS2RnbnladkcxaHkwekxDSEJ6Zw?oc=5",
-      "published": "2026-08-04T12:36:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "b2e609a313df90a3",
-      "search_section": "International",
-      "title": "Mumbai Mangrove Clearance Raises Ecological Accountability",
-      "summary": "",
-      "source": "urbanacres.in",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPOEZOanVnQ3Z6ejdQdHlOWkVxUGxhM2hMR2hDWGVTMDlmc3Uya21BcElvU0poUXA4RUZPTml0azNaT1dZX0NhTzNialJxdVBNQXJ2ZURmSzJYSFVsaE1ZWFh0bjlqMHc1S0gxLUhvZEdRUDlvR29ia04xZk9NWkJUYV80azlTRm9S?oc=5",
-      "published": "2026-08-04T12:31:55-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "515df92dbbeb1e32",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Joby to develop US vertiport network ahead of air taxi launch",
@@ -3289,17 +3542,6 @@
       "source": "Zag Daily",
       "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOYkpMeThWOVJaQWJ4RkItWFM5UDJDMVUwSU1pVFIwdnQzQVJhOTB3SmwweW9CVkNMekhnX3U5dWY3eC01eFBxckMxRkFBMUNnTDA5VTRHMDgtWFYwRHBHaDJ2V3lSdEZpdTdiOFlyZ1JoTVFFczRvQ0dRUTRVNFVBaUNadFh3VjNvMXBRdTZrSHc4UDRlaWc?oc=5",
       "published": "2026-08-04T12:17:45-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "29d8d0b143d32aea",
-      "search_section": "UAS and Drones",
-      "title": "Counter-UAS Investment Continues as Monava Raises New Funding for AI Drone Detection",
-      "summary": "",
-      "source": "Dronelife",
-      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1lSmZwd0dnQW93cDczX19DU0xMMHByLWQyeFE4dnhkSzYwU1pCUndpVGtsMmk0NnpTYlh4dUljRktKNllCbGdnNzVSNTV6SjQzQ3RnbndWajVyendrUXRYOEwyZ2xsb0JndUwzZ0FBcnhNWFRscENyQm9qVQ?oc=5",
-      "published": "2026-08-04T12:05:40-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -3315,13 +3557,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "29455be1014a6148",
-      "search_section": "UAS and Drones",
-      "title": "Fortem Technologies selected as prime contractor for USD1 billion DHS counter-drone IDIQ contract",
+      "id": "9d97761e7315f560",
+      "search_section": "eVTOL Integration Pilot Program and AAM",
+      "title": "Joby Teams With Ex-Uber CEO to Build Air Taxi Vertiports",
       "summary": "",
-      "source": "Unmanned airspace",
-      "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxOUDdQSXBmT3N6MEdhUmZsZVdZT3lRTHR4M3dDbDBOX1MwNFNpdnVwVUJDQlRPclRFTXZOdGhzbnA0bUJHNnJ6bEE0cU5kbmNtbDFoUUlxaXpTelpoT3lOY01sZVlrZEs4Wmk5RXAzalFpcEV1cVpCd1FsY2dEdWxhRnhuR2Zha24xd3dSdXNRRndYT3VaUWNqRW50ZHpib2pRQTlEMzVfMUdzMWtvZS1DNllYaGd2Ykp5bnk3NHMxX1k0VHQ3Y2VQazN0ck1zU1BEdnc0R2FIMFJGOVVrSzByMG40RmUxcjEwSGpEbWNoSzVjQQ?oc=5",
-      "published": "2026-08-04T12:00:58-04:00",
+      "source": "FLYING Magazine",
+      "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFBkcXd6eGQ1SkNJNjlnMkpFb3Z3cnlhQXQtOTQ0TWZRRmhQTExxbHRMU2x1T05EeGhPUXNvZlJNUC03Qm1xQmJ4ZEhmZFhvLU1Mc0xXMmxtZ29DSzJhaFkwU0NJQWl6ekNYUy1DZk1ISGFtYWk0UE1HRmJmUG0?oc=5",
+      "published": "2026-08-04T12:00:00-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
     },
@@ -3469,11 +3711,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "4c4e8e82f566a90e",
+      "id": "0db5253684b1aa83",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "High energy density lithium metal battery pack to power 1850-pound evtol aircraft",
       "summary": "",
-      "source": "Interesting Engineering",
+      "source": "interestingengineering.com",
       "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNZTk0alJ5X05xVmVmY3ZLRkt3ajJaV041c002X0xzTXdQeHR2cnZQTFg1RUVLcHB5dFlwVkc5NkZVX1BKbDRwaW5OdmU3bEtSRVJoeGN1YWp4ZklEd1YtWkt3bHVBaFE1QTAxb29qb3k0amROeFJXYlpGRVViRmVqZXhXNGM0UDBtX1Nsd0ZjaXhWTkJGcDhiNFlaRjlxbTVRbnZHa1AtRWxOeEpqT2RnZEtlSk1VUGIyWHdlX180QVY?oc=5",
       "published": "2026-08-04T11:56:00-04:00",
       "date_label": "Aug. 4, 2026",
@@ -3489,338 +3731,19 @@
       "published": "2026-08-04T11:51:59-04:00",
       "date_label": "Aug. 4, 2026",
       "origin": "Google News RSS"
-    },
-    {
-      "id": "1a08ac4b630a206e",
-      "search_section": "International",
-      "title": "China mandates 'deactivation override' for self-driving cars as the UK's MoD rejects Chinese vehicles",
-      "summary": "",
-      "source": "GB News",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPU0lyb2cxcEJDbXN2RkVzUGgzWTJXRmVCTkVveEx6V1UzeEVFMlg5V2NoeURscF9QcmhYYXFDcVFSaTR0Vm1OYXdZVW0xU0I4QzVENWxWQklkQm1JT2lSd3VpMUlaRkUwUllSdmprdUpHdEdGWVZZNEpSNGkyRThkYXltYmVFS25KSTRtemhPY3IzN1ZOalVN?oc=5",
-      "published": "2026-08-04T11:48:34-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "9539401158ec0f7f",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Archer Advances Air Taxi Plans with First Inter-City Midnight Flight",
-      "summary": "",
-      "source": "Aerospace Global News",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOdDFkSkRFSWtQMGMxN21qRlQzUU5jUC1XMkRXWEk1OHZRSTFMb05TN3JlenhiYzJ0RlRvbm9pYWstVzFyNDBpUE5hdHFkSm8xdkFMazdqUzExSnl4NVFBWHZBS040YlM2cDkwMGtqRGVrbjhKS25icUR1dnpzSHZDY1BIS2Y0S1NLUGM3NzdLdzRCRVND?oc=5",
-      "published": "2026-08-04T11:47:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "f01d713f52c07c00",
-      "search_section": "UAS and Drones",
-      "title": "Meet Ana Healander, Co-Founder of Airspace Link",
-      "summary": "",
-      "source": "The Drone Girl",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFAwVjlLYzcwLUhiYm1BaV9LMmlwaVM1OG1OUWpvWWdqSlcwZmNudm1rODZkUUU0LXVfOGwxc0p5MTVNVzBtTU5EZFVBdVc4TE1NcUxycnR2SUFFZThxV1ZqVlQ4ZEPSAWRBVV95cUxQMFY5S2M3MC1IYmJtQWlfSzJpcGlTNThtTlFqb1lnakpXMGZjbnZtazg2ZFFFNC11XzhsMXNKeTE1TVcwbU1ORGRVQXVXOExNTXFMcnJ0dklBRWU4cVdWalZUOGRD?oc=5",
-      "published": "2026-08-04T11:41:56-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "9982af4d4834e7a2",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "\"Adept at making baseless statements\": BJP's Sudhanshu Trivedi slams Arvind Kejriwal over E20 fuel protest",
-      "summary": "",
-      "source": "Devdiscourse",
-      "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxPUDZWZThTYXFIS3VXaWJUSTZ2VlQyZ3c2MzFtQlZldmt3TDNMUTIwdGplT1Y3N3hOQ1RuNWJvcVpDWmJhX2ZveGRDa290anE5SjYyMm5NOVphWE16TjM4THhpRnBOVEdCSU9fbG8yVU9aVldBejFVZUVfdjB2MGR3V3VGaUVSdHJ4aGJyeWlLd3YzSkRmZDdQWDBTNmRvQWtJT2ZOZ3Y2Nm9kMERDbExmWWd1el8tcDR0TlpfRkRPYTBoRFJxMHhzLVBfUG1ud2pRUlU2V2dzaE5sVXVkNGZsYmYyRnJ4Y09vTjhFT3hJaFFiUdIB8gFBVV95cUxPUDZWZThTYXFIS3VXaWJUSTZ2VlQyZ3c2MzFtQlZldmt3TDNMUTIwdGplT1Y3N3hOQ1RuNWJvcVpDWmJhX2ZveGRDa290anE5SjYyMm5NOVphWE16TjM4THhpRnBOVEdCSU9fbG8yVU9aVldBejFVZUVfdjB2MGR3V3VGaUVSdHJ4aGJyeWlLd3YzSkRmZDdQWDBTNmRvQWtJT2ZOZ3Y2Nm9kMERDbExmWWd1el8tcDR0TlpfRkRPYTBoRFJxMHhzLVBfUG1ud2pRUlU2V2dzaE5sVXVkNGZsYmYyRnJ4Y09vTjhFT3hJaFFiUQ?oc=5",
-      "published": "2026-08-04T11:36:22-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "d1fab43cd25824f2",
-      "search_section": "International",
-      "title": "Railway Gazette International’s March 2024 Rail Highlights",
-      "summary": "",
-      "source": "thetraveler.org",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxOSFVuMFNaLThQalN0UXJKSEI0Q2pETjQ2bDZmSkN1VE9FeUZNbFlwckpKMVVVSXFocVlZTmdLSWgzeHhiN0JwMkEzVy03djR1LVF2Z2IxUmxMMlBVLWQzd1VuYWZZaWxxNHhGRmNhdHlUR0l0TGVqMV9OVGItdGRBZmZVZzJRY1RCbkhWUEtjZw?oc=5",
-      "published": "2026-08-04T11:32:16-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "bdf2decb00e637d6",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "'Shoot the Archer': There Might Be Only One Way for Ukraine to Stop Putin's Deadly Missile Attacks and it Involves F-16 Fighters",
-      "summary": "",
-      "source": "National Security Journal",
-      "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxORVVfXzRSQmJja09HSTNicGoxdVNIdmhfVXNMVUh5a0Eyal8zUzRNeEMxbjhiTVBvaHJad2s2bnY4MjBLZDZRSkFzSHJ1Wl8zdGFia09BdUh3VjR3OUJvQ1diTzllSGFMWmtpWndkbHNZRllEdHpvN2tadGJZeFEydlYtTjlqa3JSV0I0NEpOZWZCMThxYXVGQVhGZ1hDU3pFVWthSFZ6TjlHYmRWQ0NGMDd6aG9BTWM4OHFtQlRNcHp1YzdXZ1pvbC1iX1ZXc1ktV1Q0cTMyTThLTERHZW0wbFF0TWx1V3piSHhTZHZwVm9Xc1E?oc=5",
-      "published": "2026-08-04T11:29:25-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "dba65dff5c51331c",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Radar-processing software used in counter-UAS exercise supports NATO open standard",
-      "summary": "",
-      "source": "militaryembedded.com",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQYk9jMTdRN3ZFYkkwTHBPN2drYVNUMjV4VHUtN2V5bW52eFRxZkk5X1NvcVRsRnd3SFFUa2hjSnlfdTRHVndYOG54ek1IMmh6QmVlbzBNSGRzZEpkUGtVek5fVk5yZU50dE9iVlJORjB0cnh5Z0wyMUNWSVBOVkFTQnBpdWd6cEpnTndsY05vaWkzNG5haXp0a2xySk85TFAwVzlvekhqUER1OW5YREVQandnYk9JZGQ0dHpEcVdtZ1dEVTJ1WTRB?oc=5",
-      "published": "2026-08-04T11:24:31-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "ae44802950d86448",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "ADM lifts 2026 profit forecast on strong margins, favorable biofuels outlook",
-      "summary": "",
-      "source": "Reuters",
-      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNLWNNclJBRG1LdXhBRUxqeFRkeXhZc1YtRjVTai1wV2VpTlI2R3dOVXhPeUlKX2l4MWpfcmtSTnJDNmYzcldGXzJ4c1c2RnljR2EtejgzUDhmbUkyTHpMMk4wa0tOS0lRS3QyRW1YZzkyR2lFMktadkhtUU54THdQWjlqSzdpVl9tVmtscVNpNFB2X28xcnBSUUUtaXpkZ3NuV3hiSG9BcS0xNWJlZ2x3NEFhd2FQVzFVbUpOdi1IN0x3RVlMNUk4bS1R?oc=5",
-      "published": "2026-08-04T11:22:58-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "9f6e61c75cf3ede1",
-      "search_section": "International",
-      "title": "Kolkata Rail Wheel Project Boosts Manufacturing Capacity",
-      "summary": "",
-      "source": "urbanacres.in",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNNzBnWk9CVHZ6Vi1zYng5WE5MWTNnWHlDcTVFQ25aeTVETVJxZG9BOWNYVGZwN2NMa3RoNWdTUnczQVVOTVhQS01rV21QSW5ia2N4cy1uZF9GbFNQYjFWenY0WlRxN0MzWHF3czRRWFZxUHRyYVl1Ymg4NGQtWnYwWkVtbkFkZw?oc=5",
-      "published": "2026-08-04T11:19:21-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "b470630489e6bf5e",
-      "search_section": "UAS and Drones",
-      "title": "From missiles to pizzas – why 6G drone sensing has been fast-tracked for 5G",
-      "summary": "",
-      "source": "RCR Wireless News",
-      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQbXFiUmxLMThUbjJoTGtfRzR0UmxNSTdhWXVvekF2ZXBtemVvZ1lpWVNvcllOSjJJdmtNcmNaR1hPRUdONngwbVZyR1RZUklwQWh2YWFsdXJvQng4Y2ZGZGVXNTd2Y1Zfc3EyRnVlNHZLS3ZEdklLanVEUDlLbjJqOTV0SHdnSDA?oc=5",
-      "published": "2026-08-04T11:11:21-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "8fe4c9fb23bdf85c",
-      "search_section": "UAS and Drones",
-      "title": "DoorDash gets FAA approval for its own delivery drones",
-      "summary": "",
-      "source": "CyberGuy",
-      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE55OHkwZUxXMW9kcVZsa2Fycld3eVBYZ3otZUtlZnpoT0Q1OVAtRGRVV3BhSklVSGpUQkpVczBuX1pZWHFJQzN4SGp2eTdyeklVRUJMcTBkTnMzbm56VXBKVlZHaW5rWG1ubVk4QWhwU182X3h1YmNKaEJaZw?oc=5",
-      "published": "2026-08-04T11:00:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "a13368fe4615e18d",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Fortem Technologies Selected as Prime Contractor on 5-Year DHS Counter-Drone IDIQ Worth More Than $1B",
-      "summary": "",
-      "source": "sUAS News",
-      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQTWV3TFc2TW1BU1BkTVY4T2NJeTVRM1hqdFVLN0hiRTZPaF93bFIxS2FEVHkzRldjTVNyeGQ2STVFeVRocmlLSEVTaXZUalQydzMzcE9halhLdS1iYzFkRURGampnbXc0bXJqWmRPMmxCRE9wWURYSTdfdjRHOGtGbmUxanZsVER5ZGxTdmpBZG0tNEs4NVNSY0d4T29RUkt5MFJ5VlB2cUVYejZGZzBIOWhtcDRuLTV5RHhiQUxyQTRzU0Y1M0x2ZEFNWGVabDg?oc=5",
-      "published": "2026-08-04T10:56:44-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "0273d2b5663a2a60",
-      "search_section": "UAS and Drones",
-      "title": "ENAIRE joins European VERTI-GO project to accelerate the safe integration of air taxis and cargo drones",
-      "summary": "",
-      "source": "ATC Network",
-      "url": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxOYWY1YlUtR2dkOExTeUE4RTROZ0NNbzBibTRwUVBzN1Jja0gwdGstLWs2UE9RdDV6SWRuMnJzTzRiZDJoTExUa1hqRWxGRTZNUmhDNWxUalBFMk50MDBlTklQZDZUTV9hYWVKaXkwaWtaeGswaUg0MlJlMnRaaHdqTzJIVEFsUWs2SzhzM1lHVGFfTmc0aW11X3oyQ3dkNXI5cFpfaHdpVjQxVll2LXZ2QmZsTy1BRkVhOV9fRHpQYXVjdGc4ZXV2MEJjaDF4VXpyVGQzNTlaVWMyc0M3MjVNSmNleEdFOWQt?oc=5",
-      "published": "2026-08-04T10:52:33-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "411dd25b24c4e0b8",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Cambridge Pixel Demonstrates SAPIENT-Compliant Radar Processing at NATO Counter-UAS Exercise",
-      "summary": "",
-      "source": "ATC Network",
-      "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNME1PQU1nX0hWNkRqQkp0Tmo5MVMzQlNDVnBFRWVtRU9OWE44ZVE5dDRTSnZPajgwYS1hOVR5am55QnJyYXIyNjI5Nm9oU25ETUFVeExfNnBNVFdhZi1wdEU3S0FNeE9UcFJMSmMxY284WmlrdVNZaElURjZhSlBqZm92eE8tRFZyOHczSmhTUTZoRWszV0ZyMVZNV2V6UTg5Zk56TUJnbkI2WjNwMThsdktsckJUNElvY1dxZ0hLRnpQdWJTazNmWGZhYWtnTUNmX3hyVV9vTDJYbHlpYlBORld6SQ?oc=5",
-      "published": "2026-08-04T10:52:32-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "42dc064af8735d91",
-      "search_section": "UAS and Drones",
-      "title": "Department of War Launches Marketplace for Validated Counter-Drone Systems",
-      "summary": "",
-      "source": "Dronelife",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQZjdTQVkxNklwc3ozNlNwTTF4cVNCU01EMnA4dkNvRDFDUi1OM3dnQk5uWWVlSGFUcmZ2TWpFSE5qLWtVUHMxalV4ZDFIZzNWLUV3TjlRMjZyZEk4dF81S2pkbXBxSWRJWEJ0WmFGZl92MnZ5SDF2b2pBZW1vbHgyNHM2UQ?oc=5",
-      "published": "2026-08-04T10:50:36-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "cf36aeffaed6d830",
-      "search_section": "UAS and Drones",
-      "title": "Terra Drone Develops “Signal Recovery Feature” for Indoor Inspection Drone “Terra Xross 1” in Collaboration with Chevron and Shell via DeepStar Consortium",
-      "summary": "",
-      "source": "sUAS News",
-      "url": "https://news.google.com/rss/articles/CBMikgJBVV95cUxNclhPUmMzU3RMdU40VTJnTWxMbHczdUsyRVZJV0FuUkY2VjlodmM2OS1xMmRPWS15cnRHbUoxQl9PRFozanJGZ0NuNms2NzMyYnpYUGJfVGJHVVRxNlZCWVk3Z1ZuMGYxNDUtTlV5eUVRdkl4S0R5d0lSRUdBc2dQcXVza2h5N21YeXU3SkJqaTFrOWJWUHRNcWMzM3N4MG1LUWkxajVDaU9tN1lxV0tnU3M4b3F5dFB0TGpDNTlBaFhoTjBfa09UYmRRQ3FhNmJLZWUtWDctc0t3SzlucnQ4NWtvai1TeXk3N1F1WlN6Rzh3eU9ORU9YM25UYlVNbW40Ukt0YmlieDdmNEEtUlFkQkpR?oc=5",
-      "published": "2026-08-04T10:45:30-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "72ca1f5fa85fa35f",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Modi Govt Must Stop Buying Ethanol From US Under Trump's Pressure & Impose It On Country: Arvind Kejriwal",
-      "summary": "",
-      "source": "Oneindia",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPMUYwUXdvWlYxb1VmSnJ6ZUh3ZWlvaEJ3UTE0V0NMWlZwSGFuVUtHSnROczFMZlJEYWVOaW9qQ2stUTFRWC1ITWJtMFdjMEpsclB4THB4ZU9xUUkxQnZ6QUsycWF5bDZoRk1KLW9naGxnOEtxTmZ5YmprRVIyX0w4MzJhd1ZRMTVQWUc1RjFLVmJ2YklLa042cHZjUmJHREU0bG5zYWRCZ2VrZG9wRzVMTWY2cnVnY01RaUdYazRPbVhjSU1KaUNWNllLczJMaVJ5dFRSWldtWkRBNS1fUWw4R0930gHiAUFVX3lxTE8xRjBRd29aVjFvVWZKcnplSHdlaW9oQndRMTRXQ0xaVnBIYW5VS0dKdE5zMUxmUkRhZU5pb2pDay1RMVFYLUhNYm0wV2MwSmxyUHhMcHhlT3FRSTFCdnpBSzJxYXlsNmhGTUotb2dobGc4S3FOZnliamtFUjJfTDgzMmF3VlExNVBZRzVGMUtWYnZiSUtrTjZwdmNSYkdERTRsbnNhZEJnZWtkb3BHNUxNZjZydWdjTVFpR1hrNE9tWGNJTUppQ1Y2WUtzMkxpUnl0VFJaV21aREE1LV9RbDhHT3c?oc=5",
-      "published": "2026-08-04T10:41:37-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "cf7b391213ac427e",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Are there trusted counter drone companies in 2026?",
-      "summary": "",
-      "source": "Racine County Eye",
-      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE52ajVYRW9FMFh3T1Fzai0yUEhhTnc5M2pSWGlNRDl6QWRURUNoLU9KREdBZm5GZVJPUEdjY2lMWS11WEd1Z0JTc3BoR2VIanAwa2FZZnlCREh5QXVUemFzTEloSFNLb2NQWnpiVXFXcmlGcE9aaHlGUmkwTQ?oc=5",
-      "published": "2026-08-04T10:27:48-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "77311d880ce393b4",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Joby Targets 4 U.S. Markets as Initial Vertiport Sites for Electric Air Taxis",
-      "summary": "",
-      "source": "Design and Development Today",
-      "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNSGtLdEVSVXFGY0hOZ1FxazZMSzBVOGcyMlhFZFNEUmE4elJrWHM0b3FwRkZOckJkYnlic1cwaHhBZW10M3dWU1I3NjFRY2RhcDlMYkNBU1hKZ2NnT1dPaDEyZjUxZE5OS0dUTk1WcGk0T0ZKb2gxQzNQZFhWUm1WM0oxSXVoVl83RjBUdksxM1h4UjhTbGd6VlFPLTA4WDMxVkZjallBRGI5Z05BeTB2OFg1NjdEWUZobzdFYUI1SjNWWEVvRnF3M3NiZXVoZTdnWnRORWcxRGhNcDdvNDZCUkdDYw?oc=5",
-      "published": "2026-08-04T10:27:11-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "53e10913a170a54d",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Archer Daniels Midland (ADM) Could Be 5% Overvalued As Crush Expansion Meets Earnings Focus",
-      "summary": "",
-      "source": "simplywall.st",
-      "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxNdzl2Z0JDRVFZZ1JmSTNGeW02N2pPLWhDOGV4TkhsaF9JeExxQmhjbGppeFVJTDhtMmxhY1FqTHlIeW9HRjNDUzBiUXo0Ymphc1lvbEU5ZHRSOERMR2duc0QwanlHUG1BeWVteV9Bel9QeFU3blBVTkNZTXhDbFFodG1XU01IaGJsYTlUUE9VS2MtVUp2ZXloLVN0clM5dXp2NEo0V0RONWJuaDRrMVViUGZIb3FsejFFNjhuMGNZVlRSQnJqRVZQbTRkdzhaVTNULXF4Tl9CZlU0cG5tSW4zcncxZ3FYWG4xSnlR0gHrAUFVX3lxTE13OXZnQkNFUVlnUmZJM0Z5bTY3ak8taEM4ZXhOSGxoX0l4THFCaGNsaml4VUlMOG0ybGFjUWpMeUh5b0dGM0NTMGJRejRiamFzWW9sRTlkdFI4RExHZ25zRDBqeUdQbUF5ZW15X0F6X1B4VTduUFVOQ1lNeENsUWh0bVdTTUhoYmxhOVRQT1VLYy1VSnZleWgtU3RyUzl1enY0SjRXRE41Ym5oNGsxVWJQZkhvcWx6MUU2OG4wY1lWVFJCcmpFVlBtNGR3OFpVM1QtcXhOX0JmVTRwbm1JbjNydzFncVhYbjFKeVE?oc=5",
-      "published": "2026-08-04T10:27:04-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "c4071cbcb86401f9",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Is Joby Stock Your Ticket to Becoming a Millionaire?",
-      "summary": "",
-      "source": "AOL.com",
-      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNMGd6R19XdUpIbjBiYVBTSDZxS0JDRTRoX3IyVFpLY1Mwby1pQ0lBZGx4Q19xZFlXbVFKODExSW1lWTRZb0tVQmlTXzRDa2liZmxQd0tGVXE2YWRObDRIb2NhOWhCU1c4V3R5X0lZOXZuR05tYnVMdUZ6clRVclc0dnVkdXpXZnNISFE?oc=5",
-      "published": "2026-08-04T10:25:20-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "890f3767d45b0c20",
-      "search_section": "UAS Security and C-UAS",
-      "title": "DoD's counter-drone marketplace expanded to speed access to validated systems",
-      "summary": "",
-      "source": "militaryembedded.com",
-      "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxPMEE3Ums5S0VxMFFPakZQMVI4ZmxxU2lxNWNQang0NkpyNGFqdGZfZ2FFX0ZsZ3pCNFNINk9kR2E5ckIyeERsV215T1d2eDdKZDd4OTBBZDNvakVLN2dBMVIwWnR4d2JtSk44NTdta1VycThlZ0ZkTFBqaUQ2eWNGR0pOanJPMEpVWml1RlhFNTl1blVWWmpSeE9OanpBUDFTMXBxTGdOTEd0eDU3U1hrSFMwT1VuQ3ZtQmhOUXRaQTVGRjBNUmFmbnZTbEsxMW5PeXUzZ0t6bw?oc=5",
-      "published": "2026-08-04T10:23:44-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "9702a7d0c28b0ee1",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Sensor-driven AI air intercept demo deemed successful",
-      "summary": "",
-      "source": "militaryembedded.com",
-      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOaUlMTWxyVWNkM0Faa195YWMzSG1EUnc3SmpOR0tpRGtpMXdlelFySm9Wa2ZYNGZTcGJ2cVprY3FMLXNpU0ktQnB4XzNlX215UVRIeWRXZF95XzBvRU9lZXRoSDU1Z1JxSExkci1FMkQ3UjBLS0NpX09rME1lTEluUEY3UHVSaGZRMkhjNS1fTGh0cmtHTFRBSHRKMGltbzg?oc=5",
-      "published": "2026-08-04T10:19:56-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "e6d4f1ffb8f46a86",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Joby Aviation Partners With Atoms to Develop US Vertiport Network",
-      "summary": "",
-      "source": "marketscreener.com",
-      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxNaXpxRzF4a055Mm1XbGE5WFRJaXBPNW14Q0lTUWhYYVNFcmhlcVQxUUFvM2tmU3VVM3dGMWRlMUw0dnAtbkdXYThkNFlMdXJxXzZZNnZjRXRsQ3JjRzUxdUJMRnRValI4WW9SbS1MUm5NSWNkSllpV1FVR2o3bHl1YmpCOHF5UkZQOWhPblBQQUtialRHTjhFenRfOW1sc1h2N3cyUE5Ld0NMeVlQemlPLXpJdHVjbXlqSEE?oc=5",
-      "published": "2026-08-04T10:14:17-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "cf4271e39e713454",
-      "search_section": "UAS Security and C-UAS",
-      "title": "JIATF-401 Rolls Out Amazon-Style Counter-Drone Marketplace",
-      "summary": "",
-      "source": "Tectonic Defense",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNNWoyX2pZamFHLXRqbFpCemFEeE5TOUprT2JHSnYwRHptaVpGWGQ4cjZ1eVZKSURfMVBBNWw2b0VBb2hlRjVwV1VFRXVCVUI3ZjdQNWd4WFRzcTNMbWlQT0Z6a25ZZzRGN1JSSkEtazVUVzFBbHA2UTU4ZzZqci1neGxpZkxlNk42b2tuZUhlMDZSbmVjX2c?oc=5",
-      "published": "2026-08-04T10:08:56-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "73b5bd8f752da5a1",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Archer Aviation (ACHR) Could Be 76% Undervalued On FAA Backed Midnight Flight",
-      "summary": "",
-      "source": "simplywall.st",
-      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQcTAzcVBrZ0tzaXUwS1lza2ZXc2hBeC1Hd2xkeThQckNuRE15LTVQaXFMalc5OG1CMDluQWkzaTlmNXloWFc5S0lfTlVRa2RYWTdUckx0QVU3SzEyTzQ4X0RnRTdiLWdUVHlQN2laRXdVT0tJd291S1FTQXBjdjF0OUdGMExsdGt2SmxNY3ZNTDh4ODZNMGRsVVo5bU96VloyeGNTN1V0TnlXMUlZUFZSNURMYnFIek93eVlVNTI0QkJWcTRpUUFmWFI5a1dyem1XTm0yQk1weXDSAdgBQVVfeXFMUHEwM3FQa2dLc2l1MEtZc2tmV3NoQXgtR3dsZHk4UHJDbkRNeS01UGlxTGpXOThtQjA5bkFpM2k5ZjV5aFhXOUtJX05VUWtkWFk3VHJMdEFVN0sxMk80OF9EZ0U3Yi1nVFR5UDdpWkV3VU9LSXdvdUtRU0FwY3YxdDlHRjBMbHRrdkpsTWN2TUw4eDg2TTBkbFVaOW1PelZaMnhjUzdVdE55VzFJWVBWUjVETGJxSHpPd3lZVTUyNEJCVnE0aVFBZlhSOWtXcnptV05tMkJNcHlw?oc=5",
-      "published": "2026-08-04T10:08:33-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "d6edac5dfdf6a906",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Archer’s Midnight completes city-to-city flights in California",
-      "summary": "",
-      "source": "Vertical Mag",
-      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNSEhHdGFyWTdKQjFvWGt0bDVyQmtKT0VQZW1oU29XOFZvbkNkYUtYc3pPa1M1d0Q4SmNGZ2pSRnZUcGFYbmVkS2ZzeUhwbVYwRjhUNmhEOFBiczdXRElKam5TaGpfNUhZR3dRNXVwM0VfbWdIZVlON1J5SlREd2dBbWh0aDE0dWFtRmlhamR5OEZKYUV3UFJjVVpGVUxfQk54dVRv?oc=5",
-      "published": "2026-08-04T10:02:04-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "701fb30b8f1c3852",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Joby partners with Uber co-founder Travis Kalanick to build vertiports",
-      "summary": "",
-      "source": "AeroTime",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQcUtrRkVjOXNqTjF0eU1yT3k5OVUwTE1iMUZ0Mm9FenE5djVWS3hSaENXc213VVRSUlpMRXRBSVctQlI4aElEbTFhanJEekV3cFI0dDRNelpYQUFVXzZ5NVBXaWNEcGo2WEw3cGJhcDAxd05LZG50aFNLU3poZnRLSEhIcm45MkQza0diLXFMWFE0TC12MHVIdUdRVUpaaUlGbmtLMHNXMkLSAa4BQVVfeXFMTklXcFI3ZU1wa3RHcjRqanNzR3NGaVpkLUs3RF84ME1YaGJIYTEzbDE0eG5Kb1lRT1E2bjFpYkxxeTBPajJGM2F0eVhkaWFGWS02a3JPZzhpSUN5NkJmdy1GdG9yWHFhZmVQZE5xWHRmWmZfSnBsU0RyeDNSM0o2TGtoN0JPVXZDSHAtbWJrYkJvSDhpMS1VNFppUk1LT1puVjJyNjA1NEZhTHRHc0VR?oc=5",
-      "published": "2026-08-04T10:02:04-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "fbd2424aec76904b",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Archer Completes Piloted, Intercity Air Taxi Prototype Flight",
-      "summary": "",
-      "source": "FLYING Magazine",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBUZUlyVmRVWG02VVQ2Q1g1RS1DNUUyOVdTaThBaGF6S3IwZVRlOGJNazdHS3NxMG9CSlMxV21jOEk3MHRpTm9Nb3hIRklKYnFRdk1lWkhjb2Zua1VlU1lIbElfdEYwZVdFWk96V1FjOE9ld3U1UEE?oc=5",
-      "published": "2026-08-04T10:00:00-04:00",
-      "date_label": "Aug. 4, 2026",
-      "origin": "Google News RSS"
     }
   ],
   "source_errors": [],
-  "candidate_count": 346,
+  "candidate_count": 339,
   "candidate_counts": {
-    "Military": 45,
-    "UAS Security and C-UAS": 41,
     "Other Advanced Transportation": 45,
-    "UAS and Drones": 45,
-    "International": 40,
+    "Military": 45,
     "Autonomous Vehicles": 45,
-    "Trump Administration priorities": 29,
-    "eVTOL Integration Pilot Program and AAM": 44,
+    "International": 45,
+    "UAS and Drones": 45,
+    "Trump Administration priorities": 30,
+    "UAS Security and C-UAS": 40,
+    "eVTOL Integration Pilot Program and AAM": 32,
     "Federal Actions": 12
   }
 }
