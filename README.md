@@ -30,6 +30,11 @@ README.md
 .github/workflows/daily-news-update.yml
 data/latest_raw_news.json
 data/raw_archive/
+data/latest_briefing.json
+data/archive/
+coverage_history.py
+publication.py
+public_site.py
 ```
 
 ## Required secrets
@@ -42,12 +47,19 @@ In **Manage app → Settings → Secrets**, use:
 openai_api_key = "sk-proj-..."
 owner_password = "YOUR_PRIVATE_OWNER_PASSWORD"
 openai_model = "gpt-5.4-mini"
+github_publish_token = "github_pat_..."
+github_repository = "pjwhite-dev/transportation-news-update"
 ```
 
 The OpenAI key is used only after the authenticated owner starts the editorial
 build in Streamlit. The scheduled GitHub Actions collection does not use OpenAI
 and does not need an OpenAI secret. Never place a key directly in a code, JSON,
 Markdown, TXT, or YAML file.
+
+`github_publish_token` is optional until public publishing is enabled. Use a
+fine-grained GitHub token restricted to this repository with **Contents: Read
+and write** access. It lets the owner-only Streamlit button save the reviewed
+edition to `data/archive/` without exposing the token in the repository.
 
 ## Daily schedule
 
@@ -66,6 +78,28 @@ reader-facing material. Deterministic coverage checks keep credible AV,
 advanced rail/supersonic, and international developments from disappearing when
 the raw feed contains suitable records.
 
+Before that editorial pass, the app compares automated candidates with the
+prior 45 days of owner-published editions. A likely repeat is omitted unless the
+new record contains a concrete later milestone such as a final rule, approval,
+contract award, operational launch, completed test, deadline change, permit, or
+safety action. Supplemental links remain editor-vetted and are never silently
+discarded by this check.
+
+## Public website and archive
+
+GitHub Pages publishes `news.peterjwhite.org`. The latest page uses the reviewed
+editorial edition when one has been published for that date; otherwise it shows
+a current automated headline edition. The **Archive** page catalogs every dated
+edition, and each edition has a **Copy for email** button.
+
+The daily collection workflow rebuilds the public website after it saves the raw
+feed. Publishing a reviewed edition from Streamlit creates one GitHub commit that
+updates both `data/latest_briefing.json` and the matching dated file under
+`data/archive/`, which starts another website deployment.
+
+GitHub Pages must use **GitHub Actions** as its build source. The DNS record for
+the `news` host should be a CNAME pointing to `pjwhite-dev.github.io`.
+
 GitHub scheduled workflows can occasionally run a few minutes late. The generated briefing
 always labels its exact 24-hour coverage window.
 
@@ -80,6 +114,8 @@ After deploying the files and configuring Streamlit Secrets:
 5. Confirm that `data/latest_raw_news.json` and a dated raw archive were updated.
 6. Open the Streamlit site, unlock Owner controls, and build the update.
 7. Review the edition and use **Copy for Outlook**.
+8. Select **Publish this edition to news.peterjwhite.org** to save it to the
+   public archive.
 
 If the commit step reports a permissions error, open:
 

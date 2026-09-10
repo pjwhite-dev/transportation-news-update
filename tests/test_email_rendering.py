@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from html import unescape
 import unittest
 
 from regulatory_tracker import build_regulatory_tracker
@@ -86,6 +87,81 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
             self.assertIn("Delivering critical medical supplies", rendered)
         self.assertIn("background:#fff2cc", web)
         self.assertIn('bgcolor="#FFF2CC"', outlook)
+
+    def test_top_highlights_follow_summary_and_use_included_content(self) -> None:
+        current = briefing()
+        current["regulatory_tracker"] = build_regulatory_tracker(
+            date(2026, 8, 3)
+        )
+        daily_uses = [
+            "Delivering critical medical supplies",
+            "Inspecting remote power lines",
+            "Mapping wildfire damage",
+            "Monitoring coastal erosion",
+        ]
+        current["sections"]["UAS and Drones"] = [
+            {
+                "id": f"innovative-use-{index}",
+                "title": f"New civil drone operation {index}",
+                "summary": "The operation demonstrates a practical civil use.",
+                "innovative_uas_use": use,
+                "source": "Example Aviation News",
+                "url": f"https://example.com/innovative-use-{index}",
+                "date_label": "Aug. 3, 2026",
+                "section": "UAS and Drones",
+                "is_administration_win": False,
+                "also_covered": [],
+            }
+            for index, use in enumerate(daily_uses, start=1)
+        ]
+
+        imminent = streamlit_app.imminent_regulatory_items(current)
+        self.assertEqual(
+            [item["id"] for item in imminent],
+            ["section-2209-uafr", "supersonic-overland-flight"],
+        )
+        self.assertEqual(streamlit_app.innovative_uas_uses(current), daily_uses)
+
+        for name, rendered in (
+            ("web", streamlit_app.build_web_preview_html(current)),
+            ("outlook", streamlit_app.build_outlook_html(current)),
+            ("plain", streamlit_app.build_plain_text(current)),
+        ):
+            with self.subTest(format=name):
+                lowered = rendered.casefold()
+                self.assertLess(
+                    lowered.index("executive summary"),
+                    lowered.index("imminent regulatory deadlines"),
+                )
+                self.assertLess(
+                    lowered.index("imminent regulatory deadlines"),
+                    lowered.index("innovative uas uses"),
+                )
+                self.assertLess(
+                    lowered.index("innovative uas uses"),
+                    lowered.index("headlines at a glance"),
+                )
+                self.assertIn(
+                    "INNOVATIVE UAS USES IN TODAY'S BRIEFING",
+                    unescape(rendered),
+                )
+                self.assertIn(
+                    "Comments close August 5, 2026 (in 2 days).", rendered
+                )
+                for use in daily_uses:
+                    self.assertIn(use, rendered)
+
+    def test_top_highlights_are_omitted_without_matching_items(self) -> None:
+        current = briefing()
+        current["regulatory_tracker"] = []
+
+        for rendered in (
+            streamlit_app.build_web_preview_html(current),
+            streamlit_app.build_outlook_html(current),
+            streamlit_app.build_plain_text(current),
+        ):
+            self.assertNotIn("IMMINENT REGULATORY DEADLINES", rendered)
+            self.assertNotIn("INNOVATIVE UAS USES", rendered)
 
     def test_outlook_title_heading_sizes_and_footer_match_requested_copy(self) -> None:
         current = briefing()

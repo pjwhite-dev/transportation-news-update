@@ -12,6 +12,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 import news_engine as _news_engine
+from coverage_history import load_published_history
+from publication import DEFAULT_REPOSITORY, publish_briefing_to_github
 
 # Streamlit Cloud can rerun this file after a git update while retaining an
 # older imported module in the worker process. Reload once when a newly added
@@ -53,6 +55,8 @@ st.set_page_config(
 ROOT = Path(__file__).resolve().parent
 LATEST_RAW_PATH = ROOT / "data" / "latest_raw_news.json"
 RAW_ARCHIVE_DIR = ROOT / "data" / "raw_archive"
+PUBLISHED_ARCHIVE_DIR = ROOT / "data" / "archive"
+IMMINENT_REGULATORY_WINDOW_DAYS = 14
 
 
 def secret_value(name: str, default: str = "") -> str:
@@ -269,6 +273,105 @@ def sectioned_headline_groups(briefing: dict) -> list[tuple[str, list[dict]]]:
     return groups
 
 
+def innovative_uas_uses(briefing: dict) -> list[str]:
+    """Return a short, de-duplicated list from included reader-facing stories."""
+    uses: list[str] = []
+    seen: set[str] = set()
+    for _, items in sectioned_headline_groups(briefing):
+        for item in items:
+            value = clean_innovative_uas_use(
+                item.get("innovative_uas_use", "")
+            )
+            identity = value.casefold()
+            if not value or identity in seen:
+                continue
+            seen.add(identity)
+            uses.append(value)
+    return uses
+
+
+def imminent_regulatory_items(briefing: dict) -> list[dict]:
+    """Return selected open comment periods closing in the next 14 days."""
+    imminent = []
+    for item in briefing.get("regulatory_tracker", []):
+        days_remaining = item.get("days_remaining")
+        if not isinstance(days_remaining, int):
+            continue
+        if 0 <= days_remaining <= IMMINENT_REGULATORY_WINDOW_DAYS:
+            imminent.append(item)
+    return sorted(
+        imminent,
+        key=lambda item: (
+            item.get("days_remaining", IMMINENT_REGULATORY_WINDOW_DAYS + 1),
+            item.get("action", ""),
+        ),
+    )
+
+
+def regulatory_countdown_text(item: dict) -> str:
+    days = item.get("days_remaining")
+    deadline = item.get("comment_deadline_label", "")
+    if days == 0:
+        countdown = "today"
+    elif days == 1:
+        countdown = "in 1 day"
+    else:
+        countdown = f"in {days} days"
+    return f"Comments close {deadline} ({countdown})."
+
+
+def top_highlights_web_html(briefing: dict) -> str:
+    cards = []
+    imminent = imminent_regulatory_items(briefing)
+    if imminent:
+        deadline_rows = "".join(
+            f"""
+            <div style="margin:{'0' if index == 0 else '5px'} 0 0 0;">
+              <strong>{html.escape(item.get('agency', ''))}:</strong>
+              <a href="{safe_url(item.get('source_url', ''))}"
+                  style="color:#5d4500;text-decoration:underline;font-weight:700;">
+                {html.escape(item.get('action', ''))}
+              </a>
+              &mdash; {html.escape(regulatory_countdown_text(item))}
+            </div>
+            """
+            for index, item in enumerate(imminent)
+        )
+        cards.append(
+            f"""
+            <div style="background:#fff2cc;border-left:4px solid #d99100;
+                padding:9px 11px;margin:0 0 9px 0;color:#493c00;">
+              <div style="font-size:10px;line-height:1.35;font-weight:800;
+                  letter-spacing:.3px;margin-bottom:3px;">
+                IMMINENT REGULATORY DEADLINES
+              </div>
+              <div style="font-size:12px;line-height:1.4;">{deadline_rows}</div>
+            </div>
+            """
+        )
+
+    uses = innovative_uas_uses(briefing)
+    if uses:
+        cards.append(
+            f"""
+            <div style="background:#fff2cc;border-left:4px solid #d6b656;
+                padding:9px 11px;margin:0 0 9px 0;color:#493c00;">
+              <span style="font-size:10px;line-height:1.35;font-weight:800;
+                  letter-spacing:.3px;">
+                INNOVATIVE UAS USES IN TODAY'S BRIEFING:
+              </span>
+              <span style="font-size:12px;line-height:1.4;">
+                {html.escape(' • '.join(uses))}
+              </span>
+            </div>
+            """
+        )
+
+    if not cards:
+        return ""
+    return f'<div style="margin:0 0 14px 0;">{"".join(cards)}</div>'
+
+
 def headlines_web_html(briefing: dict) -> str:
     groups = sectioned_headline_groups(briefing)
     if not groups:
@@ -402,6 +505,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
     end_text = format_datetime(briefing.get("window_end", ""))
 
     sections = briefing.get("sections", {})
+    top_highlights_markup = top_highlights_web_html(briefing)
     headline_markup = headlines_web_html(briefing)
     visible_sections = ["Trump Administration Wins", "Top Developments"]
     if not executive_only:
@@ -462,6 +566,7 @@ def build_web_preview_html(briefing: dict, executive_only: bool = False) -> str:
         </div>
       </div>
 
+      {top_highlights_markup}
       {headline_markup}
       {section_markup}
       {tracker_markup}
@@ -481,6 +586,69 @@ def outlook_spacer(height: int) -> str:
         f'<tr><td height="{height}" style="height:{height}px;'
         f'line-height:{height}px;font-size:0;">&nbsp;</td></tr>'
     )
+
+
+def outlook_highlight_card(label: str, body_html: str) -> str:
+    return f"""
+    <tr>
+      <td style="padding:0 28px;">
+        <table role="presentation" width="100%" border="0" cellspacing="0"
+            cellpadding="0" bgcolor="#FFF2CC"
+            style="width:100%;border-collapse:collapse;background-color:#FFF2CC;
+            border-left:4px solid #D6B656;">
+          <tr>
+            <td style="padding:9px 12px;font-family:Arial,Helvetica,sans-serif;
+                color:#493C00;">
+              <div style="font-size:9px;line-height:13px;font-weight:bold;
+                  letter-spacing:.3px;mso-line-height-rule:exactly;">
+                {html.escape(label)}
+              </div>
+              <div style="padding-top:3px;font-size:11px;line-height:16px;
+                  mso-line-height-rule:exactly;">{body_html}</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    """
+
+
+def top_highlights_outlook_html(briefing: dict) -> str:
+    cards = []
+    imminent = imminent_regulatory_items(briefing)
+    if imminent:
+        deadline_rows = "".join(
+            f"""
+            <div style="{'padding-top:5px;' if index else ''}">
+              <strong>{html.escape(item.get('agency', ''))}:</strong>
+              <a href="{safe_url(item.get('source_url', ''))}"
+                  style="color:#5D4500;text-decoration:underline;font-weight:bold;">
+                {html.escape(item.get('action', ''))}
+              </a>
+              &mdash; {html.escape(regulatory_countdown_text(item))}
+            </div>
+            """
+            for index, item in enumerate(imminent)
+        )
+        cards.append(
+            outlook_highlight_card(
+                "IMMINENT REGULATORY DEADLINES",
+                deadline_rows,
+            )
+        )
+
+    uses = innovative_uas_uses(briefing)
+    if uses:
+        cards.append(
+            outlook_highlight_card(
+                "INNOVATIVE UAS USES IN TODAY'S BRIEFING",
+                " &nbsp;&bull;&nbsp; ".join(html.escape(value) for value in uses),
+            )
+        )
+
+    if not cards:
+        return outlook_spacer(25)
+    return outlook_spacer(12) + outlook_spacer(9).join(cards) + outlook_spacer(16)
 
 
 def headlines_outlook_html(briefing: dict) -> str:
@@ -884,6 +1052,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
     end_text = format_datetime(briefing.get("window_end", ""))
 
     sections = briefing.get("sections", {})
+    top_highlights_markup = top_highlights_outlook_html(briefing)
     headline_markup = headlines_outlook_html(briefing)
     visible_sections = ["Trump Administration Wins", "Top Developments"]
     if not executive_only:
@@ -1019,7 +1188,7 @@ def build_outlook_html(briefing: dict, executive_only: bool = False) -> str:
             </td>
           </tr>
 
-          {outlook_spacer(25)}
+          {top_highlights_markup}
           {headline_markup}
           {section_markup}
           {tracker_markup}
@@ -1060,6 +1229,22 @@ def build_plain_text(briefing: dict, executive_only: bool = False) -> str:
         briefing.get("executive_summary", ""),
         "",
     ]
+
+    imminent = imminent_regulatory_items(briefing)
+    if imminent:
+        lines.extend(["IMMINENT REGULATORY DEADLINES", ""])
+        for item in imminent:
+            lines.append(
+                f"• {item.get('agency', '')}: {item.get('action', '')} — "
+                f"{regulatory_countdown_text(item)} {item.get('source_url', '')}"
+            )
+        lines.append("")
+
+    uses = innovative_uas_uses(briefing)
+    if uses:
+        lines.extend(
+            ["INNOVATIVE UAS USES IN TODAY'S BRIEFING", " • ".join(uses), ""]
+        )
 
     sections = briefing.get("sections", {})
     headline_groups = sectioned_headline_groups(briefing)
@@ -1572,6 +1757,7 @@ if not raw_feed.get("window_end"):
 end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
 build_key = end.date().isoformat()
 tracker_for_day = build_regulatory_tracker(end)
+previous_coverage = load_published_history(PUBLISHED_ARCHIVE_DIR, end.date())
 
 st.title("Advanced Transportation News Update")
 st.caption(
@@ -1594,6 +1780,11 @@ with build_tab:
     st.write(
         f"GitHub collected **{raw_feed.get('candidate_count', 0)}** raw candidate "
         "articles without using OpenAI."
+    )
+    st.caption(
+        f"Coverage memory will compare these candidates with "
+        f"{len(previous_coverage)} stories from prior published editions. Repeated "
+        "events are omitted unless a later article reports a concrete new milestone."
     )
     with st.expander("View the automated feed as text"):
         st.text_area(
@@ -1725,6 +1916,7 @@ with build_tab:
                                 edited_records,
                                 api_key,
                                 model,
+                                previous_coverage,
                             )
                             st.session_state[
                                 f"generated_briefing_{build_key}"
@@ -1760,7 +1952,11 @@ with build_tab:
                     ):
                         try:
                             briefing = generate_briefing_from_records(
-                                raw_feed, [], api_key, model
+                                raw_feed,
+                                [],
+                                api_key,
+                                model,
+                                previous_coverage,
                             )
                             st.session_state[
                                 f"generated_briefing_{build_key}"
@@ -1812,6 +2008,34 @@ with preview_tab:
             short_text,
             subject_line,
         )
+        if owner_authenticated():
+            publish_token = secret_value("github_publish_token")
+            publish_repository = secret_value(
+                "github_repository", DEFAULT_REPOSITORY
+            )
+            if st.button(
+                "Publish this edition to news.peterjwhite.org",
+                type="primary",
+                use_container_width=True,
+                disabled=not bool(publish_token),
+            ):
+                with st.spinner("Publishing this edition and updating the archive…"):
+                    try:
+                        publish_briefing_to_github(
+                            current,
+                            publish_token,
+                            publish_repository,
+                        )
+                        st.success(
+                            "Published. The public site and archive will update in a few minutes."
+                        )
+                    except Exception as exc:
+                        st.error(str(exc))
+            if not publish_token:
+                st.caption(
+                    "Website publishing becomes available after "
+                    "github_publish_token is added to Streamlit Secrets."
+                )
         st.download_button(
             "Download Outlook HTML",
             data=outlook_full_html,
@@ -1868,6 +2092,10 @@ with status_tab:
         f"**Automated candidates:** {raw_feed.get('candidate_count', 0)}"
     )
     if briefing:
+        st.write(
+            "**Previously published topics identified:** "
+            f"{briefing.get('previous_coverage_candidate_count', 0)}"
+        )
         st.write(
             f"**Obvious unrelated automated records filtered before AI:** "
             f"{briefing.get('automated_filtered_out_count', 0)}"

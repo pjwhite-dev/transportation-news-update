@@ -19,7 +19,8 @@ def active_feed_context() -> tuple[str, dict]:
 
 class FeedOnlyButtonVisibilityTests(unittest.TestCase):
     def load_app(self) -> AppTest:
-        app = AppTest.from_file("streamlit_app.py", default_timeout=15).run()
+        app_path = Path(__file__).resolve().parents[1] / "streamlit_app.py"
+        app = AppTest.from_file(str(app_path), default_timeout=15).run()
         self.assertEqual([item.value for item in app.exception], [])
         return app
 

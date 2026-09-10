@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 import feedparser
 import requests
 
+from coverage_history import annotate_previous_coverage
 from regulatory_tracker import build_regulatory_tracker
 
 EASTERN = ZoneInfo("America/New_York")
@@ -283,6 +284,7 @@ PORTFOLIO_ANCHORS = (
     "vertiport", "electric aircraft", "autonomous vehicle", "automated vehicle",
     "automated driving", "automated driving system", "ads-equipped", "robotaxi",
     "self-driving", "driverless", "autonomous truck", "driverless truck",
+    "autonomous shuttle", "driverless shuttle",
     "nhtsa", "fmvss", "fmcsa", "part 555", "vehicle-to-everything", "v2x",
     "supersonic", "x-59", "boom overture", "hermeus", "high-speed rail",
     "bullet train", "maglev", "autonomous rail", "passenger rail",
@@ -312,13 +314,14 @@ MILITARY_SECTION_PATTERN = re.compile(
 )
 
 MILITARY_CONFLICT_ACTOR_PATTERN = re.compile(
-    r"\b(?:ukraine|ukrainians?|russia|russians?)\b",
+    r"\b(?:ukraine|ukrainians?|russia|russians?|iran|iranian)\b",
     re.IGNORECASE,
 )
 
 MILITARY_CONFLICT_CONTEXT_PATTERN = re.compile(
     r"\b(?:drones?|uas|uavs?|unmanned|attacks?|strikes?|hit|struck|sank|sunk|"
-    r"ships?|vessels?|military|combat|war|warfare|battlefield|frontline|"
+    r"ships?|vessels?|captur(?:e|es|ed|ing)|seiz(?:e|es|ed|ing)|underwater drone|"
+    r"military|combat|war|warfare|battlefield|frontline|"
     r"weapons?|missiles?|munitions?|invasion|defen[sc]e)\b",
     re.IGNORECASE,
 )
@@ -330,6 +333,7 @@ COUNTER_UAS_TECHNOLOGY_PATTERN = re.compile(
     r"detect(?:ing|s|ed)? drones?|uas detection|drone detection|drone tracking|"
     r"drone identification|drone mitigation|drone interdiction|"
     r"drone neutralization|drone interceptor|drone jammer|"
+    r"take(?:s|n|ing)? down drones?|"
     r"unauthorized drones?|airspace sovereignty|countering unmanned aircraft)\b",
     re.IGNORECASE,
 )
@@ -396,7 +400,9 @@ INNOVATIVE_UAS_USE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
 INTERNATIONAL_MARKER_PATTERN = re.compile(
     r"\b(?:africa|asia|australia|australian|austria|brazil|brazilian|britain|"
     r"british|canada|canadian|china|chinese|europe|european|finland|finnish|"
-    r"france|french|germany|german|india|indian|indonesia|italy|italian|"
+    r"croatia|croatian|france|french|germany|german|india|indian|indonesia|"
+    r"karnataka|chikkaballapura|civil aviation safety authority|casa|"
+    r"ireland|irish|italy|italian|"
     r"japan|japanese|korea|korean|mexico|mexican|netherlands|norway|norwegian|"
     r"poland|polish|saudi arabia|singapore|spain|spanish|sweden|swedish|"
     r"switzerland|taiwan|taiwanese|united arab emirates|uae|united kingdom|"
@@ -448,8 +454,40 @@ INTERNATIONAL_TRANSPORT_PATTERN = re.compile(
 LOW_QUALITY_AUTOMATED_PATTERN = re.compile(
     r"\b(?:stock|shares?|investors?|valuation|market size|market forecast|"
     r"market report|market landscape|market insights|market growth|cagr|"
-    r"price target|buy or sell|top \d+|consumer list|game guide|personal injury "
-    r"lawyer)\b",
+    r"price target|buy or sell|buy now|top \d+|consumer list|game guide|"
+    r"personal injury lawyer|quarterly results?|revenue guidance|earnings|"
+    r"legal rights|class action|securities? law firm)\b",
+    re.IGNORECASE,
+)
+
+PUBLICATION_EXCLUSION_PATTERN = re.compile(
+    r"^(?:opinion|commentary|editorial)\b|"
+    r"\b(?:market outlook|market analysis|price prediction|investment case|"
+    r"sponsored content|press release roundup)\b",
+    re.IGNORECASE,
+)
+
+PUBLICATION_ACTION_PATTERN = re.compile(
+    r"\b(?:accept(?:s|ed)?|accused|announce[ds]?|approve[ds]?|authorize[ds]?|"
+    r"award(?:s|ed)?|begin[ns]?|complete[ds]?|deploy(?:s|ed|ing)?|expand(?:s|ed|ing)?|"
+    r"field(?:s|ed)?|first flight|grant(?:s|ed)?|launch(?:es|ed|ing)?|open(?:s|ed)?|"
+    r"operational|order[eds]?|permit(?:s|ted)?|plans?|propose[ds]?|recall(?:s|ed)?|"
+    r"regulat(?:e[ds]?|ion)|rulemaking|sign(?:s|ed)?|strike[sd]?|test(?:s|ed|ing)?|"
+    r"trial(?:s|ed)?|investigation|contract|certif(?:y|ies|ied|ication))\b",
+    re.IGNORECASE,
+)
+
+PUBLICATION_LOW_QUALITY_SOURCE_PATTERN = re.compile(
+    r"\b(?:seeking alpha|motley fool|tradingview|marketscreener|"
+    r"investing\.com|stock titan|benzinga|yahoo finance|financialcontent|"
+    r"blockonomi|business model analyst|grafa(?:\.com)?|pluang|men's journal)\b",
+    re.IGNORECASE,
+)
+
+ADS_SPECIFIC_PATTERN = re.compile(
+    r"\b(?:ads-equipped|automated driving(?: system)?|autonomous vehicles?|"
+    r"automated vehicles?|self-driving|driverless|robotaxis?|autonomous trucks?|"
+    r"driverless trucks?|part 555|vehicle-to-everything|v2x)\b",
     re.IGNORECASE,
 )
 
@@ -1078,7 +1116,12 @@ def record_is_international(record: dict[str, Any]) -> bool:
     ):
         return True
 
-    text = record_content_text(record)
+    text = clean_spaces(
+        " ".join(
+            str(record.get(key, ""))
+            for key in ("title", "summary", "description", "pasted_context")
+        )
+    )
     if DOMESTIC_MARKER_PATTERN.search(text):
         return False
     return bool(
@@ -1122,10 +1165,48 @@ def infer_section(record: dict[str, Any]) -> str:
     return "UAS and Drones"
 
 
+def automated_record_is_publication_worthy(record: dict[str, Any]) -> bool:
+    """Select high-confidence raw headlines for the no-AI public fallback."""
+    if record.get("required_include", False):
+        return True
+    title = clean_spaces(record.get("title", ""))
+    text = record_content_text(record)
+    lowered = text.casefold()
+    source = clean_spaces(record.get("source", ""))
+    if (
+        not title
+        or headline_is_publisher_only(title, record.get("source", ""))
+        or LOW_QUALITY_AUTOMATED_PATTERN.search(text)
+        or PUBLICATION_EXCLUSION_PATTERN.search(title)
+        or PUBLICATION_LOW_QUALITY_SOURCE_PATTERN.search(source)
+        or re.search(r"\([A-Z]{1,5}(?:\.[A-Z])?\)", title)
+        or not any(marker in lowered for marker in PORTFOLIO_ANCHORS)
+    ):
+        return False
+    if record.get("origin") == "Federal Register API":
+        if (
+            infer_section(record) == "Autonomous Vehicles"
+            and not ADS_SPECIFIC_PATTERN.search(text)
+        ):
+            return False
+        return True
+    return bool(
+        PUBLICATION_ACTION_PATTERN.search(text)
+        or record_is_active_conflict(record)
+        or record_is_counter_uas_technology(record)
+        or infer_innovative_uas_use(record)
+    )
+
+
 def recognized_administration_win(
     record: dict[str, Any],
 ) -> dict[str, str] | None:
     """Identify narrow, well-documented implementation wins the AI may miss."""
+    if (
+        record.get("previously_covered", False)
+        and not record.get("noteworthy_new_development", "")
+    ):
+        return None
     text = record_content_text(record)
     title = clean_spaces(record.get("title", ""))
     if (
@@ -1356,6 +1437,12 @@ def coverage_floor_score(
     record: dict[str, Any],
 ) -> int | None:
     """Score a credible record for deterministic minimum sector coverage."""
+    if (
+        record.get("previously_covered", False)
+        and not record.get("noteworthy_new_development", "")
+        and not record.get("required_include", False)
+    ):
+        return None
     title = clean_spaces(record.get("title", ""))
     text = record_content_text(record)
     if (
@@ -1492,6 +1579,11 @@ def prompt_messages(
             "origin": item.get("origin", ""),
             "required_include": bool(item.get("required_include", False)),
             "editor_vetted": bool(item.get("editor_vetted", False)),
+            "previously_covered": bool(item.get("previously_covered", False)),
+            "previous_coverage": item.get("previous_coverage", {}),
+            "noteworthy_new_development": item.get(
+                "noteworthy_new_development", ""
+            ),
         }
         for item in articles
     ]
@@ -1561,6 +1653,11 @@ EDITORIAL SCOPE AND RELEVANCE
   transportation categories above.
 - Exclude pure stock promotion, generic market-size reports, consumer-product lists,
   celebrity commentary, and articles that merely repeat old news without a new development.
+- Coverage-memory fields compare automated candidates with published editions from the prior
+  45 days. Exclude an automated record when previously_covered=true. Keep it when
+  noteworthy_new_development names a concrete later milestone, and focus the story on that
+  new action or result rather than repeating the earlier announcement. Treat this metadata as
+  a strong editorial safeguard, not reader-facing language.
 - A required supplemental item must still be accounted for, but unrelated automated records
   must be marked relevant=false and excluded.
 - The voice may be confidently pro-American and Administration-forward, but credit President
@@ -1869,6 +1966,12 @@ def validate_analysis(
             eo_number = ""
 
         includes_required = any(article_id in required for article_id in ids)
+        has_fresh_coverage = any(
+            article_id in required
+            or not lookup[article_id].get("previously_covered", False)
+            or bool(lookup[article_id].get("noteworthy_new_development", ""))
+            for article_id in ids
+        )
 
         innovative_uas_use = clean_innovative_uas_use(
             raw.get("innovative_uas_use", "")
@@ -1894,7 +1997,10 @@ def validate_analysis(
                 "article_ids": ids,
                 "primary_article_id": primary,
                 "section": section,
-                "relevant": bool(raw.get("relevant", False)) or includes_required,
+                "relevant": (
+                    (bool(raw.get("relevant", False)) and has_fresh_coverage)
+                    or includes_required
+                ),
                 "importance": max(1, min(10, int(raw.get("importance", 1) or 1))),
                 "canonical_title": clean_spaces(raw.get("canonical_title", "")),
                 "summary": clean_spaces(raw.get("summary", "")),
@@ -1904,7 +2010,11 @@ def validate_analysis(
                 "eo_section": eo_section,
                 "win_explanation": win_explanation,
                 "confidence": raw.get("confidence", "low"),
-                "exclude_reason": clean_spaces(raw.get("exclude_reason", "")),
+                "exclude_reason": (
+                    "Previously covered without a noteworthy new development."
+                    if not has_fresh_coverage and not includes_required
+                    else clean_spaces(raw.get("exclude_reason", ""))
+                ),
             }
         )
 
@@ -2292,6 +2402,7 @@ def generate_briefing_from_records(
     supplemental_records: list[dict[str, Any]],
     api_key: str,
     model: str = DEFAULT_OPENAI_MODEL,
+    previous_coverage: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     start = datetime.fromisoformat(raw_feed["window_start"]).astimezone(EASTERN)
     end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
@@ -2318,6 +2429,7 @@ def generate_briefing_from_records(
         supplemental.append(record)
 
     combined = deduplicate_articles(automated + supplemental)
+    combined = annotate_previous_coverage(combined, previous_coverage or [])
     raw_analysis, analysis_usage, analysis_cost = analyze_articles(
         combined, api_key, model, start, end
     )
@@ -2373,6 +2485,9 @@ def generate_briefing_from_records(
         "raw_automated_candidate_count": len(raw_automated),
         "automated_candidate_count": len(automated),
         "automated_filtered_out_count": len(raw_automated) - len(automated),
+        "previous_coverage_candidate_count": sum(
+            1 for item in combined if item.get("previously_covered", False)
+        ),
         "supplemental_count": supplemental_count,
         "supplemental_accounted_count": supplemental_accounted_count,
         "candidate_counts": raw_feed.get("candidate_counts", {}),
