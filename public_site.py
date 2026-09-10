@@ -372,7 +372,7 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
             '<section class="executive-summary"><h2>Executive Summary</h2>'
             f'<p>{html.escape(str(payload.get("executive_summary", "")))}</p></section>'
         )
-        status = "Owner-published editorial edition"
+        status = "Complete AI-assisted edition"
     else:
         shown = sum(len(items) for items in sections.values())
         status = "Automatically updated public-source headline edition"
@@ -579,7 +579,14 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     (output / "assets").mkdir(parents=True)
     (output / "archive").mkdir(parents=True)
 
-    latest_day = max(editions)
+    editorial_days = [
+        day
+        for day, payload in editions.items()
+        if payload.get("edition_kind") == "editorial"
+    ]
+    # A raw collection is an input, not a publishable edition. Keep it in the
+    # archive for continuity, but never let it replace the last complete briefing.
+    latest_day = max(editorial_days) if editorial_days else max(editions)
     (output / "index.html").write_text(
         edition_page(editions[latest_day], latest_day, archived=False),
         encoding="utf-8",

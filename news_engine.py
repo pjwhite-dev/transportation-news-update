@@ -1222,12 +1222,11 @@ def recognized_administration_win(
             "eo_number": "EO 14307",
             "eo_section": "Section 6",
             "win_explanation": (
-                "President Trump turned his Unleashing American Drone Dominance "
-                "order into real-world results as DOT and FAA’s eIPP completed its "
-                "first operational flight. This huge America-first win strengthens "
-                "U.S. leadership in next-generation aviation, supports high-skilled "
-                "jobs, and accelerates safer medical, cargo, and passenger "
-                "transportation for American communities."
+                "Under the Trump Administration, DOT and FAA’s eIPP completed its "
+                "first operational flight, implementing EO 14307’s direction to "
+                "advance electric vertical-takeoff-and-landing operations. The "
+                "milestone supports U.S. aviation commercialization, high-skilled "
+                "jobs, and new medical, cargo, and passenger services."
             ),
         }
 
@@ -1241,12 +1240,11 @@ def recognized_administration_win(
             "eo_number": "",
             "eo_section": "",
             "win_explanation": (
-                "President Trump’s FAA accepted new industry standards for "
-                "light-sport aircraft, including powered-lift designs, turning the "
-                "Administration’s pro-innovation aviation agenda into practical "
-                "results. This huge win gives American manufacturers and pilots a "
-                "clearer path to bring safer, more capable aircraft to market while "
-                "strengthening U.S. leadership in general aviation."
+                "The Trump Administration’s FAA accepted new industry standards "
+                "for light-sport aircraft, including powered-lift designs. The "
+                "action gives U.S. manufacturers and pilots a clearer path to bring "
+                "new aircraft to market while maintaining applicable safety "
+                "requirements."
             ),
         }
 
@@ -1256,12 +1254,10 @@ def recognized_administration_win(
             "eo_number": "",
             "eo_section": "",
             "win_explanation": (
-                "President Trump’s NHTSA set a firm federal path for the next "
-                "robotaxi safety rulebook, giving American innovators clearer rules "
-                "while putting public safety first. This huge win helps the "
-                "United States lead the driverless-vehicle revolution, supports "
-                "high-tech American jobs, and advances safer transportation for "
-                "families and communities."
+                "The Trump Administration’s NHTSA set a federal path for the next "
+                "robotaxi safety rulemaking. The milestone can give U.S. developers "
+                "clearer requirements while allowing the agency to address public "
+                "safety as automated-driving systems move toward deployment."
             ),
         }
 
@@ -1271,12 +1267,11 @@ def recognized_administration_win(
             "eo_number": "",
             "eo_section": "",
             "win_explanation": (
-                "President Trump’s NHTSA modernized Federal Motor Vehicle Safety "
-                "Standards for automated-driving vehicles, replacing outdated "
-                "requirements with a clearer path for American innovation. This "
-                "huge win puts safety first, supports high-tech American jobs, and "
-                "helps the United States lead the world in responsible "
-                "driverless-vehicle deployment."
+                "The Trump Administration’s NHTSA modernized Federal Motor Vehicle "
+                "Safety Standards for automated-driving vehicles. The action "
+                "replaces requirements written for conventional controls and gives "
+                "U.S. developers a clearer regulatory path while preserving the "
+                "agency’s safety role."
             ),
         }
 
@@ -1286,12 +1281,11 @@ def recognized_administration_win(
             "eo_number": "",
             "eo_section": "",
             "win_explanation": (
-                "Under President Trump, DARPA and the U.S. Air Force flew a "
-                "frontline F-16 modified for autonomous flight, moving American "
-                "military aviation technology from the laboratory into the air. "
-                "This huge win strengthens U.S. technological leadership, "
-                "gives American warfighters a decisive edge, and reinforces the "
-                "deterrence that keeps the Nation secure."
+                "Under the Trump Administration, DARPA and the U.S. Air Force flew "
+                "an F-16 modified for autonomous flight. The test moves U.S. "
+                "military aviation technology from laboratory development into "
+                "flight evaluation and provides operational data for future defense "
+                "capabilities."
             ),
         }
 
@@ -1304,21 +1298,18 @@ def recognized_administration_win(
     ):
         if FIFA_SECURITY_LASTING_PATTERN.search(text):
             explanation = (
-                "President Trump’s Restoring American Airspace Sovereignty agenda "
-                "delivered a huge, lasting win for the American people: counter-drone "
-                "technology deployed for the FIFA World Cup will remain available to "
-                "local law enforcement for future mass gatherings. America gains "
-                "safer public events and stronger local defenses against dangerous "
-                "or unlawful drones."
+                "Under the Trump Administration’s airspace-security initiative, "
+                "counter-drone technology deployed for the FIFA World Cup will "
+                "remain available to local law enforcement for future mass "
+                "gatherings. The retained equipment expands local capacity to "
+                "address dangerous or unlawful drones at public events."
             )
         else:
             explanation = (
-                "President Trump’s Restoring American Airspace Sovereignty agenda "
-                "put counter-drone protections to work for the FIFA World Cup, "
-                "safeguarding American families and visitors at one of the world’s "
-                "largest sporting events. This huge win strengthens U.S. control of "
-                "its skies and builds lasting federal and local capacity to defeat "
-                "rogue-drone threats."
+                "The Trump Administration’s airspace-security initiative put "
+                "counter-drone protections to work for the FIFA World Cup. The "
+                "deployment supports event security and builds federal and local "
+                "capacity to detect and address unlawful drone activity."
             )
         return {
             "event_key": "",
@@ -1660,8 +1651,9 @@ EDITORIAL SCOPE AND RELEVANCE
   a strong editorial safeguard, not reader-facing language.
 - A required supplemental item must still be accounted for, but unrelated automated records
   must be marked relevant=false and excluded.
-- The voice may be confidently pro-American and Administration-forward, but credit President
-  Trump or his Administration only where a direct, supportable connection exists.
+- Use a neutral, factual voice. Credit President Trump or his Administration only where a
+  direct, supportable connection exists, and distinguish documented results from expected
+  or potential effects.
 
 MINIMUM SECTOR COVERAGE
 - Review the full candidate set. Do not let a large volume of UAS, military, or supplemental
@@ -1734,9 +1726,9 @@ STALE-NEWS EXAMPLES
 
 HIGH-PRIORITY EO IMPLEMENTATION WINS
 - Do not overlook the first or inaugural operational flight under DOT and FAA's eIPP.
-  It is direct implementation of President Trump's EO 14307, Section 6, and should be
-  presented as a major America-first win for U.S. aviation leadership, high-skilled jobs,
-  useful transportation services, and faster commercialization of advanced aircraft.
+  It is direct implementation of President Trump's EO 14307, Section 6. Describe the
+  documented operational milestone and any source-supported effects on U.S. aviation,
+  jobs, transportation services, or commercialization.
 - Do not overlook a current U.S. FIFA World Cup counter-UAS deployment, enforcement
   action, security operation, federally backed capability, or decision to retain that
   equipment for future public events. It is direct implementation of President Trump's
@@ -1758,10 +1750,10 @@ HIGH-PRIORITY EO IMPLEMENTATION WINS
   name the Administration, agency, or federal program that acted; state what it actually
   did; and explain the specific benefit for U.S. capability, jobs, manufacturing, safety,
   security, deployment, or regulatory progress.
-- Use a strongly pro-Trump, pro-America voice for a supported Win. Confidently credit
-  President Trump's leadership, describe why the action is a major win for the American
-  people, and connect the result to safer communities, American jobs and innovation,
-  national leadership, or control of U.S. airspace. Keep every factual claim supportable.
+- Use neutral, factual language for a supported Win. Attribute the action to the responsible
+  Administration, agency, or federal program and explain the documented or clearly stated
+  effect on U.S. safety, jobs, manufacturing, security, deployment, regulatory progress, or
+  airspace operations. Keep every claim supportable by the supplied source record.
 - Use active voice and ordinary language. If the event is a contract or purchase, say who
   awarded or ordered what, who will provide it, and what American mission it supports.
 - Never say "during the window," "within the coverage window," "the record shows,"

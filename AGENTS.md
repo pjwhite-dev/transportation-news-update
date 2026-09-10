@@ -2,12 +2,13 @@
 
 ## Product purpose
 
-This repository provides a Streamlit application that creates the daily
-**Advanced Transportation News Update**. Preserve the exact visible title. Do
-not display the former subtitle “UAS, C-UAS, and Advanced Transportation.”
+This repository creates and hosts the daily **Advanced Transportation News
+Update**. Preserve the exact visible title. Do not display the former subtitle
+“UAS, C-UAS, and Advanced Transportation.”
 
-The product has two deliberately separate stages. Opening or refreshing the
-Streamlit app must never call OpenAI.
+The product has two deliberately separate GitHub Actions stages. The raw stage
+must never call OpenAI or publish an incomplete edition. Streamlit remains only
+as a legacy local tool and is not part of the publication workflow.
 
 ## Two-stage workflow
 
@@ -22,24 +23,27 @@ Streamlit app must never call OpenAI.
 - Commit generated JSON safely, retrying against the latest `main` so routine
   concurrent pushes do not lose the generated feed.
 
-### Stage 2 — owner-triggered Streamlit editorial pass
+### Stage 2 — complete AI briefing and publication
 
 - Load the automated raw feed.
-- Accept an optional, separately pasted supplemental daily news email.
+- Start either from the owner's manual GitHub Actions trigger or a trusted
+  supplemental-email `repository_dispatch` event.
+- Accept an optional base64-encoded supplemental daily email from the trusted
+  event payload; never interpolate the email body into workflow shell code.
 - Clean malformed URL wrappers such as `<https://example.com/article>`, remove
   trailing punctuation, remove duplicate URLs, and associate each link with a
   nearby pasted headline and context.
 - Fetch and use the linked article's actual page headline when metadata is
   available. A nearby description, quotation, or sentence fragment must never
   replace the article headline merely because it appears beside the URL.
-- Let the editor review and correct extracted headlines before AI processing.
-- Run OpenAI only after the authenticated owner clicks a build button.
+- Run OpenAI with the repository's `OPENAI_API_KEY` Actions secret only in this
+  complete-briefing workflow.
 - Process the automated feed and all supplemental records together in one
   editorial pass.
-- When no supplemental records have been extracted, show **Build from
-  Automated Feed Only** whenever Owner controls are unlocked. When locked,
-  clearly instruct the user to enter the owner password and unlock Owner
-  controls before the button can appear.
+- Write `data/latest_briefing.json` and the matching dated file under
+  `data/archive/`, then build and deploy the GitHub Pages site.
+- Do not replace the live homepage with a raw headline fallback. The homepage
+  advances only after a complete briefing passes validation.
 
 ## Supplemental link invariants
 
@@ -102,11 +106,8 @@ The tracker must include the FAA BVLOS/Part 108 rule, the Section 2209 fixed-sit
 UAS restriction rule, the supersonic-overland-flight rulemaking, key ADS-focused
 FMVSS modernization actions, and important Part 555 petitions. Verify dates and
 extensions against the latest official Federal Register notice before updating
-the curated tracker. Show the tracker on Build Today’s Update before any AI
-build, with an Include checkbox for every item. Carry those selections into
-Review & Edit, where the owner can change them again. If an already-open browser
-session contains a briefing created before tracker support was added, populate
-the tracker deterministically without requiring another AI build.
+the curated tracker. Populate it deterministically for every complete briefing
+without requiring another AI build.
 Use concise noun-style action labels such as “Routine BVLOS drone operations /
 Part 108”; do not begin tracker labels with boilerplate such as “Create rules
 for,” “Enable,” “Modernize,” or “Decide.”
@@ -221,11 +222,11 @@ active language. Never expose internal editorial tests with phrases such as
 purchases, say who awarded or ordered what, who will provide it, and which
 American mission it supports.
 
-For a supported Win, use a strongly pro-Trump, pro-America voice. Confidently
-credit President Trump's leadership and explain why the result is a major win
-for the American people through safer communities, American jobs and
-innovation, national leadership, or stronger control of U.S. airspace. Keep
-every factual claim supportable.
+For a supported Win, use neutral, factual language. Attribute the action to the
+responsible Administration, agency, or federal program and explain the
+documented or clearly stated effect on U.S. safety, jobs, manufacturing,
+security, deployment, regulatory progress, or airspace operations. Keep every
+claim supportable by the linked source.
 
 ## Relevance exclusions
 
@@ -236,16 +237,13 @@ generic market-size reports; and consumer-product lists. Required supplemental
 links remain subject to accounting, while unrelated automated records should be
 filtered out.
 
-## Manual review and output
+## Generated output
 
-Preserve the **Review & Edit** tab. The authenticated editor must be able to:
-
-- Remove individual stories with an Include checkbox.
-- Edit headlines and summaries.
-- Check or uncheck Trump Administration Win status for every story and move the
-  story into or out of the Win section accordingly.
-- Edit Administration Win explanations and optional EO/section citations.
-- Edit the Executive Summary and What to Watch.
+The complete-briefing workflow publishes directly without a Streamlit editing
+step. Deterministic validators must enforce required sections, supplemental-link
+accounting, section placement, Administration Win gates, innovative UAS labels,
+and the presence of the Executive Summary and regulatory tracker before files
+are saved or the live site is replaced.
 
 Directly below the Executive Summary, render **Headlines at a Glance** in a
 smaller font. It must contain only linked headlines, grouped under the same
@@ -270,16 +268,14 @@ When a Win cites a recognized EO and section, append a concise plain-English
 summary of that section, for example: “Section 3, advancing domestic
 commercialization of UAS technologies at scale.”
 
-Preserve the Outlook-specific renderer and controls:
+Preserve the email-safe renderer and controls:
 
 - Outlook-safe table HTML with inline styles
 - Generous vertical spacing
 - Large linked headlines
 - Subdued source/date metadata
 - Executive Summary and Administration Win callouts
-- Copy for Outlook
-- Copy Executive Version
-- Copy Subject Line
+- Copy for email on the public site
 
 ## Required maintenance validation
 
@@ -302,8 +298,8 @@ Before handing off a change, run:
 - The focused test suite.
 - A local headless Streamlit startup/health test when practical.
 
-Regression coverage must include owner-authenticated and unauthenticated
-feed-only button visibility, malformed and duplicate supplemental URL handling,
+Regression coverage must include malformed and duplicate supplemental URL handling,
+trusted base64 email-event handling, complete-briefing validation,
 publisher-only headline rejection, unrelated HHS/psychedelic filtering, AV
 categorization and coverage fallback, International categorization, the
 sectioned headline index, Administration Win eligibility, and end-to-end

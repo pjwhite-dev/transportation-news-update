@@ -109,7 +109,7 @@ class PublicSiteTests(unittest.TestCase):
 
         self.assertFalse(news_engine.automated_record_is_publication_worthy(item))
 
-    def test_builds_latest_page_and_catalog_of_old_editions(self) -> None:
+    def test_latest_page_stays_on_complete_edition_until_next_build(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
             raw_archive = root / "data" / "raw_archive"
@@ -157,16 +157,21 @@ class PublicSiteTests(unittest.TestCase):
             old_html = (
                 output / "archive" / "2026-09-09" / "index.html"
             ).read_text()
+            raw_html = (
+                output / "archive" / "2026-09-10" / "index.html"
+            ).read_text()
             cname = (output / "CNAME").read_text()
 
         self.assertEqual(result["edition_count"], 2)
         self.assertIn("Advanced Transportation News Update", latest_html)
         self.assertIn("Copy for email", latest_html)
-        self.assertIn("City begins autonomous shuttle operations", latest_html)
-        self.assertNotIn("draws industry comments", latest_html)
+        self.assertIn("A prior editorial summary.", latest_html)
+        self.assertNotIn("City begins autonomous shuttle operations", latest_html)
         self.assertIn("2026-09-09/", archive_html)
         self.assertIn("2026-09-10/", archive_html)
         self.assertIn("A prior editorial summary.", old_html)
+        self.assertIn("City begins autonomous shuttle operations", raw_html)
+        self.assertNotIn("draws industry comments", raw_html)
         self.assertEqual(cname, "news.peterjwhite.org\n")
 
 

@@ -413,8 +413,8 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertIn("eo 14307, section 6", instructions)
         self.assertIn("fifa world cup counter-uas", instructions)
         self.assertIn("eo 14305, section 9", instructions)
-        self.assertIn("strongly pro-trump, pro-america voice", instructions)
-        self.assertIn("major win for the american people", instructions)
+        self.assertIn("use neutral, factual language", instructions)
+        self.assertIn("documented or clearly stated effect", instructions)
         self.assertIn("current executive-branch department", instructions)
         self.assertIn("headline omits president trump", instructions)
 
@@ -487,9 +487,9 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertEqual(win["eo_number"], "EO 14307")
         self.assertEqual(win["eo_section"], "Section 6")
         self.assertGreaterEqual(win["importance"], 9)
-        self.assertIn("President Trump", win["win_explanation"])
-        self.assertIn("American communities", win["win_explanation"])
-        self.assertIn("huge", win["win_explanation"].casefold())
+        self.assertIn("Trump Administration", win["win_explanation"])
+        self.assertIn("U.S. aviation", win["win_explanation"])
+        self.assertNotIn("huge", win["win_explanation"].casefold())
 
     def test_fifa_counter_drone_retention_is_forced_to_airspace_win(self) -> None:
         article = record(
@@ -521,10 +521,10 @@ class AdministrationWinTests(unittest.TestCase):
         self.assertEqual(win["section"], "UAS Security and C-UAS")
         self.assertEqual(win["eo_number"], "EO 14305")
         self.assertEqual(win["eo_section"], "Section 9")
-        self.assertIn("President Trump", win["win_explanation"])
-        self.assertIn("American people", win["win_explanation"])
+        self.assertIn("Trump Administration", win["win_explanation"])
+        self.assertIn("local law enforcement", win["win_explanation"])
         self.assertIn("future mass gatherings", win["win_explanation"])
-        self.assertIn("huge", win["win_explanation"].casefold())
+        self.assertNotIn("huge", win["win_explanation"].casefold())
 
     def test_current_federal_implementation_actions_are_forced_to_wins(self) -> None:
         cases = [
@@ -601,8 +601,8 @@ class AdministrationWinTests(unittest.TestCase):
                 self.assertTrue(win["is_administration_win"])
                 self.assertEqual(win["section"], expected_section)
                 self.assertEqual(win["eo_number"], "")
-                self.assertIn("President Trump", win["win_explanation"])
-                self.assertIn("huge win", win["win_explanation"].casefold())
+                self.assertIn("Trump Administration", win["win_explanation"])
+                self.assertNotIn("huge win", win["win_explanation"].casefold())
 
     @patch("news_engine.generate_final_executive_summary")
     @patch("news_engine.analyze_articles")
