@@ -1,0 +1,73 @@
+name: Build and Publish Complete Briefing
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - supplemental-news-email
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: complete-transportation-briefing
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build the complete briefing
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+        run: python automated_briefing.py --event-path "$GITHUB_EVENT_PATH"
+
+      - name: Commit the completed edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/latest_briefing.json data/archive/
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish complete news edition $(date -u +%Y-%m-%d)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Build the public news archive
+        run: python public_site.py --output _site
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the public site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Publish the public site
+        id: deployment
+        uses: actions/deploy-pages@v4
