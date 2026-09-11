@@ -4,3 +4,8 @@ __pycache__/
 .vercel/
 .env.local
 .env.*.local
+.env
+.n8n-test*/
+.edge-qa/
+.chrome-qa/
+.runtime/

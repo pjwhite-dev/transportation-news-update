@@ -5,21 +5,27 @@ import base64
 import binascii
 import json
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from ai_providers import AIProvider, OpenAIProvider, provider_from_env
 from coverage_history import load_published_history
 from news_engine import (
     DEFAULT_OPENAI_MODEL,
     EASTERN,
+    HEADLINE_PLACEHOLDER_PATTERN,
     SECTION_ORDER,
     TOPIC_SECTIONS,
     clean_innovative_uas_use,
+    executive_summary_sentence_is_public,
     generate_briefing_from_records,
+    headline_is_publisher_only,
     infer_innovative_uas_use,
     infer_section,
     sanitize_story_summary,
+    story_summary_sentence_is_public,
 )
 from publication import briefing_date, briefing_payload
 from supplemental_email import extract_supplemental_items
@@ -131,13 +137,17 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
 def build_briefing(
     root: Path,
     *,
-    api_key: str,
-    model: str,
+    api_key: str = "",
+    model: str = DEFAULT_OPENAI_MODEL,
     supplemental_text: str = "",
     fetch_metadata: bool = True,
+    provider: AIProvider | None = None,
 ) -> dict[str, Any]:
-    if not api_key.strip():
-        raise ValueError("OPENAI_API_KEY is not configured.")
+    selected = provider or (
+        OpenAIProvider(api_key=api_key, model=model)
+        if api_key.strip()
+        else provider_from_env()
+    )
     raw_feed = load_json(root / "data" / "latest_raw_news.json")
     try:
         end = datetime.fromisoformat(str(raw_feed["window_end"])).astimezone(EASTERN)
@@ -153,10 +163,54 @@ def build_briefing(
         raw_feed,
         supplemental_records,
         api_key,
-        model,
+        selected.model,
         previous_coverage=previous,
+        provider=selected,
     )
     return normalize_reader_features(briefing)
+
+
+def validate_complete_briefing(briefing: dict[str, Any]) -> dict[str, Any]:
+    briefing = normalize_reader_features(briefing)
+    errors: list[str] = []
+    sections = briefing["sections"]
+    if not executive_summary_sentence_is_public(
+        str(briefing.get("executive_summary", ""))
+    ):
+        errors.append("The Executive Summary contains internal editorial language.")
+    for section in SECTION_ORDER:
+        for index, item in enumerate(sections.get(section, []), start=1):
+            title = str(item.get("title", "")).strip()
+            source = str(item.get("source", "")).strip()
+            if HEADLINE_PLACEHOLDER_PATTERN.search(title):
+                errors.append(f"{section} story {index} has a placeholder headline.")
+            if headline_is_publisher_only(title, source):
+                errors.append(f"{section} story {index} has a publisher-only headline.")
+            if not str(item.get("url", "")).startswith(("http://", "https://")):
+                errors.append(f"{section} story {index} has no public source URL.")
+            summary = str(item.get("summary", "")).strip()
+            if summary and not story_summary_sentence_is_public(summary):
+                errors.append(f"{section} story {index} contains internal editorial language.")
+            win_explanation = str(item.get("win_explanation", "")).strip()
+            if win_explanation and not story_summary_sentence_is_public(win_explanation):
+                errors.append(f"{section} story {index} has an internal Win explanation.")
+    extracted = int(briefing.get("supplemental_count", 0) or 0)
+    represented = int(briefing.get("supplemental_accounted_count", 0) or 0)
+    if extracted != represented:
+        errors.append(
+            f"Supplemental accounting failed: extracted {extracted}, represented {represented}."
+        )
+    if not briefing.get("regulatory_tracker"):
+        errors.append("The Regulatory Deadline Tracker is empty.")
+    watch_items = briefing.get("what_to_watch")
+    if not isinstance(watch_items, list) or not watch_items:
+        errors.append("What to Watch is missing or empty.")
+    elif any(not story_summary_sentence_is_public(str(item)) for item in watch_items):
+        errors.append("What to Watch contains internal editorial language.")
+    if errors:
+        raise ValueError("Complete briefing validation failed:\n- " + "\n- ".join(errors))
+    briefing["validation_status"] = "passed"
+    return briefing
 
 
 def save_briefing(root: Path, briefing: dict[str, Any]) -> tuple[Path, Path]:
@@ -182,7 +236,33 @@ def main() -> None:
     parser.add_argument("--event-path", type=Path)
     parser.add_argument("--supplemental-file", type=Path)
     parser.add_argument("--skip-metadata-fetch", action="store_true")
+    parser.add_argument("--health-check", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--validate-only", type=Path, metavar="BRIEFING_JSON")
     args = parser.parse_args()
+
+    if args.validate_only:
+        briefing = validate_complete_briefing(load_json(args.validate_only))
+        print(
+            json.dumps(
+                {
+                    "date": briefing_date(briefing),
+                    "validation_status": briefing["validation_status"],
+                    "supplemental_links_extracted": briefing.get("supplemental_count", 0),
+                    "supplemental_links_represented": briefing.get(
+                        "supplemental_accounted_count", 0
+                    ),
+                },
+                indent=2,
+            )
+        )
+        return
+
+    provider = provider_from_env()
+    health = provider.health_check()
+    if args.health_check:
+        print(json.dumps(health, indent=2))
+        return
 
     supplemental_text = ""
     if args.supplemental_file:
@@ -191,24 +271,52 @@ def main() -> None:
         supplemental_text = supplemental_text_from_event(args.event_path)
 
     root = args.root.resolve()
-    model = os.environ.get("OPENAI_MODEL", DEFAULT_OPENAI_MODEL).strip()
+    started = time.monotonic()
     briefing = build_briefing(
         root,
-        api_key=os.environ.get("OPENAI_API_KEY", ""),
-        model=model or DEFAULT_OPENAI_MODEL,
         supplemental_text=supplemental_text,
         fetch_metadata=not args.skip_metadata_fetch,
+        provider=provider,
     )
-    latest_path, archive_path = save_briefing(root, briefing)
+    briefing = validate_complete_briefing(briefing)
+    latest_path: Path | None = None
+    archive_path: Path | None = None
+    if not args.dry_run:
+        latest_path, archive_path = save_briefing(root, briefing)
     story_count = sum(
         len(items) for items in briefing["sections"].values()
     )
-    print(
-        f"Built complete edition {briefing_date(briefing)} with {story_count} "
-        f"section placements and {briefing.get('supplemental_count', 0)} "
-        "supplemental links."
-    )
-    print(f"Saved {latest_path.relative_to(root)} and {archive_path.relative_to(root)}.")
+    report = {
+        "date": briefing_date(briefing),
+        "ai_provider": briefing.get("ai_provider", provider.name),
+        "model": briefing.get("model", provider.model),
+        "raw_candidates_discovered": briefing.get("raw_automated_candidate_count", 0),
+        "searxng_candidates": briefing.get("searxng_candidate_count", 0),
+        "official_source_candidates": briefing.get("official_source_candidate_count", 0),
+        "supplemental_links_extracted": briefing.get("supplemental_count", 0),
+        "supplemental_links_represented": briefing.get(
+            "supplemental_accounted_count", 0
+        ),
+        "final_story_count": story_count,
+        "administration_wins_count": len(
+            briefing["sections"].get("Trump Administration Wins", [])
+        ),
+        "innovative_uas_uses_count": sum(
+            bool(item.get("innovative_uas_use"))
+            for item in briefing["sections"].get("UAS and Drones", [])
+        ),
+        "tracker_count": len(briefing.get("regulatory_tracker", [])),
+        "model_retries": briefing.get("model_retries", 0),
+        "total_build_seconds": round(time.monotonic() - started, 2),
+        "validation_status": briefing.get("validation_status"),
+        "saved": not args.dry_run,
+    }
+    print(json.dumps(report, indent=2))
+    if latest_path and archive_path:
+        print(
+            f"Saved {latest_path.relative_to(root)} and "
+            f"{archive_path.relative_to(root)}."
+        )
 
 
 if __name__ == "__main__":

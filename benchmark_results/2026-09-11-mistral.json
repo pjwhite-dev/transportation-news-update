@@ -1,0 +1,26 @@
+{
+  "archive": "data\\archive\\2026-09-11.json",
+  "records": 34,
+  "results": [
+    {
+      "model": "mistral:latest",
+      "valid_structured_output": true,
+      "model_retries": 0,
+      "total_build_seconds": 94.94,
+      "gpu_vram_used_mb_after_build": 9657,
+      "system_ram_used_mb_after_build": 23344,
+      "supplemental_links_extracted": 34,
+      "supplemental_links_represented": 34,
+      "all_required_supplemental_represented": true,
+      "exact_section_placement_rate": 0.824,
+      "av_coverage": true,
+      "international_coverage": true,
+      "military_conflict_urls_present": 3,
+      "administration_wins": 0,
+      "placeholder_headlines": 0,
+      "internal_language_in_summaries": 0,
+      "executive_summary_is_public": true,
+      "final_story_count": 29
+    }
+  ]
+}

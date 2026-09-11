@@ -9,9 +9,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 import news_engine as _news_engine
+from ai_providers import provider_from_env
 from coverage_history import load_published_history
 from publication import DEFAULT_REPOSITORY, publish_briefing_to_github
 
@@ -28,7 +28,6 @@ if not all(
     importlib.reload(_news_engine)
 
 from news_engine import (
-    DEFAULT_OPENAI_MODEL,
     EASTERN,
     EO_DISPLAY_NAMES,
     SECTION_ORDER,
@@ -104,7 +103,11 @@ def safe_url(value: str) -> str:
 def format_datetime(value: str) -> str:
     try:
         dt = datetime.fromisoformat(value).astimezone(EASTERN)
-        return dt.strftime("%B %d, %Y at %-I:%M %p ET").replace(" 0", " ")
+        return (
+            dt.strftime("%B %d, %Y at %I:%M %p ET")
+            .replace(" 0", " ")
+            .replace("at 0", "at ")
+        )
     except (ValueError, TypeError):
         return value
 
@@ -1387,7 +1390,7 @@ def copy_controls(
     }}
     </script></body></html>
     """
-    components.html(component, height=60)
+    st.iframe(component, height=60)
 
 
 def raw_feed_text(raw_feed: dict) -> str:
@@ -1762,7 +1765,7 @@ previous_coverage = load_published_history(PUBLISHED_ARCHIVE_DIR, end.date())
 st.title("Advanced Transportation News Update")
 st.caption(
     f"Automated raw feed covers the preceding 24 hours through "
-    f"{end.strftime('%-I:%M %p ET on %B %d, %Y').replace(' 0', ' ')}"
+    f"{end.strftime('%I:%M %p ET on %B %d, %Y').lstrip('0').replace(' 0', ' ')}"
 )
 
 build_tab, preview_tab, edit_tab, raw_tab, status_tab = st.tabs(
@@ -1885,11 +1888,8 @@ with build_tab:
                 type="primary",
                 use_container_width=True,
             ):
-                api_key = secret_value("openai_api_key")
-                model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
-                if not api_key:
-                    st.error("Add openai_api_key to Streamlit Secrets.")
-                else:
+                provider = provider_from_env()
+                try:
                     edited_records = []
                     for record in records:
                         edited = dict(record)
@@ -1910,22 +1910,22 @@ with build_tab:
                         "Compiling the full briefing from the automated feed and "
                         "all supplemental items, then writing the Executive Summary…"
                     ):
-                        try:
-                            briefing = generate_briefing_from_records(
-                                raw_feed,
-                                edited_records,
-                                api_key,
-                                model,
-                                previous_coverage,
-                            )
-                            st.session_state[
-                                f"generated_briefing_{build_key}"
-                            ] = briefing
-                            reset_editor_state(build_key)
-                            st.success("Today’s Advanced Transportation News Update is ready.")
-                            st.rerun()
-                        except Exception as exc:
-                            st.error(str(exc))
+                        briefing = generate_briefing_from_records(
+                            raw_feed,
+                            edited_records,
+                            "",
+                            provider.model,
+                            previous_coverage,
+                            provider=provider,
+                        )
+                        st.session_state[
+                            f"generated_briefing_{build_key}"
+                        ] = briefing
+                        reset_editor_state(build_key)
+                        st.success("Today’s Advanced Transportation News Update is ready.")
+                        st.rerun()
+                except Exception as exc:
+                    st.error(str(exc))
         else:
             st.warning(
                 "Enter the owner password in the sidebar and select **Unlock**. "
@@ -1942,29 +1942,26 @@ with build_tab:
                 type="primary",
                 use_container_width=True,
             ):
-                api_key = secret_value("openai_api_key")
-                model = secret_value("openai_model", DEFAULT_OPENAI_MODEL)
-                if not api_key:
-                    st.error("Add openai_api_key to Streamlit Secrets.")
-                else:
+                provider = provider_from_env()
+                try:
                     with st.spinner(
                         "Compiling today’s briefing, then writing the Executive Summary…"
                     ):
-                        try:
-                            briefing = generate_briefing_from_records(
-                                raw_feed,
-                                [],
-                                api_key,
-                                model,
-                                previous_coverage,
-                            )
-                            st.session_state[
-                                f"generated_briefing_{build_key}"
-                            ] = briefing
-                            reset_editor_state(build_key)
-                            st.rerun()
-                        except Exception as exc:
-                            st.error(str(exc))
+                        briefing = generate_briefing_from_records(
+                            raw_feed,
+                            [],
+                            "",
+                            provider.model,
+                            previous_coverage,
+                            provider=provider,
+                        )
+                        st.session_state[
+                            f"generated_briefing_{build_key}"
+                        ] = briefing
+                        reset_editor_state(build_key)
+                        st.rerun()
+                except Exception as exc:
+                    st.error(str(exc))
         else:
             st.warning(
                 "Enter the owner password in the sidebar and select **Unlock**. "

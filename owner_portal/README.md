@@ -1,13 +1,13 @@
-# Owner editor
+# Local owner editor
 
-This small server-backed site edits the current published edition without
-exposing the owner password or GitHub publishing credential to the browser.
+Run the editor from the repository root after setting a long `OWNER_PASSWORD` and an independent `SESSION_SECRET` of at least 32 characters:
 
-Deploy this directory as its own Vercel project. Configure the five variables
-listed in `.env.example` as server-side environment variables. Use a long,
-unique owner password, a separate random session secret, and a fine-grained
-GitHub token limited to Contents read/write for this repository.
+```powershell
+.\.venv\Scripts\python.exe owner_portal\local_server.py
+```
 
-The editor saves `data/latest_briefing.json` and the matching dated archive in
-one Git commit. The `publish-owner-edits.yml` workflow then rebuilds GitHub
-Pages so changes appear on the public site.
+Open `http://127.0.0.1:8765`. The service refuses non-loopback binding. It uses signed, HTTP-only, same-site session cookies and same-origin checks. A save validates the complete edition, atomically updates `data/latest_briefing.json` and its dated archive, runs `owner_edit_validation.py`, stages only those two files, commits with `Owner edit news edition `, and pushes to `main` through local Git credentials.
+
+`.github/workflows/publish-owner-edits.yml` recognizes that commit prefix, validates the edition again, and republishes GitHub Pages.
+
+The serverless API remains for compatibility, but local operation is preferred because it needs no public write service or GitHub token. Never put passwords, session secrets, or tokens in frontend code or Git.

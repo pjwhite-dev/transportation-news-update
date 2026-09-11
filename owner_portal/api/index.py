@@ -91,15 +91,20 @@ def _session_signature(expires: int, secret: str) -> str:
     ).hexdigest()
 
 
-def create_session_cookie(now: int | None = None) -> str:
+def create_session_cookie(
+    now: int | None = None,
+    *,
+    secure: bool = True,
+) -> str:
     issued = int(time.time() if now is None else now)
     expires = issued + SESSION_SECONDS
     signature = _session_signature(expires, _session_secret())
     value = f"v1.{expires}.{signature}"
-    return (
+    cookie = (
         f"owner_session={value}; Path=/; Max-Age={SESSION_SECONDS}; "
-        "HttpOnly; Secure; SameSite=Strict"
+        "HttpOnly; SameSite=Strict"
     )
+    return cookie + ("; Secure" if secure else "")
 
 
 def session_is_valid(cookie_header: str, now: int | None = None) -> bool:

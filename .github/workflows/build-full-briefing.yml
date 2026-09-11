@@ -1,10 +1,12 @@
-name: Build and Publish Complete Briefing
+name: Emergency OpenAI Briefing Build
 
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types:
-      - supplemental-news-email
+    inputs:
+      confirm_openai_usage:
+        description: "Type USE OPENAI to authorize this emergency cloud-AI run"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -17,6 +19,7 @@ concurrency:
 
 jobs:
   build-and-publish:
+    if: inputs.confirm_openai_usage == 'USE OPENAI'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     environment:
@@ -40,8 +43,10 @@ jobs:
 
       - name: Build the complete briefing
         env:
+          AI_PROVIDER: openai
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          OPENAI_FALLBACK_ENABLED: "false"
         run: python automated_briefing.py --event-path "$GITHUB_EVENT_PATH"
 
       - name: Commit the completed edition

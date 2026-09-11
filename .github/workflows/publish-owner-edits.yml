@@ -1,16 +1,12 @@
-name: Publish Transportation News Website
+name: Publish Owner Edits
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - "coverage_history.py"
-      - "public_site.py"
-      - "data/archive/**"
       - "data/latest_briefing.json"
-      - ".github/workflows/publish-news-site.yml"
+      - "data/archive/**"
 
 permissions:
   contents: read
@@ -18,16 +14,14 @@ permissions:
   id-token: write
 
 concurrency:
-  group: transportation-news-pages
-  cancel-in-progress: true
+  group: complete-transportation-briefing
+  cancel-in-progress: false
 
 jobs:
-  deploy:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      !startsWith(github.event.head_commit.message, 'Owner edit news edition ')
+  publish-owner-edit:
+    if: startsWith(github.event.head_commit.message, 'Owner edit news edition ')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -44,6 +38,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Validate the owner-edited edition
+        run: python owner_edit_validation.py data/latest_briefing.json
 
       - name: Build the public news archive
         run: python public_site.py --output _site

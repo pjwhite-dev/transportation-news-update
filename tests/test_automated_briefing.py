@@ -162,6 +162,30 @@ class AutomatedBriefingTests(unittest.TestCase):
             self.assertEqual(archived.name, "2026-09-10.json")
             self.assertEqual(latest.read_text(), archived.read_text())
 
+    def test_complete_validation_rejects_internal_executive_language(self) -> None:
+        briefing = {
+            "executive_summary": "The supplied records were selected for this briefing.",
+            "sections": {},
+            "supplemental_count": 0,
+            "supplemental_accounted_count": 0,
+            "regulatory_tracker": [{"action": "Part 108"}],
+            "what_to_watch": ["FAA action is expected."],
+        }
+        with self.assertRaisesRegex(ValueError, "Executive Summary"):
+            automated_briefing.validate_complete_briefing(briefing)
+
+    def test_complete_validation_requires_nonempty_what_to_watch(self) -> None:
+        briefing = {
+            "executive_summary": "Transportation agencies advanced several initiatives.",
+            "sections": {},
+            "supplemental_count": 0,
+            "supplemental_accounted_count": 0,
+            "regulatory_tracker": [{"action": "Part 108"}],
+            "what_to_watch": [],
+        }
+        with self.assertRaisesRegex(ValueError, "What to Watch"):
+            automated_briefing.validate_complete_briefing(briefing)
+
 
 if __name__ == "__main__":
     unittest.main()

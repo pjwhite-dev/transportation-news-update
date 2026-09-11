@@ -3,9 +3,8 @@ from __future__ import annotations
 import hashlib
 import html
 import json
-import random
+import os
 import re
-import time
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -16,13 +15,16 @@ from zoneinfo import ZoneInfo
 import feedparser
 import requests
 
+from ai_providers import AIProvider, DEFAULT_OPENAI_MODEL, OpenAIProvider
 from coverage_history import annotate_previous_coverage
 from regulatory_tracker import build_regulatory_tracker
+from web_discovery import (
+    enrich_article_metadata,
+    fetch_official_feeds,
+    fetch_searxng,
+)
 
 EASTERN = ZoneInfo("America/New_York")
-OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
-DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
-TRANSIENT_OPENAI_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
 
 EXECUTIVE_SUMMARY_PROCESS_MARKERS = (
     "supplemental",
@@ -32,6 +34,8 @@ EXECUTIVE_SUMMARY_PROCESS_MARKERS = (
     "editorial pass",
     "editorial process",
     "source record",
+    "supplied record",
+    "the record shows",
     "record id",
     "article id",
     "link accounting",
@@ -70,11 +74,6 @@ HEADLINE_PLACEHOLDER_PATTERN = re.compile(
     r"^(?:headline unavailable|untitled supplemental item|review this link)\b",
     re.IGNORECASE,
 )
-
-OPENAI_TOKEN_PRICES = {
-    "gpt-5.4-mini": {"input": 0.75, "output": 4.50},
-    "gpt-5-mini": {"input": 0.25, "output": 2.00},
-}
 
 TOPIC_SECTIONS = [
     "UAS and Drones",
@@ -941,6 +940,20 @@ def collect_articles(
     items.extend(federal_items)
     errors.extend(federal_errors)
 
+    official_items, official_errors = fetch_official_feeds(window_start, window_end)
+    errors.extend(official_errors)
+    searxng_items, searxng_errors = fetch_searxng(
+        os.environ.get("SEARXNG_BASE_URL", "http://localhost:8080"),
+        window_start,
+        window_end,
+    )
+    errors.extend(searxng_errors)
+    external_items, metadata_errors = enrich_article_metadata(
+        official_items + searxng_items
+    )
+    items.extend(external_items)
+    errors.extend(metadata_errors)
+
     filtered = [
         item for item in items
         if automated_record_is_portfolio_relevant(item)
@@ -1806,35 +1819,6 @@ The Executive Summary will be written in a separate final pass from that compile
     ]
 
 
-def extract_response_text(data: dict[str, Any]) -> str:
-    text_parts: list[str] = []
-    refusals: list[str] = []
-    for output_item in data.get("output", []):
-        if output_item.get("type") != "message":
-            continue
-        for content_item in output_item.get("content", []):
-            if content_item.get("type") == "output_text":
-                text_parts.append(content_item.get("text", ""))
-            elif content_item.get("type") == "refusal":
-                refusals.append(content_item.get("refusal", "Request refused."))
-    if refusals:
-        raise RuntimeError("OpenAI declined the request: " + " ".join(refusals))
-    text = "".join(text_parts).strip()
-    if not text:
-        raise RuntimeError("OpenAI returned no usable output.")
-    return text
-
-
-def estimate_cost(model: str, usage: dict[str, Any]) -> float | None:
-    prices = OPENAI_TOKEN_PRICES.get(model)
-    if not prices:
-        return None
-    return (
-        int(usage.get("input_tokens", 0) or 0) * prices["input"] / 1_000_000
-        + int(usage.get("output_tokens", 0) or 0) * prices["output"] / 1_000_000
-    )
-
-
 def request_structured_output(
     messages: list[dict[str, str]],
     api_key: str,
@@ -1842,59 +1826,18 @@ def request_structured_output(
     schema_name: str,
     schema: dict[str, Any],
     max_output_tokens: int,
+    provider: AIProvider | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], float | None]:
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is missing.")
-
-    payload = {
-        "model": model,
-        "input": messages,
-        "reasoning": {"effort": "none"},
-        "max_output_tokens": max_output_tokens,
-        "store": False,
-        "text": {
-            "format": {
-                "type": "json_schema",
-                "name": schema_name,
-                "strict": True,
-                "schema": schema,
-            }
-        },
-    }
-
-    errors: list[str] = []
-    for attempt in range(4):
-        try:
-            response = requests.post(
-                OPENAI_RESPONSES_ENDPOINT,
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-                timeout=300,
-            )
-        except requests.RequestException as exc:
-            errors.append(f"network error: {exc}")
-            if attempt < 3:
-                time.sleep((2 ** attempt) + random.uniform(0.2, 1.0))
-                continue
-            break
-
-        if response.status_code < 400:
-            data = response.json()
-            analysis = json.loads(extract_response_text(data))
-            usage = data.get("usage") or {}
-            return analysis, usage, estimate_cost(model, usage)
-
-        detail = clean_spaces(response.text)[:900]
-        errors.append(f"HTTP {response.status_code}: {detail}")
-        if response.status_code in TRANSIENT_OPENAI_STATUS_CODES and attempt < 3:
-            time.sleep((2 ** attempt) + random.uniform(0.2, 1.0))
-            continue
-        raise RuntimeError(f"OpenAI API returned HTTP {response.status_code}: {detail}")
-
-    raise RuntimeError("OpenAI request failed after retries: " + " | ".join(errors[-4:]))
+    selected = provider or OpenAIProvider(api_key=api_key, model=model)
+    result = selected.generate_structured(
+        messages,
+        schema_name=schema_name,
+        schema=schema,
+        max_output_tokens=max_output_tokens,
+    )
+    usage = dict(result.usage)
+    usage["_retries"] = result.retries
+    return result.value, usage, result.estimated_cost
 
 
 def analyze_articles(
@@ -1903,6 +1846,7 @@ def analyze_articles(
     model: str,
     window_start: datetime,
     window_end: datetime,
+    provider: AIProvider | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], float | None]:
     return request_structured_output(
         prompt_messages(articles, window_start, window_end),
@@ -1911,6 +1855,7 @@ def analyze_articles(
         "transportation_news_analysis",
         analysis_schema(),
         20000,
+        provider,
     )
 
 
@@ -2357,6 +2302,7 @@ def generate_final_executive_summary(
     model: str,
     window_start: datetime,
     window_end: datetime,
+    provider: AIProvider | None = None,
 ) -> tuple[str, dict[str, Any], float | None]:
     result, usage, cost = request_structured_output(
         executive_summary_messages(
@@ -2371,6 +2317,7 @@ def generate_final_executive_summary(
         "transportation_news_executive_summary",
         executive_summary_schema(),
         1200,
+        provider,
     )
     return (
         sanitize_compiled_executive_summary(
@@ -2404,9 +2351,12 @@ def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
     capped = deduplicate_articles(capped)
 
     counts: dict[str, int] = {}
+    origin_counts: dict[str, int] = {}
     for article in capped:
         key = article.get("search_section", "Unknown")
         counts[key] = counts.get(key, 0) + 1
+        origin = article.get("origin", "Unknown")
+        origin_counts[origin] = origin_counts.get(origin, 0) + 1
 
     return {
         "generated_at": datetime.now(EASTERN).isoformat(),
@@ -2416,6 +2366,12 @@ def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
         "source_errors": source_errors,
         "candidate_count": len(capped),
         "candidate_counts": counts,
+        "candidate_origin_counts": origin_counts,
+        "searxng_candidate_count": origin_counts.get("SearXNG", 0),
+        "official_source_candidate_count": (
+            origin_counts.get("Official source RSS", 0)
+            + origin_counts.get("Federal Register API", 0)
+        ),
     }
 
 
@@ -2449,6 +2405,7 @@ def generate_briefing_from_records(
     api_key: str,
     model: str = DEFAULT_OPENAI_MODEL,
     previous_coverage: list[dict[str, Any]] | None = None,
+    provider: AIProvider | None = None,
 ) -> dict[str, Any]:
     start = datetime.fromisoformat(raw_feed["window_start"]).astimezone(EASTERN)
     end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
@@ -2477,7 +2434,7 @@ def generate_briefing_from_records(
     combined = deduplicate_articles(automated + supplemental)
     combined = annotate_previous_coverage(combined, previous_coverage or [])
     raw_analysis, analysis_usage, analysis_cost = analyze_articles(
-        combined, api_key, model, start, end
+        combined, api_key, model, start, end, provider
     )
     analysis = validate_analysis(raw_analysis, combined)
     lookup = {item["id"]: item for item in combined}
@@ -2507,6 +2464,7 @@ def generate_briefing_from_records(
         model,
         start,
         end,
+        provider,
     )
     usage = combine_usage(analysis_usage, summary_usage)
     cost = (
@@ -2520,6 +2478,9 @@ def generate_briefing_from_records(
         "window_start": start.isoformat(),
         "window_end": end.isoformat(),
         "model": model,
+        "ai_provider": provider.name if provider else "openai",
+        "model_retries": int(analysis_usage.get("_retries", 0) or 0)
+        + int(summary_usage.get("_retries", 0) or 0),
         "usage": usage,
         "estimated_cost": cost,
         "executive_summary": executive_summary,
@@ -2537,6 +2498,11 @@ def generate_briefing_from_records(
         "supplemental_count": supplemental_count,
         "supplemental_accounted_count": supplemental_accounted_count,
         "candidate_counts": raw_feed.get("candidate_counts", {}),
+        "candidate_origin_counts": raw_feed.get("candidate_origin_counts", {}),
+        "searxng_candidate_count": raw_feed.get("searxng_candidate_count", 0),
+        "official_source_candidate_count": raw_feed.get(
+            "official_source_candidate_count", 0
+        ),
         "included_counts": included_counts,
         "recognized_administration_win_ids": (
             analysis["recognized_administration_win_ids"]

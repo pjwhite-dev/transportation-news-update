@@ -1,11 +1,17 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from public_site import build_public_site, prepare_automated_edition, story_html
+from public_site import (
+    build_public_site,
+    outlook_email_html,
+    prepare_automated_edition,
+    story_html,
+)
 import news_engine
 
 
@@ -34,6 +40,28 @@ def article(title: str, url: str, section: str = "UAS and Drones") -> dict:
 
 
 class PublicSiteTests(unittest.TestCase):
+    def test_outlook_renderer_is_self_contained_and_table_based(self) -> None:
+        payload = {
+            "executive_summary": "A concise executive summary.",
+            "sections": {
+                "UAS and Drones": [
+                    article(
+                        "FAA advances drone integration",
+                        "https://example.com/drone",
+                    )
+                ]
+            },
+            "regulatory_tracker": [],
+            "what_to_watch": ["Watch the next FAA filing."],
+        }
+
+        rendered = outlook_email_html(payload, date(2026, 9, 11))
+
+        self.assertIn('role="presentation"', rendered)
+        self.assertIn('style="color:#173C5E;text-decoration:underline"', rendered)
+        self.assertIn("Advanced Transportation News Update", rendered)
+        self.assertNotIn('class="', rendered)
+
     def test_story_renderer_removes_internal_editorial_commentary(self) -> None:
         rendered = story_html(
             {
@@ -181,6 +209,7 @@ class PublicSiteTests(unittest.TestCase):
         self.assertEqual(result["edition_count"], 2)
         self.assertIn("Advanced Transportation News Update", latest_html)
         self.assertIn("Copy for email", latest_html)
+        self.assertIn("data-outlook-email-b64", latest_html)
         self.assertIn("A prior editorial summary.", latest_html)
         self.assertNotIn("City begins autonomous shuttle operations", latest_html)
         self.assertIn("2026-09-09/", archive_html)

@@ -1,128 +1,121 @@
-# Transportation News Update
+# Advanced Transportation News Update
 
-A GitHub Pages site that publishes a daily, AI-assisted briefing covering the
-preceding 24 hours of:
+Local-first daily news production for [news.peterjwhite.org](https://news.peterjwhite.org). Python collects and validates public information, Ollama performs the editorial passes, n8n orchestrates the daily run, and GitHub Pages serves the generated archive.
 
-- UAS and drones
-- UAS security and C-UAS
-- Military applications, operations, procurement, and defense technology
-- eVTOL Integration Pilot Program and advanced air mobility
-- Autonomous vehicles
-- Other advanced transportation, including civil supersonics and rail innovation
-- International advanced-transportation developments
-- Federal actions
-- Verified Trump Administration wins tied to relevant policy actions and executive orders
+Normal production makes **zero OpenAI API calls**. The defaults are `AI_PROVIDER=ollama` and `OPENAI_FALLBACK_ENABLED=false`; an existing OpenAI key is ignored. The legacy cloud build requires a manual `USE OPENAI` confirmation.
 
-The finished edition includes an Executive Summary, a compact sectioned
-Headlines at a Glance index, Trump Administration Wins, Top Developments, topic
-sections, a Regulatory Deadline Tracker, What to Watch, innovative UAS-use
-highlights, and a **Copy for email** button.
-
-## Repository files
+## Architecture
 
 ```text
-streamlit_app.py
-news_engine.py
-daily_update.py
-automated_briefing.py
-requirements.txt
-README.md
-.streamlit/config.toml
-.github/workflows/daily-news-update.yml
-.github/workflows/build-full-briefing.yml
-data/latest_raw_news.json
-data/raw_archive/
-data/latest_briefing.json
-data/archive/
-coverage_history.py
-publication.py
-public_site.py
+Google News/RSS + official feeds + Federal Register + local SearXNG + Ette email
+                                  |
+                                  v
+                     Python collection and cleanup
+                                  |
+                                  v
+                Ollama structured editorial generation
+                                  |
+                                  v
+                 deterministic publication validation
+                                  |
+                                  v
+        briefing JSON -> git push -> GitHub Pages deployment
 ```
 
-## Required secrets
+Python remains the processing engine. n8n only triggers the Gmail and weekday-fallback paths, launches the guarded PowerShell runner, and records the concise command result.
 
-### GitHub Actions secret
+## Local requirements
 
-In **Repository Settings → Secrets and variables → Actions**, add:
+- Windows, Git, Python 3.12, and PowerShell 7
+- Ollama at `http://127.0.0.1:11434`
+- `qwen3.6:27b-q4_K_M` (`ollama pull qwen3.6:27b-q4_K_M`)
+- n8n 2.38.7 or compatible at `http://localhost:5678`
+- WSL Ubuntu for the loopback-only SearXNG service
 
-```text
-OPENAI_API_KEY
+Create the application environment:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-An optional `OPENAI_MODEL` repository variable can override the default model.
-The OpenAI key is used only by the complete-briefing workflow. Raw collection
-does not use OpenAI. Never place a key directly in code, JSON, Markdown, TXT, or
-YAML.
+Load the values from `.env` in the process that runs the application. Keep `OPENAI_FALLBACK_ENABLED=false` for production.
 
-## Daily schedule
+## Commands
 
-The GitHub Actions workflow runs every day at **4:15 a.m.
-America/New_York**. It:
+```powershell
+# Provider and real structured-generation health check
+.\.venv\Scripts\python.exe automated_briefing.py --health-check
 
-1. Collects records published during the preceding 24 hours.
-2. Writes `data/latest_raw_news.json` and a dated raw archive.
-3. Commits the public raw feed safely to GitHub.
+# Complete manual build with an exported supplemental email
+.\.venv\Scripts\python.exe automated_briefing.py --supplemental-file C:\private\email.txt
 
-The **Build and Publish Complete Briefing** workflow is then started manually or
-by the trusted supplemental-email bridge. OpenAI selects, clusters, categorizes,
-and summarizes the stories and drafts What to Watch. Only after that briefing
-and the regulatory tracker are compiled does a separate final AI pass write the
-Executive Summary from the finished reader-facing material. Deterministic
-coverage checks keep credible AV, advanced rail/supersonic, and international
-developments from disappearing when the raw feed contains suitable records.
+# Build and validate without writing publication JSON
+.\.venv\Scripts\python.exe automated_briefing.py --supplemental-file C:\private\email.txt --dry-run
 
-Before that editorial pass, the app compares automated candidates with the
-prior 45 days of owner-published editions. A likely repeat is omitted unless the
-new record contains a concrete later milestone such as a final rule, approval,
-contract award, operational launch, completed test, deadline change, permit, or
-safety action. Supplemental links remain editor-vetted and are never silently
-discarded by this check.
+# Validate an existing edition
+.\.venv\Scripts\python.exe automated_briefing.py --validate-only data\latest_briefing.json
 
-## Public website and archive
+# Real archived-corpus benchmark
+.\.venv\Scripts\python.exe benchmark_models.py --models qwen3.6:27b-q4_K_M mistral:latest llama3:latest --output benchmark_results\latest.json
 
-GitHub Pages publishes `news.peterjwhite.org`. The latest page advances only
-when a complete AI-assisted edition has been generated. Raw collections remain
-available to the pipeline but never replace the live briefing. The **Archive**
-page catalogs every dated edition, and each edition has a **Copy for email**
-button.
+# Guarded end-to-end collection, build, commit, push, and live verification
+.\scripts\run_local_pipeline.ps1
+```
 
-The complete-briefing workflow commits both `data/latest_briefing.json` and the
-matching dated file under `data/archive/`, then deploys the website in the same
-run.
+The production runner refuses a dirty repository, pulls `main` with `--ff-only`, checks Ollama, collects fresh public-source candidates, validates before saving, stages only generated data, pushes without force, and verifies that the dated edition reached the live site. A failed validation never replaces the prior live edition.
 
-GitHub Pages must use **GitHub Actions** as its build source. The DNS record for
-the `news` host should be a CNAME pointing to `pjwhite-dev.github.io`.
+## Web discovery
 
-GitHub scheduled workflows can occasionally run a few minutes late. The generated briefing
-always labels its exact 24-hour coverage window.
+`daily_update.py` combines the existing targeted Google News/RSS collection, Federal Register data, direct official feeds, and local SearXNG results. Article metadata retrieval resolves redirects, improves headlines/snippets where accessible, normalizes tracking parameters, corrects `msn.om`, and retains discovery metadata when a page blocks access. A SearXNG outage is reported but does not stop the independent discovery channels.
 
-## First test
+Install or update SearXNG:
 
-After deploying the files and configuring the Actions secret:
+```powershell
+wsl -d Ubuntu -- bash scripts/setup_searxng_wsl.sh
+curl.exe "http://127.0.0.1:8080/search?q=FAA+BVLOS&format=json"
+```
 
-1. Open the repository's **Actions** tab.
-2. Select **Daily Transportation Raw News Collection**.
-3. Click **Run workflow**.
-4. Wait for the run to complete.
-5. Confirm that `data/latest_raw_news.json` and a dated raw archive were updated.
-6. Select **Build and Publish Complete Briefing** in the Actions tab.
-7. Click **Run workflow**.
-8. Confirm that the completed edition appears on `news.peterjwhite.org` and use
-   **Copy for email** when needed.
+The service binds only to `127.0.0.1:8080` and starts through the Ubuntu user systemd instance.
 
-If the commit step reports a permissions error, open:
+## n8n
 
-**Repository Settings → Actions → General → Workflow permissions**
+Start n8n with `scripts/start_n8n.ps1`, then open [http://localhost:5678](http://localhost:5678). Import `n8n/workflows/transportation-news-local.json` if it is not already present.
 
-Select **Read and write permissions**, save, and run the workflow again.
+In n8n:
 
-## Important notes
+1. Create or select a Gmail OAuth credential on **Supplemental Gmail**. This must be done by the owner.
+2. Confirm the trigger query identifies mail from `ette0937@yahoo.com` with subject `9/11/26` or adjust the subject portion for the continuing daily format.
+3. Test **Manual test** first. It performs a feed-only run.
+4. Test the Gmail path with a non-production copy before activating it.
+5. Activate the workflow only after the local repository is clean and on `main`.
 
-- The site uses public-source headlines, snippets, links, and Federal Register records.
-- Google News RSS is a discovery source and can occasionally return noisy results; the AI
-  relevance filter is designed to remove obvious false positives.
-- Federal Register API results expose a publication date rather than a precise timestamp in
-  the endpoint used here.
-- Verify AI-written summaries and political attributions against the linked source.
-- Scheduled workflows in inactive public repositories can be disabled by GitHub after a long
-  period without repository activity. Check the Actions tab if a daily edition stops appearing.
+The Gmail trigger writes the body to an ignored private runtime file, invokes the runner with only that path, and deletes the file afterward. The body is never interpolated into shell code. The 9:00 a.m. weekday fallback performs a feed-only build. n8n success and error execution payloads are disabled so the email body is not retained in execution history. The runner has bounded retries and emits only operational counts/timing, git SHA, and deployment status.
+
+## Owner editor
+
+The preferred editor is local:
+
+```powershell
+$env:OWNER_PASSWORD = '<choose a long local password>'
+$env:SESSION_SECRET = '<generate a separate random value of at least 32 characters>'
+.\.venv\Scripts\python.exe owner_portal\local_server.py
+```
+
+Open `http://127.0.0.1:8765`. The server rejects non-loopback binding, requires signed sessions and same-origin writes, validates the edition, atomically updates both JSON files, commits with `Owner edit news edition `, and pushes through local Git credentials. That exact commit prefix triggers `.github/workflows/publish-owner-edits.yml` to validate and redeploy Pages.
+
+## Recovery
+
+- Ollama failure: run `--health-check`; verify `ollama list` and the configured model. Production does not fall back silently.
+- SearXNG failure: `wsl -d Ubuntu -- systemctl --user restart searxng.service`. Collection still uses RSS and official sources.
+- n8n unreachable: run `scripts/start_n8n.ps1`, then check `http://localhost:5678/healthz`.
+- Dirty repository: inspect `git status`; preserve or commit intentional work. The production runner will not discard it.
+- Push failure after commit: the local commit is preserved. Fetch, reconcile without force-pushing, and rerun validation before pushing.
+- Deployment delay: inspect the GitHub Pages Actions run. The JSON commit remains the source of truth and the prior site stays available until deployment succeeds.
+
+## Optional OpenAI emergency path
+
+OpenAI is not required. To opt in deliberately, set `AI_PROVIDER=openai`, provide `OPENAI_API_KEY`, and invoke a manual build, or run the **Emergency OpenAI Briefing Build** workflow and type `USE OPENAI`. Merely setting an API key does nothing while `AI_PROVIDER=ollama` and `OPENAI_FALLBACK_ENABLED=false`.
+
+The visible title must remain **Advanced Transportation News Update** and the footer must remain exactly: **Public source, AI-assisted news update.**

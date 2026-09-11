@@ -12,7 +12,9 @@ from streamlit.testing.v1 import AppTest
 
 
 def active_feed_context() -> tuple[str, dict]:
-    raw_feed = json.loads(Path("data/latest_raw_news.json").read_text())
+    raw_feed = json.loads(
+        Path("data/latest_raw_news.json").read_text(encoding="utf-8")
+    )
     edition_key = datetime.fromisoformat(raw_feed["window_end"]).date().isoformat()
     return edition_key, raw_feed
 
