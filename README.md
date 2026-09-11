@@ -91,7 +91,7 @@ In n8n:
 4. Test the Gmail path with a non-production copy before activating it.
 5. Activate the workflow only after the local repository is clean and on `main`.
 
-The Gmail trigger writes the body to an ignored private runtime file, invokes the runner with only that path, and deletes the file afterward. The body is never interpolated into shell code. The 9:00 a.m. weekday fallback performs a feed-only build. n8n success and error execution payloads are disabled so the email body is not retained in execution history. The runner has bounded retries and emits only operational counts/timing, git SHA, and deployment status.
+The Gmail trigger writes the body to an ignored private runtime file, invokes the runner with only that path, and deletes the file afterward. The body is never interpolated into shell code. The 1:00 p.m. Eastern weekday fallback performs a feed-only build only when no successful publication has completed that day. Gmail-triggered and fallback runs share a persisted Eastern-date success guard, and production execution concurrency is limited to one so later same-day triggers do not republish. n8n success and error execution payloads are disabled so the email body is not retained in execution history. The runner has bounded retries and emits only operational counts/timing, git SHA, and deployment status.
 
 ## Owner editor
 
