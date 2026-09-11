@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="Owner editing for the Advanced Transportation News Update.">
+  <title>Owner Editor — Advanced Transportation News Update</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="https://news.peterjwhite.org">Advanced Transportation News Update</a>
+    <button id="logout" class="text-button" type="button" hidden>Sign out</button>
+  </header>
+
+  <main>
+    <section id="login-view" class="login-card" aria-labelledby="login-title">
+      <p class="eyebrow">Owner access</p>
+      <h1 id="login-title">Edit the current edition</h1>
+      <p>Sign in to remove stories or revise the published briefing.</p>
+      <form id="login-form">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Sign in</button>
+      </form>
+      <p id="login-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="editor-view" hidden>
+      <div class="editor-heading">
+        <div>
+          <p class="eyebrow">Owner editor</p>
+          <h1>Current edition</h1>
+          <p id="edition-date" class="subtle"></p>
+        </div>
+        <div class="actions">
+          <a href="https://news.peterjwhite.org" target="_blank" rel="noopener">View public page</a>
+          <button id="save-top" type="button">Save and publish</button>
+        </div>
+      </div>
+
+      <form id="editor-form">
+        <section class="panel">
+          <label for="executive-summary">Executive Summary</label>
+          <textarea id="executive-summary" rows="7" required></textarea>
+        </section>
+
+        <section class="panel">
+          <label for="what-to-watch">What to Watch <span>one item per line</span></label>
+          <textarea id="what-to-watch" rows="5"></textarea>
+        </section>
+
+        <div id="sections"></div>
+
+        <div class="bottom-actions">
+          <p id="save-status" class="status" role="status" aria-live="polite"></p>
+          <button id="save-bottom" type="submit">Save and publish</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <template id="story-template">
+    <article class="story-card">
+      <div class="story-toolbar">
+        <label class="include-control"><input class="include" type="checkbox" checked> Include</label>
+        <span class="source"></span>
+      </div>
+      <label>Headline<input class="headline" type="text" required></label>
+      <label>Summary<textarea class="summary" rows="3"></textarea></label>
+      <label class="conditional innovation-field">Innovative UAS use<textarea class="innovation" rows="2"></textarea></label>
+      <label class="conditional win-field">Administration Win explanation<textarea class="win-explanation" rows="3"></textarea></label>
+      <a class="article-link" target="_blank" rel="noopener">Open article</a>
+    </article>
+  </template>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

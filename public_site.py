@@ -20,9 +20,9 @@ from news_engine import (
     TOPIC_SECTIONS,
     automated_record_is_publication_worthy,
     clean_innovative_uas_use,
-    distinct_story_summary,
     infer_innovative_uas_use,
     infer_section,
+    sanitize_story_summary,
 )
 from regulatory_tracker import build_regulatory_tracker
 
@@ -221,7 +221,7 @@ def _relative_prefix(is_archive_page: bool) -> str:
 def story_html(item: dict[str, Any]) -> str:
     title = html.escape(str(item.get("title", "Untitled")))
     summary = html.escape(
-        distinct_story_summary(
+        sanitize_story_summary(
             str(item.get("title", "")), str(item.get("summary", ""))
         )
     )

@@ -48,6 +48,29 @@ EXECUTIVE_SUMMARY_PROCESS_MARKERS = (
     "win for the administration",
 )
 
+STORY_SUMMARY_PROCESS_PATTERN = re.compile(
+    r"\b(?:supplied|provided)\s+(?:record|records|item|items|text|material)\b"
+    r"|\b(?:record|records|item|items)\s+(?:supplied|provided)\b"
+    r"|\bin (?:the|this) (?:record set|batch)\b"
+    r"|\bbelongs? in\b"
+    r"|\brather than (?:the |a |an )?(?:counter-?uas|c-?uas|uas|military|federal|international)\b"
+    r"|\bdoes not (?:show|provide|identify|indicate|establish)\b"
+    r"|\bno (?:concrete|broader|direct) (?:u\.s\. |federal )?(?:policy|procurement|deployment|operational|regulatory|launch)\b"
+    r"|\bnot (?:a|an) (?:u\.s\.-centered |u\.s\. |federal )?(?:policy|procurement|deployment|regulatory|transportation)\b"
+    r"|\b(?:strongest|cleanest) (?:new |international |u\.s\. )?(?:development|lead|item|story) in\b"
+    r"|\bfactual policy-alignment observation\b"
+    r"|\bnot an assessment of\b"
+    r"|^(?:the|this) (?:article|item|record|story|coverage)\b.*\b(?:not|rather than|does not|no broader|no direct)\b"
+    r"|\bwith no .*?(?:significance|milestone)\b"
+    r"|\bother .*?(?:records|items) in this (?:batch|set)\b",
+    re.IGNORECASE,
+)
+
+HEADLINE_PLACEHOLDER_PATTERN = re.compile(
+    r"^(?:headline unavailable|untitled supplemental item|review this link)\b",
+    re.IGNORECASE,
+)
+
 OPENAI_TOKEN_PRICES = {
     "gpt-5.4-mini": {"input": 0.75, "output": 4.50},
     "gpt-5-mini": {"input": 0.25, "output": 2.00},
@@ -1009,6 +1032,8 @@ def best_record_title(record: dict[str, Any]) -> str:
         value = clean_spaces(value)
         if not value:
             continue
+        if HEADLINE_PLACEHOLDER_PATTERN.search(value):
+            continue
         if source:
             value = re.sub(
                 rf"\s*[-|–—]\s*{re.escape(source)}\s*$",
@@ -1911,6 +1936,35 @@ def executive_summary_sentence_is_public(sentence: str) -> bool:
     return not (mentions_win and mentions_administration)
 
 
+def story_summary_sentence_is_public(sentence: str) -> bool:
+    """Reject model commentary about selection, categorization, or source intake."""
+    lowered = sentence.casefold()
+    if any(
+        marker in lowered
+        for marker in (
+            "required supplemental",
+            "automated feed",
+            "editorial process",
+            "qualifies as a win",
+            "win eligibility",
+            "win test",
+        )
+    ):
+        return False
+    return not bool(STORY_SUMMARY_PROCESS_PATTERN.search(sentence))
+
+
+def sanitize_story_summary(title: str, value: str) -> str:
+    """Keep only factual, reader-facing sentences in a published story summary."""
+    sentences = re.split(r"(?<!U\.S\.)(?<!U\.K\.)(?<=[.!?])\s+", clean_spaces(value))
+    public = [
+        sentence
+        for sentence in sentences
+        if sentence and story_summary_sentence_is_public(sentence)
+    ]
+    return distinct_story_summary(title, clean_spaces(" ".join(public)))
+
+
 def validate_analysis(
     analysis: dict[str, Any],
     articles: list[dict[str, Any]],
@@ -2096,7 +2150,7 @@ def cluster_to_story(
         or primary.get("summary", "")
         or primary.get("pasted_context", "")
     )
-    summary = distinct_story_summary(title, summary)
+    summary = sanitize_story_summary(title, summary)
 
     return {
         "id": cluster["cluster_id"],

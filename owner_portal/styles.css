@@ -1,0 +1,102 @@
+:root {
+  --navy: #153a5a;
+  --ink: #1f2933;
+  --muted: #667885;
+  --line: #d6e0e6;
+  --wash: #f2f6f8;
+  --paper: #ffffff;
+  --danger: #9b2c24;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #eaf0f4;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a { color: #174f77; }
+.topbar {
+  min-height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 0 max(20px, calc((100vw - 1080px) / 2));
+  background: var(--navy);
+  color: white;
+}
+.topbar a { color: white; font-weight: 800; text-decoration: none; }
+.text-button { border: 0; background: transparent; color: white; font: inherit; cursor: pointer; }
+main { width: min(980px, calc(100% - 32px)); margin: 34px auto 70px; }
+h1 { color: var(--navy); font-size: clamp(1.8rem, 4vw, 2.45rem); line-height: 1.08; margin: 0; letter-spacing: -.025em; }
+.eyebrow { margin: 0 0 7px; color: #506c80; font-size: .76rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.subtle { color: var(--muted); margin: 8px 0 0; }
+.login-card, .panel, .section-editor {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px rgba(26, 51, 70, .07);
+}
+.login-card { max-width: 520px; margin: 9vh auto 0; padding: 38px; }
+.login-card p:not(.eyebrow):not(.status) { color: var(--muted); }
+label { display: grid; gap: 7px; font-size: .88rem; font-weight: 750; color: #314b5e; }
+label span { color: var(--muted); font-size: .78rem; font-weight: 400; }
+input[type="text"], input[type="password"], textarea {
+  width: 100%;
+  border: 1px solid #b9c8d2;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.45;
+  padding: 10px 11px;
+}
+textarea { resize: vertical; }
+input:focus, textarea:focus { outline: 3px solid rgba(35, 113, 168, .18); border-color: #397da9; }
+button {
+  border: 0;
+  border-radius: 6px;
+  background: var(--navy);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  padding: 10px 15px;
+}
+button:disabled { cursor: wait; opacity: .6; }
+.login-card form { display: grid; gap: 15px; margin-top: 24px; }
+.editor-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 22px; margin-bottom: 18px; }
+.actions { display: flex; align-items: center; gap: 15px; }
+.actions a { font-size: .9rem; }
+.panel { padding: 24px; margin-bottom: 16px; }
+.section-editor { margin: 0 0 16px; padding: 22px 24px 8px; }
+.section-editor > h2 { color: var(--navy); font-size: 1.25rem; line-height: 1.2; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+.story-card { border-bottom: 1px solid var(--line); display: grid; gap: 13px; padding: 0 0 22px; margin: 0 0 22px; }
+.story-card:last-child { border-bottom: 0; }
+.story-card.excluded { opacity: .55; }
+.story-card.excluded input:not(.include), .story-card.excluded textarea { background: var(--wash); }
+.story-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.include-control { display: flex; grid-template-columns: auto 1fr; align-items: center; gap: 8px; color: var(--danger); }
+.include-control input { width: 18px; height: 18px; }
+.source { color: var(--muted); font-size: .78rem; text-align: right; }
+.article-link { font-size: .82rem; justify-self: start; }
+.conditional[hidden] { display: none; }
+.bottom-actions { display: flex; justify-content: flex-end; align-items: center; gap: 18px; position: sticky; bottom: 0; background: rgba(234,240,244,.96); padding: 14px 0; }
+.status { min-height: 1.5em; margin: 12px 0 0; color: #32633a; }
+.status.error { color: var(--danger); }
+
+@media (max-width: 680px) {
+  .topbar { padding: 0 18px; }
+  .topbar a { font-size: .9rem; }
+  main { margin-top: 22px; }
+  .login-card { margin-top: 5vh; padding: 28px 22px; }
+  .editor-heading { align-items: flex-start; flex-direction: column; }
+  .actions { width: 100%; justify-content: space-between; }
+  .panel, .section-editor { padding: 20px 17px; }
+  .story-toolbar { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .source { text-align: left; }
+}

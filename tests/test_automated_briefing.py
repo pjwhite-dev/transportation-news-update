@@ -53,6 +53,54 @@ class AutomatedBriefingTests(unittest.TestCase):
         )
         self.assertIn("Trump Administration Wins", normalized["sections"])
 
+    def test_normalization_moves_ukraine_conflict_to_military(self) -> None:
+        briefing = {
+            "executive_summary": "The briefing covers current transportation developments.",
+            "sections": {
+                "UAS and Drones": [
+                    {
+                        "title": "Russia again draws near a frontline Ukrainian city",
+                        "summary": (
+                            "Russian forces approached Izium in eastern Ukraine. "
+                            "This belongs in Military rather than UAS."
+                        ),
+                        "url": "https://www.nytimes.com/example",
+                        "source": "The New York Times",
+                    }
+                ]
+            },
+            "regulatory_tracker": [],
+            "what_to_watch": [],
+        }
+
+        normalized = automated_briefing.normalize_reader_features(briefing)
+
+        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
+        self.assertEqual(
+            normalized["sections"]["Military"][0]["summary"],
+            "Russian forces approached Izium in eastern Ukraine.",
+        )
+
+    def test_normalization_does_not_move_ambiguous_federal_action_to_uas(self) -> None:
+        briefing = {
+            "executive_summary": "The briefing covers current transportation developments.",
+            "sections": {
+                "Federal Actions": [
+                    {
+                        "title": "PHMSA issues a pipeline safety notice",
+                        "summary": "The agency announced a new compliance action.",
+                    }
+                ]
+            },
+            "regulatory_tracker": [],
+            "what_to_watch": [],
+        }
+
+        normalized = automated_briefing.normalize_reader_features(briefing)
+
+        self.assertEqual(len(normalized["sections"]["Federal Actions"]), 1)
+        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
+
     def test_build_uses_history_and_supplemental_records(self) -> None:
         generated = {
             "window_start": "2026-09-09T04:15:00-04:00",

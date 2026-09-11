@@ -132,14 +132,28 @@ def is_likely_headline(value: str, source: str = "") -> bool:
         return False
     if len(candidate) > 120 and candidate.endswith((".", "?", "!")):
         return False
+    if len(re.findall(r"[.!?](?:\s|$)", candidate)) > 1:
+        return False
     return True
+
+
+def headline_candidate_score(candidate: str, offset: int) -> int:
+    """Prefer headline-shaped lines over nearby descriptive sentences."""
+    score = max(0, 12 - abs(offset))
+    if candidate.endswith("."):
+        score -= 6
+    else:
+        score += 2
+    if re.match(r"^[A-Z0-9][^:]{1,24}:\s+\S", candidate):
+        score += 4
+    return score
 
 
 def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
     source = source_from_url(normalize_import_url(url))
     same_line = clean_headline_candidate(lines[index], source)
     context_lines = []
-    for offset in (0, -1, -2, 1):
+    for offset in (0, -1, -2, -3, -4, -5, -6, 1):
         pos = index + offset
         if 0 <= pos < len(lines):
             candidate = clean_headline_candidate(lines[pos], source)
@@ -149,12 +163,15 @@ def context_for_link(lines: list[str], index: int, url: str) -> tuple[str, str]:
     context = " ".join(context_lines)[:1200]
     # A headline normally precedes a pasted source/description/link block. Prefer
     # those lines to prose that happens to share the URL's line.
-    for offset in (-1, -2):
+    candidates: list[tuple[int, str]] = []
+    for offset in (-1, -2, -3, -4, -5, -6):
         pos = index + offset
         if 0 <= pos < len(lines):
             candidate = clean_headline_candidate(lines[pos], source)
             if is_likely_headline(candidate, source):
-                return candidate, context
+                candidates.append((headline_candidate_score(candidate, offset), candidate))
+    if candidates:
+        return max(candidates, key=lambda pair: pair[0])[1], context
 
     if is_likely_headline(same_line, source):
         return same_line, context

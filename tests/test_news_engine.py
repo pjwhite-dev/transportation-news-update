@@ -1175,5 +1175,36 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertAlmostEqual(briefing["estimated_cost"], 0.3)
 
 
+class ReaderFacingCopyTests(unittest.TestCase):
+    def test_story_summary_sanitizer_removes_editorial_process_sentences(self) -> None:
+        summary = (
+            "Russian forces approached Izium in eastern Ukraine. "
+            "The supplied record does not show a U.S. policy action. "
+            "This belongs in Military rather than UAS."
+        )
+
+        self.assertEqual(
+            news_engine.sanitize_story_summary("Russia draws near Izium", summary),
+            "Russian forces approached Izium in eastern Ukraine.",
+        )
+
+    def test_placeholder_title_does_not_override_pasted_headline(self) -> None:
+        item = record(
+            title="Headline unavailable — review this link",
+            pasted_headline=(
+                "NYT: As Russia Again Draws Near, a Frontline City Fears "
+                "Obliteration This Time"
+            ),
+        )
+
+        self.assertEqual(
+            news_engine.best_record_title(item),
+            (
+                "NYT: As Russia Again Draws Near, a Frontline City Fears "
+                "Obliteration This Time"
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

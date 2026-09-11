@@ -5,7 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from public_site import build_public_site, prepare_automated_edition
+from public_site import build_public_site, prepare_automated_edition, story_html
 import news_engine
 
 
@@ -34,6 +34,22 @@ def article(title: str, url: str, section: str = "UAS and Drones") -> dict:
 
 
 class PublicSiteTests(unittest.TestCase):
+    def test_story_renderer_removes_internal_editorial_commentary(self) -> None:
+        rendered = story_html(
+            {
+                "title": "Army tests a new unmanned aircraft",
+                "summary": (
+                    "The service completed a flight demonstration. "
+                    "The supplied record does not show a procurement milestone."
+                ),
+                "source": "Example News",
+                "url": "https://example.com/story",
+            }
+        )
+
+        self.assertIn("completed a flight demonstration", rendered)
+        self.assertNotIn("supplied record", rendered)
+
     def test_raw_publication_filter_rejects_stock_and_non_ads_fmvss_items(self) -> None:
         stock = article(
             "Tesla vs. Waymo: Which robotaxi stock wins? (TSLA)",

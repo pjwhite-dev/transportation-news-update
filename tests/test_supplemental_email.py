@@ -77,6 +77,22 @@ It's creating opportunities not only for drone operators but for communities. <h
         self.assertNotIn("<", records[0]["pasted_context"])
         self.assertNotIn(">", records[0]["pasted_context"])
 
+    def test_headline_is_found_above_a_multiline_description(self) -> None:
+        pasted = """
+NYT: As Russia Again Draws Near, a Frontline City Fears Obliteration This Time
+
+The city still bears the scars of occupation. Residents are bracing for the worst.
+
+https://www.nytimes.com/2026/09/11/world/europe/example.html
+"""
+
+        records = extract_supplemental_items(pasted, fetch_metadata=False)
+
+        self.assertEqual(
+            records[0]["title"],
+            "NYT: As Russia Again Draws Near, a Frontline City Fears Obliteration This Time",
+        )
+
     @patch("supplemental_email.requests.get")
     def test_article_metadata_title_overrides_nearby_pasted_prose(
         self,

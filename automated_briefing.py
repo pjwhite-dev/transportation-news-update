@@ -14,9 +14,12 @@ from news_engine import (
     DEFAULT_OPENAI_MODEL,
     EASTERN,
     SECTION_ORDER,
+    TOPIC_SECTIONS,
     clean_innovative_uas_use,
     generate_briefing_from_records,
     infer_innovative_uas_use,
+    infer_section,
+    sanitize_story_summary,
 )
 from publication import briefing_date, briefing_payload
 from supplemental_email import extract_supplemental_items
@@ -65,6 +68,42 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
         sections.setdefault(section, [])
         if not isinstance(sections[section], list):
             raise ValueError(f"The generated {section} section is invalid.")
+
+    # Re-apply deterministic category rules to final story copy. This keeps
+    # military/conflict and C-UAS stories out of generic UAS even when a model
+    # or metadata-blocked supplemental item supplies a weak section label.
+    moved: dict[str, list[dict[str, Any]]] = {
+        section: [] for section in SECTION_ORDER
+    }
+    for display_section in SECTION_ORDER:
+        for item in sections.get(display_section, []):
+            title = str(item.get("title", ""))
+            item["summary"] = sanitize_story_summary(
+                title, str(item.get("summary", ""))
+            )
+            target = display_section
+            if display_section in TOPIC_SECTIONS:
+                inferred = infer_section(item)
+                # infer_section intentionally defaults ambiguous stories to UAS.
+                # Only let that inference move records when the current section is
+                # generic UAS, or when a stronger deterministic rule identifies
+                # military, C-UAS, or AV-specific Federal coverage.
+                should_move = (
+                    inferred in {"Military", "UAS Security and C-UAS"}
+                    or (
+                        display_section == "UAS and Drones"
+                        and inferred != "UAS and Drones"
+                    )
+                    or (
+                        display_section == "Federal Actions"
+                        and inferred == "Autonomous Vehicles"
+                    )
+                )
+                if should_move:
+                    target = inferred
+                    item["section"] = inferred
+            moved[target].append(item)
+    briefing["sections"] = sections = moved
 
     for item in sections.get("UAS and Drones", []):
         label = clean_innovative_uas_use(item.get("innovative_uas_use", ""))
