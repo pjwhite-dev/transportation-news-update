@@ -7,7 +7,10 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from public_site import (
+    SITE_CSS,
     build_public_site,
+    edition_page,
+    headline_index_html,
     outlook_email_html,
     prepare_automated_edition,
     story_html,
@@ -40,6 +43,64 @@ def article(title: str, url: str, section: str = "UAS and Drones") -> dict:
 
 
 class PublicSiteTests(unittest.TestCase):
+    def test_headlines_at_a_glance_is_capped_and_links_into_edition(self) -> None:
+        sections = {
+            "Top Developments": [
+                article(f"Development {number}", f"https://example.com/top-{number}")
+                for number in range(1, 10)
+            ],
+            "UAS and Drones": [
+                article(f"Drone story {number}", f"https://example.com/uas-{number}")
+                for number in range(1, 10)
+            ],
+        }
+
+        rendered = headline_index_html(sections)
+
+        self.assertIn("Top Stories", rendered)
+        self.assertIn("Also Today", rendered)
+        self.assertIn("View all 18 stories", rendered)
+        self.assertEqual(rendered.count('href="#story-'), 12)
+        self.assertNotIn('href="https://example.com/', rendered)
+
+    def test_edition_uses_unified_masthead_and_section_navigation(self) -> None:
+        payload = {
+            "window_end": "2026-09-11T04:15:00-04:00",
+            "executive_summary": "A concise executive summary.",
+            "edition_kind": "editorial",
+            "sections": {
+                "UAS and Drones": [
+                    article("FAA advances drone integration", "https://example.com/drone")
+                ]
+            },
+            "regulatory_tracker": [],
+            "what_to_watch": [],
+        }
+
+        rendered = edition_page(payload, date(2026, 9, 11), archived=False)
+
+        self.assertIn('<span>Advanced Transportation</span><small>News Update</small>', rendered)
+        self.assertIn('<h1>Friday, September 11, 2026</h1>', rendered)
+        self.assertIn('class="section-nav no-copy"', rendered)
+        self.assertIn('href="#uas-drones"', rendered)
+        self.assertIn('id="summary"', rendered)
+        self.assertIn("position:sticky", SITE_CSS)
+
+    def test_story_renderer_canonicalizes_source_and_uses_quiet_uas_label(self) -> None:
+        rendered = story_html(
+            {
+                "title": "A new drone operation",
+                "summary": "The operator began a new inspection service.",
+                "source": "dronelife",
+                "url": "https://example.com/story",
+                "innovative_uas_use": "Inspecting remote infrastructure.",
+            }
+        )
+
+        self.assertIn(">DroneLife<", rendered)
+        self.assertIn('class="innovation-label"', rendered)
+        self.assertNotIn('class="highlight"', rendered)
+
     def test_outlook_renderer_is_self_contained_and_table_based(self) -> None:
         payload = {
             "executive_summary": "A concise executive summary.",
