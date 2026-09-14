@@ -43,6 +43,16 @@ def article(title: str, url: str, section: str = "UAS and Drones") -> dict:
 
 
 class PublicSiteTests(unittest.TestCase):
+    def test_pages_workflow_redeploys_for_renderer_dependencies(self) -> None:
+        workflow = (
+            Path(__file__).resolve().parents[1]
+            / ".github"
+            / "workflows"
+            / "publish-news-site.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn('- "news_engine.py"', workflow)
+
     def test_headlines_at_a_glance_includes_every_story_and_links_into_edition(self) -> None:
         sections = {
             "Top Developments": [

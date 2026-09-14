@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "coverage_history.py"
+      - "news_engine.py"
       - "public_site.py"
       - "data/archive/**"
       - "data/latest_briefing.json"
