@@ -1925,7 +1925,16 @@ def story_summary_sentence_is_public(sentence: str) -> bool:
 
 def sanitize_story_summary(title: str, value: str) -> str:
     """Keep only factual, reader-facing sentences in a published story summary."""
-    sentences = re.split(r"(?<!U\.S\.)(?<!U\.K\.)(?<=[.!?])\s+", clean_spaces(value))
+    cleaned_value = clean_spaces(value)
+    clean_title = clean_spaces(title)
+    if clean_title and cleaned_value.casefold().endswith(clean_title.casefold()):
+        cleaned_value = cleaned_value[: -len(clean_title)].rstrip(" .:;,-")
+        cleaned_value = re.sub(
+            r"(?<=[.!?])\s+[A-Z][A-Za-z0-9&'’ .-]{1,60}$",
+            "",
+            cleaned_value,
+        )
+    sentences = re.split(r"(?<!U\.S\.)(?<!U\.K\.)(?<=[.!?])\s+", cleaned_value)
     normalized_title = normalize_title(title)
     public = [
         sentence
