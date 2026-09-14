@@ -15,6 +15,8 @@ $env:N8N_SECURE_COOKIE = "false"
 $env:N8N_RUNNERS_TASK_TIMEOUT = "900"
 $env:N8N_CONCURRENCY_PRODUCTION_LIMIT = "1"
 $env:N8N_UNVERIFIED_PACKAGES_ENABLED = "false"
+$env:NODES_EXCLUDE = '["n8n-nodes-base.localFileTrigger"]'
+$env:N8N_RESTRICT_FILE_ACCESS_TO = $repoRoot
 $env:TRANSPORTATION_REPO = $repoRoot
 
 & $n8n start

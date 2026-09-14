@@ -26,7 +26,7 @@
       "parameters": {
         "pollTimes": { "item": [{ "mode": "everyMinute" }] },
         "filters": {
-          "q": "is:unread newer_than:2d from:ette0937@yahoo.com (subject:(transportation news) OR subject:(advanced transportation) OR subject:(9/11/26))"
+          "q": "is:unread newer_than:2d from:ette0937@yahoo.com"
         }
       },
       "id": "gmail-trigger",

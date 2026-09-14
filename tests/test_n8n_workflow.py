@@ -11,6 +11,7 @@ WORKFLOW_PATH = (
     / "workflows"
     / "transportation-news-local.json"
 )
+START_SCRIPT_PATH = WORKFLOW_PATH.parents[2] / "scripts" / "start_n8n.ps1"
 
 
 class N8nWorkflowTests(unittest.TestCase):
@@ -47,8 +48,22 @@ class N8nWorkflowTests(unittest.TestCase):
     def test_gmail_still_polls_every_minute(self) -> None:
         gmail = self.nodes["Supplemental Gmail"]
         poll = gmail["parameters"]["pollTimes"]["item"]
+        query = gmail["parameters"]["filters"]["q"]
 
         self.assertEqual(poll, [{"mode": "everyMinute"}])
+        self.assertEqual(
+            query,
+            "is:unread newer_than:2d from:ette0937@yahoo.com",
+        )
+        self.assertNotIn("9/11/26", query)
+
+    def test_startup_enables_execute_command_but_keeps_file_trigger_blocked(self) -> None:
+        script = START_SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("$env:NODES_EXCLUDE", script)
+        self.assertIn("n8n-nodes-base.localFileTrigger", script)
+        self.assertNotIn("$env:NODES_EXCLUDE = '[]'", script)
+        self.assertIn("$env:N8N_RESTRICT_FILE_ACCESS_TO = $repoRoot", script)
 
 
 if __name__ == "__main__":
