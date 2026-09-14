@@ -719,6 +719,12 @@ def distinct_story_summary(title: str, summary: str) -> str:
         return ""
     if normalize_title(summary) == normalize_title(title):
         return ""
+    if re.search(
+        r"\b(?:a|an|and|as|at|because|by|for|from|in|of|on|or|the|to|toward|towards|with)$",
+        summary,
+        flags=re.IGNORECASE,
+    ):
+        return ""
     return summary
 
 
@@ -1920,10 +1926,13 @@ def story_summary_sentence_is_public(sentence: str) -> bool:
 def sanitize_story_summary(title: str, value: str) -> str:
     """Keep only factual, reader-facing sentences in a published story summary."""
     sentences = re.split(r"(?<!U\.S\.)(?<!U\.K\.)(?<=[.!?])\s+", clean_spaces(value))
+    normalized_title = normalize_title(title)
     public = [
         sentence
         for sentence in sentences
-        if sentence and story_summary_sentence_is_public(sentence)
+        if sentence
+        and story_summary_sentence_is_public(sentence)
+        and normalized_title not in normalize_title(sentence)
     ]
     return distinct_story_summary(title, clean_spaces(" ".join(public)))
 

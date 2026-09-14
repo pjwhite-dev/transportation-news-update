@@ -190,6 +190,32 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             "Producing coordinated aerial light shows",
         )
 
+    def test_incomplete_metadata_summary_is_omitted(self) -> None:
+        summary = (
+            "Industry leaders exchanged ideas as uncrewed aviation rapidly moves "
+            "towards the"
+        )
+
+        self.assertEqual(
+            news_engine.sanitize_story_summary(
+                "Commercial UAV Expo and the Internationalization of Uncrewed Aviation",
+                summary,
+            ),
+            "",
+        )
+
+    def test_repeated_headline_fragment_is_removed_from_summary(self) -> None:
+        title = "It took 2,977 drones to create this 9/11 memorial show"
+        summary = (
+            "Finding a suitable launch location was one of the biggest challenges. "
+            f"Fast Company: {title}"
+        )
+
+        self.assertEqual(
+            news_engine.sanitize_story_summary(title, summary),
+            "Finding a suitable launch location was one of the biggest challenges.",
+        )
+
     def test_innovative_uas_label_is_removed_from_cuas_story(self) -> None:
         article = record(
             title="FAA tests counter-UAS detection at an airport",
