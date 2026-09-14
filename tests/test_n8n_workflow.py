@@ -12,6 +12,7 @@ WORKFLOW_PATH = (
     / "transportation-news-local.json"
 )
 START_SCRIPT_PATH = WORKFLOW_PATH.parents[2] / "scripts" / "start_n8n.ps1"
+PIPELINE_SCRIPT_PATH = WORKFLOW_PATH.parents[2] / "scripts" / "run_local_pipeline.ps1"
 
 
 class N8nWorkflowTests(unittest.TestCase):
@@ -64,6 +65,13 @@ class N8nWorkflowTests(unittest.TestCase):
         self.assertIn("n8n-nodes-base.localFileTrigger", script)
         self.assertNotIn("$env:NODES_EXCLUDE = '[]'", script)
         self.assertIn("$env:N8N_RESTRICT_FILE_ACCESS_TO = $repoRoot", script)
+
+    def test_deployment_check_accepts_human_readable_edition_date(self) -> None:
+        script = PIPELINE_SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('"MMMM d, yyyy"', script)
+        self.assertIn("$editionDisplay", script)
+        self.assertIn("[regex]::Escape($editionDisplay)", script)
 
 
 if __name__ == "__main__":

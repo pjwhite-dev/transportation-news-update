@@ -55,7 +55,12 @@ try {
     if ($LASTEXITCODE -eq 0) { Write-Output "No publication changes."; return }
     if ($LASTEXITCODE -ne 1) { throw "Unable to inspect staged publication changes." }
 
-    $edition = Get-Date -Format "yyyy-MM-dd"
+    $editionDate = Get-Date
+    $edition = $editionDate.ToString("yyyy-MM-dd", [Globalization.CultureInfo]::InvariantCulture)
+    $editionDisplay = $editionDate.ToString(
+        "MMMM d, yyyy",
+        [Globalization.CultureInfo]::GetCultureInfo("en-US")
+    )
     git commit -m "Publish local Ollama news edition $edition"
     if ($LASTEXITCODE -ne 0) { throw "git commit failed." }
     git push origin HEAD:main
@@ -67,7 +72,10 @@ try {
         Start-Sleep -Seconds 30
         try {
             $response = Invoke-WebRequest -Uri "https://news.peterjwhite.org" -TimeoutSec 20 -UseBasicParsing
-            if ($response.StatusCode -eq 200 -and $response.Content -match [regex]::Escape($edition)) {
+            $hasEditionMarker =
+                $response.Content -match [regex]::Escape($edition) -or
+                $response.Content -match [regex]::Escape($editionDisplay)
+            if ($response.StatusCode -eq 200 -and $hasEditionMarker) {
                 $deploymentStatus = "verified"
                 break
             }
