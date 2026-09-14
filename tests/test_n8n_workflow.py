@@ -58,6 +58,12 @@ class N8nWorkflowTests(unittest.TestCase):
         )
         self.assertNotIn("9/11/26", query)
 
+    def test_gmail_prefers_html_to_preserve_actual_link_targets(self) -> None:
+        encoder = self.nodes["Encode supplemental email"]
+        code = encoder["parameters"]["jsCode"]
+
+        self.assertLess(code.index("$json.textHtml"), code.index("$json.textPlain"))
+
     def test_startup_enables_execute_command_but_keeps_file_trigger_blocked(self) -> None:
         script = START_SCRIPT_PATH.read_text(encoding="utf-8")
 

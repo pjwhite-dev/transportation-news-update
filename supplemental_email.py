@@ -33,6 +33,115 @@ SOURCE_ONLY_LABELS = {
     "article",
     "link",
 }
+URL_CONTINUATION_PATTERN = re.compile(
+    r"[A-Za-z0-9._~:/?#@!$&'()*+,;=%\-\[\]]+>?$"
+)
+HTML_BODY_PATTERN = re.compile(r"<(?:html|body|p|div|a|br)\b", re.IGNORECASE)
+
+
+def join_wrapped_url_lines(lines: list[str]) -> list[str]:
+    """Rejoin URLs hard-wrapped by Outlook's plain-text conversion."""
+    joined: list[str] = []
+    index = 0
+    while index < len(lines):
+        line = lines[index].rstrip()
+        while index + 1 < len(lines):
+            matches = list(URL_PATTERN.finditer(line))
+            if not matches or matches[-1].end() != len(line):
+                break
+            next_line = lines[index + 1].strip()
+            current_url = matches[-1].group(0)
+            if (
+                len(current_url) < 60
+                or not next_line
+                or next_line.lower().startswith(("http://", "https://", "www."))
+                or not URL_CONTINUATION_PATTERN.fullmatch(next_line)
+            ):
+                break
+            line += next_line
+            index += 1
+        joined.append(line)
+        index += 1
+    return joined
+
+
+class SupplementalBodyParser(HTMLParser):
+    """Turn email HTML into text lines while preserving actual anchor targets."""
+
+    BLOCK_TAGS = {"address", "blockquote", "div", "li", "p", "table", "tr", "td"}
+    SUPPRESSED_TAGS = {"head", "script", "style"}
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.suppressed_depth = 0
+        self.anchor_href = ""
+        self.anchor_text: list[str] = []
+
+    def _break(self) -> None:
+        if self.parts and not self.parts[-1].endswith("\n"):
+            self.parts.append("\n")
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        tag = tag.casefold()
+        if tag in self.SUPPRESSED_TAGS:
+            self.suppressed_depth += 1
+            return
+        if self.suppressed_depth:
+            return
+        if tag in self.BLOCK_TAGS or tag == "br":
+            self._break()
+        if tag == "a":
+            attributes = {key.casefold(): value or "" for key, value in attrs}
+            href = html.unescape(attributes.get("href", "")).strip()
+            self.anchor_href = href if href.lower().startswith(("http://", "https://")) else ""
+            self.anchor_text = []
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.casefold()
+        if tag in self.SUPPRESSED_TAGS:
+            self.suppressed_depth = max(0, self.suppressed_depth - 1)
+            return
+        if self.suppressed_depth:
+            return
+        if tag == "a" and self.anchor_href:
+            anchor_text = clean_spaces("".join(self.anchor_text))
+            if anchor_text and not URL_PATTERN.fullmatch(anchor_text):
+                self.parts.append(anchor_text)
+            self._break()
+            self.parts.append(self.anchor_href)
+            self._break()
+            self.anchor_href = ""
+            self.anchor_text = []
+        if tag in self.BLOCK_TAGS:
+            self._break()
+
+    def handle_data(self, data: str) -> None:
+        if self.suppressed_depth:
+            return
+        if self.anchor_href:
+            self.anchor_text.append(data)
+        else:
+            self.parts.append(data)
+
+    def lines(self) -> list[str]:
+        return [line.rstrip() for line in "".join(self.parts).splitlines()]
+
+
+def supplemental_email_lines(raw_text: str) -> list[str]:
+    """Normalize HTML or plain-text email into URL-safe contextual lines."""
+    value = raw_text or ""
+    if HTML_BODY_PATTERN.search(value):
+        parser = SupplementalBodyParser()
+        parser.feed(value)
+        lines = parser.lines()
+    else:
+        lines = [html.unescape(line.rstrip()) for line in value.splitlines()]
+    return join_wrapped_url_lines(lines)
 
 
 def normalize_import_url(value: str) -> str:
@@ -316,7 +425,7 @@ def extract_supplemental_items(
     raw_text: str,
     fetch_metadata: bool = True,
 ) -> list[dict]:
-    lines = [html.unescape(line.rstrip()) for line in (raw_text or "").splitlines()]
+    lines = supplemental_email_lines(raw_text)
     records: list[dict] = []
     seen: set[str] = set()
 

@@ -43,7 +43,7 @@ def article(title: str, url: str, section: str = "UAS and Drones") -> dict:
 
 
 class PublicSiteTests(unittest.TestCase):
-    def test_headlines_at_a_glance_is_capped_and_links_into_edition(self) -> None:
+    def test_headlines_at_a_glance_includes_every_story_and_links_into_edition(self) -> None:
         sections = {
             "Top Developments": [
                 article(f"Development {number}", f"https://example.com/top-{number}")
@@ -56,12 +56,17 @@ class PublicSiteTests(unittest.TestCase):
         }
 
         rendered = headline_index_html(sections)
+        outlook = outlook_email_html(
+            {"executive_summary": "Summary.", "sections": sections},
+            date(2026, 9, 14),
+        )
 
-        self.assertIn("Top Stories", rendered)
-        self.assertIn("Also Today", rendered)
-        self.assertIn("View all 18 stories", rendered)
-        self.assertEqual(rendered.count('href="#story-'), 12)
+        self.assertIn("Top Developments", rendered)
+        self.assertIn("UAS and Drones", rendered)
+        self.assertEqual(rendered.count('href="#story-'), 18)
         self.assertNotIn('href="https://example.com/', rendered)
+        self.assertEqual(outlook.count("Development 9"), 2)
+        self.assertEqual(outlook.count("Drone story 9"), 2)
 
     def test_edition_uses_unified_masthead_and_section_navigation(self) -> None:
         payload = {
@@ -83,6 +88,8 @@ class PublicSiteTests(unittest.TestCase):
         self.assertIn('<h1>Friday, September 11, 2026</h1>', rendered)
         self.assertIn('class="section-nav no-copy"', rendered)
         self.assertIn('href="#uas-drones"', rendered)
+        self.assertIn('href="#wins"', rendered)
+        self.assertIn("No qualifying Administration implementation developments", rendered)
         self.assertIn('id="summary"', rendered)
         self.assertIn("position:sticky", SITE_CSS)
 

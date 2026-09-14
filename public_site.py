@@ -274,32 +274,23 @@ def story_anchor(item: dict[str, Any]) -> str:
     return f"story-{digest}"
 
 
-def _glance_items(
+def _glance_groups(
     sections: dict[str, list[dict[str, Any]]],
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]], int]:
-    all_items: list[dict[str, Any]] = []
-    for section in SECTION_ORDER:
-        all_items.extend(sections.get(section, []))
-
-    priority: list[dict[str, Any]] = []
-    priority.extend(sections.get("Trump Administration Wins", [])[:2])
-    priority.extend(sections.get("Top Developments", [])[:6])
-    for section in SECTION_ORDER:
-        if section not in {"Trump Administration Wins", "Top Developments"}:
-            priority.extend(sections.get(section, [])[:1])
-    priority.extend(all_items)
-
-    selected: list[dict[str, Any]] = []
+) -> list[tuple[str, list[dict[str, Any]]]]:
+    """Return every included headline once, grouped by its final section."""
+    groups: list[tuple[str, list[dict[str, Any]]]] = []
     seen: set[str] = set()
-    for item in priority:
-        identity = str(item.get("url") or item.get("title") or "").strip().casefold()
-        if not identity or identity in seen:
-            continue
-        seen.add(identity)
-        selected.append(item)
-        if len(selected) == 12:
-            break
-    return selected[:8], selected[8:12], len(all_items)
+    for section in SECTION_ORDER:
+        items: list[dict[str, Any]] = []
+        for item in sections.get(section, []):
+            identity = str(item.get("id") or item.get("url") or item.get("title") or "").strip().casefold()
+            if not identity or identity in seen:
+                continue
+            seen.add(identity)
+            items.append(item)
+        if items:
+            groups.append((section, items))
+    return groups
 
 
 def story_html(item: dict[str, Any]) -> str:
@@ -386,43 +377,21 @@ def tracker_html(items: list[dict[str, Any]]) -> str:
 
 def headline_index_html(sections: dict[str, list[dict[str, Any]]]) -> str:
     groups = []
-    top, also, total = _glance_items(sections)
-    for bucket_label, bucket_items in (
-        ("Top Stories", top),
-        ("Also Today", also),
-    ):
-        if not bucket_items:
-            continue
-        bucket_ids = {story_anchor(item) for item in bucket_items}
-        section_groups = []
-        for section in SECTION_ORDER:
-            items = [
-                item
-                for item in sections.get(section, [])
-                if story_anchor(item) in bucket_ids
-            ]
-            if not items:
-                continue
-            links = "".join(
-                f'<li><a href="#{story_anchor(item)}">'
-                f'{html.escape(str(item.get("title", "Untitled")))}</a></li>'
-                for item in items
-            )
-            section_groups.append(
-                f'<div class="glance-section"><h4>{html.escape(section)}</h4>'
-                f'<ul>{links}</ul></div>'
-            )
+    for section, items in _glance_groups(sections):
+        links = "".join(
+            f'<li><a href="#{story_anchor(item)}">'
+            f'{html.escape(str(item.get("title", "Untitled")))}</a></li>'
+            for item in items
+        )
         groups.append(
-            f'<div class="glance-column"><h3>{bucket_label}</h3>'
-            + "".join(section_groups)
-            + "</div>"
+            f'<div class="glance-section"><h4>{html.escape(section)}</h4>'
+            f'<ul>{links}</ul></div>'
         )
     if not groups:
         return ""
     return (
         '<section class="headline-index"><h2>Headlines at a Glance</h2>'
         + "".join(groups)
-        + f'<a class="view-all" href="#briefing-sections">View all {total} stories ↓</a>'
         + "</section>"
     )
 
@@ -431,7 +400,7 @@ def section_nav_html(payload: dict[str, Any]) -> str:
     links = ['<a href="#summary">Summary</a>']
     sections = payload.get("sections", {})
     for section in SECTION_ORDER:
-        if sections.get(section):
+        if sections.get(section) or section == "Trump Administration Wins":
             links.append(
                 f'<a href="#{SECTION_ANCHORS[section]}">{SECTION_NAV_LABELS[section]}</a>'
             )
@@ -581,45 +550,22 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
             f'</table></td></tr>{_email_spacer(22)}'
         )
     headline_groups = []
-    top, also, _ = _glance_items(sections)
-    for bucket_label, bucket_items in (
-        ("Top Stories", top),
-        ("Also Today", also),
-    ):
-        if not bucket_items:
-            continue
-        bucket_ids = {story_anchor(item) for item in bucket_items}
-        section_rows = []
-        for section in SECTION_ORDER:
-            items = [
-                item
-                for item in sections.get(section, [])
-                if story_anchor(item) in bucket_ids
-            ]
-            if not items:
-                continue
-            links = "".join(
-                '<tr><td width="14" valign="top" style="width:14px;padding:1px 0 5px;'
-                'font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:17px;color:#5C7182">'
-                '&#8226;</td><td valign="top" style="padding:0 0 5px;font-family:Arial,Helvetica,sans-serif;'
-                f'font-size:12px;line-height:17px"><a href="{_safe_url(item.get("url", ""))}" '
-                'style="color:#294F6D;text-decoration:none">'
-                f'{html.escape(str(item.get("title", "Untitled")))}</a></td></tr>'
-                for item in items
-            )
-            section_rows.append(
-                '<tr><td style="padding:4px 0 3px;font-family:Arial,Helvetica,sans-serif;'
-                'font-size:9px;line-height:13px;font-weight:bold;color:#73828D;letter-spacing:.25px">'
-                f'{html.escape(section.upper())}</td></tr><tr><td><table role="presentation" '
-                'width="100%" cellspacing="0" cellpadding="0" style="width:100%;'
-                f'border-collapse:collapse">{links}</table></td></tr>'
-            )
+    for section, items in _glance_groups(sections):
+        links = "".join(
+            '<tr><td width="14" valign="top" style="width:14px;padding:1px 0 5px;'
+            'font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:17px;color:#5C7182">'
+            '&#8226;</td><td valign="top" style="padding:0 0 5px;font-family:Arial,Helvetica,sans-serif;'
+            f'font-size:12px;line-height:17px"><a href="{_safe_url(item.get("url", ""))}" '
+            'style="color:#294F6D;text-decoration:none">'
+            f'{html.escape(str(item.get("title", "Untitled")))}</a></td></tr>'
+            for item in items
+        )
         headline_groups.append(
-            '<tr><td style="padding:0 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:10px;'
-            f'line-height:14px;font-weight:bold;color:#244D6B;letter-spacing:.3px">{bucket_label.upper()}'
-            '</td></tr><tr><td style="padding:0 0 9px"><table role="presentation" width="100%" '
-            f'cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse">{"".join(section_rows)}'
-            '</table></td></tr>'
+            '<tr><td style="padding:4px 0 3px;font-family:Arial,Helvetica,sans-serif;'
+            'font-size:9px;line-height:13px;font-weight:bold;color:#73828D;letter-spacing:.25px">'
+            f'{html.escape(section.upper())}</td></tr><tr><td style="padding:0 0 9px">'
+            '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" '
+            f'style="width:100%;border-collapse:collapse">{links}</table></td></tr>'
         )
     headlines_markup = ""
     if headline_groups:
@@ -638,6 +584,17 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
     for section in SECTION_ORDER:
         items = sections.get(section, [])
         if not items:
+            if section == "Trump Administration Wins":
+                section_markup.append(
+                    f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" '
+                    'cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse">'
+                    '<tr><td style="padding:0 0 9px;font-family:Arial,Helvetica,sans-serif;font-size:22px;'
+                    'line-height:27px;font-weight:bold;color:#8C241E;border-bottom:2px solid #CBD6DE">'
+                    'Trump Administration Wins</td></tr><tr><td style="padding:16px 0 24px;'
+                    'font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:#687985">'
+                    'No qualifying Administration implementation developments in this edition.'
+                    f'</td></tr></table></td></tr>{_email_spacer(8)}'
+                )
             continue
         heading_color = "#8C241E" if section == "Trump Administration Wins" else "#173C5E"
         section_markup.append(
@@ -752,6 +709,13 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
     for section in SECTION_ORDER:
         items = sections.get(section, [])
         if not items:
+            if section == "Trump Administration Wins":
+                section_markup.append(
+                    f'<section class="newsletter-section newsletter-section--wins" '
+                    f'id="{SECTION_ANCHORS[section]}"><h2>{html.escape(section)}</h2>'
+                    '<p class="empty-section">No qualifying Administration implementation '
+                    'developments in this edition.</p></section>'
+                )
             continue
         section_class = (
             " newsletter-section--wins"
@@ -922,7 +886,7 @@ main{width:min(var(--wide),calc(100% - 40px));margin:30px auto 72px}
 .automated-note{display:flex;justify-content:space-between;gap:20px;background:var(--sand);border-left:4px solid #b89a50;padding:15px 17px;margin-bottom:30px;font-size:.88rem}.automated-note span{color:#675d43}
 .top-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 34px}.top-highlight{background:var(--sand);border-top:3px solid #b89a50;padding:16px 18px;margin:0;font-size:.84rem;color:#4c493f}.top-highlight>strong{text-transform:uppercase;letter-spacing:.075em;font-size:.69rem;color:#5c5239}.top-highlight p,.top-highlight ul{margin:7px 0 0}.top-highlight ul{padding-left:20px}.top-highlight:only-child{grid-column:1/-1}
 .headline-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;row-gap:2px;border:1px solid var(--line);background:#fafcfd;padding:23px 25px 18px;margin:0 0 54px}.headline-index>h2{grid-column:1/-1;margin-bottom:10px}.headline-index>div{margin:0}.headline-index h3{font-size:.69rem;text-transform:uppercase;letter-spacing:.075em;color:#607482;margin:0 0 7px}.headline-index h4{font-size:.74rem;line-height:1.3;color:#243b4b;margin:12px 0 6px}.headline-index ul{font-size:.855rem;line-height:1.45;margin:0;padding-left:18px}.headline-index li{margin:0 0 6px}.headline-index a{text-decoration:none}.headline-index a:hover{text-decoration:underline}.headline-index .view-all{grid-column:1/-1;width:max-content;margin-top:12px;font-size:.78rem;font-weight:750}
-.newsletter-section{margin-bottom:60px;scroll-margin-top:64px}.newsletter-section>h2{font-size:1.65rem;line-height:1.18;color:var(--navy-dark);border-bottom:2px solid #cbd6de;padding-bottom:10px;margin:0 0 22px;letter-spacing:-.025em}.story{border-bottom:1px solid #e1e6ea;padding:0 0 24px;margin:0 0 24px;scroll-margin-top:62px}.story:last-child{margin-bottom:0}.story h3{font-size:1.2rem;line-height:1.35;margin:0 0 8px;letter-spacing:-.012em}.story h3 a{font-weight:725;text-decoration:none;color:#173c5e}.story h3 a:hover{text-decoration:underline}.story-summary{font-size:.975rem;line-height:1.58;margin:0 0 10px;color:#303d45}.meta,.related{font-size:.755rem;line-height:1.5;color:var(--muted);margin:7px 0 0}.innovation-label{margin:10px 0 0;padding-left:10px;border-left:2px solid #b9a45a;color:#66727a;font-size:.755rem;line-height:1.5}.innovation-label strong{text-transform:uppercase;letter-spacing:.055em;font-size:.67rem;color:#52616a;margin-right:6px}.win-callout{border-top:1px solid #d9b8b3;padding:11px 0 0;margin:13px 0 0;font-size:.82rem;color:#653631}.win-callout>strong{text-transform:uppercase;letter-spacing:.055em;font-size:.68rem}.win-callout p{margin:5px 0 0}.newsletter-section--wins{width:min(860px,100%)!important;background:#fff7f5;border-left:4px solid var(--red);padding:26px 28px 2px}.newsletter-section--wins>h2{color:#732822;border-bottom-color:#dfc2be}
+.newsletter-section{margin-bottom:60px;scroll-margin-top:64px}.newsletter-section>h2{font-size:1.65rem;line-height:1.18;color:var(--navy-dark);border-bottom:2px solid #cbd6de;padding-bottom:10px;margin:0 0 22px;letter-spacing:-.025em}.empty-section{color:var(--muted);font-size:.9rem;margin:0 0 24px}.story{border-bottom:1px solid #e1e6ea;padding:0 0 24px;margin:0 0 24px;scroll-margin-top:62px}.story:last-child{margin-bottom:0}.story h3{font-size:1.2rem;line-height:1.35;margin:0 0 8px;letter-spacing:-.012em}.story h3 a{font-weight:725;text-decoration:none;color:#173c5e}.story h3 a:hover{text-decoration:underline}.story-summary{font-size:.975rem;line-height:1.58;margin:0 0 10px;color:#303d45}.meta,.related{font-size:.755rem;line-height:1.5;color:var(--muted);margin:7px 0 0}.innovation-label{margin:10px 0 0;padding-left:10px;border-left:2px solid #b9a45a;color:#66727a;font-size:.755rem;line-height:1.5}.innovation-label strong{text-transform:uppercase;letter-spacing:.055em;font-size:.67rem;color:#52616a;margin-right:6px}.win-callout{border-top:1px solid #d9b8b3;padding:11px 0 0;margin:13px 0 0;font-size:.82rem;color:#653631}.win-callout>strong{text-transform:uppercase;letter-spacing:.055em;font-size:.68rem}.win-callout p{margin:5px 0 0}.newsletter-section--wins{width:min(860px,100%)!important;background:#fff7f5;border-left:4px solid var(--red);padding:26px 28px 2px}.newsletter-section--wins>h2{color:#732822;border-bottom-color:#dfc2be}
 .tracker{background:#f4f7f9;border-top:5px solid var(--navy);padding:26px 28px 24px}.tracker>h2{border:0;margin-bottom:15px}.table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.tracker table{border-collapse:collapse;width:100%;font-size:.79rem}.tracker th{text-align:left;background:#e6edf1;color:#4d6371;text-transform:uppercase;font-size:.65rem;letter-spacing:.04em}.tracker th,.tracker td{padding:12px 10px;border-bottom:1px solid #d4dde3;vertical-align:top}.tracker th:nth-child(2){width:34%}.tracker th:nth-child(4){width:7%}.tracker td:nth-child(4){font-weight:800;color:#294f6d}.tracker tr:last-child td{border-bottom:0}
 .what-to-watch{width:100%!important;background:#edf3f7;border-top:4px solid #5a7b92;padding:28px 32px 22px}.what-to-watch>h2{border:0;margin-bottom:14px}.watch{margin:0;padding-left:24px;columns:2;column-gap:42px}.watch li{break-inside:avoid;margin:0 0 11px;padding-left:4px;font-size:.95rem}.watch li::marker{font-weight:800;color:#526f84}footer{border-top:1px solid var(--line);padding-top:17px;color:#7b848c;font-size:.73rem}
 .archive-page{width:min(800px,calc(100% - 40px))}.archive-heading{background:#fff;border:1px solid var(--line);padding:42px 46px;margin-bottom:16px;box-shadow:0 12px 35px rgba(26,51,70,.06)}.archive-heading p:last-child{margin-bottom:0;color:var(--muted)}.archive-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.archive-list a{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff;border:1px solid var(--line);padding:18px 21px;text-decoration:none;color:var(--navy)}.archive-list a:hover{border-color:#7892a4;box-shadow:0 5px 20px rgba(26,51,70,.07)}.archive-list span{font-size:.82rem;color:var(--muted);text-align:right}

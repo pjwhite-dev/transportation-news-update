@@ -160,6 +160,36 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             "Delivering critical medical supplies",
         )
 
+    def test_drone_memorial_gets_innovative_use_label(self) -> None:
+        article = record(
+            search_section="UAS and Drones",
+            origin="Supplemental daily email",
+            source="Fast Company",
+            url="https://example.com/drone-memorial",
+            title="It took 2,977 drones to create this 9/11 memorial",
+            summary="A coordinated aerial display commemorated those who died.",
+        )
+
+        self.assertEqual(
+            news_engine.infer_innovative_uas_use(article),
+            "Creating large-scale aerial memorials",
+        )
+
+    def test_drone_light_show_gets_innovative_use_label(self) -> None:
+        article = record(
+            search_section="UAS and Drones",
+            origin="Supplemental daily email",
+            source="DroneDJ",
+            url="https://example.com/drone-light-show",
+            title="Drone light shows face new equipment restrictions",
+            summary="Purpose-built aerial entertainment drones create displays.",
+        )
+
+        self.assertEqual(
+            news_engine.infer_innovative_uas_use(article),
+            "Producing coordinated aerial light shows",
+        )
+
     def test_innovative_uas_label_is_removed_from_cuas_story(self) -> None:
         article = record(
             title="FAA tests counter-UAS detection at an airport",

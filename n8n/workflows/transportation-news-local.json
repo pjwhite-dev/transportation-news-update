@@ -48,7 +48,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const sender = String($json.from?.value?.[0]?.address || $json.from || '').toLowerCase(); if (!sender.includes('ette0937@yahoo.com')) throw new Error('Rejected unexpected supplemental sender'); const supplementalText = $json.textPlain || $json.textHtml || $json.snippet || ''; if (!supplementalText) throw new Error('Supplemental email has no usable body'); return [{ json: { supplementalText } }];"
+        "jsCode": "const sender = String($json.from?.value?.[0]?.address || $json.from || '').toLowerCase(); if (!sender.includes('ette0937@yahoo.com')) throw new Error('Rejected unexpected supplemental sender'); const supplementalText = $json.textHtml || $json.textPlain || $json.snippet || ''; if (!supplementalText) throw new Error('Supplemental email has no usable body'); return [{ json: { supplementalText } }];"
       },
       "id": "encode-email",
       "name": "Encode supplemental email",

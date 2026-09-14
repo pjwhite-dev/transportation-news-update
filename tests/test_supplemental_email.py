@@ -93,6 +93,45 @@ https://www.nytimes.com/2026/09/11/world/europe/example.html
             "NYT: As Russia Again Draws Near, a Frontline City Fears Obliteration This Time",
         )
 
+    def test_outlook_hard_wrapped_article_url_is_rejoined(self) -> None:
+        pasted = """
+Commercial UAV Expo and the Internationalization of Uncrewed Aviation
+
+https://www.commercialuavnews.com/icao-bvlos-harmonization-part-108-drone-re
+gulation
+"""
+
+        records = extract_supplemental_items(pasted, fetch_metadata=False)
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(
+            records[0]["url"],
+            "https://www.commercialuavnews.com/icao-bvlos-harmonization-part-108-drone-regulation",
+        )
+        self.assertEqual(
+            records[0]["title"],
+            "Commercial UAV Expo and the Internationalization of Uncrewed Aviation",
+        )
+
+    def test_html_email_uses_anchor_target_instead_of_homepage_label(self) -> None:
+        pasted = """
+<html><body><p>Drone Delivery Program Reaches Rural Hospitals</p>
+<p><a href="https://dronelife.com/2026/09/rural-hospital-drone-delivery/">
+https://dronelife.com/</a></p></body></html>
+"""
+
+        records = extract_supplemental_items(pasted, fetch_metadata=False)
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(
+            records[0]["url"],
+            "https://dronelife.com/2026/09/rural-hospital-drone-delivery/",
+        )
+        self.assertEqual(
+            records[0]["title"],
+            "Drone Delivery Program Reaches Rural Hospitals",
+        )
+
     @patch("supplemental_email.requests.get")
     def test_article_metadata_title_overrides_nearby_pasted_prose(
         self,

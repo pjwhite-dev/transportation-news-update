@@ -371,6 +371,24 @@ ACTIVE_CONFLICT_PATTERN = re.compile(
 INNOVATIVE_UAS_USE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (
         re.compile(
+            r"\b(?:drone|drones|uas|uncrewed aircraft)\b.*\bmemorial\b|"
+            r"\bmemorial\b.*\b(?:drone|drones|uas|uncrewed aircraft)\b",
+            re.IGNORECASE,
+        ),
+        "Creating large-scale aerial memorials",
+    ),
+    (
+        re.compile(
+            r"\b(?:drone|drones|uas|uncrewed aircraft)\b.*"
+            r"\b(?:light shows?|aerial shows?|aerial displays?|entertainment)\b|"
+            r"\b(?:light shows?|aerial shows?|aerial displays?)\b.*"
+            r"\b(?:drone|drones|uas|uncrewed aircraft)\b",
+            re.IGNORECASE,
+        ),
+        "Producing coordinated aerial light shows",
+    ),
+    (
+        re.compile(
             r"\b(?:medical|medicine|vaccine|blood|organ|healthcare)\b.*"
             r"\b(?:deliver(?:y|ing|ed|s)?|transport(?:s|ed|ing|ation)?|shipment)\b|"
             r"\b(?:deliver(?:y|ing|ed|s)?|transport(?:s|ed|ing|ation)?|shipment)\b.*"
