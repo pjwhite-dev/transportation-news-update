@@ -34,7 +34,10 @@ try {
     }
 
     $arguments = @("automated_briefing.py")
-    if ($SupplementalFile -and (Test-Path -LiteralPath $SupplementalFile)) {
+    if ($SupplementalFile) {
+        if (-not (Test-Path -LiteralPath $SupplementalFile -PathType Leaf)) {
+            throw "Supplemental email file is missing; refusing feed-only publication."
+        }
         $supplementalPath = (Resolve-Path -LiteralPath $SupplementalFile).Path
         $arguments += @("--supplemental-file", $supplementalPath)
     }

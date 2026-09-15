@@ -38,7 +38,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); if (state.lastSuccessfulPublicationDate === today) return []; return $input.all();"
+        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); if (state.lastSupplementalPublicationDate === today) return []; return $input.all();"
       },
       "id": "check-supplemental-daily-guard",
       "name": "Skip if already published today",
@@ -122,13 +122,24 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); state.lastSuccessfulPublicationDate = today; return $input.all();"
+        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); state.lastSuccessfulPublicationDate = today; state.lastSupplementalPublicationDate = today; return $input.all();"
       },
       "id": "mark-daily-publication-complete",
       "name": "Mark daily publication complete",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1580, 360]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); state.lastSuccessfulPublicationDate = today; return $input.all();"
+      },
+      "id": "mark-feed-only-publication-complete",
+      "name": "Mark provisional feed-only publication complete",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 500]
     }
   ],
   "connections": {
@@ -141,7 +152,7 @@
     "Manual test": { "main": [[{ "node": "Skip fallback if already published today", "type": "main", "index": 0 }]] },
     "Weekday 1 PM fallback": { "main": [[{ "node": "Skip fallback if already published today", "type": "main", "index": 0 }]] },
     "Skip fallback if already published today": { "main": [[{ "node": "Run scheduled feed-only publication", "type": "main", "index": 0 }]] },
-    "Run scheduled feed-only publication": { "main": [[{ "node": "Mark daily publication complete", "type": "main", "index": 0 }]] }
+    "Run scheduled feed-only publication": { "main": [[{ "node": "Mark provisional feed-only publication complete", "type": "main", "index": 0 }]] }
   },
   "settings": {
     "executionOrder": "v1",

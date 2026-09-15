@@ -279,6 +279,11 @@ def main() -> None:
         provider=provider,
     )
     briefing = validate_complete_briefing(briefing)
+    if args.supplemental_file and int(briefing.get("supplemental_count", 0) or 0) == 0:
+        raise ValueError(
+            "The supplied email yielded no supplemental article links; "
+            "refusing feed-only publication."
+        )
     latest_path: Path | None = None
     archive_path: Path | None = None
     if not args.dry_run:

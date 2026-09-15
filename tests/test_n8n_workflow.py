@@ -28,10 +28,10 @@ class N8nWorkflowTests(unittest.TestCase):
         self.assertEqual(self.workflow["settings"]["timezone"], "America/New_York")
         self.assertEqual(interval[0]["expression"], "0 13 * * 1-5")
 
-    def test_successful_paths_share_a_persisted_daily_guard(self) -> None:
+    def test_late_email_can_replace_provisional_feed_only_edition_once(self) -> None:
         connections = self.workflow["connections"]
 
-        self.assertIn("lastSuccessfulPublicationDate", self.nodes[
+        self.assertIn("lastSupplementalPublicationDate", self.nodes[
             "Skip if already published today"
         ]["parameters"]["jsCode"])
         self.assertIn("lastSuccessfulPublicationDate", self.nodes[
@@ -43,8 +43,14 @@ class N8nWorkflowTests(unittest.TestCase):
         )
         self.assertEqual(
             connections["Run scheduled feed-only publication"]["main"][0][0]["node"],
-            "Mark daily publication complete",
+            "Mark provisional feed-only publication complete",
         )
+        self.assertIn("lastSupplementalPublicationDate", self.nodes[
+            "Mark daily publication complete"
+        ]["parameters"]["jsCode"])
+        self.assertNotIn("lastSupplementalPublicationDate", self.nodes[
+            "Mark provisional feed-only publication complete"
+        ]["parameters"]["jsCode"])
 
     def test_gmail_still_polls_every_minute(self) -> None:
         gmail = self.nodes["Supplemental Gmail"]
@@ -78,6 +84,11 @@ class N8nWorkflowTests(unittest.TestCase):
         self.assertIn('"MMMM d, yyyy"', script)
         self.assertIn("$editionDisplay", script)
         self.assertIn("[regex]::Escape($editionDisplay)", script)
+
+    def test_missing_supplemental_file_cannot_publish_feed_only(self) -> None:
+        script = PIPELINE_SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("Supplemental email file is missing; refusing feed-only publication.", script)
 
 
 if __name__ == "__main__":
