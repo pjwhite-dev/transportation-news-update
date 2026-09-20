@@ -95,13 +95,13 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
                 # generic UAS, or when a stronger deterministic rule identifies
                 # military, C-UAS, or AV-specific Federal coverage.
                 should_move = (
-                    inferred in {"Military", "UAS Security and C-UAS"}
+                    inferred in {"Military UAS", "International Security", "Counter-UAS / Airspace Security"}
                     or (
-                        display_section == "UAS and Drones"
-                        and inferred != "UAS and Drones"
+                        display_section == "UAS / Drones"
+                        and inferred != "UAS / Drones"
                     )
                     or (
-                        display_section == "Federal Actions"
+                        display_section == "Federal Policy & Implementation"
                         and inferred == "Autonomous Vehicles"
                     )
                 )
@@ -111,11 +111,10 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
             moved[target].append(item)
     briefing["sections"] = sections = moved
 
-    for item in sections.get("UAS and Drones", []):
-        label = clean_innovative_uas_use(item.get("innovative_uas_use", ""))
-        item["innovative_uas_use"] = label or infer_innovative_uas_use(item)
+    for item in sections.get("UAS / Drones", []):
+        item["innovative_uas_use"] = infer_innovative_uas_use(item)
     for section in SECTION_ORDER:
-        if section == "UAS and Drones":
+        if section == "UAS / Drones":
             continue
         for item in sections.get(section, []):
             item["innovative_uas_use"] = ""
@@ -137,6 +136,7 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
 def build_briefing(
     root: Path,
     *,
+    raw_file: Path | None = None,
     api_key: str = "",
     model: str = DEFAULT_OPENAI_MODEL,
     supplemental_text: str = "",
@@ -148,7 +148,7 @@ def build_briefing(
         if api_key.strip()
         else provider_from_env()
     )
-    raw_feed = load_json(root / "data" / "latest_raw_news.json")
+    raw_feed = load_json(raw_file or root / "data" / "latest_raw_news.json")
     try:
         end = datetime.fromisoformat(str(raw_feed["window_end"])).astimezone(EASTERN)
     except (KeyError, ValueError) as exc:
@@ -235,6 +235,7 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent)
     parser.add_argument("--event-path", type=Path)
     parser.add_argument("--supplemental-file", type=Path)
+    parser.add_argument("--raw-file", type=Path, help="Use a dated raw snapshot for a test or backfill.")
     parser.add_argument("--skip-metadata-fetch", action="store_true")
     parser.add_argument("--health-check", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
@@ -274,6 +275,7 @@ def main() -> None:
     started = time.monotonic()
     briefing = build_briefing(
         root,
+        raw_file=args.raw_file,
         supplemental_text=supplemental_text,
         fetch_metadata=not args.skip_metadata_fetch,
         provider=provider,
@@ -303,12 +305,10 @@ def main() -> None:
             "supplemental_accounted_count", 0
         ),
         "final_story_count": story_count,
-        "administration_wins_count": len(
-            briefing["sections"].get("Trump Administration Wins", [])
-        ),
+        "administration_wins_count": 0,
         "innovative_uas_uses_count": sum(
             bool(item.get("innovative_uas_use"))
-            for item in briefing["sections"].get("UAS and Drones", [])
+            for item in briefing["sections"].get("UAS / Drones", [])
         ),
         "tracker_count": len(briefing.get("regulatory_tracker", [])),
         "model_retries": briefing.get("model_retries", 0),

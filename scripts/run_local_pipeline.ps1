@@ -1,5 +1,6 @@
 param(
     [string]$SupplementalFile = "",
+    [switch]$SkipMetadataFetch,
     [switch]$DryRun
 )
 
@@ -42,6 +43,7 @@ try {
         $arguments += @("--supplemental-file", $supplementalPath)
     }
     if ($DryRun) { $arguments += "--dry-run" }
+    if ($SkipMetadataFetch) { $arguments += "--skip-metadata-fetch" }
 
     & $python @arguments
     if ($LASTEXITCODE -ne 0) { throw "Briefing generation or validation failed." }

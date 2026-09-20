@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import re
+from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
 from urllib.parse import urlparse, urlunparse
 
@@ -353,7 +354,7 @@ def fetch_link_metadata(record: dict) -> dict:
         response = requests.get(
             record["url"],
             headers={"User-Agent": MANUAL_IMPORT_USER_AGENT},
-            timeout=18,
+            timeout=12,
             allow_redirects=True,
         )
         response.raise_for_status()
@@ -455,13 +456,24 @@ def extract_supplemental_items(
                 "editor_vetted": True,
                 "fetch_status": "Not fetched",
             }
-            if fetch_metadata:
-                record = fetch_link_metadata(record)
-
             final_identity = url_identity(record["url"])
             if final_identity in seen:
                 continue
             seen.update({original_identity, final_identity})
             records.append(record)
+
+    if fetch_metadata and records:
+        worker_count = min(8, len(records))
+        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+            enriched_records = list(executor.map(fetch_link_metadata, records))
+        deduplicated: list[dict] = []
+        seen_final: set[str] = set()
+        for record in enriched_records:
+            final_identity = url_identity(record["url"])
+            if final_identity in seen_final:
+                continue
+            seen_final.add(final_identity)
+            deduplicated.append(record)
+        return deduplicated
 
     return records

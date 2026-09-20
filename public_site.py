@@ -5,6 +5,7 @@ import base64
 import hashlib
 import html
 import json
+import re
 import shutil
 from collections import defaultdict
 from datetime import date, datetime, timedelta
@@ -30,7 +31,7 @@ from regulatory_tracker import build_regulatory_tracker
 
 
 SITE_URL = "https://news.peterjwhite.org"
-SITE_TITLE = "Advanced Transportation News Update"
+SITE_TITLE = "Advanced Transportation Daily"
 
 SOURCE_CANONICAL_NAMES = {
     "aol": "AOL",
@@ -46,41 +47,63 @@ SOURCE_CANONICAL_NAMES = {
 }
 
 SECTION_ANCHORS = {
-    "Trump Administration Wins": "wins",
-    "Top Developments": "top-developments",
-    "UAS and Drones": "uas-drones",
-    "UAS Security and C-UAS": "uas-security",
-    "Military": "military",
-    "eVTOL Integration Pilot Program and AAM": "aam",
+    "Federal Policy & Implementation": "federal-policy",
+    "UAS / Drones": "uas-drones",
+    "Counter-UAS / Airspace Security": "uas-security",
+    "AAM / eVTOL / Advanced Aviation": "aam",
+    "UTM / Airspace Integration": "utm",
     "Autonomous Vehicles": "autonomous-vehicles",
+    "Robotics": "robotics",
+    "Civil Supersonics / High-Speed Aviation": "supersonics",
+    "Advanced Rail / High-Speed Rail": "rail",
+    "UxS / Maritime / Ground Robotics": "uxs",
+    "Surface Transportation Reauthorization": "reauthorization",
     "Other Advanced Transportation": "other-transportation",
-    "International": "international",
-    "Federal Actions": "federal-actions",
+    "Military UAS": "military",
+    "International Security": "international-security",
+    "Federal Register": "federal-register",
 }
 
-SECTION_NAV_LABELS = {
-    "Trump Administration Wins": "Wins",
-    "Top Developments": "Top",
-    "UAS and Drones": "UAS",
-    "UAS Security and C-UAS": "Security",
-    "Military": "Military",
-    "eVTOL Integration Pilot Program and AAM": "AAM",
-    "Autonomous Vehicles": "AVs",
-    "Other Advanced Transportation": "Other",
-    "International": "International",
-    "Federal Actions": "Federal",
-}
+SECTION_NAV_LABELS = {section: section.split(" /")[0].split(" &")[0] for section in SECTION_ANCHORS}
 
 SAME_DAY_SECTION_PRIORITY = {
-    "Military": 0,
-    "UAS Security and C-UAS": 1,
-    "International": 2,
-    "eVTOL Integration Pilot Program and AAM": 3,
+    "Military UAS": 0,
+    "Counter-UAS / Airspace Security": 1,
+    "International Security": 2,
+    "AAM / eVTOL / Advanced Aviation": 3,
     "Autonomous Vehicles": 4,
     "Other Advanced Transportation": 5,
-    "Federal Actions": 6,
-    "UAS and Drones": 7,
+    "Federal Policy & Implementation": 6,
+    "UAS / Drones": 7,
 }
+
+LEGACY_SECTIONS = {
+    "Trump Administration Wins": "Federal Policy & Implementation",
+    "Top Developments": "Other Advanced Transportation",
+    "UAS and Drones": "UAS / Drones",
+    "UAS Security and C-UAS": "Counter-UAS / Airspace Security",
+    "Military": "Military UAS",
+    "eVTOL Integration Pilot Program and AAM": "AAM / eVTOL / Advanced Aviation",
+    "International": "Other Advanced Transportation",
+    "Federal Actions": "Federal Policy & Implementation",
+}
+
+
+def display_sections(payload: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+    """Retain links from archived editions created under the former taxonomy."""
+    result = {section: [] for section in SECTION_ORDER}
+    seen: set[str] = set()
+    for old_section, items in payload.get("sections", {}).items():
+        for item in items:
+            identity = str(item.get("url") or item.get("id") or item.get("title"))
+            if identity in seen:
+                continue
+            seen.add(identity)
+            target = LEGACY_SECTIONS.get(old_section, old_section)
+            if target == "Other Advanced Transportation":
+                target = infer_section(item)
+            result.setdefault(target, []).append(item)
+    return result
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -222,6 +245,7 @@ def prepare_editions(
         if entry["kind"] == "editorial":
             payload = dict(entry["payload"])
             payload["edition_kind"] = "editorial"
+            payload["sections"] = display_sections(payload)
             prepared[day] = payload
             history.extend(briefing_stories(payload))
         else:
@@ -241,6 +265,33 @@ def _safe_url(value: str) -> str:
     if value.startswith(("https://", "http://")):
         return html.escape(value, quote=True)
     return "#"
+
+
+def summary_html(payload: dict[str, Any]) -> str:
+    """Render source links from the final AI summary without allowing arbitrary HTML."""
+    summary = str(payload.get("executive_summary", ""))
+    allowed = {
+        str(item.get("url", ""))
+        for items in payload.get("sections", {}).values()
+        for item in items
+        if str(item.get("url", "")).startswith(("https://", "http://"))
+    }
+    pattern = re.compile(r"\[([^\]]{1,120})\]\((https?://[^\s)]+)\)")
+    parts: list[str] = []
+    cursor = 0
+    for match in pattern.finditer(summary):
+        parts.append(html.escape(summary[cursor:match.start()]))
+        label, url = match.groups()
+        if url in allowed:
+            parts.append(
+                f'<a href="{_safe_url(url)}" style="color:#174F86;text-decoration:underline">'
+                f'{html.escape(label)}</a>'
+            )
+        else:
+            parts.append(html.escape(label))
+        cursor = match.end()
+    parts.append(html.escape(summary[cursor:]))
+    return "".join(parts)
 
 
 def _format_day(day: date) -> str:
@@ -322,24 +373,11 @@ def story_html(item: dict[str, Any]) -> str:
         else ""
     )
     use = str(item.get("innovative_uas_use", "")).strip()
-    use_markup = (
-        f'<p class="innovation-label"><strong>Innovative use</strong> '
-        f'{html.escape(use)}</p>'
-        if use
-        else ""
-    )
-    win_markup = ""
-    if item.get("is_administration_win") and item.get("win_explanation"):
-        win_markup = (
-            '<aside class="win-callout"><strong>Why this is an Administration win</strong>'
-            f'<p>{html.escape(str(item.get("win_explanation", "")))}</p></aside>'
-        )
+    use_markup = '<span class="innovation-label">Innovative Drone Use</span>' if use else ""
     return f"""
       <article class="story" id="{story_anchor(item)}">
-        <h3><a href="{_safe_url(item.get('url', ''))}">{title}</a></h3>
+        <h3><a href="{_safe_url(item.get('url', ''))}">{title}</a>{use_markup}</h3>
         {summary_markup}
-        {use_markup}
-        {win_markup}
         <p class="meta">{source}{f' · {date_label}' if date_label else ''}</p>
         {related_markup}
       </article>
@@ -356,19 +394,20 @@ def tracker_html(items: list[dict[str, Any]]) -> str:
         prefix = "Closes" if isinstance(days, int) else "Closed"
         rows.append(
             "<tr>"
-            f"<td>{html.escape(str(item.get('agency', '')))}</td>"
-            f'<td><a href="{_safe_url(item.get("source_url", ""))}">'
-            f"{html.escape(str(item.get('action', '')))}</a></td>"
+            f"<td>{html.escape(str(item.get('agency', '')))} — "
+            f"{html.escape(str(item.get('action', '')))} "
+            f"({html.escape(str(item.get('rin', '')))})</td>"
+            f"<td>{html.escape(str(item.get('status', '')))}</td>"
             f"<td>{prefix} {html.escape(str(item.get('comment_deadline_label', '')))}</td>"
             f"<td>{days_label}</td>"
-            f"<td>{html.escape(str(item.get('status', '')))}</td>"
+            f'<td><a href="{_safe_url(item.get("source_url", ""))}">Official source</a></td>'
             "</tr>"
         )
     return """
       <section class="newsletter-section tracker" id="tracker">
-        <h2>Regulatory Deadline Tracker</h2>
+        <h2>Regulatory Tracker</h2>
         <div class="table-scroll" role="region" tabindex="0" aria-label="Regulatory deadlines table"><table>
-          <thead><tr><th>Agency</th><th>Action</th><th>Comment period</th><th>Days</th><th>Status</th></tr></thead>
+          <thead><tr><th>Agency / Rule (and RIN)</th><th>Current Status</th><th>Deadline / Next Known Date</th><th>Days Remaining</th><th>Source</th></tr></thead>
           <tbody>""" + "".join(rows) + """</tbody>
         </table></div>
       </section>
@@ -400,7 +439,7 @@ def section_nav_html(payload: dict[str, Any]) -> str:
     links = ['<a href="#summary">Summary</a>']
     sections = payload.get("sections", {})
     for section in SECTION_ORDER:
-        if sections.get(section) or section == "Trump Administration Wins":
+        if sections.get(section):
             links.append(
                 f'<a href="#{SECTION_ANCHORS[section]}">{SECTION_NAV_LABELS[section]}</a>'
             )
@@ -417,26 +456,6 @@ def section_nav_html(payload: dict[str, Any]) -> str:
 
 def top_highlights_html(payload: dict[str, Any]) -> str:
     cards = []
-    imminent = [
-        item
-        for item in payload.get("regulatory_tracker", [])
-        if isinstance(item.get("days_remaining"), int)
-        and 0 <= item["days_remaining"] <= 14
-    ]
-    if imminent:
-        items = "".join(
-            f'<li><a href="{_safe_url(item.get("source_url", ""))}">'
-            f'{html.escape(str(item.get("action", "")))}</a> — '
-            f'{html.escape(str(item.get("comment_deadline_label", "")))} '
-            f'({item["days_remaining"]} day'
-            f'{"" if item["days_remaining"] == 1 else "s"} remaining)</li>'
-            for item in sorted(imminent, key=lambda value: value["days_remaining"])
-        )
-        cards.append(
-            '<aside class="top-highlight"><strong>Imminent regulatory deadlines</strong>'
-            f'<ul>{items}</ul></aside>'
-        )
-
     uses = []
     seen = set()
     for items in payload.get("sections", {}).values():
@@ -444,14 +463,18 @@ def top_highlights_html(payload: dict[str, Any]) -> str:
             value = clean_innovative_uas_use(
                 str(item.get("innovative_uas_use", ""))
             )
-            identity = value.casefold()
+            identity = str(item.get("url") or item.get("id") or value).casefold()
             if value and identity not in seen:
                 seen.add(identity)
-                uses.append(value)
+                uses.append(item)
     if uses:
         cards.append(
-            '<aside class="top-highlight"><strong>Innovative UAS uses in today’s briefing</strong>'
-            f'<p>{html.escape(" • ".join(uses))}</p></aside>'
+            '<aside class="top-highlight"><strong>Innovative Drone Uses in This Update</strong><ul>'
+            + "".join(
+                f'<li><a href="{_safe_url(item.get("url", ""))}">{html.escape(str(item.get("title", "")))}</a></li>'
+                for item in uses
+            )
+            + '</ul></aside>'
         )
     return f'<div class="top-highlights">{"".join(cards)}</div>' if cards else ""
 
@@ -479,23 +502,12 @@ def _outlook_story(item: dict[str, Any]) -> str:
             f'font-size:14px;line-height:21px;color:#283640">{summary}</td></tr>'
         )
     use = clean_innovative_uas_use(str(item.get("innovative_uas_use", "")))
-    if use:
-        detail_rows += (
-            '<tr><td style="padding:9px 0 0 10px;border-left:2px solid #B9A45A;'
-            'font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:17px;'
-            'color:#626A70"><strong style="text-transform:uppercase;letter-spacing:.3px;'
-            f'color:#4F5F69">Innovative use</strong> &nbsp;{html.escape(use)}</td></tr>'
-        )
-    if item.get("is_administration_win") and item.get("win_explanation"):
-        detail_rows += (
-            '<tr><td style="padding:10px 0 0"><table role="presentation" width="100%" '
-            'cellspacing="0" cellpadding="0" bgcolor="#FFF1ED" style="width:100%;'
-            'border-collapse:collapse;background:#FFF1ED;border-left:4px solid #B42318">'
-            '<tr><td style="padding:11px 13px;font-family:Arial,Helvetica,sans-serif;'
-            'font-size:13px;line-height:19px;color:#57201B"><strong style="font-size:10px;'
-            'line-height:14px;letter-spacing:.3px">WHY THIS IS AN ADMINISTRATION WIN</strong><br>'
-            f'{html.escape(str(item.get("win_explanation", "")))}</td></tr></table></td></tr>'
-        )
+    badge = (
+        ' &nbsp;<span style="font-family:Arial,Helvetica,sans-serif;font-size:10px;'
+        'line-height:14px;color:#174F86;background:#EAF3FB;border:1px solid #AFCDE5;'
+        'padding:2px 5px;border-radius:10px">Innovative Drone Use</span>'
+        if use else ""
+    )
     related_links = []
     seen_urls = {str(item.get("url", ""))}
     for related in item.get("also_covered", []):
@@ -517,9 +529,9 @@ def _outlook_story(item: dict[str, Any]) -> str:
     return f"""
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
           style="width:100%;border-collapse:collapse">
-        <tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:18px;
-            line-height:24px;font-weight:bold;mso-line-height-rule:exactly">
-          <a href="{url}" style="color:#173C5E;text-decoration:underline">{title}</a>
+        <tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+            line-height:21px;font-weight:700;mso-line-height-rule:exactly">
+          <strong><a href="{url}" style="color:#174F86;text-decoration:none;font-size:16px;line-height:21px;font-weight:700">{title}</a></strong>{badge}
         </td></tr>
         {detail_rows}
         <tr><td style="padding:9px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;
@@ -536,7 +548,7 @@ def _outlook_story(item: dict[str, Any]) -> str:
 def outlook_email_html(payload: dict[str, Any], day: date) -> str:
     """Return self-contained table HTML that retains its styling in Outlook."""
     sections = payload.get("sections", {})
-    summary = html.escape(str(payload.get("executive_summary", "")))
+    summary = summary_html(payload)
     summary_markup = ""
     if summary:
         summary_markup = (
@@ -580,23 +592,30 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
             + "".join(headline_groups)
             + f'</table></td></tr></table></td></tr>{_email_spacer(25)}'
         )
+    innovative_items = [
+        item for items in sections.values() for item in items
+        if clean_innovative_uas_use(str(item.get("innovative_uas_use", "")))
+    ]
+    innovative_markup = ""
+    if innovative_items:
+        links = "".join(
+            '<tr><td style="padding:0 0 7px;font:13px/19px Arial,Helvetica,sans-serif">'
+            f'<a href="{_safe_url(item.get("url", ""))}" style="color:#174F86;text-decoration:underline">'
+            f'{html.escape(str(item.get("title", "")))}</a></td></tr>'
+            for item in innovative_items
+        )
+        innovative_markup = (
+            '<tr><td style="padding:0 28px 20px;font:18px/24px Arial,Helvetica,sans-serif;'
+            'font-weight:700;color:#173C5E">Innovative Drone Uses in This Update</td></tr>'
+            '<tr><td style="padding:0 28px 22px"><table role="presentation" width="100%">'
+            + links + '</table></td></tr>'
+        )
     section_markup = []
     for section in SECTION_ORDER:
         items = sections.get(section, [])
         if not items:
-            if section == "Trump Administration Wins":
-                section_markup.append(
-                    f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" '
-                    'cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse">'
-                    '<tr><td style="padding:0 0 9px;font-family:Arial,Helvetica,sans-serif;font-size:22px;'
-                    'line-height:27px;font-weight:bold;color:#8C241E;border-bottom:2px solid #CBD6DE">'
-                    'Trump Administration Wins</td></tr><tr><td style="padding:16px 0 24px;'
-                    'font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:#687985">'
-                    'No qualifying Administration implementation developments in this edition.'
-                    f'</td></tr></table></td></tr>{_email_spacer(8)}'
-                )
             continue
-        heading_color = "#8C241E" if section == "Trump Administration Wins" else "#173C5E"
+        heading_color = "#173C5E"
         section_markup.append(
             '<tr><td style="padding:0 28px"><table role="presentation" width="100%" '
             'cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse">'
@@ -607,7 +626,8 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
             + f'</td></tr></table></td></tr>{_email_spacer(8)}'
         )
     tracker_markup = _outlook_tracker(payload.get("regulatory_tracker", []))
-    watch_markup = _outlook_watch(payload.get("what_to_watch", []))
+    watch_markup = ""
+    deck = html.escape(lead_headline(payload))
     return f"""<!doctype html><html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -620,14 +640,77 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
             bgcolor="#FFFFFF" style="width:720px;max-width:720px;border-collapse:collapse;background:#FFFFFF">
           <tr><td bgcolor="#153A5A" style="padding:24px 28px 22px;background:#153A5A;
               font-family:Arial,Helvetica,sans-serif"><div style="font-size:30px;line-height:35px;
-              font-weight:bold;color:#FFFFFF">Advanced Transportation News Update</div>
+              font-weight:bold;color:#FFFFFF">Advanced Transportation Daily</div>
               <div style="padding-top:7px;font-size:14px;line-height:19px;color:#DCE8F0">
-              {html.escape(_format_day(day))}</div></td></tr>{_email_spacer(18)}
-          {summary_markup}{headlines_markup}{"".join(section_markup)}{tracker_markup}{watch_markup}
+              {html.escape(_format_day(day))}</div>
+              <div style="padding-top:9px;font-size:15px;line-height:21px;color:#FFFFFF">{deck}</div>
+              </td></tr>{_email_spacer(18)}
+          {summary_markup}{innovative_markup}{headlines_markup}{"".join(section_markup)}{tracker_markup}{watch_markup}
           <tr><td style="padding:0 28px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11px;
               line-height:16px;color:#7B848C;border-top:1px solid #DFE5E9">
-              Public source, AI-assisted news update.</td></tr>
+              This summary is AI generated.</td></tr>
         </table></td></tr></table></body></html>"""
+
+
+def lead_headline(payload: dict[str, Any]) -> str:
+    stories = [item for items in payload.get("sections", {}).values() for item in items]
+    if not stories:
+        return "Today's advanced transportation developments"
+    return str(max(stories, key=lambda item: int(item.get("importance", 0) or 0)).get("title", ""))
+
+
+def email_subject(payload: dict[str, Any], day: date) -> str:
+    date_label = f"{day.month}/{day.day}/{day.year % 100:02d}"
+    weekend = "Weekend + Monday — " if day.weekday() == 0 else ""
+    return f"{SITE_TITLE} — {date_label} — {weekend}{lead_headline(payload)}"
+
+
+def plain_text_email(payload: dict[str, Any], day: date) -> str:
+    lines = [
+        SITE_TITLE, _format_day(day), lead_headline(payload), "",
+        "Executive Summary", str(payload.get("executive_summary", "")), "",
+    ]
+    sections = payload.get("sections", {})
+    innovative = [
+        item for items in sections.values() for item in items
+        if item.get("innovative_uas_use")
+    ]
+    if innovative:
+        lines.extend(["Innovative Drone Uses in This Update"])
+        lines.extend(f"- {item.get('title', '')}: {item.get('url', '')}" for item in innovative)
+        lines.append("")
+    for section in SECTION_ORDER:
+        items = sections.get(section, [])
+        if not items:
+            continue
+        lines.extend([section, ""])
+        for item in items:
+            lines.extend([str(item.get("title", "")), str(item.get("url", ""))])
+            if item.get("summary"):
+                lines.append(str(item["summary"]))
+            if item.get("also_covered"):
+                lines.append("Additional coverage: " + " · ".join(
+                    f"{related.get('source', '')} ({related.get('url', '')})"
+                    for related in item["also_covered"]
+                ))
+            lines.append("")
+    lines.extend(["Regulatory Tracker", ""])
+    for item in payload.get("regulatory_tracker", []):
+        days = item.get("days_remaining")
+        deadline = (
+            f"comment deadline {item.get('comment_deadline_label', '')}; "
+            f"{days} days remaining"
+            if isinstance(days, int)
+            else f"comment period closed {item.get('comment_deadline_label', '')}"
+        )
+        lines.append(
+            f"{item.get('agency', '')} — {item.get('action', '')} "
+            f"({item.get('rin', '')}): {item.get('status', '')}; "
+            f"{deadline}; "
+            f"{item.get('source_url', '')}"
+        )
+    lines.extend(["", "This summary is AI generated."])
+    return "\n".join(lines) + "\n"
 
 
 def _outlook_tracker(items: list[dict[str, Any]]) -> str:
@@ -638,12 +721,14 @@ def _outlook_tracker(items: list[dict[str, Any]]) -> str:
         days = item.get("days_remaining")
         prefix = "Closes" if isinstance(days, int) else "Closed"
         values = (
-            html.escape(str(item.get("agency", ""))),
-            f'<a href="{_safe_url(item.get("source_url", ""))}" style="color:#173C5E;'
-            f'text-decoration:underline;font-weight:bold">{html.escape(str(item.get("action", "")))}</a>',
+            html.escape(str(item.get("agency", ""))) + " — "
+            + html.escape(str(item.get("action", ""))) + " ("
+            + html.escape(str(item.get("rin", ""))) + ")",
+            html.escape(str(item.get("status", ""))),
             f'{prefix} {html.escape(str(item.get("comment_deadline_label", "")))}',
             str(days) if isinstance(days, int) else "—",
-            html.escape(str(item.get("status", ""))),
+            f'<a href="{_safe_url(item.get("source_url", ""))}" style="color:#173C5E;'
+            'text-decoration:underline">Official source</a>',
         )
         cells = "".join(
             '<td valign="top" style="padding:9px 7px;border-bottom:1px solid #E1E6EA;'
@@ -654,13 +739,13 @@ def _outlook_tracker(items: list[dict[str, Any]]) -> str:
     headers = "".join(
         f'<td style="padding:7px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:bold;'
         f'color:#5D6B78">{label}</td>'
-        for label in ("AGENCY", "ACTION", "COMMENT PERIOD", "DAYS", "STATUS")
+        for label in ("AGENCY / RULE (RIN)", "CURRENT STATUS", "DEADLINE / NEXT DATE", "DAYS", "SOURCE")
     )
     return (
         '<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellspacing="0" '
         'cellpadding="0" style="width:100%;border-collapse:collapse"><tr><td style="padding:0 0 9px;'
         'font-family:Arial,Helvetica,sans-serif;font-size:22px;line-height:27px;font-weight:bold;'
-        'color:#173C5E;border-bottom:2px solid #CBD6DE">Regulatory Deadline Tracker</td></tr>'
+        'color:#173C5E;border-bottom:2px solid #CBD6DE">Regulatory Tracker</td></tr>'
         f'{_email_spacer(14)}<tr><td><table role="presentation" width="100%" cellspacing="0" '
         f'cellpadding="0" style="width:100%;border-collapse:collapse;table-layout:fixed"><tr bgcolor="#F3F6F8">{headers}</tr>'
         + "".join(rows)
@@ -692,9 +777,9 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
     if kind == "editorial":
         intro = (
             '<section class="executive-summary" id="summary"><h2>Executive Summary</h2>'
-            f'<p>{html.escape(str(payload.get("executive_summary", "")))}</p></section>'
+            f'<p>{summary_html(payload)}</p></section>'
         )
-        status = "Complete AI-assisted edition"
+        status = "Daily executive briefing"
     else:
         shown = sum(len(items) for items in sections.values())
         status = "Automatically updated public-source headline edition"
@@ -709,35 +794,15 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
     for section in SECTION_ORDER:
         items = sections.get(section, [])
         if not items:
-            if section == "Trump Administration Wins":
-                section_markup.append(
-                    f'<section class="newsletter-section newsletter-section--wins" '
-                    f'id="{SECTION_ANCHORS[section]}"><h2>{html.escape(section)}</h2>'
-                    '<p class="empty-section">No qualifying Administration implementation '
-                    'developments in this edition.</p></section>'
-                )
             continue
-        section_class = (
-            " newsletter-section--wins"
-            if section == "Trump Administration Wins"
-            else ""
-        )
         section_markup.append(
-            f'<section class="newsletter-section{section_class}" id="{SECTION_ANCHORS[section]}">'
+            f'<section class="newsletter-section" id="{SECTION_ANCHORS[section]}">'
             f'<h2>{html.escape(section)}</h2>'
             + "".join(story_html(item) for item in items)
             + "</section>"
         )
 
     tracker = tracker_html(payload.get("regulatory_tracker", []))
-    watch = payload.get("what_to_watch", [])
-    watch_markup = ""
-    if watch:
-        watch_markup = (
-            '<section class="newsletter-section what-to-watch" id="watch"><h2>What to Watch</h2><ol class="watch">'
-            + "".join(f"<li>{html.escape(str(item))}</li>" for item in watch)
-            + "</ol></section>"
-        )
 
     return f"""
       <div class="edition-heading">
@@ -752,9 +817,8 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
       <div class="briefing-sections" id="briefing-sections">
         {''.join(section_markup)}
         {tracker}
-        {watch_markup}
       </div>
-      <footer>Public source, AI-assisted news update.</footer>
+      <footer>This summary is AI generated.</footer>
     """
 
 
@@ -787,7 +851,7 @@ def page_shell(
   <header class="site-header no-copy">
     <div class="masthead-inner">
       <a class="brand" href="{prefix}" aria-label="{SITE_TITLE}">
-        <span>Advanced Transportation</span><small>News Update</small>
+        <span>Advanced Transportation</span><small>Daily</small>
       </a>
       <div class="masthead-tools">
         <nav aria-label="Primary navigation">
@@ -892,6 +956,8 @@ main{width:min(var(--wide),calc(100% - 40px));margin:30px auto 72px}
 .archive-page{width:min(800px,calc(100% - 40px))}.archive-heading{background:#fff;border:1px solid var(--line);padding:42px 46px;margin-bottom:16px;box-shadow:0 12px 35px rgba(26,51,70,.06)}.archive-heading p:last-child{margin-bottom:0;color:var(--muted)}.archive-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.archive-list a{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff;border:1px solid var(--line);padding:18px 21px;text-decoration:none;color:var(--navy)}.archive-list a:hover{border-color:#7892a4;box-shadow:0 5px 20px rgba(26,51,70,.07)}.archive-list span{font-size:.82rem;color:var(--muted);text-align:right}
 @media(max-width:760px){.masthead-inner{min-height:auto;padding:16px 0;align-items:flex-start;flex-wrap:wrap;gap:14px}.brand span{font-size:1rem}.brand small{font-size:.65rem}.masthead-tools{width:100%;justify-content:space-between;gap:12px}.masthead-tools button{min-height:44px}.copy-status{margin-top:50px;right:20px}.newsletter{padding:34px 22px}.top-highlights,.headline-index{grid-template-columns:1fr}.headline-index>h2,.headline-index .view-all{grid-column:1}.headline-index>div+div{margin-top:12px}.tracker{padding:23px 20px}.tracker table{min-width:760px}.what-to-watch{padding:25px 22px 18px}.watch{columns:1}.archive-heading{padding:32px 25px}}
 @media(max-width:440px){main,.archive-page{width:calc(100% - 20px);margin-top:12px}.masthead-inner{width:calc(100% - 28px)}.site-header nav{gap:15px}.newsletter{padding:27px 18px}.edition-heading{padding-top:17px}.edition-heading h1,.archive-heading h1{font-size:1.9rem}.section-nav{margin-left:-10px;margin-right:-10px;padding-left:10px}.automated-note,.archive-list a{align-items:flex-start;flex-direction:column;gap:4px}.archive-list span{text-align:left}.headline-index{padding:19px 17px 15px}.executive-summary{padding:20px}.newsletter-section>h2{font-size:1.4rem}.story h3{font-size:1.12rem}.newsletter-section--wins{padding:22px 19px 1px}.tracker,.what-to-watch{margin-left:-8px;width:calc(100% + 16px)!important}}
+.top-highlights{display:block}.top-highlight{background:#eef5fa;border-top:3px solid #4d7898;color:#173c5e}.top-highlight>strong{color:#173c5e}.top-highlight a{color:#174f86}
+.story h3 .innovation-label{display:inline-block;vertical-align:middle;margin:0 0 0 10px;padding:3px 7px;border:1px solid #a8c6dc;border-radius:12px;background:#eaf3fb;color:#174f86;font-size:.62rem;line-height:1.2;font-weight:700;letter-spacing:0;white-space:nowrap}
 @media print{html{background:#fff}.site-header,.no-copy{display:none!important}main{width:100%;margin:0}.newsletter{border:0;box-shadow:none;padding:0}}
 """.strip() + "\n"
 
@@ -953,6 +1019,15 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     (output / "index.html").write_text(
         edition_page(editions[latest_day], latest_day, archived=False),
         encoding="utf-8",
+    )
+    (output / "email.html").write_text(
+        outlook_email_html(editions[latest_day], latest_day), encoding="utf-8"
+    )
+    (output / "email.txt").write_text(
+        plain_text_email(editions[latest_day], latest_day), encoding="utf-8"
+    )
+    (output / "subject.txt").write_text(
+        email_subject(editions[latest_day], latest_day) + "\n", encoding="utf-8"
     )
     (output / "archive" / "index.html").write_text(
         archive_page(editions), encoding="utf-8"

@@ -10,6 +10,7 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "section-2209-uafr",
         "agency": "FAA",
+        "rin": "2120-AL33",
         "action": "Section 2209 fixed-site UAS flight restrictions / Part 74",
         "docket": "FAA-2026-4558",
         "comment_deadline": "2026-08-05",
@@ -19,6 +20,7 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "supersonic-overland-flight",
         "agency": "FAA",
+        "rin": "2120-AM15",
         "action": (
             "Civil supersonic overland flight / interim noise standard"
         ),
@@ -30,11 +32,22 @@ TRACKED_RULEMAKINGS = (
     {
         "id": "bvlos-part-108",
         "agency": "FAA and TSA",
+        "rin": "2120-AL82",
         "action": "Routine BVLOS drone operations / Part 108",
         "docket": "FAA-2025-1908",
         "comment_deadline": "2026-02-11",
         "post_comment_status": "Pending final rule",
         "source_url": "https://www.federalregister.gov/d/2026-02649",
+    },
+    {
+        "id": "tsa-bvlos-security",
+        "agency": "TSA",
+        "rin": "1652-AA80",
+        "action": "BVLOS operator security requirements",
+        "docket": "FAA-2025-1908",
+        "comment_deadline": "2025-10-06",
+        "post_comment_status": "Pending final rule; technical roundtables planned",
+        "source_url": "https://www.federalregister.gov/d/2026-18124",
     },
     {
         "id": "fmvss-102-ads",

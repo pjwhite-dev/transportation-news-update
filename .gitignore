@@ -9,3 +9,4 @@ __pycache__/
 .edge-qa/
 .chrome-qa/
 .runtime/
+_site/

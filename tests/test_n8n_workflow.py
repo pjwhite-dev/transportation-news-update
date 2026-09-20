@@ -31,11 +31,14 @@ class N8nWorkflowTests(unittest.TestCase):
     def test_late_email_can_replace_provisional_feed_only_edition_once(self) -> None:
         connections = self.workflow["connections"]
 
-        self.assertIn("lastSupplementalPublicationDate", self.nodes[
+        self.assertIn("--mode supplemental", self.nodes[
+            "Check supplemental publication state"
+        ]["parameters"]["command"])
+        self.assertIn("--mode any", self.nodes[
+            "Check feed publication state"
+        ]["parameters"]["command"])
+        self.assertIn("READY", self.nodes[
             "Skip if already published today"
-        ]["parameters"]["jsCode"])
-        self.assertIn("lastSuccessfulPublicationDate", self.nodes[
-            "Skip fallback if already published today"
         ]["parameters"]["jsCode"])
         self.assertEqual(
             connections["Run validated local publication"]["main"][0][0]["node"],
@@ -52,23 +55,22 @@ class N8nWorkflowTests(unittest.TestCase):
             "Mark provisional feed-only publication complete"
         ]["parameters"]["jsCode"])
 
-    def test_gmail_still_polls_every_minute(self) -> None:
-        gmail = self.nodes["Supplemental Gmail"]
-        poll = gmail["parameters"]["pollTimes"]["item"]
+    def test_gmail_search_includes_read_and_archived_messages(self) -> None:
+        schedule = self.nodes["Check ETTE every five minutes"]
+        gmail = self.nodes["Search read and archived Gmail"]
+        self.assertEqual(schedule["parameters"]["rule"]["interval"][0]["expression"], "*/5 * * * 1-5")
+        self.assertEqual(gmail["parameters"]["filters"]["readStatus"], "both")
         query = gmail["parameters"]["filters"]["q"]
-
-        self.assertEqual(poll, [{"mode": "everyMinute"}])
-        self.assertEqual(
-            query,
-            "is:unread newer_than:2d from:ette0937@yahoo.com",
-        )
+        self.assertNotIn("is:unread", query)
+        self.assertNotIn("in:inbox", query)
         self.assertNotIn("9/11/26", query)
+        self.assertIn("from:ette0937@yahoo.com", query)
 
     def test_gmail_prefers_html_to_preserve_actual_link_targets(self) -> None:
         encoder = self.nodes["Encode supplemental email"]
         code = encoder["parameters"]["jsCode"]
 
-        self.assertLess(code.index("$json.textHtml"), code.index("$json.textPlain"))
+        self.assertLess(code.index("message.html"), code.index("message.text"))
 
     def test_startup_enables_execute_command_but_keeps_file_trigger_blocked(self) -> None:
         script = START_SCRIPT_PATH.read_text(encoding="utf-8")

@@ -24,21 +24,68 @@
     },
     {
       "parameters": {
-        "pollTimes": { "item": [{ "mode": "everyMinute" }] },
-        "filters": {
-          "q": "is:unread newer_than:2d from:ette0937@yahoo.com"
-        }
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "*/5 * * * 1-5" }] }
       },
       "id": "gmail-trigger",
-      "name": "Supplemental Gmail",
-      "type": "n8n-nodes-base.gmailTrigger",
-      "typeVersion": 1.3,
+      "name": "Check ETTE every five minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
       "position": [260, 220]
     },
     {
       "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 50,
+        "simple": true,
+        "filters": { "q": "from:ette0937@yahoo.com newer_than:2d", "readStatus": "both" }
+      },
+      "id": "search-supplemental-gmail",
+      "name": "Search read and archived Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [480, 220]
+    },
+    {
+      "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); if (state.lastSupplementalPublicationDate === today) return []; return $input.all();"
+        "jsCode": "const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }); const today = formatter.format(new Date()); const matches = $input.all().filter(item => { const timestamp = Number(item.json.internalDate); return Number.isFinite(timestamp) && formatter.format(new Date(timestamp)) === today; }); matches.sort((a, b) => Number(b.json.internalDate) - Number(a.json.internalDate)); return matches.slice(0, 1);"
+      },
+      "id": "select-todays-email",
+      "name": "Select today's ETTE email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 220]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": { "downloadAttachments": false }
+      },
+      "id": "get-supplemental-gmail",
+      "name": "Get full ETTE email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [920, 220]
+    },
+    {
+      "parameters": {
+        "command": "\"%TRANSPORTATION_REPO%\\.venv\\Scripts\\python.exe\" \"%TRANSPORTATION_REPO%\\scripts\\check_publication_state.py\" --mode supplemental"
+      },
+      "id": "check-supplemental-publication",
+      "name": "Check supplemental publication state",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1140, 220]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return $input.all().filter(item => String(item.json.stdout || '').trim() === 'READY');"
       },
       "id": "check-supplemental-daily-guard",
       "name": "Skip if already published today",
@@ -48,7 +95,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const sender = String($json.from?.value?.[0]?.address || $json.from || '').toLowerCase(); if (!sender.includes('ette0937@yahoo.com')) throw new Error('Rejected unexpected supplemental sender'); const supplementalText = $json.textHtml || $json.textPlain || $json.snippet || ''; if (!supplementalText) throw new Error('Supplemental email has no usable body'); return [{ json: { supplementalText } }];"
+        "jsCode": "const message = $('Get full ETTE email').first().json; const sender = String(message.from?.value?.[0]?.address || message.from || '').toLowerCase(); if (!sender.includes('ette0937@yahoo.com')) throw new Error('Rejected unexpected supplemental sender'); const supplementalText = message.html || message.textHtml || message.text || message.textPlain || message.snippet || ''; if (!supplementalText) throw new Error('Supplemental email has no usable body'); return [{ json: { supplementalText } }];"
       },
       "id": "encode-email",
       "name": "Encode supplemental email",
@@ -98,13 +145,23 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()); const values = Object.fromEntries(parts.map(({ type, value }) => [type, value])); const today = `${values.year}-${values.month}-${values.day}`; const state = $getWorkflowStaticData('global'); if (state.lastSuccessfulPublicationDate === today) return []; return $input.all();"
+        "jsCode": "return $input.all().filter(item => String(item.json.stdout || '').trim() === 'READY');"
       },
       "id": "check-feed-daily-guard",
       "name": "Skip fallback if already published today",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [560, 500]
+    },
+    {
+      "parameters": {
+        "command": "\"%TRANSPORTATION_REPO%\\.venv\\Scripts\\python.exe\" \"%TRANSPORTATION_REPO%\\scripts\\check_publication_state.py\" --mode any"
+      },
+      "id": "check-feed-publication",
+      "name": "Check feed publication state",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [480, 500]
     },
     {
       "parameters": {
@@ -143,21 +200,26 @@
     }
   ],
   "connections": {
-    "Supplemental Gmail": { "main": [[{ "node": "Skip if already published today", "type": "main", "index": 0 }]] },
+    "Check ETTE every five minutes": { "main": [[{ "node": "Search read and archived Gmail", "type": "main", "index": 0 }]] },
+    "Search read and archived Gmail": { "main": [[{ "node": "Select today's ETTE email", "type": "main", "index": 0 }]] },
+    "Select today's ETTE email": { "main": [[{ "node": "Get full ETTE email", "type": "main", "index": 0 }]] },
+    "Get full ETTE email": { "main": [[{ "node": "Check supplemental publication state", "type": "main", "index": 0 }]] },
+    "Check supplemental publication state": { "main": [[{ "node": "Skip if already published today", "type": "main", "index": 0 }]] },
     "Skip if already published today": { "main": [[{ "node": "Encode supplemental email", "type": "main", "index": 0 }]] },
     "Encode supplemental email": { "main": [[{ "node": "Create private email file", "type": "main", "index": 0 }]] },
     "Create private email file": { "main": [[{ "node": "Write private email file", "type": "main", "index": 0 }]] },
     "Write private email file": { "main": [[{ "node": "Run validated local publication", "type": "main", "index": 0 }]] },
     "Run validated local publication": { "main": [[{ "node": "Mark daily publication complete", "type": "main", "index": 0 }]] },
-    "Manual test": { "main": [[{ "node": "Skip fallback if already published today", "type": "main", "index": 0 }]] },
-    "Weekday 1 PM fallback": { "main": [[{ "node": "Skip fallback if already published today", "type": "main", "index": 0 }]] },
+    "Manual test": { "main": [[{ "node": "Check feed publication state", "type": "main", "index": 0 }]] },
+    "Weekday 1 PM fallback": { "main": [[{ "node": "Check feed publication state", "type": "main", "index": 0 }]] },
+    "Check feed publication state": { "main": [[{ "node": "Skip fallback if already published today", "type": "main", "index": 0 }]] },
     "Skip fallback if already published today": { "main": [[{ "node": "Run scheduled feed-only publication", "type": "main", "index": 0 }]] },
     "Run scheduled feed-only publication": { "main": [[{ "node": "Mark provisional feed-only publication complete", "type": "main", "index": 0 }]] }
   },
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/New_York",
-    "saveDataErrorExecution": "none",
+    "saveDataErrorExecution": "all",
     "saveDataSuccessExecution": "none"
   },
   "active": true,

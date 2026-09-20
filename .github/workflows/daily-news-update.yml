@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Collect preceding 24-hour raw news feed
+      - name: Collect daily raw news (weekend through Monday)
         run: python daily_update.py
 
       - name: Commit the raw feed safely

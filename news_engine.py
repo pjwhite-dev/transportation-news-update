@@ -76,21 +76,24 @@ HEADLINE_PLACEHOLDER_PATTERN = re.compile(
 )
 
 TOPIC_SECTIONS = [
-    "UAS and Drones",
-    "UAS Security and C-UAS",
-    "Military",
-    "eVTOL Integration Pilot Program and AAM",
+    "Federal Policy & Implementation",
+    "UAS / Drones",
+    "Counter-UAS / Airspace Security",
+    "AAM / eVTOL / Advanced Aviation",
+    "UTM / Airspace Integration",
     "Autonomous Vehicles",
+    "Robotics",
+    "Civil Supersonics / High-Speed Aviation",
+    "Advanced Rail / High-Speed Rail",
+    "UxS / Maritime / Ground Robotics",
+    "Surface Transportation Reauthorization",
     "Other Advanced Transportation",
-    "International",
-    "Federal Actions",
+    "Military UAS",
+    "International Security",
+    "Federal Register",
 ]
 
-SECTION_ORDER = [
-    "Trump Administration Wins",
-    "Top Developments",
-    *TOPIC_SECTIONS,
-]
+SECTION_ORDER = TOPIC_SECTIONS
 
 NEWS_QUERIES = {
     "Trump Administration priorities": [
@@ -153,6 +156,26 @@ NEWS_QUERIES = {
         '(state legislature OR governor OR city OR DMV) ("autonomous vehicle" OR robotaxi OR driverless)',
         '("vehicle-to-everything" OR V2X OR "roadside infrastructure") ("automated driving" OR autonomous vehicle)',
         '("autonomous vehicle" OR "automated driving") (simulation OR mapping OR validation OR testing) United States',
+    ],
+    "Robotics": [
+        '(humanoid robot OR warehouse robot OR "autonomous mobile robot") (deployment OR manufacturing OR logistics)',
+        '(industrial robot OR delivery robot OR embodied AI) (new deployment OR production OR safety)',
+        '(robotics OR robotic) (airport OR port OR cargo OR warehouse OR manufacturing)',
+    ],
+    "UTM / Airspace Integration": [
+        '(UTM OR "UAS traffic management" OR "digital flight rules") (FAA OR deployment OR test)',
+        '(USS OR "strategic deconfliction" OR "networked airspace") drone',
+    ],
+    "UxS / Maritime / Ground Robotics": [
+        '("uncrewed surface vessel" OR "uncrewed underwater vehicle" OR "autonomous ship") (test OR deployment OR contract)',
+        '("ground robot" OR "unmanned ground vehicle") (deployment OR military OR logistics)',
+    ],
+    "Surface Transportation Reauthorization": [
+        '"surface transportation reauthorization" (bill OR hearing OR markup OR proposal)',
+        '(FHWA OR FMCSA OR FTA OR NHTSA) "reauthorization" (hearing OR legislation OR extension)',
+    ],
+    "Federal Register": [
+        '(FAA OR TSA) ("Part 108" OR "1652-AA80" OR "2120-AL33" OR "2120-AM15")',
     ],
     "Other Advanced Transportation": [
         '("civil supersonic" OR "commercial supersonic" OR "quiet supersonic") United States',
@@ -310,6 +333,12 @@ PORTFOLIO_ANCHORS = (
     "nhtsa", "fmvss", "fmcsa", "part 555", "vehicle-to-everything", "v2x",
     "supersonic", "x-59", "boom overture", "hermeus", "high-speed rail",
     "bullet train", "maglev", "autonomous rail", "passenger rail",
+    "robotics", "robot", "humanoid", "warehouse automation",
+    "autonomous mobile robot", "industrial automation", "embodied ai",
+    "utm", "uas traffic management", "strategic deconfliction",
+    "uncrewed surface vessel", "uncrewed underwater vehicle",
+    "autonomous ship", "maritime drone", "ground robot",
+    "surface transportation reauthorization",
     "pentagon", "department of defense", "military drone", "defense drone",
     "warfighter", "battlefield autonomy", "defense innovation unit", "afwerx",
 )
@@ -368,6 +397,12 @@ ACTIVE_CONFLICT_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+INNOVATIVE_UAS_POLICY_PATTERN = re.compile(
+    r"\b(?:petition|rulemaking|regulation|deregulation|legislation|bill|"
+    r"comment period|proposed rule|final rule)\b",
+    re.IGNORECASE,
+)
+
 INNOVATIVE_UAS_USE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (
         re.compile(
@@ -396,6 +431,22 @@ INNOVATIVE_UAS_USE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
             re.IGNORECASE,
         ),
         "Delivering critical medical supplies",
+    ),
+    (
+        re.compile(r"\bmedical logistics\b|\bmedical and agricultural\b", re.IGNORECASE),
+        "Testing medical and agricultural drone services",
+    ),
+    (
+        re.compile(r"\b(?:agricultural|agriculture|crop)\b.*\b(?:drone|uas|bvlos|application|demo)", re.IGNORECASE),
+        "Supporting precision agriculture",
+    ),
+    (
+        re.compile(r"\bdrone delivery\b.*\bfield technicians?\b", re.IGNORECASE),
+        "Delivering parts to field technicians",
+    ),
+    (
+        re.compile(r"\b(?:ocean|marine)\b.*\b(?:carbon uptake|carbon monitoring)\b", re.IGNORECASE),
+        "Monitoring ocean carbon uptake",
     ),
     (
         re.compile(r"\b(?:search and rescue|missing persons?|locate survivors?)\b", re.IGNORECASE),
@@ -461,8 +512,9 @@ DOMESTIC_MARKER_PATTERN = re.compile(
 
 COVERAGE_FLOOR_SECTIONS = (
     "Autonomous Vehicles",
-    "Other Advanced Transportation",
-    "International",
+    "Civil Supersonics / High-Speed Aviation",
+    "Advanced Rail / High-Speed Rail",
+    "Robotics",
 )
 
 SECTION_COVERAGE_PATTERNS = {
@@ -472,11 +524,19 @@ SECTION_COVERAGE_PATTERNS = {
         r"waymo|zoox|nhtsa|fmvss|part 555|vehicle-to-everything|v2x)\b",
         re.IGNORECASE,
     ),
-    "Other Advanced Transportation": re.compile(
+    "Civil Supersonics / High-Speed Aviation": re.compile(
         r"\b(?:civil supersonic|commercial supersonic|quiet supersonic|x-59|"
-        r"boom supersonic|overture|hermeus|high-speed rail|bullet train|"
-        r"hydrogen train|hydrogen fuel cell train|maglev|autonomous rail|"
-        r"automated train|digital train|advanced rail)\b",
+        r"boom supersonic|overture|hermeus)\b",
+        re.IGNORECASE,
+    ),
+    "Advanced Rail / High-Speed Rail": re.compile(
+        r"\b(?:high-speed rail|bullet train|hydrogen train|hydrogen fuel cell train|"
+        r"maglev|autonomous rail|automated train|digital train|advanced rail)\b",
+        re.IGNORECASE,
+    ),
+    "Robotics": re.compile(
+        r"\b(?:robotics?|humanoid|warehouse automation|autonomous mobile robot|"
+        r"industrial automation|embodied ai)\b",
         re.IGNORECASE,
     ),
 }
@@ -1160,10 +1220,12 @@ def infer_innovative_uas_use(record: dict[str, Any]) -> str:
     if (
         record_is_military(record)
         or record_is_counter_uas_technology(record)
-        or infer_section(record) != "UAS and Drones"
+        or infer_section(record) != "UAS / Drones"
     ):
         return ""
     text = record_content_text(record)
+    if INNOVATIVE_UAS_POLICY_PATTERN.search(record_content_text(record)):
+        return ""
     for pattern, label in INNOVATIVE_UAS_USE_PATTERNS:
         if pattern.search(text):
             return label
@@ -1197,17 +1259,25 @@ def record_is_international(record: dict[str, Any]) -> bool:
 
 def infer_section(record: dict[str, Any]) -> str:
     text = record_text(record).casefold()
+    if record.get("origin") == "Federal Register API":
+        if any(term in text for term in ("autonomous vehicle", "automated driving", "fmvss", "part 555")):
+            return "Autonomous Vehicles"
+        return "Federal Register"
     if record_is_counter_uas_technology(record):
-        return "UAS Security and C-UAS"
+        return "Counter-UAS / Airspace Security"
     if record_is_military(record):
-        return "Military"
-    if record_is_international(record):
-        return "International"
+        return "International Security" if record_is_international(record) else "Military UAS"
+    if any(term in text for term in ("surface transportation reauthorization", "highway reauthorization")):
+        return "Surface Transportation Reauthorization"
+    if any(term in text for term in ("utm", "uas traffic management", "strategic deconfliction", "digital flight rules", "uss provider")):
+        return "UTM / Airspace Integration"
+    if any(term in text for term in ("uncrewed surface vessel", "uncrewed underwater vehicle", "autonomous ship", "maritime drone", "ground robot", "unmanned ground vehicle")):
+        return "UxS / Maritime / Ground Robotics"
     if any(term in text for term in (
         "evtol", "eipp", "advanced air mobility", "air taxi", "powered-lift",
         "powered lift", "vertiport", "electric aircraft",
     )):
-        return "eVTOL Integration Pilot Program and AAM"
+        return "AAM / eVTOL / Advanced Aviation"
     if any(term in text for term in (
         "autonomous vehicle", "automated vehicle", "robotaxi", "self-driving",
         "driverless", "automated driving", "automated driving system",
@@ -1218,13 +1288,17 @@ def infer_section(record: dict[str, Any]) -> str:
     )):
         return "Autonomous Vehicles"
     if any(term in text for term in (
-        "supersonic", "x-59", "high-speed rail", "bullet train", "maglev",
-        "passenger rail", "autonomous rail",
+        "supersonic", "x-59", "boom overture", "hermeus",
     )):
-        return "Other Advanced Transportation"
-    if record.get("origin") == "Federal Register API":
-        return "Federal Actions"
-    return "UAS and Drones"
+        return "Civil Supersonics / High-Speed Aviation"
+    if any(term in text for term in ("high-speed rail", "bullet train", "maglev", "passenger rail", "autonomous rail", "hydrogen train")):
+        return "Advanced Rail / High-Speed Rail"
+    if any(term in text for term in ("robotics", "robot", "humanoid", "embodied ai", "warehouse automation")):
+        return "Robotics"
+    title = clean_spaces(str(record.get("title", "")))
+    if re.match(r"^(?:FAA|DOT|TSA|DHS|White House)\b", title, re.IGNORECASE):
+        return "Federal Policy & Implementation"
+    return "UAS / Drones"
 
 
 def automated_record_is_publication_worthy(record: dict[str, Any]) -> bool:
@@ -1246,6 +1320,11 @@ def automated_record_is_publication_worthy(record: dict[str, Any]) -> bool:
     ):
         return False
     if record.get("origin") == "Federal Register API":
+        if (
+            re.search(r"\bFMCSA\b|Federal Motor Carrier", text, re.IGNORECASE)
+            and not ADS_SPECIFIC_PATTERN.search(text)
+        ):
+            return False
         if (
             infer_section(record) == "Autonomous Vehicles"
             and not ADS_SPECIFIC_PATTERN.search(text)
@@ -1837,6 +1916,26 @@ The Executive Summary will be written in a separate final pass from that compile
     user = "Build the briefing from these records:\n" + json.dumps(
         compact, ensure_ascii=False
     )
+    developer = re.sub(
+        r"TRUMP ADMINISTRATION WINS — HARD ELIGIBILITY TEST.*?(?=WHAT TO WATCH)",
+        "",
+        developer,
+        flags=re.DOTALL,
+    )
+    developer += """
+
+CURRENT EDITORIAL FORMAT (OVERRIDES LEGACY SECTION LABELS ABOVE)
+- Use the section names in the JSON schema. Include important Robotics news,
+  including humanoid, warehouse, logistics, industrial and general robotics.
+- Check eIPP and surface transportation reauthorization on every run, but include
+  a story only for a genuinely new implementation or legislative development.
+- Treat executive orders as factual policy cross-references, never political credit.
+  Set all legacy win booleans false and legacy win text fields empty.
+- Do not make up dates, claims, source links or recurring milestones.
+- Omit empty sections silently. Never say that no news was found.
+- Preserve every editor-vetted article either as its own story or as genuine
+  same-event Additional coverage, and keep individual headlines recognizable.
+"""
     return [
         {"role": "developer", "content": developer},
         {"role": "user", "content": user},
@@ -1975,17 +2074,19 @@ def validate_analysis(
         section = raw.get("section", "")
         inferred_section = infer_section(lookup[primary])
         if inferred_section in {
-            "UAS Security and C-UAS",
-            "Military",
-            "International",
+            "Counter-UAS / Airspace Security",
+            "Military UAS",
+            "International Security",
             "Autonomous Vehicles",
-            "Other Advanced Transportation",
+            "Civil Supersonics / High-Speed Aviation",
+            "Advanced Rail / High-Speed Rail",
+            "Robotics",
+            "UTM / Airspace Integration",
+            "UxS / Maritime / Ground Robotics",
+            "Surface Transportation Reauthorization",
         }:
             section = inferred_section
-        elif section not in TOPIC_SECTIONS or (
-            section == "Federal Actions"
-            and inferred_section == "Autonomous Vehicles"
-        ):
+        elif section not in TOPIC_SECTIONS:
             section = inferred_section
 
         eo_number = clean_spaces(raw.get("eo_number", ""))
@@ -2003,12 +2104,14 @@ def validate_analysis(
         innovative_uas_use = clean_innovative_uas_use(
             raw.get("innovative_uas_use", "")
         )
-        if section != "UAS and Drones":
+        if section != "UAS / Drones":
             innovative_uas_use = ""
         elif not innovative_uas_use:
             innovative_uas_use = infer_innovative_uas_use(lookup[primary])
 
-        validated_win = administration_win_is_eligible(raw)
+        # The legacy model schema retains these fields for archived compatibility,
+        # but the new briefing treats executive orders as policy context, not wins.
+        validated_win = False
 
         if not validated_win:
             eo_number = ""
@@ -2077,10 +2180,7 @@ def validate_analysis(
             }
         )
 
-    recognized_win_ids = ensure_recognized_administration_wins(
-        clusters,
-        articles,
-    )
+    recognized_win_ids: list[str] = []
     coverage_floor_sections = ensure_minimum_section_coverage(clusters, articles)
 
     return {
@@ -2175,20 +2275,7 @@ def arrange_sections(stories: list[dict[str, Any]]) -> dict[str, list[dict[str, 
         reverse=True,
     )
 
-    wins = [item for item in relevant if item["is_administration_win"]]
-    sections["Trump Administration Wins"] = wins
-    win_ids = {item["id"] for item in sections["Trump Administration Wins"]}
-
-    eligible_top = [
-        item for item in relevant
-        if item["id"] not in win_ids and item["importance"] >= 7
-    ]
-    sections["Top Developments"] = eligible_top[:8]
-    top_ids = {item["id"] for item in sections["Top Developments"]}
-
     for item in relevant:
-        if item["id"] in win_ids or item["id"] in top_ids:
-            continue
         section = item["section"]
         if section in sections:
             sections[section].append(item)
@@ -2244,6 +2331,7 @@ def executive_summary_messages(
                     "summary": item.get("summary", ""),
                     "innovative_uas_use": item.get("innovative_uas_use", ""),
                     "source": item.get("source", ""),
+                    "url": item.get("url", ""),
                     "date": item.get("date_label", ""),
                 }
             )
@@ -2272,12 +2360,13 @@ U.S. advanced-transportation news briefing. The material supplied below is the
 final, authoritative briefing; base the summary only on those reader-facing
 facts.
 
-- Write a polished, standalone briefing for a senior executive in 2-3 sentences
-  and 60-100 words.
+- Write one polished paragraph for a senior executive in 4-7 sentences.
 - Lead with the most consequential developments and accurately describe the
   day's overall pattern. Do not turn a minor item into the lead.
 - Do not introduce facts, causal claims, credit, or conclusions that do not
   appear in the compiled stories.
+- Link the source of important factual assertions inline with Markdown links
+  using ONLY a URL supplied in final_stories. Never invent a source URL.
 - Do not mention records, links, intake methods, supplemental or automated
   material, accounting, editorial workflow, prompts, sections, or how the
   briefing was assembled.
@@ -2373,7 +2462,8 @@ def combine_usage(*passes: dict[str, Any]) -> dict[str, int]:
 
 def generate_raw_feed(window_end: datetime | None = None) -> dict[str, Any]:
     end = (window_end or datetime.now(EASTERN)).astimezone(EASTERN)
-    start = end - timedelta(hours=24)
+    # Monday covers the weekend since the prior Friday edition.
+    start = end - timedelta(days=3 if end.weekday() == 0 else 1)
     articles, source_errors = collect_articles(start, end)
 
     # Keep broad coverage while preventing one query family from swamping the feed.
