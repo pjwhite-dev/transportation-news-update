@@ -5,6 +5,7 @@ from unittest import TestCase
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
+import automated_briefing
 import news_engine
 import public_site
 from regulatory_tracker import build_regulatory_tracker
@@ -62,6 +63,27 @@ class MasterBriefingTests(TestCase):
         plain = public_site.plain_text_email(payload, date(2026, 9, 21))
         self.assertIn("https://example.com/robot", plain)
         self.assertTrue(plain.rstrip().endswith("This summary is AI generated."))
+
+    def test_lowercase_summary_fragment_is_omitted(self) -> None:
+        payload = {
+            "executive_summary": "A valid executive summary.",
+            "regulatory_tracker": [],
+            "what_to_watch": [],
+            "sections": {
+                section: []
+                for section in news_engine.SECTION_ORDER
+            }
+        }
+        payload["sections"]["Military UAS"] = [
+            {
+                "title": "Russia receives a drone defense system",
+                "summary": "systems.",
+                "url": "https://example.com/story",
+            }
+        ]
+        normalized = automated_briefing.normalize_reader_features(payload)
+        story = normalized["sections"]["Military UAS"][0]
+        self.assertEqual(story["summary"], "")
 
     def test_tracker_contains_all_four_required_rules(self) -> None:
         tracker = build_regulatory_tracker(date(2026, 9, 20))

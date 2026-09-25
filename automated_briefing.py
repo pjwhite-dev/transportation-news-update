@@ -28,7 +28,11 @@ from news_engine import (
     story_summary_sentence_is_public,
 )
 from publication import briefing_date, briefing_payload
-from supplemental_email import extract_supplemental_items
+from supplemental_email import (
+    extract_supplemental_items,
+    headline_from_url_slug,
+    headline_is_sentence_fragment,
+)
 
 
 MAX_SUPPLEMENTAL_EMAIL_BYTES = 2_000_000
@@ -84,9 +88,16 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
     for display_section in SECTION_ORDER:
         for item in sections.get(display_section, []):
             title = str(item.get("title", ""))
-            item["summary"] = sanitize_story_summary(
+            if headline_is_sentence_fragment(title):
+                fallback_title = headline_from_url_slug(str(item.get("url", "")))
+                if fallback_title:
+                    item["title"] = title = fallback_title
+            summary = sanitize_story_summary(
                 title, str(item.get("summary", ""))
             )
+            if headline_is_sentence_fragment(summary):
+                summary = ""
+            item["summary"] = summary
             target = display_section
             if display_section in TOPIC_SECTIONS:
                 inferred = infer_section(item)

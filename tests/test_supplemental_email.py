@@ -7,6 +7,8 @@ from supplemental_email import (
     clean_headline_candidate,
     extract_supplemental_items,
     fetch_link_metadata,
+    headline_from_url_slug,
+    is_likely_headline,
     is_source_only,
 )
 
@@ -16,6 +18,23 @@ class SupplementalExtractionTests(unittest.TestCase):
         self.assertEqual(
             clean_headline_candidate("2209 Rule Advances Fixed-Site Protections"),
             "2209 Rule Advances Fixed-Site Protections",
+        )
+
+    def test_sentence_fragment_falls_back_to_url_slug_headline(self) -> None:
+        url = (
+            "https://www.msn.com/en-us/news/technology/"
+            "task-force-using-ai-aerial-drones-to-cut-down-on-storm-clean-up-costs/"
+            "ar-AA1ABC"
+        )
+        self.assertFalse(
+            is_likely_headline("using AI, aerial drones to cut cleanup costs")
+        )
+        self.assertFalse(
+            is_likely_headline("US Army secures giant magnet deal to")
+        )
+        self.assertEqual(
+            headline_from_url_slug(url),
+            "Task force using AI aerial drones to cut down on storm clean up costs",
         )
 
     def test_malformed_wrappers_punctuation_and_duplicate_urls_are_cleaned(

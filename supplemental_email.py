@@ -4,7 +4,7 @@ import html
 import re
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import unquote, urlparse, urlunparse
 
 import requests
 
@@ -192,6 +192,67 @@ def source_from_url(url: str) -> str:
     return known.get(brand, brand.title() or "Supplemental source")
 
 
+def headline_is_sentence_fragment(value: str) -> bool:
+    value = clean_spaces(value)
+    if not value:
+        return False
+    words = re.findall(r"[A-Za-z0-9]+", value.casefold())
+    starts_as_fragment = (
+        value[:1].islower()
+        and not value.startswith(("eVTOL", "iPhone", "xAI"))
+    )
+    incomplete_endings = {
+        "a",
+        "an",
+        "and",
+        "against",
+        "at",
+        "by",
+        "for",
+        "from",
+        "in",
+        "of",
+        "on",
+        "over",
+        "the",
+        "to",
+        "with",
+    }
+    return starts_as_fragment or bool(words and words[-1] in incomplete_endings)
+
+
+def headline_from_url_slug(url: str) -> str:
+    try:
+        segments = [unquote(segment) for segment in urlparse(url).path.split("/") if segment]
+    except ValueError:
+        return ""
+    for segment in reversed(segments):
+        if re.fullmatch(r"ar-[A-Za-z0-9]+", segment, re.IGNORECASE):
+            continue
+        candidate = re.sub(r"-\d{5,}$", "", segment)
+        if candidate.count("-") < 3 or len(candidate) < 25:
+            continue
+        value = clean_spaces(candidate.replace("-", " "))
+        for acronym in (
+            "AI",
+            "CIA",
+            "FAA",
+            "UAS",
+            "UAV",
+            "NHTSA",
+            "DARPA",
+            "DOD",
+            "US",
+        ):
+            value = re.sub(rf"\b{acronym}\b", acronym, value, flags=re.IGNORECASE)
+        for proper_name in (
+            "Army", "Europe", "Russia", "Russian", "Ukraine", "Zubr"
+        ):
+            value = re.sub(rf"\b{proper_name}\b", proper_name, value, flags=re.IGNORECASE)
+        return value[:1].upper() + value[1:]
+    return ""
+
+
 def is_source_only(value: str, source: str = "") -> bool:
     cleaned = clean_spaces(re.sub(r"^[•\-–—\s]+", "", value or "")).strip(
         " :|"
@@ -229,6 +290,8 @@ def is_likely_headline(value: str, source: str = "") -> bool:
     """Reject source labels and obvious prose fragments used as link context."""
     candidate = clean_headline_candidate(value, source)
     if not candidate or is_source_only(candidate, source):
+        return False
+    if headline_is_sentence_fragment(candidate):
         return False
     words = candidate.split()
     if len(candidate) > 240 or len(words) > 28:
@@ -368,12 +431,15 @@ def fetch_link_metadata(record: dict) -> dict:
             enriched.get("pasted_headline", ""), source
         )
         fetched = clean_headline_candidate(fetched_title, source)
+        slug_title = headline_from_url_slug(final_url or record["url"])
         # The linked article's own metadata is authoritative. Nearby pasted
         # text is only a fallback because it may be a description or quotation.
         if fetched and not is_source_only(fetched, source):
             title = fetched
         elif is_likely_headline(pasted, source):
             title = pasted
+        elif slug_title:
+            title = slug_title
         else:
             context_title = clean_headline_candidate(
                 enriched.get("pasted_context", ""), source
@@ -402,8 +468,11 @@ def fetch_link_metadata(record: dict) -> dict:
         context_title = clean_headline_candidate(
             record.get("pasted_context", ""), source
         )
+        slug_title = headline_from_url_slug(record["url"])
         if is_likely_headline(pasted, source):
             title = pasted
+        elif slug_title:
+            title = slug_title
         elif is_likely_headline(context_title, source):
             title = context_title
         else:
