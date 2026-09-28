@@ -1,8 +1,85 @@
 {
-  "generated_at": "2026-09-28T12:46:47.054664-04:00",
-  "window_start": "2026-09-25T12:46:13.834473-04:00",
-  "window_end": "2026-09-28T12:46:13.834473-04:00",
+  "generated_at": "2026-09-28T13:02:30.520395-04:00",
+  "window_start": "2026-09-25T13:00:33.906021-04:00",
+  "window_end": "2026-09-28T13:00:33.906021-04:00",
   "articles": [
+    {
+      "id": "b9b65f0bab3c23ab",
+      "search_section": "Military",
+      "title": "Russian Drone Strike Damages Terminal Checkpoint Near Yahodyn, No Casualties Reported",
+      "summary": "",
+      "source": "Межа. Новини України.",
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE04Y2F3ZjRFNTMxd2g1M1loMnRsbXNoaXI0QVJvSU9TR3Z5V2h0VUJWYkNWOVd1ZUdMTFJ3MC1tR3h3VnF3WUJ4Z2ZOSXJrZ0ZDSHd0Z3FsWk90SFVaRVlNM1g1TWd1U1ph?oc=5",
+      "published": "2026-09-28T12:57:44-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "3ada90cacbffdec2",
+      "search_section": "Military",
+      "title": "Israeli Boy Killed in Ukraine Attack",
+      "summary": "",
+      "source": "IFCJ",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQOVd3Xy1BX2hNaWFaM1BUbXdlMUt5NjNJcDZ0ZDZTVUxBY2o0dXJ5ZjQ4X05sd1R1eWtDT2NkcjhqeWo5enpud3ZUTW5DQkYxV3g5QWZYSWNMclhSYkdCRE9peWM5S2NZcmNIS21fWHRxOWR6a21CTnpKdHk5MDhMblJ6empSRksweHdVV2hR?oc=5",
+      "published": "2026-09-28T12:54:25-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "450ee0eb407f7615",
+      "search_section": "Military",
+      "title": "Russian Jet-Powered Drone Crashes Near Poland Border, Blast Damages Ukrainian Checkpoint",
+      "summary": "",
+      "source": "UNITED24 Media",
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxPUExLUEplcVNTaEhBTjU2RnNlNC1PLXA0WXJMSmpTS0FCSHVWMmpOTDB2Z2lFTmFoV2NycUJqcEdwR2ZvbFpBN3BSR2FQU2NWRUNFOHY1ZVAxWTh0bTM1X0hlWjdLM0l5M09ZcUc1dk1Hd2NpNzJfYnVZM21TSHJFZGpIY2FvR045b2RwNUFpc0hmd0FWcE52dGd5RF9pMVcwdXU5OGE3LVN0YU1WbF85bnFiUGNackpBOUxIRTdOUXBMN01VdFc1VXJaMjhDa1U?oc=5",
+      "published": "2026-09-28T12:53:42-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "a6f9f2b17eb6e2c9",
+      "search_section": "Robotics",
+      "title": "Wild Ride For Retailers: The Humanoid Robots",
+      "summary": "",
+      "source": "Furniture World Magazine",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9mU05uUndibldSU0hXR0FLcGE0OEw1SFBpQ3lSRkVldDZZbDFobEZNb1ZWbER5V2hjM2tyVVJ2Z2R0dlZ5Y0x6bm5TaHF1VnZDZzNqay1KSDgwUmR1VzRHS25CQS0?oc=5",
+      "published": "2026-09-28T12:50:08-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "dbb9c2e9317e3f89",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Veteran jet reborn: Yak-130M upgrade rewrites air combat rules",
+      "summary": "",
+      "source": "english.pravda.ru",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBWNlVGQlFFN2tWRFF3STdCM1lYREI0VElTc2ppaUhRMEc0a1ZSQkNyXzlicVRMbmxnbmhWWHJMbkl1alBqODQtNnM3dmlfdDJlX05tNHlCN2dpWS16aU1FOTdUQS1OWHd3dVItOHZ0ZjJuTXByb3hxZg?oc=5",
+      "published": "2026-09-28T12:47:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "0afb476ba8b6ebb4",
+      "search_section": "Military",
+      "title": "Exclusive: The Pentagon wants more AI. One CEO says that could go very wrong",
+      "summary": "",
+      "source": "bizpacreview.com",
+      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQbE5Ub0d3bW45VVE4eHJ5alNTcUhJeENoQ0JxRW03NUVZbXZzcnUtS21pMDdDWnF6UGd2OTB4NW8xdzB1ZHcybXlNM29ubTYyaF9fb1BEWmZxaGtHdlQ5S2hrUGlIa29SZm9TUmFrbVVwZmRIeDZpd1o5c2tiblI4eFhaZWlSdEtpOWxtdDJGLVFqc2ktMFd1d0MzdlJKU2RVV3FZdDg0d3lzV0ljZzkyZmJkY0xoNXlRRDhjMDJkWF8?oc=5",
+      "published": "2026-09-28T12:43:35-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "b1be0fbaabf88f61",
+      "search_section": "Military",
+      "title": "Russian strike on Kyiv’s science academy kills at least one in latest daytime attack",
+      "summary": "",
+      "source": "The Guardian",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNQXlEc0NVNnBQc3ZwOVhQZVhDdU1ZbXE3LWZIcEVFRkVJRDZ1QzlBRzBCMVZUcXlUNXlGS0NlSnRJYUVWQTZyMnJRTW9oejBVN2JzdUtKNTFpa3JjQ3ZjaFVjOVFaRFFrN0hWa29GalhvUE5pOWN0MldpWnFncEVDRlQ2d3RKc3hkVUxQWU9GdmMtYURWeEtLQ3hCa3JSZw?oc=5",
+      "published": "2026-09-28T12:41:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
     {
       "id": "6d9a7e6b78a06dcc",
       "search_section": "Military",
@@ -42,6 +119,17 @@
       "title": "Northglenn Drafts Colorado's First Drone Rules. Wing Can Fly In Anyway",
       "summary": "",
       "source": "dronexl.co",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQbmF2SElMWk5yVlVfb2VURHoxcEVWZXFqb2VpNkFaV3A5blN5dXZHVjNOQWlLMnhiYnd2VDh1WV9BQXM5blJJR2hXZG5zUTY1cGQzWU1LOS1wbmdlelUyQTE3VklnYXBrVGlMTHJlOVpScFJmWXZ0LUR6S3pfdW0tcDhkR3JPZw?oc=5",
+      "published": "2026-09-28T12:31:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "d1f49edaaa64410d",
+      "search_section": "UAS and Drones",
+      "title": "Northglenn Drafts Colorado's First Drone Rules. Wing Can Fly In Anyway",
+      "summary": "",
+      "source": "DroneXL",
       "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQbmF2SElMWk5yVlVfb2VURHoxcEVWZXFqb2VpNkFaV3A5blN5dXZHVjNOQWlLMnhiYnd2VDh1WV9BQXM5blJJR2hXZG5zUTY1cGQzWU1LOS1wbmdlelUyQTE3VklnYXBrVGlMTHJlOVpScFJmWXZ0LUR6S3pfdW0tcDhkR3JPZw?oc=5",
       "published": "2026-09-28T12:31:00-04:00",
       "date_label": "Sep. 28, 2026",
@@ -159,11 +247,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "ac26b74ccf96ecf6",
+      "id": "562a62c085184dc8",
       "search_section": "Autonomous Vehicles",
       "title": "Autonomous Vehicle Market to Reach USD 2,208.2 Billion by 2036,",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOZUhUemVkcjFNZXRGZW5EOWRGTWYxU0dFZlhHLUt2bTZzWTRhb3VLNmYxNjhDYWs4RDNTb3duMjJDNkZNaV9NYldRQndKZkI2TFdxTE5DNTJ5QzJ4ajNJQ0R6TmN6QnRTODg1bmVSUHFVOHVjMFRwVnBaQllhZGJVUTZ1TFRBMENvdTg2STRKb3hvaVl1eExpT01ZSWg3R3c?oc=5",
       "published": "2026-09-28T12:20:44-04:00",
       "date_label": "Sep. 28, 2026",
@@ -172,13 +260,14 @@
     {
       "id": "445eea2d7a08963d",
       "search_section": "Federal Actions",
-      "title": "Meet NASA’s Artemis II Crew During Houston Public Event",
+      "title": "Meet NASA's Artemis II Crew During Houston Public Event - NASA",
       "summary": "The four astronauts of NASA’s Artemis II mission will participate in an event hosted by industry and community partners at the University of Houston to discuss their mission around the Moon aboard the Orion spacecraft. It will be the first event in Houston for the public following their lunar mission earlier this year and marks […]",
       "source": "NASA",
       "url": "https://www.nasa.gov/news-release/meet-nasas-artemis-ii-crew-during-houston-public-event/",
       "published": "2026-09-28T12:16:40-04:00",
       "date_label": "Sep. 28, 2026",
-      "origin": "Official source RSS"
+      "origin": "Official source RSS",
+      "original_title": "Meet NASA's Artemis II Crew During Houston Public Event - NASA"
     },
     {
       "id": "4ea9f5c0966d7671",
@@ -227,13 +316,14 @@
     {
       "id": "8f29d12804dd6eba",
       "search_section": "Federal Actions",
-      "title": "What You Need to Know About NASA’s SpaceX Crew-13 Mission",
+      "title": "What You Need to Know About NASA’s SpaceX Crew-13 Mission - NASA",
       "summary": "Four crew members are set to launch to the International Space Station as part of NASA’s SpaceX Crew-13 mission to perform research, technology demonstrations, and maintenance aboard the orbiting laboratory.",
       "source": "NASA",
       "url": "https://www.nasa.gov/missions/station/commercial-crew/what-you-need-to-know-about-nasas-spacex-crew-13-mission/",
       "published": "2026-09-28T12:09:09-04:00",
       "date_label": "Sep. 28, 2026",
-      "origin": "Official source RSS"
+      "origin": "Official source RSS",
+      "original_title": "What You Need to Know About NASA’s SpaceX Crew-13 Mission - NASA"
     },
     {
       "id": "02254964a3ca4a63",
@@ -287,6 +377,17 @@
       "source": "DC Velocity",
       "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPTFhFQXZ3U3dPVzZxb2hRQzVNTzJQR3JERFhjbGJXRGxpSUNtc19NTUJKdG5sZ1R2ZHdLWGp2OURZdW1wYUM2WXAzY2IyS1lsdkcxdHN0b3ItUVpGZVJrdThhTFg5cmNQQi1IYVBEYTFuZDZnQThZRzJzT3JsLUVxRDF0ZDBtSUc3NVNEQ2U5Q1FwQmhDdVk5bDd2TGVyYmV4aXpFbTRVMlZaR0hsY2UxaEI5YVdWWUVaS0NwRUJ3M05UeGViNTNyLUMtVzhnYk5SZjF0SWNOZUdHZw?oc=5",
       "published": "2026-09-28T12:04:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "72c41a5950d381f8",
+      "search_section": "Robotics",
+      "title": "VIDEO: Robots have their own domain in Langley’s Best Buy warehouse",
+      "summary": "",
+      "source": "Langley Advance Times",
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQd0E5MkJ4RzRGY1ZwUjV1QkJVZ3RhOWpYVHFtOURPaFZFcTZMSm9rSkVseUEzN0VVdGZDeGlTVThlN1RMVWg4OGsybDBkaEZaUXNzeUgtS1ZVRzlVUTRjdnlYTXNJMkw2akRZdEhhbWRvWnFaRUlNWDlDdDBvQkNMTGVwN2tmcFZ4LUkyWkVRLUdCVFg4MXdqQzJqckZlUnR2R0I3LXh6bU5TS3ZaY3c?oc=5",
+      "published": "2026-09-28T12:03:44-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -388,6 +489,17 @@
       "published": "2026-09-28T12:00:00-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Federal Register API"
+    },
+    {
+      "id": "b13828557aa47b67",
+      "search_section": "Military",
+      "title": "Russian drone strikes near Yahodyn border crossing with Poland",
+      "summary": "",
+      "source": "Українська правда",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9EWkhsWlhzbWgybGtHZjQzMXRyRUxyUnFEYkFRU3huWUdMM3JKbjBlelF0UjBFcjBrUVVTTzlGSEE3RnI3aHdkeDhhWjFoaC1xd0tJWjE2VldNWkNvei1rVjROZlXSAXBBVV95cUxPdDNCRmFRa1hCWW9zNkc0UnV0clhmVjRKVUZvS2c0dXg5d016Z1hpNlpEVTJiTUdDQlFSLW1yLUpaTk14YllKZUZEREtIWS1zWnFLb2FzS3c2cVRhWks3aFBETzFPSVlMeW1scGhRQXZo?oc=5",
+      "published": "2026-09-28T11:56:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
     },
     {
       "id": "c2c87305cdc129de",
@@ -533,13 +645,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "490b88deac8d7026",
-      "search_section": "Military",
-      "title": "Staff killed and wounded in Russian strike on Kyiv’s science academy",
+      "id": "d5de6ff0f0bb18e4",
+      "search_section": "UAS and Drones",
+      "title": "DSPA Breaks Charter to Take DHS Blue UAS Report to Congress",
       "summary": "",
-      "source": "The Guardian",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNQXlEc0NVNnBQc3ZwOVhQZVhDdU1ZbXE3LWZIcEVFRkVJRDZ1QzlBRzBCMVZUcXlUNXlGS0NlSnRJYUVWQTZyMnJRTW9oejBVN2JzdUtKNTFpa3JjQ3ZjaFVjOVFaRFFrN0hWa29GalhvUE5pOWN0MldpWnFncEVDRlQ2d3RKc3hkVUxQWU9GdmMtYURWeEtLQ3hCa3JSZw?oc=5",
-      "published": "2026-09-28T11:29:00-04:00",
+      "source": "DroneXL",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONHBVLUQtTkt5cGJDTl84bmlGNHE2clJ4ZXMxUmlsS3J3eF9uZnI0LWNHcUpIaVZaM0NCenI5TXV2cEJzLVE5bGZFWVNWcjROMWxOSUZ5eWhIbVFheEd5dFhUODVPU3UyS1RoMGhtb3BObF9Qd3VUVDM5R1h3QlVIMXFUdw?oc=5",
+      "published": "2026-09-28T11:31:00-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -618,6 +730,17 @@
       "source": "TVP World",
       "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOTlEyNE5Eb2p0MWtwVEpZZG1PNm5SM3llejN2OUhLbTgyNXc0T2RuZ2w1d2lpeVh6NDlieGNjQ2YydXNyWGZleUw0RFhQTDk5alFLQkp5aG9wRnprOEFhbTVyUDZTWlEzSG9qWmdWLThYTHFwanZMY1R4YXducDhTelQ3djQtaTdyWVRPcmhOSXNXQQ?oc=5",
       "published": "2026-09-28T11:20:45-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "ffed2f28f01909a4",
+      "search_section": "Military",
+      "title": "Russian drones hammer apartments, offices and a cultural landmark in Ukraine, killing 7",
+      "summary": "",
+      "source": "Baltimore Sun",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQazdMNmtqN3BXcGIxZ2d5cThLQ182QnVNbkpZWHJNeWY5anNEMzRLcHlCMElFOWh5NXBwNjNmT0k3YVZMRTQ1Tk1pVkw1cEQ5N1Z4UWd2LWx1NFBKemtEOHRLd0NMd1c5QjJsVDJRRFZxc3VkT0ljSEJTN1RiTHZsZjdoS2NaMzFSeW5tNWNlalpucWI4Qk5Ba2F0UG5ESlR5eXc?oc=5",
+      "published": "2026-09-28T11:19:42-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -822,13 +945,14 @@
     {
       "id": "7b5469e1b1327a17",
       "search_section": "Federal Actions",
-      "title": "NASA ORBIT Challenge 2027",
+      "title": "NASA ORBIT Challenge 2027 - NASA",
       "summary": "The NASA ORBIT (Opportunities in Research, Business, Innovation, and Technology for the Workforce) Challenge invites university and community college students nationwide to work with real NASA intellectual property and mission challenges. Choose your path: develop commercial applications of NASA patents that solve problems here on Earth (ORBIT Earth), or design next-generation technologies for space exploration […]",
       "source": "NASA",
       "url": "https://www.nasa.gov/directorates/stmd/prizes-challenges-crowdsourcing-program/center-of-excellence-for-collaborative-innovation-coeci/nasa-orbit-challenge-2027/",
       "published": "2026-09-28T10:56:39-04:00",
       "date_label": "Sep. 28, 2026",
-      "origin": "Official source RSS"
+      "origin": "Official source RSS",
+      "original_title": "NASA ORBIT Challenge 2027 - NASA"
     },
     {
       "id": "23f4038bbaaa0162",
@@ -864,11 +988,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "752e3188930fea1b",
+      "id": "32e1d3cc18032719",
       "search_section": "Trump Administration priorities",
       "title": "Trump administration lowers fuel economy standards, critics say at a significant environmental cost",
       "summary": "",
-      "source": "pbs.org",
+      "source": "PBS",
       "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPTDlISzF5M1hFTXhqYWROaThvVnA4NlhvV2NRSE5SS05kS1p1UlNfYkFLUk1zeW4yMVRPaXNVaVMweVFuVlRPLTFVLUZMSEZvanhjalZhTDBxd05iclptT0Q3MG1lXzY3NWd1dWtpRGkzeTYtVkh3MHJHMlMxUjNoT2haYVo3Z2NfZlRPM0g4RnhuVU1zdjFfMk5oaWtWd1Z1cEdaRlRBZVoyTzNmOFdQZUNUTlVfRndqNDZXT1dLS2o2b3NtTGludjJRQWxHbXNTOXc?oc=5",
       "published": "2026-09-28T10:53:26-04:00",
       "date_label": "Sep. 28, 2026",
@@ -941,17 +1065,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "5db3fcb59c36aa49",
-      "search_section": "UAS and Drones",
-      "title": "Kansas City Fire Department accelerates 24/7 DFR program in time for FIFA World Cup 2026",
-      "summary": "",
-      "source": "Police1",
-      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxOdnNOMnlmOHhtUVBlTDgxYklBNWNaV1FXS3RTXzZFeHFDcmFBZEp6YmJWU05HMkMtMVA1dllEU201YkZaaXFsVlJfSF9nLXJ0di1OMUt2SFgwYm5ZaXg0bGI2cnY1TWxSRUp4bkw5TFJ6c21FUlcyNlNScEJ4eV9FblMtQVNIX2pJemV6a2tjLUNmSDJ6WXdBR1FTc0J2TXFkTWxOOUhvOFZfdWNZMlZRN2NmVVFtQVJCUm9USW5SZzQ3MXBmRlVmTm5yb3BMUQ?oc=5",
-      "published": "2026-09-28T10:47:21-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "d214f171972c52f4",
       "search_section": "Military",
       "title": "Trump dines with Anthropic CEO Dario Amodei after months of bitter AI feud",
@@ -963,6 +1076,17 @@
       "origin": "Google News RSS"
     },
     {
+      "id": "2141ba8a7fb221b0",
+      "search_section": "Military",
+      "title": "Autonomous weapons shielded by the United States and Russia at the UN",
+      "summary": "",
+      "source": "Meta-Defense",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE4wOFRRSnBoa1owdHZtM0o2cnlJSHMzSDRLRnRSejc3b2loTzFBcjdCSllwazVDeWJSUWlQU2tRY1ozejhSbHYwd1phS0U5bm8zeHZ2YUM0X3pBUDVxVVM0b1RLaF9fbHVBTjlBNnZLNkpqMno3dTlqSA?oc=5",
+      "published": "2026-09-28T10:46:20-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
       "id": "0bd5265e388e8b75",
       "search_section": "Military",
       "title": "MQ-9A Reaper Fleet Shrinks Amid Combat Losses",
@@ -970,17 +1094,6 @@
       "source": "Legis1",
       "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE9wbElZOE40UHJ2TkVFYjVtTXZ3bDhSQWNNMmhsT3hiQ3F0S2JCNldOdWRrczFwOEVLUnBIMnNUSXZWdGdjb2tZM2FSSGlMUWdjdGVaMWN3Qzg1Z2d5bnk2V0V3c2VLNXlBb3IzenZncEdJaF9SWUdieA?oc=5",
       "published": "2026-09-28T10:45:46-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "8a9e645ffc278ecc",
-      "search_section": "Military",
-      "title": "People jump from building windows to escape as Russian jet-powered drone hits Kyiv science academy - vide",
-      "summary": "",
-      "source": "The Times of India",
-      "url": "https://news.google.com/rss/articles/CBMiiwJBVV95cUxQc2N0UjYyXzVxemNtS3ZIb1ExSDNBc1ZHWi13Y0FabUQwcEJSWUl0NTNObUtVQU5ZenRJU0RndzRQcjNLVUFKLVF3MEpBXzA5NC1ZbFI0cXlhbTdCaWtkcGw3Z2ZYcHhWX2VxbnVnR3JUTEJtSzc3eW5YOVg0V2NLNTQ3VlNRb0dQSEpJYkRxOU02UVR0czdHWnc3OUxRYnZDdkhyV2pNQmpRcVNac3AtZXJ4YzRWZU8tb3hPYVJQa3FzVUkySTZkZFR6Y3U2TXB2bEg2M2M4a1BZcmdXeDlmTVV1c1VLZEpLM0xzT0NaQ0QwaTloTmRjeUdxbC00OVBlaHdSRWJxR3Nzb0XSAZACQVVfeXFMT0VaMWk5SGFmRERwaUN0LWtIaW1obEtvdnlOU2dDa1MzVGEwUkgybi1pcnFDWV83Y000RnJFZHlhY1dGOE5FZHFDdHlZZU56OE9wb3dWZ1dSbXRreG9rQm85TVIwXy1VRU14REh4QlhENVBJQndPUzZES1hxU0tERFFZZDU2WG9ITDdCYWV2YmdYb09zVS1NS1FFTG1qV3VHeUlGRS1wS1hKZm54NndGRUpTSEFFRmd4NDZEV1hQVGwwUVdSQWlZcTNjNE9QVmVkbUVCcFRIOFZSTEdWZkcwZTlsbWFURW40bzNqUVVFSlA5Sk4xOEp6Q2xjbWtKa0hLN1o1VDVldWwtMHJsSWxqSGU?oc=5",
-      "published": "2026-09-28T10:45:00-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -997,11 +1110,11 @@
     },
     {
       "id": "011d726da2bdd707",
-      "search_section": "Military",
+      "search_section": "UxS / Maritime / Ground Robotics",
       "title": "Liminal’s mass-producible UGV heads to Pentagon trial",
       "summary": "",
       "source": "The Defence Blog",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQWnB0VHBBOXhfczRRRE1FSFVRdDcwb1N4NHFvQ21MQzVPUFQ4UFZ2Rm5HNWNTV3RSYV9TZ0FuMUpKNldWZDhBOExMTzZXUjM4ZW9ZZk9WUUxJeVhnNzA3dEV5QXJVb3djQmk5RHdZTlM4Q3p1eHFpVjV5cXJlMExXQlpZR2TSAYoBQVVfeXFMUEZZNDZCellVZzQxN2U3YzRSbG5nRWpubFZqMzRqQlQ3Wk9vcU5tUmFTOGxRSncya2tHamdNMUxXY0kwbzRuOUNKVmRlZm42MWs2Z3lVUE1McmdhN1h2SFBnWV80dnBTNU91YXAzTVRpX2VsWmY2QXpmNDBhZ0JCb1EzZU1rdnA5OFRn?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQRlk0NkJ6WVVnNDE3ZTdjNFJsbmdFam5sVmozNGpCVDdaT29xTm1SYVM4bFFKdzJra0dqZ00xTFdjSTBvNG45Q0pWZGVmbjYxazZneVVQTUxyZ2E3WHZIUGdZXzR2cFM1T3VhcDNNVGlfZWxaZjZBemY0MGFnQkJvUTNlTWt2cDk4VGfSAYoBQVVfeXFMUEZZNDZCellVZzQxN2U3YzRSbG5nRWpubFZqMzRqQlQ3Wk9vcU5tUmFTOGxRSncya2tHamdNMUxXY0kwbzRuOUNKVmRlZm42MWs2Z3lVUE1McmdhN1h2SFBnWV80dnBTNU91YXAzTVRpX2VsWmY2QXpmNDBhZ0JCb1EzZU1rdnA5OFRn?oc=5",
       "published": "2026-09-28T10:40:17-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
@@ -1029,17 +1142,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "c6febde101aada9a",
-      "search_section": "Military",
-      "title": "Desperate escape as Russian drone hits building in Ukraine's capital",
-      "summary": "",
-      "source": "Reuters",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQWEw1WG16ZVlUclB5aVQySU91MGE2aUxoRjh2b3ZRX1Q0Z2V1RlNOc2VkNUhrSFFZMUdiUUVVd3BvUDBfZFVPMXNyT25kVV9hOFBBTE94WUw5Tm94RlBjSXQtZUY5UHUtYTZSZHYxUkZvSXZ3NDRuTFk0bldiYnB4Q1dSM1JQOVdBczhwZEtwUTQxUXlvQzZtb2kwSkxHcGFqTk9aMmpONlRNQQ?oc=5",
-      "published": "2026-09-28T10:40:00-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "a031a9e79a769689",
       "search_section": "UAS and Drones",
       "title": "DTC’s BluSDR™ MANET Radios Added to U.S. DCMA Blue List",
@@ -1051,35 +1153,35 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "6426bca572b9bb4b",
+      "id": "d7516257cb4da123",
       "search_section": "Military",
-      "title": "Kyiv Science Academy hit as Russian jet-drones strike across Ukraine",
+      "title": "Trump meets Anthropic CEO after Pentagon clash over AI safety",
       "summary": "",
-      "source": "Wichita Eagle",
-      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9raTRBRGJlSWYzdy1NMHFhQ1gtT3ZEV05uYVlDNnRVREYwS3pIWFp2RHZjQmdiM090ck5LWEhkaUpONnlMQ3EtbUFMMldrWVh6STFPc2ctVWNTM0tORXhVMVBhdHk5eHhBVkM4ZUNRUkh3ZlZrVGhJ?oc=5",
-      "published": "2026-09-28T10:33:02-04:00",
+      "source": "WPEC",
+      "url": "https://news.google.com/rss/articles/CBMi1wJBVV95cUxPSDB2dDc2S0Q3X3Nsdnh3b1BKcDlzaXU0Y0dWbGQ2bGJUNE9tLVYwSlNKQ0RHZUM5SkNlZjA0cFNhRTlKUWRKZnBtUGttZ2VlZnQwT1ByX2lrVFV6RC1Uak42RnpGMVRvNURiNjhTMHdwYzlRalRtb2k5RTVwQ1ZMVHRnSmd0d1FWZkE1VEZKQTEtNEJqSElRa3FFU19QdzRIT0EwWmhzRmtkOVhZOWlxR3ZDYl9YQjAySlJUNlg3TlE2Ulc1S1dKOVI5VjNEWG5qenh2R0JvZnZzY1RoTkxVRDZvOVNJNWFTZWlXMENMUlBCd0E3S0JIdFRmTDl0YXZIdnhIdDJBQklaV3VqMnljMWcwTzYzalViTUtNTE9LNmI5Z3NZNEtnRWkzQUcxakw0ckNvb0hQU0RZcjVlZEIwSkxtb2VGdWtfXzFUOWNxN1Z6MThBSW80?oc=5",
+      "published": "2026-09-28T10:30:09-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "51bb51b7b4ebe38f",
+      "id": "f955d0c7c9a54075",
       "search_section": "Autonomous Vehicles",
       "title": "HD Mapping & Localization for AVs Market to Reach USD 11.1 Billion",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOcVdwTjFNazg3bkdxai1MT3lQajktUFpTNHRGTFZoVlNKZ0V3QjlQVUo1YVdyZGlNR0dFQTNsUFFwV1MwTUhqTXUzQVNyRFpYSUcwZWZyUlN1c2JOZFNQQlZ0YTdaV1lENVJWWjNTUGtDMHFFTkR4dDE1ejgtX2dtbi1pTmVfXzU3blhGeXg0TFM1TjgwR1BORWpWdGwwajY4SGc?oc=5",
       "published": "2026-09-28T10:28:59-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "1fe4a83fa8fffa72",
-      "search_section": "Military",
-      "title": "Kyiv Independent community helps fund 26 drone detectors for front-line journalists",
+      "id": "ac3654bd61f052d0",
+      "search_section": "UAS and Drones",
+      "title": "What Amprius Technologies (AMPX)'s $75 Million Drone Battery Award Means For Shareholders",
       "summary": "",
-      "source": "The Kyiv Independent",
-      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNTnZ6cUd1b01oT256TE1LOTF2LU8yNDZscEdXSXQtVDNxQVEtSTNITTRtTjRBZm9zLUZSQVFnaGlMZWwwWEdVZWhTcm9Nb2hkbmQtX25vc3pQYi16dzlqY2tNMkRKczJOQWdRUWJPSC0xNk5hZmZJUkdwMUpKb2o3ckhEd1U3VTdCXy1zdjNodDBwcXJSX2t6QmF4Z3NEZmQ5T012MnJpZXJtV0pwTTZkOEZn?oc=5",
-      "published": "2026-09-28T10:27:05-04:00",
+      "source": "simplywall.st",
+      "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPdktwQ3EyNkg0UTdqbERsZ0pFczc0UTRnelBEM0JHV0dzUTlQS0lDWF9yMWl2Mk00QXlxZ0xxX2ZCYnRtR1I0STBsazNxRVRydnZ6V1R6LUJjRlVfcEhDNW5ldDNzdFdISEoyNE9iOTlUOS1KTzMydVBmazdQWUh2SUFZa3RJUkZmTXVZbTBNbm9RYi1DcnlEVnNfZHlseVBfR0ZzM1NWYklJVWdyMTZzaDU5OTFJdHpVQUxRRGZPYVVRMlAxZGxEQWxfSVdLclZOMkN4SXhxN19XQdIB3wFBVV95cUxNR2xZajVjblVLR0JoUlk2cFRWb09oN1lJSlB6RGxBdHo3RE8yRmI3UVhNUXRmVUkzcEViR183T1NMRkptMFRkeGwwcUp3QnJrdDV4YTBxQnB2VXNsYTJGNWdLMldKNTdyQVA2T2ZGLWpLVC1qNGRQRnNCSXpMWElCUHZvTG84bmVFTUduU2JjbDMyTGdiREdqNFZQbFkzMHVtNHVBV2xpT2d5bkE4Ri1CQ2M0RVZXM2EwS3gyY3hoRnNfQm10Y1EyMnpCOVh2SWZ3MFU1UGxuMHBhQ2RJZnBF?oc=5",
+      "published": "2026-09-28T10:28:35-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -1117,24 +1219,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "94a3adba37d2a9ba",
+      "id": "eab440feff86bc24",
       "search_section": "Autonomous Vehicles",
       "title": "Vehicle Teleoperation Market to Reach USD 8,099.0 Million",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNRl96d3cxRWZ4VW5JV0lUS3Qzb3pPN2t1TTB6RFpBbXhGVU1UakxrSzlxc1c2S3ZtRmNGUVlELTl4N0UzSjFVdDQwaTBDaHFSX04tTm9FaW5nN1MzY19jelJVY2ZaOUxQUVVOZVNxNzZZdFBPS0NVdFBDcDBlTEdpcmVBTVJiRjBHSl9sVklLTlpON3JpWEEybw?oc=5",
       "published": "2026-09-28T10:24:35-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "d2600078f49dfb0d",
-      "search_section": "Autonomous Vehicles",
-      "title": "Waymo’s driverless cars continue to crash less often than people",
-      "summary": "",
-      "source": "Bundle",
-      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQUnRqd0Q5aVpRZTE2bnhDVkNzTVJneHR4NE1BaFNhaWF5RDRwNWh5eDB5RFprTmREQ2lwRUxrZHIzbmU5dUt6cjA2Uk13N0JOaGRUYTY2QUo2SEhRd3QwVm02bFVKb3FfNTF1VDJUUlFmQy1rbC1GeG4xSHNqclFsNm1UZ0hFTHpDVUlNdjV2UjB4cGttdXFxaC1zdGFGdDk5ZnhKUXRHM0dhMnhMbW16SkF4QlllRVlGWmVNVWZfT0RLTkxEeUhRYUtYV2ZPUQ?oc=5",
-      "published": "2026-09-28T10:22:20-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -1194,24 +1285,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "160e8071dc1f54f8",
+      "id": "c0c1bec0cf0b3132",
       "search_section": "Other Advanced Transportation",
       "title": "Update: China opens four high-speed rail lines, expanding national network",
       "summary": "",
-      "source": "Big News Network.com",
+      "source": "bignewsnetwork.com",
       "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxNbVRPV1BjNHdKdEhpMFowNUE1UXNYN0E4OHRuajAwaFdEcE1maE1RdGVaYXNzdXcya05Oa0c3c3B4U0lmUkw2VjNsMFQxcC1Ha2xlVEdjdU4tQzFVWEw3aU13UkNVYTFLX0Z5UTk0WWNJX1BXZ2RteHdCbkJGa0I0LThmUFRWLThHLUlDYXg5MTJPWEhGc0JOZzYzVDIyZTRPX2RPc250dGtIdHlZQy1wUFhGYUhlVG94REE?oc=5",
       "published": "2026-09-28T10:18:00-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "034cc773f6f385f1",
-      "search_section": "Military",
-      "title": "Kyiv Science Academy hit as Russian jet-drones strike across Ukraine",
-      "summary": "",
-      "source": "Reuters",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPMXNCaFd6cFhVZnVqaUNuN2dFMG9HVUs2UGVqR3BNa01SY3pXU0RLWmZoZEdEaWwyeTdHVHhyX2dLalFPTDFqMkthSXhqTUxZWWE2YVdyYUZMd2VWQVZsNHgwSDNkRmZYcTFuVHc0Ykk3b2FjdDF1ODNZbjRFczFxOW9rVnJBOHNlLW5Ma0V6a29pd0l3TWdfMS1XTDN6UXNGcnB4b0QtVXlIZDU5X2tFd3dTQWc?oc=5",
-      "published": "2026-09-28T10:17:43-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -1304,17 +1384,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "5c32406aa558ff63",
-      "search_section": "Military",
-      "title": "Anthropic loses Pentagon blacklist appeal over Claude’s safeguards",
-      "summary": "",
-      "source": "The Rundown AI",
-      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQMHF3OFJ5T2NVdy1CNEhvQWZ4bHA0U1poMXloM3BXSG9wem5ZTGNEa0NMQkx3VDM0N05veEZZOTR3T01tUDRhQmZ5bHVlb1NYNkYybVFHYkowcVlCeE5mUTNtdVNBaDN6UGpDYWVPVkxJZVhhWF83WFZMSlRqRnVpaktrck01NUZyMHV2Uw?oc=5",
-      "published": "2026-09-28T10:01:39-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "eeadb574e7cd3a3b",
       "search_section": "UAS and Drones",
       "title": "Inside GDU's P200 UAV Series for Utility and Infrastructure Inspection",
@@ -1366,17 +1435,6 @@
       "source": "Robotics & Automation News",
       "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPazB4YmlLM3RQM2JSODJMOF9UR2ZTeWowdTJocUU0bjVRcmpRR0VQTEd2UHdJN29EMWRtRDR4aXFjLXplUENibGx6R2hzVnhReExTcldfUzdYR0prMXJtWkdid0VNbFhoSzZid20zUGxodkl1ajVXb21HQUhCdnZ5Z2c5UWQ3SGdfWFhJLWRjcTJfaklmWF9BMktTaVFfRUk3c2dBenJFbE43S0FCcm0wTkJGOVBBYUlHcWZ3cloybi0xZjNCc3pR?oc=5",
       "published": "2026-09-28T09:58:38-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "c6fdc2ac1af6fe76",
-      "search_section": "Military",
-      "title": "Sparc AI Inc. (SPAI:CSE) Ukraine Tour Validates Overwatch in Defense Drones Boom",
-      "summary": "",
-      "source": "Streetwise Reports",
-      "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNakxaLTBYMTZjU1c0LXRWWGVlZ1BBdnVyUjlHUGktcGhGdVhzZzgxU19zWUNfMTVEZVFHNi1JQzRUaVpDUXM2WEI0c2h3OGFBcWJuV2tlLUIzcFdxTEFzYmRFUzRJSk9KNzVHSWg5OG5JV1FnZ3RnWWx0YzJiSlNBWWZxOXoxTDhBb2JKXzVjaGRHMU5Mc2wwVEJkYmFPVGJqVnFtZjkxY252MGtEMnIyRGhrYzRhemwyV2h5YTVlX0VCYTdJMnhlZm0zV1MwZjl0?oc=5",
-      "published": "2026-09-28T09:57:57-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -1480,22 +1538,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "b3afb9125b48265e",
+      "id": "fa6572612ec16eab",
       "search_section": "UAS Security and C-UAS",
       "title": "Iran rejects suggestion it is linked to UK airbase arrests",
       "summary": "",
-      "source": "Sacramento Bee",
-      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9vQUNnREQ0bENNQWU0a3RFYUY5X1RyYWl2VkhZZUJ3UHg3clREemxaTHFIb2g1c2Y1SW83VmwzWXhhcGNhMzZuVWRDZmtGLXhXaEVoZXVQUTFNVDBoUk8zR1NPc2FjNXZYYS04Mmc5dWFmdUE3c29R?oc=5",
+      "source": "The State",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTFB1UlZYMzk4d0xNelB3azNubGhaME11czhBZFY5UDZzY1RlbC1qQjlyOExmMTdWU2FST0J1NnZlSktPSHdRM3FQZ2h6ekpYZEFvaTBHM0tnd2p4c01Sc2phN2RGdlFic2twQ1dWWFdJLXZxbnBRU0tMZWRR?oc=5",
       "published": "2026-09-28T09:36:04-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "50210e88ab48c142",
+      "id": "86b5ebc27bbd69bd",
       "search_section": "Autonomous Vehicles",
       "title": "Robotaxi risk has shifted from the driver to the software",
       "summary": "",
-      "source": "Insurance Business",
+      "source": "insurancebusinessmag.com",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOZTBrRi1iMHpKM3dRS0dsOHgzcHBTVko4VDhST1lsZHpSNVVRQzhqZDFtZl9Jc1VIbERreU5FUkc0Tm5zMkNqRi1Na2xwamhDdFMweE9MUzUzNDlPQUxpd2dWQ0lxc3U5RVdNZUY0eUk4WVpsMG5iLUp6NUpVN3l6bHR6TWMzVlpPRGdETWtXUDQzSDIwRFhoaFZpWk1vX0RBTER4TDNPRnFnN2xNS283UTRFN3pvcFZQWXNWWkdEMzMwNDg?oc=5",
       "published": "2026-09-28T09:35:43-04:00",
       "date_label": "Sep. 28, 2026",
@@ -1509,6 +1567,17 @@
       "source": "Morningstar",
       "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxNaGxEaXF1V1VPR1FUUjd1T2VPTGE4c3VMcFpDdWxSSmhZZUxjRmRlM1hOUHF3UWdLWHNBQWtlQzBnQU5EWWRxc29zZUNZaEUwRFNlTjQxaFhCMnZ3QkUxSmtMSmh6Q19hZ0NmbmgySFYya0trZ3lrNXZFYWxHN21UclgzOWZiZC1reTBCcmhnOFROanhmamVVVURoZ0I2RU1LeUoyUndxNHFHMVlQd2JsQWg4S1pQNV9aNG9BZ2Zhcms4NGdWY2JfNVZYRVFpSmNCcTNNdERZUmRqb3FMQ0IzNXJ3dmZhaGx5WTU3eUJuaF90enVZMDJLdU16Z05lS2lrSWRHZEl3MVFsTFhremZCSEttbGY?oc=5",
       "published": "2026-09-28T09:35:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "13dd5256a892b27d",
+      "search_section": "UAS and Drones",
+      "title": "DTC’s BluSDRTM MANET Radios Added to U.S. DCMA Blue List",
+      "summary": "",
+      "source": "The Manila Times",
+      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPX3U1cmM0anRZMzhsT0VzVFVobURSOC1TejFQM2tybDRGMm1XM1I0M2hTdXRlSnV6LU52dFZYM1JNZnFMVjFyWVFMaG40WXVhR0I2MzdITGtMd2JqcmFxeUdmYWthSnVJeGo4R2xxT2ZNYmZNVVV2Um1yaDR3Q3VVNEs3aTNMUG05TjVpYTV3dzZSNDdkUi1VWEZNZVpOdi1FanlRcHhTUDB6a1FfbHhsMTk4dFR1MUJyS1dJbjVsaTh3Nl9xa2fSAcsBQVVfeXFMTk1acTV5VmhMc2xlV09yR093dW9aQ05kdy1SSVo1TDZIMkNZU2tKLWh2aEdZcG5hQ2lhM2JGN2VmNUYzSDR6bWZTV1FGSjVlWHdQbFYzYnFSYnFGRDVwTkFGc3YzTzFPZmJTU1VZZ0Fremw1cFZCTWliR1ZlQ0JMT0piZmswMVBxc0RjTXdUSDQ0YXJKVXB1YlVWLUs3WG5nZmdCc2wzaDJuM01jN0FaUzc0bmNpd05PSFNsWWJhNERCYTJMU0ZxamZMLVE?oc=5",
+      "published": "2026-09-28T09:34:50-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -1557,22 +1626,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "3da1c6aef0408b7a",
-      "search_section": "UAS Security and C-UAS",
-      "title": "Residents brace for a possible Russian hybrid attack on Poland’s border with Ukraine",
-      "summary": "",
-      "source": "The Boston Globe",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPQTdGZTFtb09fMXZaSmdvZWRtMGl2NE8ySVI2V3M4VjY3cVJIOVRnekdVMGhXeVIyYVZIeWItd0tDQkNfYW0yVlQ5OTg0U1pxMlZHbEE0ZmlMMnRtZXVoZTd4ZWxfY19yaUxyRENFak1hUExUb0d0M3ZPZDE4V1BfMVBqZkE5UW1uVDV4SE9xMkJ0SlVZRGlobGhiYzlicERheXhVT3RNb1VlMUJqSVFmX241WTRHWWJk?oc=5",
-      "published": "2026-09-28T09:20:56-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "66998c05aed43499",
       "search_section": "UAS and Drones",
       "title": "Amazon Faces 92% Opposition in Westborough Drone Survey, Calls Urged",
       "summary": "",
       "source": "dronexl.co",
+      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNVHBqZWJIdTVFUzlUU0RMOTNfeUN2NFBEMTd5OVF1MUcyQml3dWc4elBfSXRhajF0ZXpaUnBKOXVfdGJKeDBPdGhiZkR5Um8zQk5JZy16dWM1alBDS21Ka0dETjNndGM4b0hJU01OMld6YmRIRWRkV1JqcV81Z3lucmxpdGlEWkx5dTdqNQ?oc=5",
+      "published": "2026-09-28T09:17:00-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "3bdb8fd1948962d8",
+      "search_section": "UAS and Drones",
+      "title": "Amazon Faces 92% Opposition in Westborough Drone Survey, Calls Urged",
+      "summary": "",
+      "source": "DroneXL",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNVHBqZWJIdTVFUzlUU0RMOTNfeUN2NFBEMTd5OVF1MUcyQml3dWc4elBfSXRhajF0ZXpaUnBKOXVfdGJKeDBPdGhiZkR5Um8zQk5JZy16dWM1alBDS21Ka0dETjNndGM4b0hJU01OMld6YmRIRWRkV1JqcV81Z3lucmxpdGlEWkx5dTdqNQ?oc=5",
       "published": "2026-09-28T09:17:00-04:00",
       "date_label": "Sep. 28, 2026",
@@ -1691,13 +1760,14 @@
     {
       "id": "227e85b3a2ee5c22",
       "search_section": "Federal Actions",
-      "title": "Contractor to Civil Servant: NASA Welcomes Kristie Foster",
+      "title": "Contractor to Civil Servant: NASA Welcomes Kristie Foster - NASA",
       "summary": "Kristie Foster paved her road to becoming a NASA civil servant with literal miles of dedication. Her work at the agency’s Stennis Space Center near Bay St. Louis, Mississippi, supports NASA’s mission to return American astronauts to the Moon, build a Moon Base for an enduring presence on the lunar surface, and ensure American leadership […]",
       "source": "NASA",
       "url": "https://www.nasa.gov/centers-and-facilities/stennis/contractor-to-civil-servant-kristie-foster/",
       "published": "2026-09-28T09:00:00-04:00",
       "date_label": "Sep. 28, 2026",
-      "origin": "Official source RSS"
+      "origin": "Official source RSS",
+      "original_title": "Contractor to Civil Servant: NASA Welcomes Kristie Foster - NASA"
     },
     {
       "id": "8ff23b2535748fe4",
@@ -1920,11 +1990,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "fc743d2620ffda24",
+      "id": "138aa75bbf9de393",
       "search_section": "UAS Security and C-UAS",
       "title": "Ondas' Cyberhawk(TM) Secures Multi-Year Agreement for SSE plc's Electricity Network Inspection and Surveying",
       "summary": "",
-      "source": "Newswire.com",
+      "source": "newswire.com",
       "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOd1FSN3cxZTNfSVNfMWt1MmY2aC1qdDFIU1FEMUoyY0ZodjY1NUVqc0JwTUlmWkdJdnZ5bGo1bUtzQ3Frd1AtSFVTTEhWRl9OSDlOOXVSUWU2WHQ1T2ZzaG9nQ2dLbmI5dU9odWlFekk0UkppY0Q5YjZZQ0wzWmJBeVFpM2xhMU9qcWFyTUZXRUl1NS1FaWlNNm9KLXZxMlpNb2tVRg?oc=5",
       "published": "2026-09-28T08:30:00-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2030,11 +2100,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "b4034c1b46779766",
+      "id": "eb7e8ec443b7729c",
       "search_section": "UAS and Drones",
       "title": "GPS-Denied Drone Navigation Systems Market to Reach USD 386.10",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPQVBNRmxwbDM5ZzNadDZCRm9oMUdGeGVobXYzVk4tSHpMdXNxRlN5SUtFd2lqeFFsdXRSRHRfR2JKc0VUaXZqWWxLZ29zS0JUZnRmcW9oX3d0YW1UUE9qQk96OWNEY29fY1NMQW1STjdkVnlMMHZoMnFhQjhJbzZsSXhTTl9JampqdEVEX2NrYVVxa1dPWmZJVVVQcFVTZ28?oc=5",
       "published": "2026-09-28T08:10:39-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2195,11 +2265,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "4b2b37953f15c32b",
+      "id": "e1b5276228ea4943",
       "search_section": "UAS and Drones",
       "title": "Ondas' Cyberhawk(TM) Secures Multi-Year Agreement for SSE plc's Electricity Network Inspection and Surveying",
       "summary": "",
-      "source": "Big News Network.com",
+      "source": "bignewsnetwork.com",
       "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxQMFNmZFppb1Q3Vlg0VGZvZnFEQWdpanh5NXA3NFRQWWhBV1h2dlcyVXp3cVcwYnhjeW1PdkZ1UW9qNlhGbFA0Y0k0blNYR2RVRF9XWUtxWU9xYkh3SFJtcHNIemRoLUJiN2NUb0JMaXpnSVNzMU1QYzAxeGc1U3BGZDYtclo3M285dy1RbUt0d3VyLTZRWERodFVpM3lRTjVqdWh0RFpubG1RREdfMEM0dFVlcWZIMWN2UGRRS2xoekhld3RkRU5TX0JzZXJPZkRTNjMzQ1ktRXdSMG1hZnRxZXJncw?oc=5",
       "published": "2026-09-28T07:39:00-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2272,23 +2342,23 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f38ad46ae3a04462",
-      "search_section": "UAS and Drones",
-      "title": "Main",
-      "summary": "",
-      "source": "Odessa Journal",
-      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOdmpzSDNqOTN1Z2VHd3l4RGdTdExQOV9yLUVnNUpLZGhPd1NOQlIwbFZrQTNrSllITzM1dllwZHpfTUl6Q3cwLVZ6ejJYa3dESXAtNVBuaWYzT3B4ekNlc2ZqMGpCNC1EM1lnWWp2cy04SHY0OGNTRkNQcWFpWWY2ZFcxZkF1d1R5YjNGZlN5LUI4bzhxZVB0b0s2SU9obGtGaGdBajlFT21hZC04MmJSVC1aTmtUeG01TWtDLS1QTmhXUQ?oc=5",
-      "published": "2026-09-28T07:24:37-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "9ade6b02eb4db36e",
       "search_section": "UAS Security and C-UAS",
       "title": "Russia Tests the Tools for a Multi-Domain Crisis on NATO’s Baltic Flank - Oj",
       "summary": "",
       "source": "Odessa Journal",
       "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQRG43cTVyWWFIT0JUQ095TWRqVGJFVkFORlRURFhLR094aUx4UVNYYllGclR3Y0Njbkp5cWpuOVZKSmpYdmFpM3ltcVljVUV6M0FaWmZGb0NGUmZZQXpENDh5MmNoMHdzVTlwUDM5cjJTeVFKYVF4amEyZ3RHcTJaOThSbER3RzZ1QjZrZGV3TTV0RWdjaC1PeW9IYWRma213Y2ZMVXM1UlUyRHhERG5jMUdqeVR1NDhQ?oc=5",
+      "published": "2026-09-28T07:24:37-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "f38ad46ae3a04462",
+      "search_section": "UAS and Drones",
+      "title": "Main",
+      "summary": "",
+      "source": "Odessa Journal",
+      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOdmpzSDNqOTN1Z2VHd3l4RGdTdExQOV9yLUVnNUpLZGhPd1NOQlIwbFZrQTNrSllITzM1dllwZHpfTUl6Q3cwLVZ6ejJYa3dESXAtNVBuaWYzT3B4ekNlc2ZqMGpCNC1EM1lnWWp2cy04SHY0OGNTRkNQcWFpWWY2ZFcxZkF1d1R5YjNGZlN5LUI4bzhxZVB0b0s2SU9obGtGaGdBajlFT21hZC04MmJSVC1aTmtUeG01TWtDLS1QTmhXUQ?oc=5",
       "published": "2026-09-28T07:24:37-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
@@ -2355,7 +2425,7 @@
       "title": "Trump Jr.-backed Unusual Machines, US asset manager invest $10 million in Canada's Draganfly",
       "summary": "",
       "source": "The Economic Times",
-      "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxNVkZrN0NHaVpLUGtrY3AwbWlyc09EQUpzeUl6LU5EMThGc0xGbS12NDBpSUhDaGVlbzNLbXM3bzk3ZzE3S05vOTZ0VnhxMDQtZnBSR0hHWVhSQXYwdU82eExnWE9vTUJCMGhNVXBPOTBpUDVzbTNxZ1I5Q3FQaEtvVjF4Q1VUVFNhMG96Z2IwbVdkbUI1ZS1zX094U1pDeFpGd2lPanF5WHh6UC1QanB3U0FqUGlITzd2TVp1RWczUWVUNGMzS3RBOWh5c1hTTEc1Ylg5TmV1VVUzWTZHQUZYaVBQRXBIenNnQTYtOERvU1V1a3F5MmFj0gHyAUFVX3lxTFBSd3RrakdIUmZ3Wm9hNjZMTWE4WVVsQ0lGSmt2Mk85WGhONGV6UXB1ZnItTm1USU0xd3lqQ1hwd2lDQnZFblU1MHotYm5jZXkzOFpDWVhUSzRFZVZtR01ST1NnaFVnSDd3TG5rYlpfMnNoR3QzR2Q0SGVOWDlHSXVEQXRMaWFQVXZDazVPOGFOMmI3ZHZGUVVVTmhOSWt1N2Y5NDd6WXhpd3hkR3BQVjVCOHp0S3ZYdHlXY3k4Qy15SFduMXJZVl9oWG1CVVpjM0tjZHQ5bUU5aXBtb3pwQjlZeDhPSW9xWWhDU2tRS19sZVVn?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxQblo3bWg2Nk10RUtodDVHVzNRUFRYa0hNZVhRNGFzM0t3X2JEek54ZmpXZURmVXZUTVVLN0lFZzRFRUdEMFVQNUpMSXA3eEszOXNOaHVNLUZuQlhnbEtkcWk5UWxxWDhIMmRDNXFYbW1mekdYQlR0M1Q5NTNBUEMyRFNOWWVCM3lEOTk3WTRLNGdfUnVvYXh5OF9qN0Nhc3c0SXkwd0M4WlNxZUc1ZFJhRDc4ZEdDd2lKeTcyM1ZhS0ZrY1ZnY1VjbnMzRWI1TEJRZVN5ZUtCZVkzeF83c29uc2duOXNBNkpjU2Nn0gHyAUFVX3lxTFBSd3RrakdIUmZ3Wm9hNjZMTWE4WVVsQ0lGSmt2Mk85WGhONGV6UXB1ZnItTm1USU0xd3lqQ1hwd2lDQnZFblU1MHotYm5jZXkzOFpDWVhUSzRFZVZtR01ST1NnaFVnSDd3TG5rYlpfMnNoR3QzR2Q0SGVOWDlHSXVEQXRMaWFQVXZDazVPOGFOMmI3ZHZGUVVVTmhOSWt1N2Y5NDd6WXhpd3hkR3BQVjVCOHp0S3ZYdHlXY3k4Qy15SFduMXJZVl9oWG1CVVpjM0tjZHQ5bUU5aXBtb3pwQjlZeDhPSW9xWWhDU2tRS19sZVVn?oc=5",
       "published": "2026-09-28T07:14:23-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
@@ -2515,11 +2585,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "439cd9f193277ef4",
+      "id": "5538b354fc97ef53",
       "search_section": "Robotics",
       "title": "Self-Driving Robot Market Report 2026 Market Outlook Supported By A Forecast 20.3% CAGR",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPNzVnTzFHS0ZhcE93eFZJRG1WRTUtR3Q1UUlkNVdjRWJkcjdSOHloQjVqMWs5R0hwS3B6a04wY1M2LXJ5WnMwRkFzUDRfMGk0dm9RaGlzMzBwOFZNRmZrZnctVEc0bzlJd19FYlJSYnM1X0JhQURoRmdzaXhFRUdMaVJhTkdOWE9wSDNSd2lwVVlZbXpwUS1ncTNmcjBpcms?oc=5",
       "published": "2026-09-28T06:30:07-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2537,11 +2607,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "3acb6f2a8d588147",
+      "id": "2d8c22e0d069e981",
       "search_section": "Other Advanced Transportation",
       "title": "First steel bridge launched in Maharashtra for Mumbai-Ahmedabad bullet train project",
       "summary": "",
-      "source": "Big News Network.com",
+      "source": "bignewsnetwork.com",
       "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxOR05kMHVIdmRHaXh0LXZBUWJyOHNRRy05NzdLVHp6SjJVV282SVhuXzVzaDY0UTRNUzctSDRIMGJCTGlQQXU0OXJUQVhFX2hJeWhzTUZpdFJrT3BYemdGdnZiR0Y2Q3JJY3MwWndlQnNkdHp6bUZYR2RPNG02NW1rNWVSVTlaTHFZQS1HamllYUxBRXdnbUlhMGt6dmNadUtUYl9QVUtfWWRJSl9kMlRFa21vSkpZcVptMmhqTjdSVjl4WW4zWU5TVjJR?oc=5",
       "published": "2026-09-28T06:30:00-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2593,7 +2663,7 @@
     },
     {
       "id": "dde303ac1f9e4b4d",
-      "search_section": "UAS Security and C-UAS",
+      "search_section": "UxS / Maritime / Ground Robotics",
       "title": "First Hydrogen Completes Commercial Drone UGV Build",
       "summary": "",
       "source": "cantechletter.com",
@@ -2603,11 +2673,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "64a565cbaf7b7bda",
+      "id": "7cb1825cba2a89aa",
       "search_section": "Autonomous Vehicles",
       "title": "Physical AI Market to Reach US$ 82.79 Billion by 2035 as Embodied",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNTGVZZnN4LTMwVzR4bzdNVVFHNE1Ja2JzOWhlTzFVS0VpME5hYkZzX3RKZmNLMm9ZUGJtN19zODd5TjVhM3RQNnVXdEphSE4xeVJGWXVLVWNzTFVObVFpN3JXOFdzSnMyc3FFODBrdExBUHVTZGRiYWJHdWZIMzNDWmJ3RUZ6NXMzS3NOT0VPMWpTUTJWakk1QjBIQlR2Y1NpZEE?oc=5",
       "published": "2026-09-28T06:12:49-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2703,11 +2773,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cdd5aeb314872615",
+      "id": "9613f714d4ffdfc5",
       "search_section": "Robotics",
       "title": "Robot Tendon Cables Market Analysis 2026-2032, Key Growth",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNdkcxcHFoYU1IaXdIM3ZxckY2ZzV2dFBrUjg2OS1QVU16M1VjVlJDbUxMRkt4TXpsNlJZV2VOOXAxdldtWjZfYUxCVUo2QWJGcmplSnkxY084THl2YzBPUFpJTV9CWHpBVGtQNlJ5UmRtZlZ2a2F1OEJrb1FTSEtjcWttMVNIY1hXMDFIVXZ3eDMyNktacGtV?oc=5",
       "published": "2026-09-28T05:57:38-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2725,11 +2795,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f4c5418cc80a2451",
+      "id": "87b90b5e4ae94e4f",
       "search_section": "Robotics",
       "title": "Humanoid Robot Rotary Encoders Market Poised for Accelerated",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNOXJxWERhLXdzLXVwZXJpdVIwa0JpcTBLSzFVUDZ2M2JiOTFBc3pUZkhlMGtSOHlySlNYQmUtVGFKdGsyMnBBeDM1elVpenVMSzhTZzVGWjJIdWplMFpEdVAzaThtS2ZnVUxOTEY4em05ODg4OF9yZ2VnWV9HaWdRUVV5anRhQ0w1Yk1JVEllLTA2cUtfclZyUEpHSzk?oc=5",
       "published": "2026-09-28T05:54:16-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2754,17 +2824,6 @@
       "source": "TimesTech",
       "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOeEp5bEZPcGR6bFcybzNWUGlRNXU4dzBMS3FxUjlkNFB0QkNSR2xEaUd1b1AtT0JrZ25hMFlPcVJKcUZUTDRLdndkVTdpY0wwOWtJS1VkN1FfNFVCa2RHSnk1TnlvT2xuejR2amxONWxlWjJ6a0lGMmNBZ0pDRWk4cFpoNA?oc=5",
       "published": "2026-09-28T05:45:30-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "f8037254e72c2146",
-      "search_section": "UAS and Drones",
-      "title": "Hackathon’s C-UAS technologies demonstrated at HCA Airport",
-      "summary": "",
-      "source": "Unmanned airspace",
-      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPRnNSbkFYRFotOXQxdXFVcXZvRUNSRGlkb29QOG9VNXp3SHZEbUdPOW8ydXBXaGFWRDFNN0xCeEhxQjBZN2hta0tPN3RVeHlZblliX1FJYkxPUzZfY2E5WGtLX3FrT005Tl91aHhBVVdrYnlwN283eUpfc0NxcTJVbkJ2Uk12TGREenlKck5oUlJPckwyRi1ENnEwblh1VUhvQWh4Z3p5V2NqN3ZYUnM3bWFjLU5HLURUYTlCdGcyQkZkcjA?oc=5",
-      "published": "2026-09-28T05:41:12-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -2813,11 +2872,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "fa125164b318cce3",
+      "id": "013c8ae6aebfb91f",
       "search_section": "UAS Security and C-UAS",
       "title": "Hear DHS Deputy Secretary Troy Edgar Lay Out Operational Priorities at 2026 Homeland Security Summit",
       "summary": "",
-      "source": "govconwire.com",
+      "source": "GovCon Wire",
       "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxObWVJbnFuY2Jjc2hoZ0FTUU9fTUotXzBwelhmel9QSlVFTUZEendtM2pCVDlCbUFzNkM1TnNmV0Z6R1Z5QXR3RDhyRndfYUFzZnAtem10RkF3R3VmQmRINy1fMm5ZRXBFMzJERHRmenhrSXNEWkxnejAwdEdtMzlxbUhfOC0xekEtS3FReWh2WlZyMzdyZlliYzFKYw?oc=5",
       "published": "2026-09-28T05:29:04-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2835,11 +2894,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cff4cf63bc0499c7",
+      "id": "52c781c19349b6bc",
       "search_section": "UAS Security and C-UAS",
       "title": "Indian Army Plans Steel Mesh Shields At Sensitive Sites To Counter Drone Threat",
       "summary": "",
-      "source": "outlookindia.com",
+      "source": "Outlook India",
       "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNQjlEczNSTGF0ZnI5Um5yVndDZmZoQk0yMUo0MkY2VVBaVGl1Y01qa3JWTG82bjRMNUZrTXNrUDBfYi1lVUJZWEZRak9BMnRuR0tUYldINGl1RUJYSG5RRFdpSmJVMURlUE94ZFg3cVdwaWFPMHZaUXYwbmYtbHFaQzA3NzhSWlg2cVl1RFAzbGQweFlWdlZTNkN5Q2lkT1hqbXFxVWw4WkUzdTdGeXlwazJVbENJOEJu0gHGAUFVX3lxTFBhd1VLRGR0RUNxdm5Fczg1bGU5bjlzeWJQLTdseTdiVmFIVmYzcDJjUlRxcFFKaXZuMkQzM0NsV1o2WlhCZWxUbVUzT09nYm15WWpab2RYbzNMSXBaY1lEZkI0ZG1pakpnT2JMZGg4YUg0SG84OXhYcGZtOTZsSFVoSVE3eVFpRzQyMF9PQUd5YzF6dmJhazdqVzl5ZVF2LWJac1FFdXZscTBaNFNHMnYyMTEzV3BDTGNlYnZCczhxMllTNkZPUQ?oc=5",
       "published": "2026-09-28T05:26:20-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2857,22 +2916,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "0ce6b573c2221494",
+      "id": "58d37d67d8cb16a0",
       "search_section": "UxS / Maritime / Ground Robotics",
       "title": "First Hydrogen completes unmanned ground vehicle prototype",
       "summary": "",
-      "source": "innovationnewsnetwork.com",
+      "source": "Innovation News Network",
       "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPMWdjNE5ycUFSM1lYZ0YzMHVrbGc1V3QxVUxzaTg2Zm8tMDZ3NHV0c1JJRXJVLU95SjRoMkI3X2J1dm9hMUw5T0J1WDVzdkI5c0pyRlhRU04tUUJaZjFEakVzQlg5eVdRc3V4akJaZFhqOFVZSVVpZS01Tl9YQzdheDZLR18yWHNkdkQxLVpiekdLY3NKcjlVQU0tQllZanBiYWFkV2lB?oc=5",
       "published": "2026-09-28T05:22:18-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "18e406e5f56800e5",
+      "id": "626e4290052ba643",
       "search_section": "Robotics",
       "title": "Robot Torque Sensors Market Forecast 2026-2032, Growth Drivers, Emerging Trends, and Strategic Market Insights",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxONElxdi1vSGhzYXc3SjltWXZzcXNjTUIwWTNMZXFLNDhFTUZTMmNZNkNWdVgtLTM4S0tyYlZYajAtS1ZfXzRTMmVTU09BbHoxSC04WnRRVk1ZOHJ6dUo2YzFpS2dURHBjQnFMcWxPQUNkYW8zaW5xVDJjZ3h3cHFST2J4eURXSEJZVFpuQnJPVUxvT0E?oc=5",
       "published": "2026-09-28T05:11:32-04:00",
       "date_label": "Sep. 28, 2026",
@@ -2897,17 +2956,6 @@
       "source": "SamMobile",
       "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQOEtKTmdoblJZb3F3T1ZhaXVVbHRfLVNPVE5Yb3h6OXdVdXZYeVlzaFJLQ3lQZy02U0d2Q0VMa040aUdXRkRZMEtCYTRGb1NkOGZoV0tyeWVXd2VhcGJsakdNbDZjOHpOYkV1c1ZtV1VDT1FNQ1JERWFIenhJTjJBa2hQa3ZtOGc0ZC1uNTV6UQ?oc=5",
       "published": "2026-09-28T05:08:00-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "7e141d6ceb1f9e2b",
-      "search_section": "UAS and Drones",
-      "title": "Estonia puts drone roadmap into action",
-      "summary": "",
-      "source": "Unmanned airspace",
-      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOVUlON2JpOXZoWlU2VnU1ZzI5a2lqeW1hWTJQMndDYXZ2MDh0S09HaUt5WEdyTHhlMlBJM1MweWdhTDZLLXFLeFM3aHhFRzZzTUZSdGxpSlNxcGRoNTQtY0JoWDZzTHZQU1hrLWVIRjFhV1h0TllscmVDdkZIN05iX1puUnEwMTVHbUZmcWNmWl8?oc=5",
-      "published": "2026-09-28T05:07:15-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -3099,11 +3147,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f5ea746be45587cc",
+      "id": "0727c6f92bf584e7",
       "search_section": "International",
       "title": "Nor'easter's coastal surge falls outside most Atlantic Canada home policies",
       "summary": "",
-      "source": "Insurance Business",
+      "source": "insurancebusinessmag.com",
       "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNSHNTaUpqdm82Tk51RU8taFIySUd5elhXMGYzUDFwTmU5YTk4aHhmbnI1QTFFQXJLNXdZMFgxYVNMdmxSeG44b1RHR215NnhUUExmcEpWX3ZxSUJvVUN5RTZSdFA3eU5oc0pNUm95Yk1aVGxuMGdvVDQ4UzFwVlNGU1ZrS1o2RkdySmJ0dEt5UmFRT0lRODFETWMwdkpWTUs4VUJkcExTTzBta2tmWXNWVER2Q0p6bWpIb19RbXp1VjBnSzh3UmdTLS1OUnBKWEIwckVJSnVsLWNCdw?oc=5",
       "published": "2026-09-28T04:08:29-04:00",
       "date_label": "Sep. 28, 2026",
@@ -3121,11 +3169,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f811e52b04e9849a",
+      "id": "966293da742e401b",
       "search_section": "Robotics",
       "title": "OMRON launches automation center Singapore for logistics to embody innovative-automation concept",
       "summary": "",
-      "source": "edb.gov.sg",
+      "source": "Singapore Economic Development Board (EDB)",
       "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOR2t0Yl9HZFFJR1NCdVVzUkhyMG5DV1JHY2x5MnBOb2xrVkx0WUFJckRtTnhyMmNyNUdrOEdBSFRJRDBvdzZrWFFPd2pnaUd3MmFWV0lFTXdaNWhYNUIteVZvYVJzc2M4R2NZTWRVUUN4N0F0Z3RyaDBCaldoSlJTY0Q4TURITTY1NktpbmxCdEhuYlRXeW0xWmc5Wmk2U3E5TFJBZ0pNUW12czNWbjBqZ1o3dW9aR016YWpvLUxyVkNkd3NTTmVjUUpQRF9xMFJzZXEw?oc=5",
       "published": "2026-09-28T04:05:20-04:00",
       "date_label": "Sep. 28, 2026",
@@ -3209,17 +3257,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "fdc6e9c2e1e9d61a",
-      "search_section": "UAS and Drones",
-      "title": "ENAC creates safety guide for reporting incidents in the drone sector",
-      "summary": "",
-      "source": "Unmanned airspace",
-      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPMG0xZ1J5THQyc0VDT2dNNVpwTkNHYXdiTzVTZ1hDYUxWTmxNd2FOMmF6bUkyX0NHRFhmbF9IU3YyZU1wVzdFZHdrQlZQVkNWTktEUzVHOVA2bW5xZW51RWUzbnh6WHRMNjlxY2tTbmxqRlNUeXkxT2xNS3VsSnRqTmYwSVV0ck1OaEhmb0RNVUpVRlN0TmE3OVV5WVZpdnIxSExhRzNuYjJsVVdZa2d0bFk3c3ZNNjZLNFE?oc=5",
-      "published": "2026-09-28T03:49:34-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "010d64265960dd77",
       "search_section": "UAS Security and C-UAS",
       "title": "DroneShield Adds Boardroom Firepower as US Army Signs Off on DroneSentry-X Mk2",
@@ -3227,17 +3264,6 @@
       "source": "AD HOC NEWS",
       "url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNMjFhTk5kdENlclpla0VHcFZ4N2YzSF9ocl9mZ2pQckNBakRCOHZTMmJ0elRueHZYNnJ3d21oaHEyUnZfczFBdm80OVBJeFJnRlNxbUdCMU5jYVM0a3M3bnRFQVIteGVfS001QWRMTzdwQmM0aVlfWHQ1dzNnY3VjRllLckhyR2tlZERlaG1zS1Q1NXhXNlpDSTRoRjh0dF9WWDM2X1dRY2daNUVVVkFmeXhkMkRLSGZDVUt0ZnRxeFhtc3R2WENFNkpMZ2ZsSHQyd1dhNTF1OGgyZnhISWFZ?oc=5",
       "published": "2026-09-28T03:41:02-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "c96a51ec8e08e540",
-      "search_section": "UAS and Drones",
-      "title": "U-space study finds drone operators interested but highly price-sensitive",
-      "summary": "",
-      "source": "INSIGHT EU MONITORING",
-      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxONkJKT054bzI2LUdHdTd4TzdGWmRYLXVCYXVtb0VRUmVjLXdRSzRZQVlUMXVaYnpBT0IyZWNXckhqbWN2anR1N0Z2cUZRNkdCRU5TOFJXVW03UkFPZHA0cWx4enotdzhvaFNCcFdueVkwN2JmMFR2cU5Hbk9FbzkzbE1NWDVHNGhQQUZDQVMyUFVGaVN6TmZac1QxLXdTNnRLNHR6d3VLSlhwNGhPUWxlWWNWMXJ0aU9EMExiOU5MSHZyU054OGdDSUxRaWRYbGNQSDlOUmJuQ2g?oc=5",
-      "published": "2026-09-28T03:40:49-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -3264,11 +3290,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "bebdd895792c206c",
+      "id": "b8340f9ffa35ee5f",
       "search_section": "Robotics",
       "title": "Tacta Systems™ Expands Global Manufacturing Footprint With New Singapore Facility",
       "summary": "",
-      "source": "edb.gov.sg",
+      "source": "Singapore Economic Development Board (EDB)",
       "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPT0VQWkFlWmV6UGZTN015Smh0Q19wazQ3cEtSYVZwazBoWlRSQndHcHBxVTFnXzNFUHlZU1BGaXJkenlXLXU5OTRTN1c0bkR2MS1kV055QTN5ZmJhTUdhcFNJRzlZUk1jVkJoLW1qWmNqczBSYnVjVElfNUQ0Z29jaGU3ZnYxYWh4YnBLTzRfTWZBQmxacXFKU0RSX2w0OVpXTVdlclptbHRxem1MZjFqbEd4QWlvdmhHblZlb1Vxd2Zsdw?oc=5",
       "published": "2026-09-28T03:29:56-04:00",
       "date_label": "Sep. 28, 2026",
@@ -3282,17 +3308,6 @@
       "source": "News18",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPZ3JDRFdTemJMRVhrUUhDb1h4Q3lSU1RvcWZGX1JzNjJTT1dId041bkdyVU8zT0wtNUY4cUx3RHJrTDJ0anpudGJNSjNSeVQ2T2gwdzNJbjZFQnNKcDJlVGVvX2pDZkNKZDJpdU9wZGxWWm9FdjAxOU9kZkJQQ0xZbTVHZDMwcFVIV3pybm5ra2NJVjNVYWJVZ0kxcEJkVkZiV0wzclJLQmRoNzNjckl1bFRZSDMtdTNMVDdfbWwyV0dzSTDSAcMBQVVfeXFMT2dyQ0RXU3piTEVYa1FIQ29YeEN5UlNUb3FmRl9SczYyU09XSHdONW5HclVPM09MLTVGOHFMd0Rya0wydGp6bnRiTUozUnlUNk9oMHczSW42RUJzSnAyZVRlb19qQ2ZDSmQyaXVPcGRsVlpvRXYwMTlPZGZCUENMWW01R2QzMHBVSFd6cm5ua2tjSVYzVWFiVWdJMXBCZFZGYldMM3JSS0JkaDczY3JJdWxUWUgzLXUzTFQ3X21sMldHc0kw?oc=5",
       "published": "2026-09-28T03:27:00-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "cfbf0b0937037b45",
-      "search_section": "Robotics",
-      "title": "Manufacturing Seals Market to Reach USD 14.1 Billion by 2031 as Industrial Automation Expands",
-      "summary": "",
-      "source": "openPR.com",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNQjM0U0tpcU1XdEw3aWstR3lZbkxaYW1hRVFSc3UzMFBRajNsYVNiWDEyMzhlRWdiSS05RG1iSXFWSVUtSWVRMDRsWlRfaHNCSUdqSzNKdGgtNllaVHNMMV9UVzRmZ0psTEJaTjd1cjNtTVZzWWZvMV9zSkZuUkg1Um8xSTZXRG1TMGk0VG1CWFRPdHlnUGdQZmE2V0RrUi1y?oc=5",
-      "published": "2026-09-28T03:23:53-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -3319,17 +3334,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "0788c11d477d0e5a",
-      "search_section": "Robotics",
-      "title": "Ain Hospital Center Director Lee Jin-wook Publishes Paper Demonstrating the Safety of SPRA Surgery for Thyroid Cancer",
-      "summary": "",
-      "source": "sportschosun.com",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQbWRFdkt4ZmlvZG95WEN2OVBNVzYwd0xqNGNod0pOakFXQlV1b1hneXZnZk1EbmNCOGI3QlBUaDZiODlYSVBIS2xuVjltVWpmWjVndjlzMVBENjllSE5Qdi1xbDhldmxlRTRWU1c3cUpKOEJXRkJFUUt4YjhhRHF6MQ?oc=5",
-      "published": "2026-09-28T03:11:34-04:00",
-      "date_label": "Sep. 28, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "859d6d84183ac614",
       "search_section": "Autonomous Vehicles",
       "title": "Taxi and private-hire drivers get new bus-driving pathway as Singapore expands autonomous vehicles",
@@ -3352,22 +3356,22 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "05814552e3fa0936",
+      "id": "93e83ccd9c905e6d",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "Archer-Daniels-Midland (ADM) Plans Carbon-Credit Sales. Can They Generate Steady Income?",
       "summary": "",
-      "source": "insidermonkey.com",
-      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxPR2xHN0RmekVxQmplZFJUYXJOOXdKWVhEZVRyT2JGV3VkZ3c1d2xnUEJZVzczZlJPUGk4aFE5dlNwTS05ei1ibFB4eVBtQl9pNE1WRVkyTjYwdUNCcVFzLUNIVzVQcEw0bXdHdjhfODRpUi1wMHV6ODBYQTRkb1hYQzltMVNoTXdGRXdsN1lkeFA3OE1aRWp1aEo4S2F1dW9Na1ZFaEZ4TkJVWV9qMi1sa3pOZHdULWpfR2k2UXMzMWFWUk5Na1kxWFFIVXdkQjDSAc8BQVVfeXFMT0dsRzdEZnpFcUJqZWRSVGFyTjl3SllYRGVUck9iRld1ZGd3NXdsZ1BCWVc3M2ZST1BpOGhROXZTcE0tOXotYmxQeHlQbUJfaTRNVkVZMk42MHVDQnFRcy1DSFc1UHBMNG13R3Y4Xzg0aVItcDB1ejgwWEE0ZG9YWEM5bTFTaE13RkV3bDdZZHhQNzhNWkVqdWhKOEthdXVvTWtWRWhGeE5CVVlfajItbGt6TmR3VC1qX0dpNlFzMzFhVlJOTWtZMVhRSFV3ZEIw?oc=5",
+      "source": "Insider Monkey",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOZ1RwM0ZaNTA0bU16eU0yakpwM05jV3ktMGltN0Y2dndSQmxFeVlnREt4TUFUVndxXzBVcW9ZdVVtYlB0RS1TMnQydzVRaWRtVDZ5anluZm5LbnphSnNJM0NGbFhtZmYyVFNMenlPdjFMZHdiRmxwN0tFcVNqZGNDNnY2N2pkdTJhY3pVQk1GUWNkdDdmYko4cndvTTktdDRPS1pVZjNvUnJDSXBjVHlsbmVGNlVYN0pUV2pUMENMOFhZd2NrcElr0gHPAUFVX3lxTE9HbEc3RGZ6RXFCamVkUlRhck45d0pZWERlVHJPYkZXdWRndzV3bGdQQllXNzNmUk9QaThoUTl2U3BNLTl6LWJsUHh5UG1CX2k0TVZFWTJONjB1Q0JxUXMtQ0hXNVBwTDRtd0d2OF84NGlSLXAwdXo4MFhBNGRvWFhDOW0xU2hNd0ZFd2w3WWR4UDc4TVpFanVoSjhLYXV1b01rVkVoRnhOQlVZX2oyLWxrek5kd1Qtal9HaTZRczMxYVZSTk1rWTFYUUhVd2RCMA?oc=5",
       "published": "2026-09-28T02:39:54-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
     {
-      "id": "1130edfa609bc704",
+      "id": "ae7b8ad6f471898c",
       "search_section": "Autonomous Vehicles",
       "title": "Carziqo Reports 640% Growth in A-DS Delivery Orders, Introduces Wednesday Performance Reward",
       "summary": "",
-      "source": "openPR.com",
+      "source": "openpr.com",
       "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQa00tMFVqU2Z3M0ZwOUpXSjRHSWppZlNvSTNHazlXWkQxOE8wUUYtdnBhcHROWGNPYWtsazl1T2t4eHd1ZmYtN2h4Y04wZWRYbVktbUlHeVMxX0UzMDNBTGkxWG5PRXhhSDJQZkc5a01XOThMOWtzdWFFcVczUzAtVGFKdGdyUnVKQWJ3Z1NGNEZzVU5NX0pnWXFudnJpZw?oc=5",
       "published": "2026-09-28T02:25:52-04:00",
       "date_label": "Sep. 28, 2026",
@@ -3462,11 +3466,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "243fa7bbb6a2d63c",
+      "id": "d3f540b4875e2c6e",
       "search_section": "Trump Administration priorities",
       "title": "BETA Launches ALIA Electric Aircraft Tests in North Carolina",
       "summary": "",
-      "source": "airguide.info",
+      "source": "AirGuide Business",
       "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQQmlqZkY2NEFuYWVfSU96SXFCQ0NGZVdVV193ZFo2RkpFVVlpaUV3R1QxcExfNUNQMUw4R1ZDLWR2TEZod2VZSHFnZmxXTzRLa05kcjEybWU1c0I0aW1sZTZnRFgzYXpxQ19SemQ1NXZlZ0lrMW10OVRWSGtQSUtSeXdSSFB5MEpNOWpF?oc=5",
       "published": "2026-09-28T01:49:54-04:00",
       "date_label": "Sep. 28, 2026",
@@ -3513,6 +3517,17 @@
       "source": "Laodong.vn",
       "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNd1R6a3VBcXlyYjByRlZGMTZyQnZLaEhxVjA2cEN1RTdTalhFbEI0Q002SzR4bDE2V3NNLVQ1TWtBcWhJMkUzaHFPei1UdFN0TkZuUnBFTkc2UnY5UWM0Ym9ubGc3WHR2Sks3LXB0dUI1SWFhb2dvY3VlTXh5NzNYdVdjUzNQR2xUZ29GZzF3WWZkS1QzQ2lDTzNlZDliVi1NS0gzMER4ajBUWS1N?oc=5",
       "published": "2026-09-28T01:31:14-04:00",
+      "date_label": "Sep. 28, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "96cb2699fa5b9078",
+      "search_section": "eVTOL Integration Pilot Program and AAM",
+      "title": "Stable One UI 9.0 hitting even more US Galaxy S26 phones",
+      "summary": "",
+      "source": "Sammy Fans",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxObFlCd2JKVUpvUHJJV3p5TmNSdEk1bXFrR1prVGdfU2xibGhMM3pQVUw3S3hLUXZVaXAzVUZ3X093T3V0VXZIQ1lIOFdDejFuM1E5WDY0TldXWTZQNnVXY2FtcDJaWm4zR1hUNk81bnBBTDh6UDNEaGcyWlVwT0ZLOTJvUGVMZjUyWnVUV2Y5a21QU3BlNjJXZW5n0gGfAUFVX3lxTE9sd1ZnaG1MRUhoQi1DNGpEcDdMQnNyXzlnZVhSUDJVdURnTGFsSVdNOE5NTW1RQ1d4aTlsb1RJTXR0OWVYVHI5U1N2ejd0QVJrTUtZaTc0eFQtSTRrb2xITUY1clVkRFpyaktta1JLeHRLWHk2amYwRnEwbFVwZGNRd2g5Y2RrQ3hNQVlJbE1GVXMwWmVyVVBqVmtGaFE1NA?oc=5",
+      "published": "2026-09-28T01:08:23-04:00",
       "date_label": "Sep. 28, 2026",
       "origin": "Google News RSS"
     },
@@ -3595,11 +3610,11 @@
       "original_title": "Uncovering the Valleys Hidden Below Greenland’s Ice - NASA Science"
     },
     {
-      "id": "9dcd5f81291d8d48",
+      "id": "c6fde4efade54599",
       "search_section": "eVTOL Integration Pilot Program and AAM",
       "title": "How planet Beta Pictoris B creates mysterious radio signals",
       "summary": "",
-      "source": "WION",
+      "source": "wionews.com",
       "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQTmM2bFhMMElxSGc4ajU5UV9xdUJQTlNSOFFTbnM1WHAyT3ZRNnVyNjFUZWZacXNRMlp2bmlBNTVDbEh5eTdIWHppZWpjNk1zakJUNENRUTUyYUxmdUxGM1JlUGxpUGN1MmxsR2QwZS03U3RibEJ1V1d3d0NjV0NGNnkydmJIUjJIUElzZXlSQndKQ1ZJTXN6d3pLajBURER0Wk9neGlvNNIBrAFBVV95cUxQOGdmdDJrUjFyaWZyRnl2LS14OC1nMGk0M2lnVG5wZHEtTmxsNkl0eTVmUE1ucnlPdjhiSExwVW1IZEFzS0p6YnI5NHlhdUh6bXVoaklPUmd0LVRPVjBBVDVNM0ZiWTVEajBkMlM5TFJkSUZJSXpUNk84RzE1cHU2Z3BSNWNjSXA1Z1J2UlZ2NkZwYWFiSV8zM0ZzZFhoZnhiZm1hX09LSGU3Q29U?oc=5",
       "published": "2026-09-27T23:50:00-04:00",
       "date_label": "Sep. 27, 2026",
@@ -3624,17 +3639,6 @@
       "source": "Tarmac Life",
       "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQQ0RpU0JrTGIzWnNWMXFwLWk0QVN6R2RLM2NKTlN0Z3JVMnBxMFhWSkdzYkppZkNhbWRVc3JkaF92c3BVNnlPcHZyVmgwVGUxZ3lyakEzZ3ZfQ3hLY2xlUEc4YlhrWHpreThFVUlCakJYeHNVeHg3ZjNKR2hFV3drTHJJbFdGMW95cFJuT0hwaDVwelpqVmlN?oc=5",
       "published": "2026-09-27T23:39:44-04:00",
-      "date_label": "Sep. 27, 2026",
-      "origin": "Google News RSS"
-    },
-    {
-      "id": "72161356b0d84ee1",
-      "search_section": "eVTOL Integration Pilot Program and AAM",
-      "title": "Lance Archer Reveals Jon Moxley’s Message After PAC’s Death at Warrior Wrestling",
-      "summary": "",
-      "source": "Ringside News",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOQzhYeWhLNGRNd29VQTVfRGV1MUJzSks1Vmx4eE9EdGFjY3VrSjNrTDVKb0hJS3gwVGJGLU9EV0Y4ZHpOemNIamhNX3FwV3A2MkxYN0hCU3ktRzlWaWV0cExBMmFmWlNiTXc4aXRoaFhvT1Jsb1pqSXNZdVJueDQ4TjMxR1FjcFFqd01pQlFWRHA5enFLMTFJaFQ2RDVNNW5h?oc=5",
-      "published": "2026-09-27T23:36:13-04:00",
       "date_label": "Sep. 27, 2026",
       "origin": "Google News RSS"
     },
@@ -3855,6 +3859,17 @@
       "source": "The Times of India",
       "url": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxNdE9TRk93QmZvdm51UEhxVFZFNmpGcmFUblcxV0ZfLUdRTldnVUhHeWhJaDlSRko3Wk5heXNRZ3Z2NHg1ZFRuVkhDLUNvcDNrNEJNa2E1bjhlZUdnRXVOSjJ1WXgtVV9KdWYxUEV0UUt2bUprLUwyMFJuOTZaTm9sdUdYTFV4YWdVaUFQNmFLTjVvMUdYXzNRZlZGU3lhbnZaUkg2a1lUT3JhYkcxMmNjT0Z5N1oxNl9oLThteE1EODhtY3pZYXQxTmJQVnFTTXhybzNIblduVUdUYVVuaW90czNvamJ1RkMzcmtJdUdMWGVnOVFDNDNMNFFR0gH_AUFVX3lxTE4zYzZjcmlPY2RudVFJcWtYNmI3d1FKQWl6UFJtZDRNSHlMMDZOeVlYM2JPcEhfT1F1VVlzeXlIM0UwTmY1bjB1bWdzYUlCNVVxUURfcm9ITGlxSjk5LVp5QnUxRFg2d3JzV1JsTzVobjdyVFRKcEhjdUdZVXJ5ekV4LW12bHp6ZXVDeEp0Wkk2ZDJWd05QMnlvZTh0YWJwMDJCaXRmSGtqaEc1ejRxNk5sQVJ4SlFLWjBFbkQ0ajdiS1hBR0Q4cDdMRDJRTHBnaXVyd291VG8tRUgzSHdWdUpQTHBRM1dUVXFsM2xNSDdOaWR4RzNXM3BlRndMYlhDSQ?oc=5",
       "published": "2026-09-27T19:45:00-04:00",
+      "date_label": "Sep. 27, 2026",
+      "origin": "Google News RSS"
+    },
+    {
+      "id": "363d1f76a08165fc",
+      "search_section": "Autonomous Vehicles",
+      "title": "Autonomous & Self-Driving Vehicles News: Waymo, ComEd, TIER IV, Einride, Hyundai, AEye, Witherite, Aurora, NHTSA, Volvo & Arbe Robotics | auto connected car news",
+      "summary": "",
+      "source": "AUTO Connected Car News",
+      "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxPXzN2cFVQendmTl9ma0N5YzVwbkJRZ0ZneTdESG1VeTduazdQVzN6MXJwWmt2UlZYZDh2WkVZLU10TFphRnhVRGNidU5yU1p4dFhLTlR3Ukk3S1VSQkVqd0pkYXhNZ2RyZHp3SXpJNW14NVhORWl2WE9CVm9QSDN6aXJjS1Brdjd3ZEw3ODczM1ItVVlidXJ2TmFPbW1OZ08xZnozd2hKbWNZdmpTS1lLZVB0ZjdlSzlQa3VKVGFsQ2ZUeXVaWVZWNW5SaDh4NzVrZVZROVFmMkVwVUVqbXp0ZTlBOEpnYVdWMEdNYUFZdWQzS2k5SkE?oc=5",
+      "published": "2026-09-27T19:32:07-04:00",
       "date_label": "Sep. 27, 2026",
       "origin": "Google News RSS"
     },
@@ -4189,13 +4204,13 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "d83b519786d32dff",
-      "search_section": "UxS / Maritime / Ground Robotics",
-      "title": "Ukrainian special forces armed with grenade launchers attacked Russian positions",
+      "id": "267f56d55c8f79b8",
+      "search_section": "UAS Security and C-UAS",
+      "title": "Russia says it struck military infrastructure, vessels in Ukraine",
       "summary": "",
-      "source": "Цензор.НЕТ",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOLVBrQkRRd1oydUVqY3RzU2ptMGRqYVJiZjhpR25wZ1Z6SkRrRkh4NWxnOE5qM2dWM1FqTWlxNGUtbU92d1pfLV9VNW9jbnNyZmc2NGNqRnNSd1BkM2FaWHBTV1hyTDFSbmpXd2ktMzFLTlAzd3JQYXRDUk1HaWFYQi16ekVOUWlyZmJoRkh3cV9xam55M2VUak5hSG5LNE5ISkFvM1VfYWsxRkNENlRUWnVDY0hEdw?oc=5",
-      "published": "2026-09-27T10:23:00-04:00",
+      "source": "Reuters",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQTlc5N3Y2SGJrR2NwcnR0cXl1bURjSnVTaDBXalZ4TlQzX1ZQb0VOZERydmxPTW1MalZfXzZnVHhmYnc2LWFRdW5uMDZoejlpcWxYRXhNRjdHaHA3LW5rRFFCV29WX3RmTHBudnY3VkVHRkhnWUVCNmdyMUpvRm1MZjdLR3FfSmhPMFRHMlNSZmc2dk12UGpUdXRpNkdwck1xUk1FZ2hR?oc=5",
+      "published": "2026-09-27T11:15:44-04:00",
       "date_label": "Sep. 27, 2026",
       "origin": "Google News RSS"
     },
@@ -4388,11 +4403,11 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "cc02c3000a0be55d",
+      "id": "4aebe3bf55f3f065",
       "search_section": "Other Advanced Transportation",
       "title": "When Brad Pitt's 'Heart of the Beast' Will Release on Streaming",
       "summary": "",
-      "source": "movieweb.com",
+      "source": "MovieWeb",
       "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB4VjBVX2s2Z004MjZPeDY2N0k4TVZaT0NSUUttQnpJM2NWY1NyWmFQTmo2OGNSRTQxeWNRMWJVcGduR1duRzlhdWYyLWlTLVAtS2lsdFBEWmUzMkZLTG5uaFl5LXA?oc=5",
       "published": "2026-09-26T14:30:14-04:00",
       "date_label": "Sep. 26, 2026",
@@ -4421,17 +4436,6 @@
       "origin": "Google News RSS"
     },
     {
-      "id": "f64be06bf8b4dcb6",
-      "search_section": "Other Advanced Transportation",
-      "title": "Mumbai: Women Get Into Heated Argument on Local Train Over Marathi Language; Video Goes Viral",
-      "summary": "",
-      "source": "lokmattimes.com",
-      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOT2pTYi1wMlE0MS1XQnZlTURjZDJYRTJSR3l5UG9GLWF2WlhBbG11azR4aTdrdnZURXJNclpMZjhFQmtUbW1vb3dPRnhfNDdxc3EwMzlTYThMN3J2U204d19fOUdFYS1vVXpzMHVjZW8wRU0zekhkQjFKd2dYV0ppaXRFdktVRVVFUlJfazIzRDduWklVQUJuckFZVzd1LWhGTXRuYUNVY2tJQlFFS3lJNFBkMjlVMlpiYVpzSVgtMlhaMjFCNEVmOUVZc2I?oc=5",
-      "published": "2026-09-26T12:49:55-04:00",
-      "date_label": "Sep. 26, 2026",
-      "origin": "Google News RSS"
-    },
-    {
       "id": "25ff1e50c269b9ce",
       "search_section": "Federal Actions",
       "title": "U.S., Indian Army Snipers Train on Long-Range Marksmanship",
@@ -4444,40 +4448,36 @@
     }
   ],
   "source_errors": [
-    "Official feed White House: 403 Client Error: Forbidden for url: https://www.whitehouse.gov/briefing-room/feed/",
+    "Official feed White House: 404 Client Error: Not Found for url: https://www.whitehouse.gov/briefing-room/feed/",
     "Official feed U.S. Department of Transportation: 403 Client Error: Forbidden for url: https://www.transportation.gov/rss/press-releases.xml",
     "Official feed Federal Aviation Administration: 404 Client Error: Not Found for url: https://www.faa.gov/newsroom/all_news.rss",
-    "SearXNG search \"drone UAS BVLOS Part 108 Remote ID delivery manufacturing\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=drone+UAS+BVLOS+Part+108+Remote+ID+delivery+manufacturing&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"innovative drone use inspection agriculture emergency response\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=innovative+drone+use+inspection+agriculture+emergency+response&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"counter-UAS C-UAS drone detection mitigation jamming interceptor\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=counter-UAS+C-UAS+drone+detection+mitigation+jamming+interceptor&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"airspace security unauthorized drone airport stadium infrastructure\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=airspace+security+unauthorized+drone+airport+stadium+infrastructure&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"military UAS drone procurement test deployment DARPA DIU\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=military+UAS+drone+procurement+test+deployment+DARPA+DIU&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"Ukraine Russia battlefield drone strike unmanned warship\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=Ukraine+Russia+battlefield+drone+strike+unmanned+warship&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"eVTOL eIPP advanced air mobility powered-lift FAA\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=eVTOL+eIPP+advanced+air+mobility+powered-lift+FAA&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"autonomous vehicle robotaxi NHTSA FMCSA FMVSS Part 555\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=autonomous+vehicle+robotaxi+NHTSA+FMCSA+FMVSS+Part+555&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"driverless autonomous trucking deployment recall investigation\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=driverless+autonomous+trucking+deployment+recall+investigation&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"civil supersonic X-59 Boom Hermeus high-speed rail maglev hydrogen rail\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=civil+supersonic+X-59+Boom+Hermeus+high-speed+rail+maglev+hydrogen+rail&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"international drone eVTOL autonomous vehicle regulation deployment\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=international+drone+eVTOL+autonomous+vehicle+regulation+deployment&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"international high-speed rail maglev hydrogen train\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=international+high-speed+rail+maglev+hydrogen+train&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"site:dot.gov OR site:faa.gov OR site:nhtsa.gov advanced transportation\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Adot.gov+OR+site%3Afaa.gov+OR+site%3Anhtsa.gov+advanced+transportation&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"site:fmcsa.dot.gov OR site:fra.dot.gov OR site:transit.dot.gov autonomy drone rail\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Afmcsa.dot.gov+OR+site%3Afra.dot.gov+OR+site%3Atransit.dot.gov+autonomy+drone+rail&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "SearXNG search \"site:dhs.gov OR site:justice.gov OR site:tsa.gov counter-UAS drone security\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Adhs.gov+OR+site%3Ajustice.gov+OR+site%3Atsa.gov+counter-UAS+drone+security&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [Errno 111] Connection refused\"))",
-    "Article metadata nasa.gov: 429 Client Error: Too Many Requests for url: https://www.nasa.gov/news-release/meet-nasas-artemis-ii-crew-during-houston-public-event/",
-    "Article metadata nasa.gov: 429 Client Error: Too Many Requests for url: https://www.nasa.gov/missions/station/commercial-crew/what-you-need-to-know-about-nasas-spacex-crew-13-mission/",
-    "Article metadata nasa.gov: 429 Client Error: Too Many Requests for url: https://www.nasa.gov/directorates/stmd/prizes-challenges-crowdsourcing-program/center-of-excellence-for-collaborative-innovation-coeci/nasa-orbit-challenge-2027/",
-    "Article metadata nasa.gov: 429 Client Error: Too Many Requests for url: https://www.nasa.gov/centers-and-facilities/stennis/contractor-to-civil-servant-kristie-foster/",
+    "SearXNG search \"drone UAS BVLOS Part 108 Remote ID delivery manufacturing\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=drone+UAS+BVLOS+Part+108+Remote+ID+delivery+manufacturing&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"innovative drone use inspection agriculture emergency response\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=innovative+drone+use+inspection+agriculture+emergency+response&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"counter-UAS C-UAS drone detection mitigation jamming interceptor\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=counter-UAS+C-UAS+drone+detection+mitigation+jamming+interceptor&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"airspace security unauthorized drone airport stadium infrastructure\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=airspace+security+unauthorized+drone+airport+stadium+infrastructure&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"military UAS drone procurement test deployment DARPA DIU\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=military+UAS+drone+procurement+test+deployment+DARPA+DIU&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"Ukraine Russia battlefield drone strike unmanned warship\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=Ukraine+Russia+battlefield+drone+strike+unmanned+warship&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"eVTOL eIPP advanced air mobility powered-lift FAA\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=eVTOL+eIPP+advanced+air+mobility+powered-lift+FAA&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"autonomous vehicle robotaxi NHTSA FMCSA FMVSS Part 555\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=autonomous+vehicle+robotaxi+NHTSA+FMCSA+FMVSS+Part+555&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"driverless autonomous trucking deployment recall investigation\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=driverless+autonomous+trucking+deployment+recall+investigation&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"civil supersonic X-59 Boom Hermeus high-speed rail maglev hydrogen rail\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=civil+supersonic+X-59+Boom+Hermeus+high-speed+rail+maglev+hydrogen+rail&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"international drone eVTOL autonomous vehicle regulation deployment\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=international+drone+eVTOL+autonomous+vehicle+regulation+deployment&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"international high-speed rail maglev hydrogen train\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=international+high-speed+rail+maglev+hydrogen+train&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"site:dot.gov OR site:faa.gov OR site:nhtsa.gov advanced transportation\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Adot.gov+OR+site%3Afaa.gov+OR+site%3Anhtsa.gov+advanced+transportation&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"site:fmcsa.dot.gov OR site:fra.dot.gov OR site:transit.dot.gov autonomy drone rail\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Afmcsa.dot.gov+OR+site%3Afra.dot.gov+OR+site%3Atransit.dot.gov+autonomy+drone+rail&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+    "SearXNG search \"site:dhs.gov OR site:justice.gov OR site:tsa.gov counter-UAS drone security\": HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /search?q=site%3Adhs.gov+OR+site%3Ajustice.gov+OR+site%3Atsa.gov+counter-UAS+drone+security&format=json&language=en-US&time_range=day&safesearch=0 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8080): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
     "Article metadata war.gov: 403 Client Error: Forbidden for url: https://www.war.gov/News/News-Stories/Article/Article/4611821/us-indian-army-snipers-train-on-long-range-marksmanship/"
   ],
   "candidate_count": 403,
   "candidate_counts": {
     "Military": 45,
     "Robotics": 45,
-    "UAS and Drones": 45,
     "UAS Security and C-UAS": 45,
+    "UAS and Drones": 45,
     "Federal Actions": 17,
     "Autonomous Vehicles": 45,
-    "UxS / Maritime / Ground Robotics": 10,
-    "Other Advanced Transportation": 36,
+    "UxS / Maritime / Ground Robotics": 11,
+    "Other Advanced Transportation": 35,
     "eVTOL Integration Pilot Program and AAM": 30,
     "Trump Administration priorities": 27,
     "International": 45,
