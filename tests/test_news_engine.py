@@ -997,6 +997,19 @@ class SupplementalGuardrailTests(unittest.TestCase):
             "FAA advanced a new BVLOS action affecting drone operations.",
         )
 
+    def test_executive_summary_removes_exposed_url_citations(self) -> None:
+        summary = news_engine.sanitize_executive_summary_citations(
+            "FAA completed a test [https://news.google.com/rss/articles/very-long]. "
+            "Rail service expanded <https://example.com/rail>. "
+            "A [labeled source](https://example.com/source) remains readable."
+        )
+
+        self.assertEqual(
+            summary,
+            "FAA completed a test. Rail service expanded. "
+            "A [labeled source](https://example.com/source) remains readable.",
+        )
+
     def test_final_summary_prompt_contains_only_compiled_reader_fields(self) -> None:
         story = {
             "id": "story-1",

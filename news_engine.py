@@ -75,6 +75,29 @@ HEADLINE_PLACEHOLDER_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+SUMMARY_MARKDOWN_LINK_PATTERN = re.compile(
+    r"\[([^\]]{1,120})\]\((https?://[^\s)]+)\)"
+)
+
+
+def sanitize_executive_summary_citations(value: str) -> str:
+    """Preserve labeled Markdown links but remove exposed URL citations."""
+    protected: list[str] = []
+
+    def protect(match: re.Match[str]) -> str:
+        protected.append(match.group(0))
+        return f"\x00SUMMARY_LINK_{len(protected) - 1}\x00"
+
+    text = SUMMARY_MARKDOWN_LINK_PATTERN.sub(protect, str(value or ""))
+    text = re.sub(r"\[\s*https?://[^\]\s]+\s*\]", "", text)
+    text = re.sub(r"<https?://[^>\s]+>", "", text)
+    text = re.sub(r"https?://\S+", "", text)
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    text = re.sub(r"\.{2,}", ".", text)
+    for index, link in enumerate(protected):
+        text = text.replace(f"\x00SUMMARY_LINK_{index}\x00", link)
+    return clean_spaces(text)
+
 TOPIC_SECTIONS = [
     "Federal Policy & Implementation",
     "UAS / Drones",
@@ -2365,8 +2388,9 @@ facts.
   day's overall pattern. Do not turn a minor item into the lead.
 - Do not introduce facts, causal claims, credit, or conclusions that do not
   appear in the compiled stories.
-- Link the source of important factual assertions inline with Markdown links
-  using ONLY a URL supplied in final_stories. Never invent a source URL.
+- Do not include URLs, footnotes, bracketed citations, or Markdown links. Story
+  links are presented immediately below the Executive Summary elsewhere in the
+  briefing.
 - Do not mention records, links, intake methods, supplemental or automated
   material, accounting, editorial workflow, prompts, sections, or how the
   briefing was assembled.
@@ -2389,7 +2413,8 @@ def sanitize_compiled_executive_summary(
     sections: dict[str, list[dict[str, Any]]],
 ) -> str:
     """Keep final summary copy public-facing and derive a factual fallback."""
-    sentences = re.split(r"(?<=[.!?])\s+", clean_spaces(value))
+    cleaned_value = sanitize_executive_summary_citations(value)
+    sentences = re.split(r"(?<=[.!?])\s+", cleaned_value)
     public_sentences = [
         sentence
         for sentence in sentences

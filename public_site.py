@@ -25,6 +25,7 @@ from news_engine import (
     clean_innovative_uas_use,
     infer_innovative_uas_use,
     infer_section,
+    sanitize_executive_summary_citations,
     sanitize_story_summary,
 )
 from regulatory_tracker import build_regulatory_tracker
@@ -269,7 +270,9 @@ def _safe_url(value: str) -> str:
 
 def summary_html(payload: dict[str, Any]) -> str:
     """Render source links from the final AI summary without allowing arbitrary HTML."""
-    summary = str(payload.get("executive_summary", ""))
+    summary = sanitize_executive_summary_citations(
+        str(payload.get("executive_summary", ""))
+    )
     allowed = {
         str(item.get("url", ""))
         for items in payload.get("sections", {}).values()
@@ -668,7 +671,11 @@ def email_subject(payload: dict[str, Any], day: date) -> str:
 def plain_text_email(payload: dict[str, Any], day: date) -> str:
     lines = [
         SITE_TITLE, _format_day(day), lead_headline(payload), "",
-        "Executive Summary", str(payload.get("executive_summary", "")), "",
+        "Executive Summary",
+        sanitize_executive_summary_citations(
+            str(payload.get("executive_summary", ""))
+        ),
+        "",
     ]
     sections = payload.get("sections", {})
     innovative = [
@@ -946,7 +953,7 @@ main{width:min(var(--wide),calc(100% - 40px));margin:30px auto 72px}
 .edition-heading,.executive-summary,.automated-note,.newsletter-section:not(.tracker):not(.what-to-watch),footer{width:min(var(--reader),100%);margin-left:auto;margin-right:auto}
 .edition-heading{border-top:6px solid var(--navy);padding:20px 0 22px;margin-bottom:0}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.7rem;font-weight:800;color:#557286;margin:0 0 8px}.edition-heading h1,.archive-heading h1{font-size:clamp(2.15rem,5vw,2.9rem);line-height:1.05;color:var(--navy-dark);letter-spacing:-.035em;margin:0;overflow-wrap:break-word}.coverage{font-size:.79rem;color:var(--muted);margin:9px 0 0}
 .section-nav{position:sticky;top:0;z-index:10;display:flex;gap:4px;overflow-x:auto;white-space:nowrap;margin:0 0 34px;padding:7px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);border-bottom:1px solid var(--line);box-shadow:0 5px 15px rgba(24,52,70,.06);scrollbar-width:thin}.section-nav a{flex:0 0 auto;padding:7px 9px;color:#425c6e;text-decoration:none;font-size:.72rem;font-weight:750;border-radius:4px}.section-nav a:hover{background:var(--wash);color:var(--navy-dark)}
-.executive-summary{background:#edf4f8;border-left:4px solid #4d7898;padding:24px 26px;margin-bottom:34px}.executive-summary h2,.headline-index>h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.11em;color:#244d6b;margin:0 0 9px}.executive-summary p{font-size:1.075rem;line-height:1.65;margin:0;color:#253944}
+.executive-summary{background:#edf4f8;border-left:4px solid #4d7898;padding:24px 26px;margin-bottom:34px}.executive-summary h2,.headline-index>h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.11em;color:#244d6b;margin:0 0 9px}.executive-summary p{font-size:1.075rem;line-height:1.65;margin:0;color:#253944;overflow-wrap:anywhere}
 .automated-note{display:flex;justify-content:space-between;gap:20px;background:var(--sand);border-left:4px solid #b89a50;padding:15px 17px;margin-bottom:30px;font-size:.88rem}.automated-note span{color:#675d43}
 .top-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 34px}.top-highlight{background:var(--sand);border-top:3px solid #b89a50;padding:16px 18px;margin:0;font-size:.84rem;color:#4c493f}.top-highlight>strong{text-transform:uppercase;letter-spacing:.075em;font-size:.69rem;color:#5c5239}.top-highlight p,.top-highlight ul{margin:7px 0 0}.top-highlight ul{padding-left:20px}.top-highlight:only-child{grid-column:1/-1}
 .headline-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;row-gap:2px;border:1px solid var(--line);background:#fafcfd;padding:23px 25px 18px;margin:0 0 54px}.headline-index>h2{grid-column:1/-1;margin-bottom:10px}.headline-index>div{margin:0}.headline-index h3{font-size:.69rem;text-transform:uppercase;letter-spacing:.075em;color:#607482;margin:0 0 7px}.headline-index h4{font-size:.74rem;line-height:1.3;color:#243b4b;margin:12px 0 6px}.headline-index ul{font-size:.855rem;line-height:1.45;margin:0;padding-left:18px}.headline-index li{margin:0 0 6px}.headline-index a{text-decoration:none}.headline-index a:hover{text-decoration:underline}.headline-index .view-all{grid-column:1/-1;width:max-content;margin-top:12px;font-size:.78rem;font-weight:750}

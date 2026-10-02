@@ -45,12 +45,17 @@ class MasterBriefingTests(TestCase):
 
     def test_summary_links_are_limited_to_published_story_urls(self) -> None:
         payload = {
-            "executive_summary": "[Flight](https://example.com/flight) and [unknown](https://bad.example/).",
+            "executive_summary": (
+                "[Flight](https://example.com/flight) and "
+                "[unknown](https://bad.example/). "
+                "[https://news.google.com/rss/articles/oversized-wrapper]"
+            ),
             "sections": {"UAS / Drones": [{"url": "https://example.com/flight"}]},
         }
         rendered = public_site.summary_html(payload)
         self.assertIn('href="https://example.com/flight"', rendered)
         self.assertNotIn("https://bad.example", rendered)
+        self.assertNotIn("news.google.com", rendered)
 
     def test_monday_subject_and_plain_fallback(self) -> None:
         payload = {

@@ -24,6 +24,7 @@ from news_engine import (
     headline_is_publisher_only,
     infer_innovative_uas_use,
     infer_section,
+    sanitize_executive_summary_citations,
     sanitize_story_summary,
     story_summary_sentence_is_public,
 )
@@ -130,7 +131,9 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
         for item in sections.get(section, []):
             item["innovative_uas_use"] = ""
 
-    summary = str(briefing.get("executive_summary", "")).strip()
+    summary = sanitize_executive_summary_citations(
+        str(briefing.get("executive_summary", ""))
+    )
     if not summary:
         raise ValueError("The generated briefing has no Executive Summary.")
     if not isinstance(briefing.get("regulatory_tracker"), list):
