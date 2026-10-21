@@ -4,7 +4,7 @@
   "publication_mode": "automated-ai",
   "window_start": "2026-10-16",
   "window_end": "2026-10-20",
-  "executive_summary": "This Tuesday update marks continued momentum in U.S. advanced aviation, autonomous-defense, and counter-drone capability. The FAA and the Department of the Army completed the first operational clearance of a high-energy laser counter-drone system for the U.S.-Mexico border, and the U.S. government banned TikTok American users from using the app to operate drones, closing a platform-mediated gap in U.S. airspace security. In autonomous defense, an F-22 commanded a Fury Loyal Wingman drone in a combined-flights test, the Air Force is targeting roughly 500 such drones by 2032, and the Navy awarded a 1.2 billion dollar contract to build 30 new unmanned surface vessels at American shipyards. In autonomous ground transportation, NHTSA recalled 3,871 Waymo vehicles over freeway construction-zone behavior, advanced a modernized brake-safety standard for driverless trucks, and confirmed the 2031 autonomous-truck safety rule remains on schedule. In advanced aviation, NASA logged a record Mach 1.53 test flight for the X-59 quiet supersonic demonstrator, Joby launched eVTOL integration pilot flights in Texas, and Archer completed San Francisco Bay demo flights. In high-speed rail, a Chinese experimental maglev reached 800 kilometers per hour in 5.3 seconds, and California High-Speed Rail completed all 66 structures on its Central Valley segment. Altogether the developments point to a durable buildout of U.S. advanced-transportation capability in both air and ground domains.",
+  "executive_summary": "This Tuesday update marks continued momentum in U.S. advanced aviation, autonomous-defense, and counter-drone capability. The FAA and the Department of the Army completed the first operational clearance of a high-energy laser counter-drone system for the U.S.-Mexico border. In autonomous defense, an F-22 commanded a Fury Loyal Wingman drone in a combined-flights test, the Air Force is targeting roughly 500 such drones by 2032, and the Navy awarded a 1.2 billion dollar contract to build 30 new unmanned surface vessels at American shipyards. In autonomous ground transportation, NHTSA recalled 3,871 Waymo vehicles over freeway construction-zone behavior, advanced a modernized brake-safety standard for driverless trucks, and confirmed the 2031 autonomous-truck safety rule remains on schedule. In advanced aviation, NASA logged a record Mach 1.53 test flight for the X-59 quiet supersonic demonstrator, Joby launched eVTOL integration pilot flights in Texas, and Archer completed San Francisco Bay demo flights. In high-speed rail, a Chinese experimental maglev reached 800 kilometers per hour in 5.3 seconds, and California High-Speed Rail completed all 66 structures on its Central Valley segment. Altogether the developments point to a durable buildout of U.S. advanced-transportation capability in both air and ground domains.",
   "sections": {
     "Federal Policy & Implementation": [
       {
@@ -146,23 +146,6 @@
         "win_foreign_company_expansion_only": false,
         "win_reason": "",
         "win_explanation": ""
-      },
-      {
-        "title": "U.S. Bans TikTok American Users From Using App to Operate Drones",
-        "url": "https://defensenews.com/2026/10/16/united-states-bans-tiktok-american-users-from-using-app-to-operate-drones/",
-        "source": "Defense News",
-        "date": "2026-10-16",
-        "section": "Counter-UAS / Airspace Security",
-        "summary": "The United States banned TikTok American users from using the app to operate drones, a direct federal action to prevent a foreign-controlled platform from being used to fly UAS over U.S. airspace. The ban closes a gap in the FAA's counter-UAS enforcement authority and protects U.S. airspace from platform-mediated drone operations.",
-        "innovative_uas_use": "",
-        "win": true,
-        "is_administration_win": true,
-        "win_event_within_window": true,
-        "win_direct_administration_nexus": true,
-        "win_concrete_american_benefit": true,
-        "win_foreign_company_expansion_only": false,
-        "win_reason": "The U.S. government, in the Trump administration's border-se",
-        "win_explanation": "The U.S. government, in the Trump administration's border-security and airspace-protection posture, banned TikTok American users from using the app to operate drones, a direct federal action that closes a gap in the FAA's counter-UAS enforcement authority and protects U.S. airspace from platform-mediated drone operations."
       },
       {
         "title": "FAA and Army Complete First Operational Clearance of High-Energy Laser C-UAS for U.S. Border",
@@ -862,6 +845,6 @@
   ],
   "supplemental_count": 0,
   "supplemental_accounted_count": 0,
-  "admin_wins_count": 9,
+  "admin_wins_count": 8,
   "validation_status": "passed"
 }
