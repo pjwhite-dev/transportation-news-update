@@ -18,3 +18,6 @@ One line per judgment call: date — decision — reason.
 - 2026-10-24 — Unresolvable Google News links are dropped from the candidate pool rather than published (they would fail the links gate anyway). Resolution uses the same article-id exchange as open-source decoders; cached in .runtime/url_cache.json.
 - 2026-10-24 — Raw collector now commits to a `raw-feed` branch; the local pipeline already collects its own feed, so nothing on main depends on it. Branch created from main by the workflow's first run.
 - 2026-10-24 — Pulling qwen3.6:27b-q4_K_M (interim model named in plan Phase 0.3; not installed locally). llama3.3:70b is not referenced by this repository's configuration (it lived in the separate Hermes checkout's .env.local); the model file itself is left installed.
+- 2026-10-25 — Cloned to C:\newsroom early (Phase 1 item 1) because the OneDrive checkout is dirty and the pipeline refuses unclean trees; the OneDrive copy stays untouched but unused.
+- 2026-10-25 — Published a Sunday edition once to prove the fixed path and replace the template-text Oct 22 edition that was still live; scheduled editions remain weekdays.
+- 2026-10-25 — Interim daily cut (45 total, 12 per section, importance >= 3) is a stopgap for the missing significance scoring; to be replaced in Phase 2.

@@ -24,3 +24,10 @@ Changed (not yet merged to main; see decisions.md):
 Tests: new suites 100% green (gates 17, tracker 11, providers, resolver 6, alerts 7). Full suite: 47 failures, all pre-existing (docs/test-baseline.md).
 Found: SearXNG was down because WSL was stopped (started it; boot task is in the admin batch). The Ollama model qwen3.6:27b-q4_K_M was not installed (pull started); qwen3.8:27b-q4_K_M is installed.
 Next: confirm a real dry-run edition end to end, merge to main, run the first live edition, then Phase 1 (runner, ledger, C:\newsroom). Waiting on docs/phase0-requests.md (credentials + admin steps).
+
+## 2026-10-25 — First edition through the fixed path (Phase 0 items 3-7, 9)
+Changed: batched story analysis (35 per call; the single 300-candidate call produced 4-7 story days), interim daily cut (top 45, 12 per section, importance >= 3, editor-vetted never cut), pre-gate prune (dead links, non-article pages, headline-echo summaries; every removal recorded in pruned_items), minimum-story-count gate, retry now ends on a user turn (Ollama rejected system-last).
+Run: C:\newsroom clone + venv; scripts/run_local_pipeline.ps1 published the 2026-10-25 edition (30 stories, 10/10 tracker, all gates passed, 4 items pruned, 560 s model time) and verified it live on news.peterjwhite.org. First edition from the new code; replaces the template-text Oct 22 edition on the site.
+Tests: new suites green; full suite = the 47 pre-existing failures (docs/test-baseline.md).
+Not done: Telegram/Healthchecks unconfigured (alerts print "not configured"), boot services/tasks not installed (need admin + credentials, docs/phase0-requests.md), Anthropic key not set so the local model still writes the Executive Summary, GitHub CLI absent so CI result not inspected, OneDrive copy untouched (Phase 1 uses C:\newsroom).
+Next: owner runs docs/phase0-requests.md; then verify Monday 2026-10-26 04:30 run; Phase 1 runner/ledger.
