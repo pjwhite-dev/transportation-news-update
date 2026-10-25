@@ -1,0 +1,348 @@
+diff --git a/.gitignore b/.gitignore
+index b797c05..b02a963 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -10,3 +10,5 @@ __pycache__/
+ .chrome-qa/
+ .runtime/
+ _site/
++.vercel
++.env*
+diff --git a/AGENTS.md b/AGENTS.md
+index 94a44fa..ff21d4e 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,5 +1,77 @@
+ # Repository Maintenance Guide
+ 
++## Dedicated Hermes operating brief
++
++This repository belongs only to the **Advanced Transportation Update** Hermes
++project/profile (`advtransport`). It is not part of the novelwriting project and
++must never inherit novelwriting roles, goals, prompts, or files.
++
++The dedicated master brief is
++`docs/HERMES_MASTER_OPERATING_INSTRUCTIONS.md`. Its persistent goal and
++Detailed Architecture and Workflow Appendix are authoritative, together with
++the compact profile SOUL and the repository-specific safeguards below. Inspect
++its headings and read the relevant section when a stage or requirement needs
++clarification; do not load the entire long document into model context on every
++run. If instructions differ, apply the more restrictive publication, delivery,
++credential, and human-authorization rule.
++
++Never alter or operate the separate ChatGPT Advanced Transportation automation
++from this repository. Never send email, publish, activate a schedule, change
++credentials, or push changes unless the user has explicitly authorized that
++specific action.
++
++### Current Hermes delivery authorization (2026-10-14)
++
++The user has explicitly authorized the dedicated Hermes workflow to:
++
++- run automatically under Hermes control;
++- monitor public sources continuously without using or depending on the ETTE
++  email;
++- prepare one edition each weekday, with a target delivery time of 9:30 a.m.
++  Eastern after all required AI, validation, and QC stages finish;
++- treat Monday as the Weekend + Monday edition, including developments since
++  the prior Friday edition; and
++- send the validated multipart edition from
++  `advancedtransportationupdate@gmail.com` to
++  `advancedtransportationupdate@gmail.com` through the Gmail account linked to
++  Hermes, with duplicate-send protection and provider confirmation.
++
++This authorization does not extend to changing, pausing, replacing, or
++stopping the separate ChatGPT Advanced Transportation automation, which must
++continue independently until the user explicitly says otherwise. It also does
++not authorize using the ETTE email as an input to the Hermes edition.
++
++### Current Hermes website-publication authorization (2026-10-15)
++
++The owner explicitly authorized Hermes to publish each validated weekday edition
++to the existing GitHub Pages site at `news.peterjwhite.org`. After deterministic
++QC passes, Hermes may commit only `data/latest_briefing.json` and the matching
++`data/archive/YYYY-MM-DD.json` to `main`. Use
++`scripts/publish_validated_site.py`; it builds the commit from `origin/main` and
++must not include any other working-tree change. Never overwrite a conflicting
++dated archive, publish a failed or incomplete edition, alter DNS or hosting, or
++touch the separate ChatGPT automation.
++
++For large daily candidate sets, do not repeatedly load or print the complete
++inventory into model context. Review it once, then use deterministic code to
++score, deduplicate, and save a compact, section-balanced shortlist with source
++indices and URLs in the dated run directory. Continue drafting and QC from that
++saved shortlist. Preserve successful stage artifacts and never restart an
++earlier stage merely because later context was compressed.
++
++### Mandatory one-or-two-sentence article summaries (2026-10-15)
++
++Every published article must have one or two complete explanatory sentences
++immediately beneath its headline. State the verified development and explain its
++significance for advanced transportation, policy, safety, deployment, industry,
++or operations; use one concise sentence when it covers both, otherwise use two.
++Do not repeat the headline, use filler, expose editorial process language, or
++leave a summary blank. The final
++independent QC must run `scripts/final_summary_qc.py` against the dated JSON,
++HTML, and plain-text artifacts. Any missing or three-plus-sentence summary, or
++any summary not rendered in both output formats, blocks website
++publication and email delivery.
++
+ ## Product purpose
+ 
+ This repository creates and hosts the daily **Advanced Transportation News
+diff --git a/README.md b/README.md
+index 17d5c7c..7ea6035 100644
+--- a/README.md
++++ b/README.md
+@@ -28,7 +28,7 @@ Python remains the processing engine. n8n only triggers the Gmail and weekday-fa
+ 
+ - Windows, Git, Python 3.12, and PowerShell 7
+ - Ollama at `http://127.0.0.1:11434`
+-- `qwen3.6:27b-q4_K_M` (`ollama pull qwen3.6:27b-q4_K_M`)
++- `qwen3.8:27b-q4_K_M` (`ollama pull qwen3.8:27b-q4_K_M`)
+ - n8n 2.38.7 or compatible at `http://localhost:5678`
+ - WSL Ubuntu for the loopback-only SearXNG service
+ 
+@@ -58,7 +58,7 @@ Load the values from `.env` in the process that runs the application. Keep `OPEN
+ .\.venv\Scripts\python.exe automated_briefing.py --validate-only data\latest_briefing.json
+ 
+ # Real archived-corpus benchmark
+-.\.venv\Scripts\python.exe benchmark_models.py --models qwen3.6:27b-q4_K_M mistral:latest llama3:latest --output benchmark_results\latest.json
++.\.venv\Scripts\python.exe benchmark_models.py --models qwen3.8:27b-q4_K_M mistral:latest llama3:latest --output benchmark_results\latest.json
+ 
+ # Guarded end-to-end collection, build, commit, push, and live verification
+ .\scripts\run_local_pipeline.ps1
+diff --git a/ai_providers.py b/ai_providers.py
+index d78bf81..92898d5 100644
+--- a/ai_providers.py
++++ b/ai_providers.py
+@@ -11,7 +11,7 @@ import requests
+ from jsonschema import ValidationError, validate
+ 
+ DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
+-DEFAULT_OLLAMA_MODEL = "qwen3.6:27b-q4_K_M"
++DEFAULT_OLLAMA_MODEL = "qwen3.8:27b-q4_K_M"
+ DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
+ OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
+ TRANSIENT_STATUS_CODES = {408, 409, 425, 429, 500, 502, 503, 504}
+@@ -80,7 +80,7 @@ class OllamaProvider:
+         base_url: str = DEFAULT_OLLAMA_BASE_URL,
+         model: str = DEFAULT_OLLAMA_MODEL,
+         timeout_seconds: int = 600,
+-        num_ctx: int = 32768,
++        num_ctx: int = 131072,
+         temperature: float = 0.1,
+         num_predict: int | None = None,
+         max_attempts: int = 3,
+@@ -385,7 +385,7 @@ def provider_from_env(environ: dict[str, str] | None = None) -> AIProvider:
+             base_url=env.get("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE_URL),
+             model=env.get("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL),
+             timeout_seconds=_positive_int(env.get("OLLAMA_TIMEOUT_SECONDS"), 600),
+-            num_ctx=_positive_int(env.get("OLLAMA_NUM_CTX"), 32768),
++            num_ctx=_positive_int(env.get("OLLAMA_NUM_CTX"), 131072),
+             temperature=_float(env.get("OLLAMA_TEMPERATURE"), 0.1),
+             num_predict=(
+                 _positive_int(num_predict_value, 20000) if num_predict_value else None
+diff --git a/automated_briefing.py b/automated_briefing.py
+index 3161834..7db81d2 100644
+--- a/automated_briefing.py
++++ b/automated_briefing.py
+@@ -34,6 +34,7 @@ from supplemental_email import (
+     headline_from_url_slug,
+     headline_is_sentence_fragment,
+ )
++from summary_quality import has_one_or_two_sentences, sentence_count
+ 
+ 
+ MAX_SUPPLEMENTAL_EMAIL_BYTES = 2_000_000
+@@ -93,9 +94,12 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
+                 fallback_title = headline_from_url_slug(str(item.get("url", "")))
+                 if fallback_title:
+                     item["title"] = title = fallback_title
+-            summary = sanitize_story_summary(
+-                title, str(item.get("summary", ""))
+-            )
++            if item.get("confidence") == "headline-only":
++                summary = str(item.get("summary", "")).strip()
++            else:
++                summary = sanitize_story_summary(
++                    title, str(item.get("summary", ""))
++                )
+             if headline_is_sentence_fragment(summary):
+                 summary = ""
+             item["summary"] = summary
+@@ -203,7 +207,11 @@ def validate_complete_briefing(briefing: dict[str, Any]) -> dict[str, Any]:
+             if not str(item.get("url", "")).startswith(("http://", "https://")):
+                 errors.append(f"{section} story {index} has no public source URL.")
+             summary = str(item.get("summary", "")).strip()
+-            if summary and not story_summary_sentence_is_public(summary):
++            if not has_one_or_two_sentences(summary):
++                errors.append(
++                    f"{section} story {index} has {sentence_count(summary)} summary sentences; 1 or 2 required."
++                )
++            elif not story_summary_sentence_is_public(summary):
+                 errors.append(f"{section} story {index} contains internal editorial language.")
+             win_explanation = str(item.get("win_explanation", "")).strip()
+             if win_explanation and not story_summary_sentence_is_public(win_explanation):
+diff --git a/news_engine.py b/news_engine.py
+index cec0e68..22d1f2c 100644
+--- a/news_engine.py
++++ b/news_engine.py
+@@ -1948,6 +1948,9 @@ The Executive Summary will be written in a separate final pass from that compile
+     developer += """
+ 
+ CURRENT EDITORIAL FORMAT (OVERRIDES LEGACY SECTION LABELS ABOVE)
++- When at least 36 credible, previously-uncovered records are supplied, select
++  36 to 40 distinct stories. Never reach the target by inventing, padding, or
++  weakening the relevance standard.
+ - Use the section names in the JSON schema. Include important Robotics news,
+   including humanoid, warehouse, logistics, industrial and general robotics.
+ - Check eIPP and surface transportation reauthorization on every run, but include
+diff --git a/public_site.py b/public_site.py
+index 286640d..151a684 100644
+--- a/public_site.py
++++ b/public_site.py
+@@ -349,10 +349,11 @@ def _glance_groups(
+ 
+ def story_html(item: dict[str, Any]) -> str:
+     title = html.escape(str(item.get("title", "Untitled")))
++    raw_summary = str(item.get("summary", ""))
+     summary = html.escape(
+-        sanitize_story_summary(
+-            str(item.get("title", "")), str(item.get("summary", ""))
+-        )
++        raw_summary.strip()
++        if item.get("confidence") == "headline-only"
++        else sanitize_story_summary(str(item.get("title", "")), raw_summary)
+     )
+     source = html.escape(canonical_source(str(item.get("source", "Source"))))
+     date_label = html.escape(str(item.get("date_label", "")))
+@@ -492,8 +493,11 @@ def _email_spacer(height: int) -> str:
+ def _outlook_story(item: dict[str, Any]) -> str:
+     raw_title = str(item.get("title", "Untitled"))
+     title = html.escape(raw_title)
++    raw_summary = str(item.get("summary", ""))
+     summary = html.escape(
+-        sanitize_story_summary(raw_title, str(item.get("summary", "")))
++        raw_summary.strip()
++        if item.get("confidence") == "headline-only"
++        else sanitize_story_summary(raw_title, raw_summary)
+     )
+     url = _safe_url(item.get("url", ""))
+     source = html.escape(canonical_source(str(item.get("source", "Source"))))
+@@ -629,7 +633,7 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
+             + f'</td></tr></table></td></tr>{_email_spacer(8)}'
+         )
+     tracker_markup = _outlook_tracker(payload.get("regulatory_tracker", []))
+-    watch_markup = ""
++    watch_markup = _outlook_watch(payload.get("what_to_watch", []))
+     deck = html.escape(lead_headline(payload))
+     return f"""<!doctype html><html xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+@@ -716,6 +720,10 @@ def plain_text_email(payload: dict[str, Any], day: date) -> str:
+             f"{deadline}; "
+             f"{item.get('source_url', '')}"
+         )
++    watch_items = payload.get("what_to_watch", [])
++    if watch_items:
++        lines.extend(["", "What to Watch", ""])
++        lines.extend(f"- {item}" for item in watch_items)
+     lines.extend(["", "This summary is AI generated."])
+     return "\n".join(lines) + "\n"
+ 
+diff --git a/scripts/run_local_pipeline.ps1 b/scripts/run_local_pipeline.ps1
+index 494e0cd..ab41981 100644
+--- a/scripts/run_local_pipeline.ps1
++++ b/scripts/run_local_pipeline.ps1
+@@ -13,7 +13,8 @@ if (-not (Test-Path -LiteralPath $python)) {
+ 
+ if (-not $env:AI_PROVIDER) { $env:AI_PROVIDER = "ollama" }
+ if (-not $env:OLLAMA_BASE_URL) { $env:OLLAMA_BASE_URL = "http://127.0.0.1:11434" }
+-if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.6:27b-q4_K_M" }
++if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.8:27b-q4_K_M" }
++if (-not $env:OLLAMA_NUM_CTX) { $env:OLLAMA_NUM_CTX = "131072" }
+ if (-not $env:OPENAI_FALLBACK_ENABLED) { $env:OPENAI_FALLBACK_ENABLED = "false" }
+ 
+ Push-Location $repoRoot
+diff --git a/tests/test_automated_briefing.py b/tests/test_automated_briefing.py
+index 58d79f4..6748abf 100644
+--- a/tests/test_automated_briefing.py
++++ b/tests/test_automated_briefing.py
+@@ -33,7 +33,7 @@ class AutomatedBriefingTests(unittest.TestCase):
+         briefing = {
+             "executive_summary": "Transportation agencies advanced several initiatives.",
+             "sections": {
+-                "UAS and Drones": [
++                "UAS / Drones": [
+                     {
+                         "title": "Drones begin delivering blood to rural clinics",
+                         "summary": "The service carries urgent medical supplies.",
+@@ -49,15 +49,15 @@ class AutomatedBriefingTests(unittest.TestCase):
+ 
+         self.assertEqual(normalized["edition_kind"], "editorial")
+         self.assertTrue(
+-            normalized["sections"]["UAS and Drones"][0]["innovative_uas_use"]
++            normalized["sections"]["UAS / Drones"][0]["innovative_uas_use"]
+         )
+-        self.assertIn("Trump Administration Wins", normalized["sections"])
++        self.assertIn("Federal Policy & Implementation", normalized["sections"])
+ 
+     def test_normalization_moves_ukraine_conflict_to_military(self) -> None:
+         briefing = {
+             "executive_summary": "The briefing covers current transportation developments.",
+             "sections": {
+-                "UAS and Drones": [
++                "UAS / Drones": [
+                     {
+                         "title": "Russia again draws near a frontline Ukrainian city",
+                         "summary": (
+@@ -75,9 +75,9 @@ class AutomatedBriefingTests(unittest.TestCase):
+ 
+         normalized = automated_briefing.normalize_reader_features(briefing)
+ 
+-        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
++        self.assertEqual(normalized["sections"]["UAS / Drones"], [])
+         self.assertEqual(
+-            normalized["sections"]["Military"][0]["summary"],
++            normalized["sections"]["Military UAS"][0]["summary"],
+             "Russian forces approached Izium in eastern Ukraine.",
+         )
+ 
+@@ -85,7 +85,7 @@ class AutomatedBriefingTests(unittest.TestCase):
+         briefing = {
+             "executive_summary": "The briefing covers current transportation developments.",
+             "sections": {
+-                "Federal Actions": [
++                "Federal Policy & Implementation": [
+                     {
+                         "title": "PHMSA issues a pipeline safety notice",
+                         "summary": "The agency announced a new compliance action.",
+@@ -98,8 +98,8 @@ class AutomatedBriefingTests(unittest.TestCase):
+ 
+         normalized = automated_briefing.normalize_reader_features(briefing)
+ 
+-        self.assertEqual(len(normalized["sections"]["Federal Actions"]), 1)
+-        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
++        self.assertEqual(len(normalized["sections"]["Federal Policy & Implementation"]), 1)
++        self.assertEqual(normalized["sections"]["UAS / Drones"], [])
+ 
+     def test_build_uses_history_and_supplemental_records(self) -> None:
+         generated = {
+diff --git a/web_discovery.py b/web_discovery.py
+index 20a30e5..a75dc6e 100644
+--- a/web_discovery.py
++++ b/web_discovery.py
+@@ -22,11 +22,8 @@ HEADERS = {
+ }
+ 
+ OFFICIAL_FEEDS = {
+-    "White House": "https://www.whitehouse.gov/briefing-room/feed/",
+-    "U.S. Department of Transportation": (
+-        "https://www.transportation.gov/rss/press-releases.xml"
+-    ),
+-    "Federal Aviation Administration": "https://www.faa.gov/newsroom/all_news.rss",
++    "White House": "https://www.whitehouse.gov/releases/feed/",
++    "Federal Aviation Administration": "https://www.faa.gov/newsroom/press_releases/rss",
+     "NASA": "https://www.nasa.gov/news-release/feed/",
+     "U.S. Department of Defense": (
+         "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?"

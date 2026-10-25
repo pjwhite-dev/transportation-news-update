@@ -1,309 +1,42 @@
-# Repository Maintenance Guide
+# Repository Operating Rules
 
-## Product purpose
+This repository produces the daily **Advanced Transportation News Update**
+(https://news.peterjwhite.org, GitHub Pages). It is being rebuilt. The full plan
+is in `docs/rebuild-plan.md`; read it before changing anything. Keep the visible
+site title, section set and footer unchanged unless the owner says otherwise.
 
-This repository creates and hosts the daily **Advanced Transportation News
-Update**. Preserve the exact visible title. Do not display the former subtitle
-“UAS, C-UAS, and Advanced Transportation.”
+The previous OpenAI / GitHub Actions design described in older versions of this
+file is obsolete. Its useful editorial rules are in `docs/editorial-rules-legacy.md`.
 
-The product has two deliberately separate GitHub Actions stages. The raw stage
-must never call OpenAI or publish an incomplete edition. Streamlit remains only
-as a legacy local tool and is not part of the publication workflow.
+## Operating rules (plan Section 3)
 
-## Two-stage workflow
+- Work autonomously. Do not ask for approval of routine work; decide and log the
+  decision in `docs/decisions.md` (one line each, with the reason).
+- Run everything under the owner's own Windows account. No separate user.
+- Every change goes on a branch. Merge to main automatically (fast-forward or
+  squash) once the full test suite and validation gates pass. Push without force.
+- Never: force-push or rewrite main's history; delete or rewrite past editions in
+  `data/archive` or `data/raw_archive`; weaken, skip or disable a validation gate
+  to make a run pass; print, log or commit secrets; read or write outside the
+  repository, `C:\newsroom`, and the config folders of Ollama, Hermes, Task
+  Scheduler and NSSM; send data to any endpoint not named in the plan; modify the
+  owner's separate email newsletter.
+- Ask the owner only for: credentials, actions needing administrator rights or
+  BIOS access, the Phase 2 blind judging, genuine blockers. Batch requests into
+  one message per phase with exact steps.
+- Secrets: never ask for one in chat. `scripts/set_secret.py` stores values with
+  `keyring` (Windows Credential Manager); code reads secrets only from keyring.
+- Keep changes small and tested. Anything with one right answer (fetching,
+  dedup, tracker status, validation, git, deployment) is deterministic code,
+  never model judgment.
+- A failure that recurs twice gets a new deterministic recovery rule, not a
+  cleverer prompt.
+- Budget: cloud spend at most $50/month; stop cloud calls at $45, fall back to
+  local, and alert.
+- Fallback/template text is a hard failure; it must never be saved as an edition.
 
-### Stage 1 — GitHub Actions raw collection
+## Session discipline
 
-- Run daily at 4:15 a.m. in `America/New_York`.
-- Collect public-source advanced-transportation news from the preceding 24
-  hours.
-- Write `data/latest_raw_news.json` and a dated copy under
-  `data/raw_archive/`.
-- Do not call OpenAI or require an OpenAI secret.
-- Commit generated JSON safely, retrying against the latest `main` so routine
-  concurrent pushes do not lose the generated feed.
-
-### Stage 2 — complete AI briefing and publication
-
-- Load the automated raw feed.
-- Start either from the owner's manual GitHub Actions trigger or a trusted
-  supplemental-email `repository_dispatch` event.
-- Accept an optional base64-encoded supplemental daily email from the trusted
-  event payload; never interpolate the email body into workflow shell code.
-- Clean malformed URL wrappers such as `<https://example.com/article>`, remove
-  trailing punctuation, remove duplicate URLs, and associate each link with a
-  nearby pasted headline and context.
-- Fetch and use the linked article's actual page headline when metadata is
-  available. A nearby description, quotation, or sentence fragment must never
-  replace the article headline merely because it appears beside the URL.
-- Run OpenAI with the repository's `OPENAI_API_KEY` Actions secret only in this
-  complete-briefing workflow.
-- Process the automated feed and all supplemental records together in one
-  editorial pass.
-- Write `data/latest_briefing.json` and the matching dated file under
-  `data/archive/`, then build and deploy the GitHub Pages site.
-- Do not replace the live homepage with a raw headline fallback. The homepage
-  advances only after a complete briefing passes validation.
-
-## Supplemental link invariants
-
-Every unique pasted link must be accounted for in the generated briefing. It
-must either:
-
-1. Appear as a distinct story with a specific headline, summary, source, date,
-   and link; or
-2. Appear as Additional coverage / Also covered by under a genuinely identical
-   event.
-
-Treat supplemental-email records as editor-vetted and presume they are relevant
-and included. Do not apply the automated-feed relevance exclusions to them and
-do not omit them for low importance. If there is any doubt whether a
-supplemental item is the same concrete event as an automated item, keep it as a
-separate story. When it is genuinely the same event, consolidation is allowed
-only if the supplemental URL remains visible as additional coverage.
-
-Never silently discard a required supplemental link. Never merge distinct
-events. Never use a publisher label such as MSN, Yahoo, AOL, Reuters, or another
-publisher name as the headline. Never generate filler such as “Imported from
-the supplemental daily news email.” Never place distinct stories into a generic
-“Additional Headlines” bucket.
-
-Display both accounting values using these meanings:
-
-- **Supplemental links extracted**: unique supplemental URLs accepted for the
-  editorial pass.
-- **Supplemental links represented in the briefing**: those URLs found as a
-  primary story link or genuine additional-coverage link in the final output.
-
-Do not claim full accounting merely because the AI returned record IDs; compute
-the represented count from URLs actually present in the arranged briefing.
-
-## Required editorial sections
-
-Preserve these explicit sections and ordering:
-
-1. Trump Administration Wins
-2. Top Developments
-3. UAS and Drones
-4. UAS Security and C-UAS
-5. Military
-6. eVTOL Integration Pilot Program and AAM
-7. Autonomous Vehicles
-8. Other Advanced Transportation
-9. International
-10. Federal Actions
-11. Regulatory Deadline Tracker
-12. What to Watch
-
-Place the Regulatory Deadline Tracker at the bottom of the email immediately
-before What to Watch. It is a persistent public-information section, not a list
-of news stories. Each tracker item must show agency, action, official source,
-comment deadline, days remaining when open, and status. After a comment period
-closes, retain its closing date and use a specific pending status such as
-“Pending final rule,” “Pending NHTSA action,” or “Pending petition decision.”
-
-The tracker must include the FAA BVLOS/Part 108 rule, the Section 2209 fixed-site
-UAS restriction rule, the supersonic-overland-flight rulemaking, key ADS-focused
-FMVSS modernization actions, and important Part 555 petitions. Verify dates and
-extensions against the latest official Federal Register notice before updating
-the curated tracker. Populate it deterministically for every complete briefing
-without requiring another AI build.
-Use concise noun-style action labels such as “Routine BVLOS drone operations /
-Part 108”; do not begin tracker labels with boilerplate such as “Create rules
-for,” “Enable,” “Modernize,” or “Decide.”
-
-Do not add “new since yesterday” or “materially changed” badges. The email is
-already limited to new developments. Do not add By-the-Numbers, Today-at-a-
-Glance counts, or a separate Decision Points Ahead feature.
-
-## Autonomous Vehicles coverage
-
-Treat the following as Autonomous Vehicles when directly relevant:
-
-- NHTSA and FMCSA actions
-- FMVSS modernization, including FMVSS 102, 103, 104, and 108
-- Part 555 exemptions
-- ADS-equipped commercial vehicles and autonomous trucking
-- Robotaxis, driverless operations, and automated-driving deployments
-- Recalls, investigations, safety actions, and enforcement
-- Federal, state, and local rules, permits, and legislation
-- Testing, simulation, mapping, validation, and relevant V2X work
-
-AV-specific federal actions normally belong in **Autonomous Vehicles**, not the
-generic **Federal Actions** section. Enforce this in deterministic validation,
-not only in the AI prompt.
-
-When credible records exist, the editorial pass must include at least one
-substantive Autonomous Vehicles development and at least one substantive civil
-supersonic, high-speed rail, hydrogen rail, maglev, automated rail, or other
-genuinely advanced-transportation development. Enforce this with deterministic
-fallbacks that continue to reject stock promotion, market reports, consumer
-lists, and keyword collisions.
-
-## Military coverage
-
-Place counter-UAS technology and capability stories in **UAS Security and
-C-UAS**, including detection, tracking, identification, jamming, mitigation,
-interceptors, directed energy, acquisition, contracts, tests, deployments,
-training, and capability-building. This applies even when a Defense agency,
-military service, or defense contractor is involved, unless the story centers
-on active combat.
-
-Place other stories centered on the Department of Defense, a military service,
-defense acquisition, military operations or exercises, bases, warfighters,
-battlefield use, or military-focused contractors in **Military**. This includes
-non-C-UAS military UAS, autonomy, advanced aircraft, procurement, testing,
-deployments, and operational use. It also includes conflict reporting such as
-the war in Ukraine, Russian military operations, attacks on warships, naval or
-battlefield strikes, weapons and munitions, and other combat activity. Enforce
-this categorization deterministically so military stories are not buried in
-generic UAS or Federal Actions. A C-UAS story about battlefield use, war,
-Ukraine, Russia, strikes, or other active combat remains in **Military**.
-
-## International coverage
-
-Place substantive non-U.S. commercial, regulatory, operational, and technical
-advanced-transportation developments in **International**. This includes
-foreign drone, eVTOL, autonomous-vehicle, advanced-rail, and civil-supersonic
-news. International military and conflict stories remain in **Military**.
-Do not classify a U.S.-centered story as International merely because it
-mentions a foreign company, supplier, comparison, or market. When a credible
-international candidate exists, keep at least one International story in the
-briefing.
-
-## Trump Administration Win eligibility
-
-Apply the rule conservatively. A story is an Administration Win only when all
-four gates are true:
-
-1. The underlying event—not merely publication of an article—occurred in the
-   stated 24-hour coverage window.
-2. The record supports a direct Trump Administration connection.
-3. The event creates a concrete American benefit, such as domestic capability,
-   U.S. manufacturing, American jobs, public safety, national security,
-   deployment, regulatory progress, or removal of a barrier.
-4. The event is not merely a foreign-headquartered company entering or
-   expanding in the United States.
-
-A new final rule, approval, contract award, enforcement result, implementation
-milestone, operational launch, or regulatory action during the window may
-qualify when the other gates are met. A new article about an old NPRM does not.
-EO 14307, EO 14305, and EO 14304 are optional citations and may be used only
-when the supplied record supports the connection; an EO number is not itself a
-mandatory fifth eligibility gate.
-
-A new action by a current executive-branch department, agency, military
-service, or Federal program is itself a direct Trump Administration action; the
-article does not also have to name President Trump. This does not extend the
-nexus to private, State, local, congressional, judicial, or foreign actions
-that merely align with Administration policy.
-
-Treat an inaugural operational flight under DOT and FAA's eIPP as a direct
-implementation win under EO 14307, Section 6. Treat a current U.S. FIFA World
-Cup counter-UAS deployment, enforcement action, federally backed capability,
-or retention of World Cup counter-drone equipment for future public events as
-a direct implementation win under EO 14305, Section 9. Enforce these two
-narrow recognizers deterministically so they are not lost when the AI omits a
-Win flag. Do not extend them to generic eIPP explainers, unrelated FIFA
-coverage, security criticism, or private promotion.
-
-Also protect concrete current Federal implementation results such as FAA
-acceptance of aviation standards, a NHTSA automated-driving rule or firm
-rulemaking milestone, and a DARPA or U.S. military operational technology
-flight or test when the other gates are supported. Do not reduce these to
-generic agency news merely because the headline omits President Trump's name.
-
-Administration Win explanations are published verbatim and must stand alone for
-the email reader. Name the Administration, agency, or federal program that
-acted; state what it did; and explain the specific American result in ordinary,
-active language. Never expose internal editorial tests with phrases such as
-“during the window,” “the record shows,” “qualifies as a win,” “direct nexus,”
-“concrete benefit,” or “clear federal procurement action.” For contracts and
-purchases, say who awarded or ordered what, who will provide it, and which
-American mission it supports.
-
-For a supported Win, use neutral, factual language. Attribute the action to the
-responsible Administration, agency, or federal program and explain the
-documented or clearly stated effect on U.S. safety, jobs, manufacturing,
-security, deployment, regulatory progress, or airspace operations. Keep every
-claim supportable by the linked source.
-
-## Relevance exclusions
-
-Exclude unrelated keyword collisions, including HHS requests about psychedelic
-therapies; medical, pharmaceutical, NIH, FDA, or general health-policy stories;
-generic AI stories without a direct transportation connection; stock promotion;
-generic market-size reports; and consumer-product lists. Required supplemental
-links remain subject to accounting, while unrelated automated records should be
-filtered out.
-
-## Generated output
-
-The complete-briefing workflow publishes directly without a Streamlit editing
-step. Deterministic validators must enforce required sections, supplemental-link
-accounting, section placement, Administration Win gates, innovative UAS labels,
-and the presence of the Executive Summary and regulatory tracker before files
-are saved or the live site is replaced.
-
-Directly below the Executive Summary, render **Headlines at a Glance** in a
-smaller font. It must contain only linked headlines, grouped under the same
-editorial sections used by the final arranged briefing. Build it dynamically
-from that final briefing so supplemental items are included and story Include
-checkboxes and headline edits are reflected automatically.
-
-The Executive Summary must read as a polished, standalone news briefing for a
-senior executive. It must never expose intake or editorial-process language such
-as “required supplemental,” automated feed, records, links extracted or
-represented, accounting, or how the briefing was assembled.
-It must also never discuss whether any story is or is not an Administration Win
-or why a story passed or failed the Win test. If a story description or summary
-merely repeats its headline, omit the description entirely.
-Generate the Executive Summary in a separate final AI pass only after all story
-selection, clustering, section placement, summaries, What to Watch items, and
-the regulatory tracker have been compiled. Give that final pass only the
-compiled reader-facing briefing, never the raw intake records or internal Win
-eligibility fields.
-
-When a Win cites a recognized EO and section, append a concise plain-English
-summary of that section, for example: “Section 3, advancing domestic
-commercialization of UAS technologies at scale.”
-
-Preserve the email-safe renderer and controls:
-
-- Outlook-safe table HTML with inline styles
-- Generous vertical spacing
-- Large linked headlines
-- Subdued source/date metadata
-- Executive Summary and Administration Win callouts
-- Copy for email on the public site
-
-## Required maintenance validation
-
-Before changing behavior, inspect the current repository and git history; do not
-assume an earlier proposed or uploaded fix is present. At minimum inspect
-`streamlit_app.py`, `news_engine.py`, `daily_update.py`, `requirements.txt`,
-`.github/workflows/daily-news-update.yml`, `data/latest_raw_news.json`,
-`data/raw_archive/`, and `.streamlit/config.toml`.
-
-Before handing off a change, run:
-
-- `git status` and review the complete diff.
-- Python syntax compilation for the application modules.
-- A direct `import news_engine`.
-- An AST or runtime check that every name imported from `news_engine` by
-  `streamlit_app.py` exists.
-- Requirements parsing/version validation and `pip check` in an isolated
-  environment.
-- GitHub Actions YAML parsing and, when available, an Actions-aware validator.
-- The focused test suite.
-- A local headless Streamlit startup/health test when practical.
-
-Regression coverage must include malformed and duplicate supplemental URL handling,
-trusted base64 email-event handling, complete-briefing validation,
-publisher-only headline rejection, unrelated HHS/psychedelic filtering, AV
-categorization and coverage fallback, International categorization, the
-sectioned headline index, Administration Win eligibility, and end-to-end
-supplemental link accounting.
-
-Never request, print, expose, or commit secrets. Do not push, open a pull
-request, or merge without the repository owner’s explicit approval.
+- Append a dated entry to `docs/progress.md` at the end of every work session
+  (what changed, tests run, what is next).
+- Until the move to `C:\newsroom`, stay inside this repository folder.

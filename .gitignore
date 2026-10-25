@@ -10,3 +10,6 @@ __pycache__/
 .chrome-qa/
 .runtime/
 _site/
+
+# local worktrees
+.claude/wt-*/
