@@ -65,5 +65,35 @@ class BatchingTests(unittest.TestCase):
         self.assertFalse(merged[2]["relevant"])  # irrelevant clusters are never folded in
 
 
+class DailyCutTests(unittest.TestCase):
+    def _clusters(self):
+        out = []
+        for index in range(60):
+            c = cluster(f"c{index}", f"Story {index}", f"a{index}", importance=3 + index % 7)
+            c["section"] = "Military UAS" if index % 2 else "UAS / Drones"
+            out.append(c)
+        return out
+
+    def test_daily_and_section_limits_apply_and_cuts_are_recorded(self) -> None:
+        clusters = news_engine.select_top_clusters(self._clusters(), set())
+        kept = [c for c in clusters if c["relevant"]]
+        self.assertLessEqual(len(kept), news_engine.DAILY_STORY_LIMIT)
+        for section in ("Military UAS", "UAS / Drones"):
+            self.assertLessEqual(sum(c["section"] == section for c in kept), news_engine.SECTION_STORY_LIMIT)
+        self.assertEqual(len(kept), 24)
+        self.assertGreaterEqual(min(c["importance"] for c in kept), 3)
+        cut = [c for c in clusters if not c["relevant"]]
+        self.assertTrue(all("daily cut" in c["exclude_reason"] for c in cut))
+
+    def test_low_importance_is_cut_and_required_articles_are_never_cut(self) -> None:
+        low = cluster("low", "Minor event", "a-low", importance=1)
+        low["section"] = "Military UAS"
+        vetted = cluster("vet", "Editor pick", "a-vet", importance=1)
+        vetted["section"] = "Military UAS"
+        clusters = news_engine.select_top_clusters([low, vetted], {"a-vet"})
+        self.assertFalse(clusters[0]["relevant"])
+        self.assertTrue(clusters[1]["relevant"])
+
+
 if __name__ == "__main__":
     unittest.main()

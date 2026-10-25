@@ -1988,6 +1988,10 @@ def request_structured_output(
 
 ANALYSIS_BATCH_SIZE = 35
 ANALYSIS_BATCH_OUTPUT_TOKENS = 12000
+# Interim deterministic daily cut (replaced by explicit significance scoring in Phase 2).
+DAILY_STORY_LIMIT = 45
+SECTION_STORY_LIMIT = 12
+MINIMUM_IMPORTANCE = 3
 
 
 def analyze_articles(
@@ -2034,8 +2038,41 @@ def analyze_articles(
     usage = combine_usage(*usages)
     usage["_retries"] = sum(int(u.get("_retries", 0) or 0) for u in usages)
     cost = None if any(c is None for c in costs) else sum(costs)  # type: ignore[arg-type]
-    merged = {"what_to_watch": what_to_watch, "clusters": merge_duplicate_clusters(clusters)}
+    required_ids = {a["id"] for a in articles if a.get("required_include", False)}
+    selected = select_top_clusters(merge_duplicate_clusters(clusters), required_ids)
+    merged = {"what_to_watch": what_to_watch, "clusters": selected}
     return merged, usage, cost
+
+
+def select_top_clusters(
+    clusters: list[dict[str, Any]],
+    protected_article_ids: set[str],
+) -> list[dict[str, Any]]:
+    """Keep the day's most important relevant clusters; mark the rest excluded (never silent).
+
+    Editor-vetted (required) articles are never cut. Ties keep the model's order.
+    """
+    ranked = sorted(
+        (c for c in clusters if c.get("relevant")),
+        key=lambda c: -int(c.get("importance", 0) or 0),
+    )
+    per_section: dict[str, int] = {}
+    kept_ids: set[int] = set()
+    for cluster in ranked:
+        protected = bool(protected_article_ids & set(cluster.get("article_ids", [])))
+        section = str(cluster.get("section", ""))
+        if not protected:
+            if len(kept_ids) >= DAILY_STORY_LIMIT or per_section.get(section, 0) >= SECTION_STORY_LIMIT:
+                continue
+            if int(cluster.get("importance", 0) or 0) < MINIMUM_IMPORTANCE:
+                continue
+        kept_ids.add(id(cluster))
+        per_section[section] = per_section.get(section, 0) + 1
+    for cluster in clusters:
+        if cluster.get("relevant") and id(cluster) not in kept_ids:
+            cluster["relevant"] = False
+            cluster["exclude_reason"] = "Below the daily cut (importance rank or section limit)."
+    return clusters
 
 
 def merge_duplicate_clusters(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
