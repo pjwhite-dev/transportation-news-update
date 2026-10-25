@@ -327,7 +327,7 @@ class RegulatoryTrackerRenderingTests(unittest.TestCase):
                     rendered.casefold().index("what to watch"),
                 )
                 self.assertIn("Closed February 11, 2026", rendered)
-                self.assertIn("Pending final rule", rendered)
+                self.assertIn("pending final rule", rendered)
 
     def test_tracker_is_omitted_from_executive_versions(self) -> None:
         current = briefing()

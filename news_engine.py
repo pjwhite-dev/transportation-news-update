@@ -2399,6 +2399,10 @@ facts.
 - The regulatory tracker is background context. Do not elevate a standing
   deadline into daily news unless the same development appears in final_stories.
 """.strip()
+    developer += (
+        "\n- Reply with the Executive Summary paragraph as plain text only: "
+        "no JSON, headings, or preamble."
+    )
     user = "Write the final Executive Summary from this compiled briefing:\n" + json.dumps(
         compiled, ensure_ascii=False
     )
@@ -2412,7 +2416,7 @@ def sanitize_compiled_executive_summary(
     value: str,
     sections: dict[str, list[dict[str, Any]]],
 ) -> str:
-    """Keep final summary copy public-facing and derive a factual fallback."""
+    """Keep final summary copy public-facing; raise rather than fall back to a template."""
     cleaned_value = sanitize_executive_summary_citations(value)
     sentences = re.split(r"(?<=[.!?])\s+", cleaned_value)
     public_sentences = [
@@ -2423,25 +2427,12 @@ def sanitize_compiled_executive_summary(
     if public_sentences:
         return clean_spaces(" ".join(public_sentences))
 
-    titles: list[str] = []
-    seen: set[str] = set()
-    for section in SECTION_ORDER:
-        for item in sections.get(section, []):
-            title = clean_spaces(item.get("title", ""))
-            if title and title.casefold() not in seen:
-                seen.add(title.casefold())
-                titles.append(title)
-            if len(titles) == 3:
-                break
-        if len(titles) == 3:
-            break
-    if not titles:
-        return "Today's briefing covers the most consequential developments in advanced transportation."
-    if len(titles) == 1:
-        return f"The leading development is {titles[0]}."
-    if len(titles) == 2:
-        return f"Key developments include {titles[0]} and {titles[1]}."
-    return f"Key developments include {titles[0]}; {titles[1]}; and {titles[2]}."
+    # Never substitute template copy: an edition without model-written prose
+    # must fail so the run is retried or alerts the owner (rebuild plan 6.0.4).
+    raise ValueError(
+        "The Executive Summary contains no public-facing sentences; "
+        "refusing to substitute template text."
+    )
 
 
 def generate_final_executive_summary(
@@ -2454,7 +2445,8 @@ def generate_final_executive_summary(
     window_end: datetime,
     provider: AIProvider | None = None,
 ) -> tuple[str, dict[str, Any], float | None]:
-    result, usage, cost = request_structured_output(
+    selected = provider or OpenAIProvider(api_key=api_key, model=model)
+    generation = selected.generate_text(
         executive_summary_messages(
             sections,
             what_to_watch,
@@ -2462,19 +2454,14 @@ def generate_final_executive_summary(
             window_start,
             window_end,
         ),
-        api_key,
-        model,
-        "transportation_news_executive_summary",
-        executive_summary_schema(),
-        1200,
-        provider,
+        max_output_tokens=1200,
     )
+    usage = dict(generation.usage)
+    usage["_retries"] = generation.retries
     return (
-        sanitize_compiled_executive_summary(
-            result.get("executive_summary", ""), sections
-        ),
+        sanitize_compiled_executive_summary(generation.text, sections),
         usage,
-        cost,
+        generation.estimated_cost,
     )
 
 
@@ -2630,6 +2617,11 @@ def generate_briefing_from_records(
         "window_end": end.isoformat(),
         "model": model,
         "ai_provider": provider.name if provider else "openai",
+        "provenance": {
+            "story_analysis": {"provider": provider.name if provider else "openai", "model": model},
+            "executive_summary": {"provider": provider.name if provider else "openai", "model": model},
+            "fallback_text_used": False,
+        },
         "model_retries": int(analysis_usage.get("_retries", 0) or 0)
         + int(summary_usage.get("_retries", 0) or 0),
         "usage": usage,

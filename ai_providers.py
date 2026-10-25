@@ -25,6 +25,14 @@ class StructuredGeneration:
     retries: int = 0
 
 
+@dataclass(frozen=True)
+class TextGeneration:
+    text: str
+    usage: dict[str, int]
+    estimated_cost: float | None
+    retries: int = 0
+
+
 class AIProvider(Protocol):
     name: str
     model: str
@@ -37,6 +45,13 @@ class AIProvider(Protocol):
         schema: dict[str, Any],
         max_output_tokens: int,
     ) -> StructuredGeneration: ...
+
+    def generate_text(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        max_output_tokens: int,
+    ) -> TextGeneration: ...
 
     def health_check(self) -> dict[str, Any]: ...
 
@@ -80,6 +95,7 @@ class OllamaProvider:
         base_url: str = DEFAULT_OLLAMA_BASE_URL,
         model: str = DEFAULT_OLLAMA_MODEL,
         timeout_seconds: int = 600,
+        stall_timeout_seconds: int = 120,
         num_ctx: int = 32768,
         temperature: float = 0.1,
         num_predict: int | None = None,
@@ -87,6 +103,7 @@ class OllamaProvider:
         session: requests.Session | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
+        self.stall_timeout_seconds = stall_timeout_seconds
         self.model = model.strip()
         self.timeout_seconds = timeout_seconds
         self.num_ctx = num_ctx
@@ -107,6 +124,80 @@ class OllamaProvider:
             for item in messages
         ]
 
+    def _stream_chat(self, payload: dict[str, Any]) -> tuple[str, dict[str, int]]:
+        """Stream /api/chat and fail when no data arrives for the stall timeout.
+
+        The read timeout of a streaming request is the longest allowed gap between
+        chunks, so a hung model fails after ``stall_timeout_seconds`` of silence
+        rather than after a fixed wall-clock budget.
+        """
+        response = self.session.post(
+            f"{self.base_url}/api/chat",
+            json={**payload, "stream": True},
+            timeout=(10, self.stall_timeout_seconds),
+            stream=True,
+        )
+        if response.status_code >= 400:
+            detail = _clean_error(response.text)
+            if response.status_code not in TRANSIENT_STATUS_CODES:
+                raise RuntimeError(f"Ollama returned HTTP {response.status_code}: {detail}")
+            raise requests.HTTPError(f"HTTP {response.status_code}: {detail}")
+        parts: list[str] = []
+        usage = {"input_tokens": 0, "output_tokens": 0}
+        finished = False
+        for line in response.iter_lines():
+            if not line:
+                continue
+            chunk = json.loads(line)
+            if chunk.get("error"):
+                raise requests.HTTPError(_clean_error(str(chunk["error"])))
+            parts.append(str((chunk.get("message") or {}).get("content", "")))
+            if chunk.get("done"):
+                finished = True
+                usage["input_tokens"] = int(chunk.get("prompt_eval_count", 0) or 0)
+                usage["output_tokens"] = int(chunk.get("eval_count", 0) or 0)
+        if not finished:
+            raise requests.ConnectionError("Ollama stream ended before completion.")
+        usage["total_tokens"] = usage["input_tokens"] + usage["output_tokens"]
+        return "".join(parts).strip(), usage
+
+    def generate_text(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        max_output_tokens: int,
+    ) -> TextGeneration:
+        """Free-text generation for prose; no schema constraint."""
+        request_messages = self._messages(messages)
+        errors: list[str] = []
+        for attempt in range(self.max_attempts):
+            payload = {
+                "model": self.model,
+                "messages": request_messages,
+                "think": False,
+                "options": {
+                    "temperature": self.temperature,
+                    "num_ctx": self.num_ctx,
+                    "num_predict": self.num_predict or max_output_tokens,
+                },
+            }
+            try:
+                text, usage = self._stream_chat(payload)
+                if not text:
+                    raise ValueError("Ollama returned no text.")
+                return TextGeneration(text, usage, 0.0, attempt)
+            except RuntimeError:
+                raise
+            except (requests.RequestException, ValueError) as exc:
+                errors.append(_clean_error(str(exc)))
+                if attempt + 1 >= self.max_attempts:
+                    break
+                time.sleep(min(2 ** attempt, 4) + random.uniform(0.05, 0.25))
+        raise RuntimeError(
+            f"Ollama text generation failed after {self.max_attempts} attempts: "
+            + " | ".join(errors[-self.max_attempts :])
+        )
+
     def generate_structured(
         self,
         messages: list[dict[str, str]],
@@ -121,7 +212,6 @@ class OllamaProvider:
             payload = {
                 "model": self.model,
                 "messages": request_messages,
-                "stream": False,
                 "think": False,
                 "format": schema,
                 "options": {
@@ -131,28 +221,10 @@ class OllamaProvider:
                 },
             }
             try:
-                response = self.session.post(
-                    f"{self.base_url}/api/chat",
-                    json=payload,
-                    timeout=self.timeout_seconds,
-                )
-                if response.status_code >= 400:
-                    detail = _clean_error(response.text)
-                    if response.status_code not in TRANSIENT_STATUS_CODES:
-                        raise RuntimeError(
-                            f"Ollama returned HTTP {response.status_code}: {detail}"
-                        )
-                    raise requests.HTTPError(f"HTTP {response.status_code}: {detail}")
-                data = response.json()
-                content = str((data.get("message") or {}).get("content", "")).strip()
+                content, usage = self._stream_chat(payload)
                 if not content:
                     raise ValueError("Ollama returned no structured content.")
                 value = _validate_payload(json.loads(content), schema)
-                usage = {
-                    "input_tokens": int(data.get("prompt_eval_count", 0) or 0),
-                    "output_tokens": int(data.get("eval_count", 0) or 0),
-                }
-                usage["total_tokens"] = usage["input_tokens"] + usage["output_tokens"]
                 return StructuredGeneration(value, usage, 0.0, attempt)
             except RuntimeError:
                 raise
@@ -328,6 +400,53 @@ class OpenAIProvider:
             + " | ".join(errors[-self.max_attempts :])
         )
 
+    def generate_text(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        max_output_tokens: int,
+    ) -> TextGeneration:
+        payload = {
+            "model": self.model,
+            "input": messages,
+            "reasoning": {"effort": "none"},
+            "max_output_tokens": max_output_tokens,
+            "store": False,
+        }
+        errors: list[str] = []
+        for attempt in range(self.max_attempts):
+            try:
+                response = self.session.post(
+                    OPENAI_RESPONSES_ENDPOINT,
+                    headers={
+                        "Authorization": f"Bearer {self.api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                    timeout=self.timeout_seconds,
+                )
+                if response.status_code >= 400:
+                    detail = _clean_error(response.text)
+                    if response.status_code not in TRANSIENT_STATUS_CODES:
+                        raise RuntimeError(
+                            f"OpenAI API returned HTTP {response.status_code}: {detail}"
+                        )
+                    raise requests.HTTPError(f"HTTP {response.status_code}: {detail}")
+                data = response.json()
+                usage = data.get("usage") or {}
+                return TextGeneration(self._text(data), usage, self._cost(usage), attempt)
+            except RuntimeError:
+                raise
+            except (requests.RequestException, ValueError) as exc:
+                errors.append(_clean_error(str(exc)))
+                if attempt + 1 >= self.max_attempts:
+                    break
+                time.sleep(min(2 ** attempt, 8) + random.uniform(0.1, 0.5))
+        raise RuntimeError(
+            f"OpenAI text generation failed after {self.max_attempts} attempts: "
+            + " | ".join(errors[-self.max_attempts :])
+        )
+
     def health_check(self) -> dict[str, Any]:
         schema = {
             "type": "object",
@@ -371,6 +490,18 @@ class FallbackProvider:
                     f"also failed ({fallback_error})."
                 ) from fallback_error
 
+    def generate_text(self, *args: Any, **kwargs: Any) -> TextGeneration:
+        try:
+            return self.primary.generate_text(*args, **kwargs)
+        except RuntimeError as primary_error:
+            try:
+                return self.fallback.generate_text(*args, **kwargs)
+            except RuntimeError as fallback_error:
+                raise RuntimeError(
+                    f"Ollama failed ({primary_error}); explicitly enabled OpenAI fallback "
+                    f"also failed ({fallback_error})."
+                ) from fallback_error
+
     def health_check(self) -> dict[str, Any]:
         return self.primary.health_check()
 
@@ -385,6 +516,7 @@ def provider_from_env(environ: dict[str, str] | None = None) -> AIProvider:
             base_url=env.get("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE_URL),
             model=env.get("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL),
             timeout_seconds=_positive_int(env.get("OLLAMA_TIMEOUT_SECONDS"), 600),
+            stall_timeout_seconds=_positive_int(env.get("OLLAMA_STALL_TIMEOUT_SECONDS"), 120),
             num_ctx=_positive_int(env.get("OLLAMA_NUM_CTX"), 32768),
             temperature=_float(env.get("OLLAMA_TEMPERATURE"), 0.1),
             num_predict=(

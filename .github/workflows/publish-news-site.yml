@@ -11,6 +11,8 @@ on:
       - "public_site.py"
       - "data/archive/**"
       - "data/latest_briefing.json"
+      - "validation_gates.py"
+      - "tracker/**"
       - ".github/workflows/publish-news-site.yml"
 
 permissions:
@@ -45,6 +47,15 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Run gate and tracker regression tests
+        run: >-
+          python -m unittest tests.test_validation_gates
+          tests.test_regulatory_tracker tests.test_ai_providers tests.test_url_resolver
+          tests.test_alerts
+
+      - name: Re-validate the edition (hard gates)
+        run: python automated_briefing.py --validate-only data/latest_briefing.json
 
       - name: Build the public news archive
         run: python public_site.py --output _site

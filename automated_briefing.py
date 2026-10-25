@@ -6,7 +6,7 @@ import binascii
 import json
 import os
 import time
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +29,9 @@ from news_engine import (
     story_summary_sentence_is_public,
 )
 from publication import briefing_date, briefing_payload
+from tracker.core import refresh as refresh_tracker
+from url_resolver import resolve_articles
+from validation_gates import check_url_status, failing_checks, run_gates
 from supplemental_email import (
     extract_supplemental_items,
     headline_from_url_slug,
@@ -168,6 +171,15 @@ def build_briefing(
     except (KeyError, ValueError) as exc:
         raise ValueError("The latest raw feed has no valid coverage end time.") from exc
 
+    # Google News wrappers are not publisher links. Resolve them, and drop any
+    # candidate that cannot be resolved rather than ever publishing a wrapper.
+    link_stats = resolve_articles(
+        raw_feed.get("articles", []), root / ".runtime" / "url_cache.json"
+    )
+    raw_feed["articles"] = [
+        item for item in raw_feed.get("articles", []) if not item.get("url_unresolved")
+    ]
+
     supplemental_records = extract_supplemental_items(
         supplemental_text,
         fetch_metadata=fetch_metadata,
@@ -181,10 +193,22 @@ def build_briefing(
         previous_coverage=previous,
         provider=selected,
     )
+    briefing["link_resolution"] = link_stats
     return normalize_reader_features(briefing)
 
 
-def validate_complete_briefing(briefing: dict[str, Any]) -> dict[str, Any]:
+def validate_complete_briefing(
+    briefing: dict[str, Any],
+    *,
+    today: date | None = None,
+    check_links: bool = False,
+    previous_cutoff: datetime | None = None,
+) -> dict[str, Any]:
+    """Run the editorial checks and the Section 7.3 hard gates; raise if any fail.
+
+    The result carries ``validation_report`` (each check, its result and evidence).
+    ``validation_status`` is kept only as a summary of that report.
+    """
     briefing = normalize_reader_features(briefing)
     errors: list[str] = []
     sections = briefing["sections"]
@@ -221,6 +245,14 @@ def validate_complete_briefing(briefing: dict[str, Any]) -> dict[str, Any]:
         errors.append("What to Watch is missing or empty.")
     elif any(not story_summary_sentence_is_public(str(item)) for item in watch_items):
         errors.append("What to Watch contains internal editorial language.")
+    report = run_gates(
+        briefing,
+        today=today,
+        previous_cutoff=previous_cutoff,
+        fetch_status=check_url_status if check_links else None,
+    )
+    errors.extend(failing_checks(report))
+    briefing["validation_report"] = report
     if errors:
         raise ValueError("Complete briefing validation failed:\n- " + "\n- ".join(errors))
     briefing["validation_status"] = "passed"
@@ -254,10 +286,24 @@ def main() -> None:
     parser.add_argument("--health-check", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--validate-only", type=Path, metavar="BRIEFING_JSON")
+    parser.add_argument(
+        "--require-today",
+        action="store_true",
+        help="With --validate-only: also require the edition date to be today in ET.",
+    )
+    parser.add_argument(
+        "--skip-link-check",
+        action="store_true",
+        help="Skip live HTTP link checks (offline use only; never in production).",
+    )
     args = parser.parse_args()
 
     if args.validate_only:
-        briefing = validate_complete_briefing(load_json(args.validate_only))
+        briefing = validate_complete_briefing(
+            load_json(args.validate_only),
+            today=datetime.now(EASTERN).date() if args.require_today else None,
+            check_links=not args.skip_link_check,
+        )
         print(
             json.dumps(
                 {
@@ -287,6 +333,9 @@ def main() -> None:
 
     root = args.root.resolve()
     started = time.monotonic()
+    # Refresh the official-source ledger first; a source outage is recorded and the
+    # tracker gate reports any verification that is stale or missing.
+    tracker_refresh = refresh_tracker()
     briefing = build_briefing(
         root,
         raw_file=args.raw_file,
@@ -294,7 +343,11 @@ def main() -> None:
         fetch_metadata=not args.skip_metadata_fetch,
         provider=provider,
     )
-    briefing = validate_complete_briefing(briefing)
+    briefing = validate_complete_briefing(
+        briefing,
+        today=datetime.now(EASTERN).date(),
+        check_links=not args.skip_link_check,
+    )
     if args.supplemental_file and int(briefing.get("supplemental_count", 0) or 0) == 0:
         raise ValueError(
             "The supplied email yielded no supplemental article links; "
@@ -328,6 +381,7 @@ def main() -> None:
         "model_retries": briefing.get("model_retries", 0),
         "total_build_seconds": round(time.monotonic() - started, 2),
         "validation_status": briefing.get("validation_status"),
+        "tracker_refresh_errors": tracker_refresh["errors"],
         "saved": not args.dry_run,
     }
     print(json.dumps(report, indent=2))

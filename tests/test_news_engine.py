@@ -1114,22 +1114,18 @@ class SupplementalGuardrailTests(unittest.TestCase):
             "advancing domestic commercialization of UAS technologies at scale",
         )
 
-    def test_executive_summary_has_factual_fallback_if_all_copy_is_internal(
+    def test_executive_summary_fails_instead_of_using_template_text_if_all_copy_is_internal(
         self,
     ) -> None:
         sections = {section: [] for section in news_engine.SECTION_ORDER}
         sections["Top Developments"] = [
             {"title": "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles"}
         ]
-        summary = news_engine.sanitize_compiled_executive_summary(
-            "The supplemental email satisfied link accounting.",
-            sections,
-        )
-
-        summary = summary.casefold()
-        self.assertIn("nhtsa modernizes fmvss 108", summary)
-        for marker in news_engine.EXECUTIVE_SUMMARY_PROCESS_MARKERS:
-            self.assertNotIn(marker, summary)
+        with self.assertRaisesRegex(ValueError, "refusing to substitute template text"):
+            news_engine.sanitize_compiled_executive_summary(
+                "The supplemental email satisfied link accounting.",
+                sections,
+            )
 
     @patch("news_engine.generate_final_executive_summary")
     @patch("news_engine.analyze_articles")

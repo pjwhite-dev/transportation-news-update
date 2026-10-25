@@ -1,0 +1,65 @@
+# Watch list for the Regulatory Deadline Tracker (rebuild plan 7.2).
+# Seeded from data/archive/2026-10-20.json, which had all ten entries.
+# `required: true` entries must be present, with an official link, in every edition.
+# `agenda_source` is the Unified Agenda page; it is a projection, never a status.
+rulemakings:
+  - rin: 2120-AL82
+    id: bvlos-part-108
+    agency: FAA
+    action: Routine BVLOS drone operations / Part 108
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL82
+  - rin: 1652-AA80
+    id: tsa-bvlos-security
+    agency: TSA
+    action: BVLOS operator security requirements
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=1652-AA80&pubId=202510
+  - rin: 2120-AL33
+    id: section-2209-uafr
+    agency: FAA
+    action: Section 2209 fixed-site UAS flight restrictions / Part 74
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL33
+  - rin: 2120-AM15
+    id: supersonic-overland-flight
+    agency: FAA
+    action: Civil supersonic overland flight / interim noise standard
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AM15
+  - rin: 2127-AM70
+    id: fmvss-108-lighting-ads
+    agency: NHTSA
+    action: FMVSS No. 108 lighting for ADS vehicles without manual controls
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM70&pubId=202510
+  - rin: 2127-AM71
+    id: fmvss-103-104-visibility-ads
+    agency: NHTSA
+    action: FMVSS Nos. 103 and 104 (windshield defrosting and wiping) for ADS vehicles
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM71&pubId=202510
+  - rin: 2127-AM72
+    id: fmvss-102-transmission-ads
+    agency: NHTSA
+    action: FMVSS No. 102 (transmission control) for ADS vehicles without manual controls
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM72&pubId=202510
+  - rin: 2127-AN00
+    id: fmvss-135-braking-ads
+    agency: NHTSA
+    action: FMVSS No. 135 (braking) for ADS vehicles without manual controls
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AN00&pubId=202510
+  - rin: 2127-AM57
+    id: part-555-temporary-exemptions
+    agency: NHTSA
+    action: Temporary exemption from motor vehicle safety and bumper standards (Part 555)
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM57&pubId=202510
+  - rin: 2126-AC17
+    id: fmcsa-ads-cmv
+    agency: FMCSA
+    action: Operation of ADS-equipped commercial motor vehicles
+    required: true
+    agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2126-AC17&pubId=202510

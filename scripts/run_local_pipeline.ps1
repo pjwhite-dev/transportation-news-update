@@ -49,12 +49,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Briefing generation or validation failed." }
     if ($DryRun) { return }
 
-    & $python automated_briefing.py --validate-only data/latest_briefing.json
+    & $python automated_briefing.py --validate-only data/latest_briefing.json --require-today
     if ($LASTEXITCODE -ne 0) { throw "Publication gate failed." }
     & $python public_site.py --output _site
     if ($LASTEXITCODE -ne 0) { throw "Static site build failed." }
 
-    git add -- data/latest_raw_news.json data/raw_archive data/latest_briefing.json data/archive
+    git add -- data/latest_raw_news.json data/raw_archive data/latest_briefing.json data/archive tracker/events.jsonl tracker/verifications.jsonl
     if ($LASTEXITCODE -ne 0) { throw "git add failed." }
     git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) { Write-Output "No publication changes."; return }
@@ -92,11 +92,20 @@ try {
     if ($deploymentStatus -ne "verified") {
         throw "Git push succeeded at $commitSha, but the live deployment was not verified within five minutes."
     }
+    & $python alerts.py ping edition-verified
+    & $python alerts.py quiet "Edition $edition published and verified live."
     [ordered]@{
         git_commit_sha = $commitSha
         deployment_status = $deploymentStatus
         live_url = "https://news.peterjwhite.org"
     } | ConvertTo-Json
+}
+catch {
+    # No silent failures: every failed or incomplete run alerts the owner directly.
+    $failure = "Edition run FAILED: $($_.Exception.Message)"
+    & $python alerts.py critical $failure
+    & $python alerts.py ping edition-verified --fail
+    throw
 }
 finally {
     $runtimeRoot = Join-Path $repoRoot ".runtime"

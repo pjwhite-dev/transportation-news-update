@@ -36,7 +36,7 @@ jobs:
       - name: Collect daily raw news (weekend through Monday)
         run: python daily_update.py
 
-      - name: Commit the raw feed safely
+      - name: Commit the raw feed to the raw-feed branch (never main)
         shell: bash
         run: |
           set -euo pipefail
@@ -44,6 +44,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # Only the local publisher writes to main. The raw feed lives on its own
+          # branch so a rejected push can never block an edition (rebuild plan 4.10).
           rm -rf /tmp/generated-raw-news
           mkdir -p /tmp/generated-raw-news/raw_archive
           cp data/latest_raw_news.json /tmp/generated-raw-news/latest_raw_news.json
@@ -53,8 +55,12 @@ jobs:
 
           for attempt in 1 2 3 4; do
             echo "Save attempt ${attempt}..."
-            git fetch origin main
-            git reset --hard origin/main
+            if git ls-remote --exit-code --heads origin raw-feed >/dev/null 2>&1; then
+              git fetch origin raw-feed
+              git checkout -B raw-feed origin/raw-feed
+            else
+              git checkout -B raw-feed origin/main
+            fi
 
             mkdir -p data/raw_archive
             cp /tmp/generated-raw-news/latest_raw_news.json data/latest_raw_news.json
@@ -69,12 +75,12 @@ jobs:
 
             git commit -m "Daily raw news collection $(date -u +%Y-%m-%d)"
 
-            if git push origin HEAD:main; then
-              echo "Raw feed committed successfully."
+            if git push origin raw-feed; then
+              echo "Raw feed committed to raw-feed."
               exit 0
             fi
 
-            echo "Main changed during the push; retrying."
+            echo "raw-feed changed during the push; retrying."
             sleep $((attempt * 2))
           done
 
