@@ -16,6 +16,16 @@ if (-not $env:OLLAMA_BASE_URL) { $env:OLLAMA_BASE_URL = "http://127.0.0.1:11434"
 if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.6:27b-q4_K_M" }
 if (-not $env:OPENAI_FALLBACK_ENABLED) { $env:OPENAI_FALLBACK_ENABLED = "false" }
 
+New-Item -ItemType Directory -Force -Path (Join-Path $repoRoot ".runtime") | Out-Null
+try {
+    # Never run two editions at once (newsroom-edition and newsroom-ensure can overlap).
+    $editionLock = [IO.File]::Open((Join-Path $repoRoot ".runtime\edition.lock"), "OpenOrCreate", "ReadWrite", "None")
+}
+catch {
+    Write-Output "Another edition run is active; exiting."
+    return
+}
+
 Push-Location $repoRoot
 $supplementalPath = $null
 try {
@@ -117,4 +127,5 @@ finally {
         Remove-Item -LiteralPath $supplementalPath -Force
     }
     Pop-Location
+    if ($editionLock) { $editionLock.Dispose() }
 }
