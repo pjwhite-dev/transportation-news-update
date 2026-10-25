@@ -242,6 +242,24 @@ class PruneTests(unittest.TestCase):
         self.assertNotIn("links", failed_checks(report))
 
 
+class NonArticleTests(unittest.TestCase):
+    def test_social_quote_topic_and_home_pages_are_removed(self) -> None:
+        briefing = good_briefing()
+        junk = [
+            "https://www.reddit.com/r/JobyAviation/new/",
+            "https://www.nytimes.com/topic/subject/predator-drones",
+            "https://sg.finance.yahoo.com/quote/EOS.AX/",
+            "https://example.com/",
+        ]
+        briefing["sections"]["Military"] = [
+            {"title": f"Junk {i} unrelated words {i}", "summary": "s", "url": url} for i, url in enumerate(junk)
+        ]
+        removed = gates.prune_unusable_stories(briefing, lambda url: 200)
+        self.assertEqual({r["url"] for r in removed}, set(junk))
+        self.assertEqual(briefing["sections"]["Military"], [])
+        self.assertFalse(gates.is_non_article_url("https://www.faa.gov/newsroom/part108"))
+
+
 class KnownBadEditionTests(unittest.TestCase):
     """Editions that actually shipped with fallback text must always fail."""
 

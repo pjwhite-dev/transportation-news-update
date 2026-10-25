@@ -348,6 +348,23 @@ def check_url_status(url: str, *, timeout: float = 15.0) -> int | None:
     return status
 
 
+NON_ARTICLE_HOSTS = frozenset(
+    {"reddit.com", "old.reddit.com", "facebook.com", "x.com", "twitter.com", "linkedin.com",
+     "youtube.com", "youtu.be", "instagram.com", "tiktok.com", "wikipedia.org", "en.wikipedia.org",
+     "finance.yahoo.com", "sg.finance.yahoo.com", "quote.cnbc.com"}
+)
+NON_ARTICLE_PATH = re.compile(r"/(?:topics?|tags?|category|categories|search|quote|hashtag)(?:/|$)", re.IGNORECASE)
+
+
+def is_non_article_url(url: str) -> bool:
+    """Social posts, stock-quote pages, and topic/tag index pages are not news articles."""
+    parsed = urlparse(url.strip())
+    host = parsed.netloc.casefold().removeprefix("www.")
+    if host in NON_ARTICLE_HOSTS or host.endswith(".reddit.com"):
+        return True
+    return bool(NON_ARTICLE_PATH.search(parsed.path)) or parsed.path.rstrip("/") == ""
+
+
 def prune_unusable_stories(
     briefing: dict[str, Any],
     fetch_status: Callable[[str], int | None],
@@ -371,6 +388,7 @@ def prune_unusable_stories(
             for story in items
             if str(story.get("url", "")).startswith(("http://", "https://"))
             and not is_aggregator_url(str(story.get("url", "")))
+            and not is_non_article_url(str(story.get("url", "")))
         }
     )
     with ThreadPoolExecutor(max_workers=8) as pool:
@@ -379,6 +397,10 @@ def prune_unusable_stories(
         kept = []
         for story in items:
             url = str(story.get("url", "")).strip()
+            if story.get("required_include") is not True and url.startswith(("http://", "https://")) and is_non_article_url(url):
+                removed.append({"section": section, "title": str(story.get("title", ""))[:120],
+                                "url": url, "reason": "not a news article (social, quote, topic or home page)"})
+                continue
             if url.startswith(("http://", "https://")) and not is_aggregator_url(url):
                 status = cache[url]
                 if status is None or status in (404, 410) or status >= 500:
