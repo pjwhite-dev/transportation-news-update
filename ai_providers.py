@@ -235,7 +235,9 @@ class OllamaProvider:
                 request_messages = [
                     *self._messages(messages),
                     {
-                        "role": "system",
+                        # Must be a user turn: Ollama chat templates reject a
+                        # conversation that does not end with a user message.
+                        "role": "user",
                         "content": (
                             "The previous response was invalid. Return only one JSON object "
                             f"that conforms exactly to the schema named {schema_name}. "

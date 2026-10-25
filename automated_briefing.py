@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import base64
 import binascii
 import json
@@ -31,7 +32,12 @@ from news_engine import (
 from publication import briefing_date, briefing_payload
 from tracker.core import refresh as refresh_tracker
 from url_resolver import resolve_articles
-from validation_gates import check_url_status, failing_checks, run_gates
+from validation_gates import (
+    check_url_status,
+    failing_checks,
+    prune_unusable_stories,
+    run_gates,
+)
 from supplemental_email import (
     extract_supplemental_items,
     headline_from_url_slug,
@@ -40,6 +46,9 @@ from supplemental_email import (
 
 
 MAX_SUPPLEMENTAL_EMAIL_BYTES = 2_000_000
+
+# One live check per URL per run, shared by the prune step and the hard gates.
+link_status = functools.lru_cache(maxsize=4096)(check_url_status)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -249,7 +258,7 @@ def validate_complete_briefing(
         briefing,
         today=today,
         previous_cutoff=previous_cutoff,
-        fetch_status=check_url_status if check_links else None,
+        fetch_status=link_status if check_links else None,
     )
     errors.extend(failing_checks(report))
     briefing["validation_report"] = report
@@ -343,6 +352,18 @@ def main() -> None:
         fetch_metadata=not args.skip_metadata_fetch,
         provider=provider,
     )
+    if args.dry_run:
+        # Keep the raw model output so gate/prune changes can be tested without regenerating.
+        scratch = root / ".runtime"
+        scratch.mkdir(exist_ok=True)
+        (scratch / "last_dry_run_unvalidated.json").write_text(
+            json.dumps(briefing, indent=1, ensure_ascii=False), encoding="utf-8"
+        )
+    # Deterministic cleanup first (dead links, headline-echo summaries); every removal is
+    # recorded in the edition, then the hard gates verify what remains.
+    briefing["pruned_items"] = (
+        [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
+    )
     briefing = validate_complete_briefing(
         briefing,
         today=datetime.now(EASTERN).date(),
@@ -381,6 +402,7 @@ def main() -> None:
         "model_retries": briefing.get("model_retries", 0),
         "total_build_seconds": round(time.monotonic() - started, 2),
         "validation_status": briefing.get("validation_status"),
+        "pruned_items": len(briefing.get("pruned_items", [])),
         "tracker_refresh_errors": tracker_refresh["errors"],
         "saved": not args.dry_run,
     }

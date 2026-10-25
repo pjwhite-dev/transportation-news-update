@@ -68,7 +68,8 @@ STOPWORDS = frozenset(
     "these those into over under after before about than then".split()
 )
 
-ANTI_BOT_STATUSES = frozenset({401, 403, 429, 451, 999})
+MIN_STORIES_WHEN_CANDIDATES = 15
+ANTI_BOT_STATUSES = frozenset({401, 402, 403, 429, 451, 999})  # page exists; publisher refuses bots or paywalls
 HEADLINE_ECHO_THRESHOLD = 0.80
 NEAR_DUPLICATE_TITLE_RATIO = 0.90
 SAME_EVENT_CONTAINMENT = 0.75
@@ -318,7 +319,7 @@ def gate_links(
                 status = fetch_status(url)
                 if status == 200:
                     continue
-                if status in ANTI_BOT_STATUSES and not is_official_url(url):
+                if status in ANTI_BOT_STATUSES:
                     # The page exists but the publisher refuses automated requests.
                     warnings.append(f"{label} blocked automated check (HTTP {status}): {url[:90]}")
                 else:
@@ -327,17 +328,71 @@ def gate_links(
 
 
 def check_url_status(url: str, *, timeout: float = 15.0) -> int | None:
-    """Live HTTP status after redirects, or None when the host is unreachable."""
+    """Live HTTP status after redirects, or None when the host is unreachable.
+
+    One retry for network errors and 5xx so a transient blip does not condemn a link.
+    """
     import requests
 
     headers = {"User-Agent": "Mozilla/5.0 (compatible; AdvancedTransportationNewsBot/1.0)"}
-    try:
-        response = requests.get(url, headers=headers, timeout=timeout, stream=True, allow_redirects=True)
-        status = response.status_code
-        response.close()
-        return status
-    except requests.RequestException:
-        return None
+    status: int | None = None
+    for attempt in range(2):
+        try:
+            response = requests.get(url, headers=headers, timeout=timeout, stream=True, allow_redirects=True)
+            status = response.status_code
+            response.close()
+        except requests.RequestException:
+            status = None
+        if status is not None and status < 500:
+            return status
+    return status
+
+
+def prune_unusable_stories(
+    briefing: dict[str, Any],
+    fetch_status: Callable[[str], int | None],
+) -> list[dict[str, str]]:
+    """Deterministic pre-validation cleanup; every removal is recorded, none is silent.
+
+    - A story whose link is dead (404/410/5xx/unreachable) is removed.
+    - A summary that restates its headline is blanked (the headline stands alone).
+    The hard gates then re-verify what remains.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    removed: list[dict[str, str]] = []
+    sections = briefing.get("sections")
+    if not isinstance(sections, dict):
+        return removed
+    urls = sorted(
+        {
+            str(story.get("url", "")).strip()
+            for items in sections.values()
+            for story in items
+            if str(story.get("url", "")).startswith(("http://", "https://"))
+            and not is_aggregator_url(str(story.get("url", "")))
+        }
+    )
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        cache: dict[str, int | None] = dict(zip(urls, pool.map(fetch_status, urls)))
+    for section, items in sections.items():
+        kept = []
+        for story in items:
+            url = str(story.get("url", "")).strip()
+            if url.startswith(("http://", "https://")) and not is_aggregator_url(url):
+                status = cache[url]
+                if status is None or status in (404, 410) or status >= 500:
+                    removed.append({"section": section, "title": str(story.get("title", ""))[:120],
+                                    "url": url, "reason": f"dead link (HTTP {status})"})
+                    continue
+            summary = str(story.get("summary", ""))
+            if summary.strip() and headline_echo_ratio(str(story.get("title", "")), summary) > HEADLINE_ECHO_THRESHOLD:
+                story["summary"] = ""
+                removed.append({"section": section, "title": str(story.get("title", ""))[:120],
+                                "url": url, "reason": "summary restated headline; blanked"})
+            kept.append(story)
+        sections[section] = kept
+    return removed
 
 
 def gate_tracker(
@@ -403,6 +458,13 @@ def gate_schema(briefing: dict[str, Any]) -> GateResult:
         evidence.append("The edition has no stories.")
     if not briefing.get("what_to_watch"):
         evidence.append("What to Watch is empty.")
+    stories = sum(1 for _ in iter_stories(briefing))
+    candidates = int(briefing.get("candidate_count", 0) or 0)
+    if candidates >= 50 and stories < MIN_STORIES_WHEN_CANDIDATES:
+        evidence.append(
+            f"Only {stories} stories from {candidates} candidates (minimum {MIN_STORIES_WHEN_CANDIDATES}); "
+            "the model output is probably truncated or degraded."
+        )
     return GateResult("schema", not evidence, evidence)
 
 

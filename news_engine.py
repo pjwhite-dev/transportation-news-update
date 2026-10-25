@@ -1986,6 +1986,10 @@ def request_structured_output(
     return result.value, usage, result.estimated_cost
 
 
+ANALYSIS_BATCH_SIZE = 35
+ANALYSIS_BATCH_OUTPUT_TOKENS = 12000
+
+
 def analyze_articles(
     articles: list[dict[str, Any]],
     api_key: str,
@@ -1994,15 +1998,75 @@ def analyze_articles(
     window_end: datetime,
     provider: AIProvider | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], float | None]:
-    return request_structured_output(
-        prompt_messages(articles, window_start, window_end),
-        api_key,
-        model,
-        "transportation_news_analysis",
-        analysis_schema(),
-        20000,
-        provider,
-    )
+    """Analyze candidates in small batches.
+
+    One call over ~300 candidates needs a ~20K-token JSON answer; the model often stops
+    early or is truncated, which produced 4-7 story editions. Small batches keep each
+    answer short and reliable; same-event clusters are merged across batches afterwards.
+    """
+    batches = [
+        articles[start : start + ANALYSIS_BATCH_SIZE]
+        for start in range(0, len(articles), ANALYSIS_BATCH_SIZE)
+    ] or [[]]
+    clusters: list[dict[str, Any]] = []
+    what_to_watch: list[str] = []
+    usages: list[dict[str, Any]] = []
+    costs: list[float | None] = []
+    for index, batch in enumerate(batches):
+        result, usage, cost = request_structured_output(
+            prompt_messages(batch, window_start, window_end),
+            api_key,
+            model,
+            "transportation_news_analysis",
+            analysis_schema(),
+            ANALYSIS_BATCH_OUTPUT_TOKENS,
+            provider,
+        )
+        for cluster in result.get("clusters", []):
+            cluster = dict(cluster)
+            cluster["cluster_id"] = f"b{index}-{cluster.get('cluster_id', '')}"
+            clusters.append(cluster)
+        for item in result.get("what_to_watch", []):
+            if item and item.casefold() not in {w.casefold() for w in what_to_watch}:
+                what_to_watch.append(item)
+        usages.append(usage)
+        costs.append(cost)
+    usage = combine_usage(*usages)
+    usage["_retries"] = sum(int(u.get("_retries", 0) or 0) for u in usages)
+    cost = None if any(c is None for c in costs) else sum(costs)  # type: ignore[arg-type]
+    merged = {"what_to_watch": what_to_watch, "clusters": merge_duplicate_clusters(clusters)}
+    return merged, usage, cost
+
+
+def merge_duplicate_clusters(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Fold relevant clusters about the same event (near-identical titles) into the first one."""
+    from validation_gates import titles_are_near_identical
+
+    merged: list[dict[str, Any]] = []
+    for cluster in clusters:
+        title = str(cluster.get("canonical_title", ""))
+        target = next(
+            (
+                kept
+                for kept in merged
+                if kept.get("relevant")
+                and cluster.get("relevant")
+                and titles_are_near_identical(title, str(kept.get("canonical_title", "")))
+            ),
+            None,
+        )
+        if target is None:
+            merged.append(cluster)
+            continue
+        known = list(target.get("article_ids", []))
+        for article_id in cluster.get("article_ids", []) or [cluster.get("primary_article_id", "")]:
+            if article_id and article_id not in known:
+                known.append(article_id)
+        target["article_ids"] = known
+        target["importance"] = max(
+            int(target.get("importance", 0) or 0), int(cluster.get("importance", 0) or 0)
+        )
+    return merged
 
 
 def administration_win_is_eligible(raw: dict[str, Any]) -> bool:

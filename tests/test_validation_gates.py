@@ -200,6 +200,13 @@ class ProvenanceAndSchemaTests(unittest.TestCase):
         briefing["provenance"]["fallback_text_used"] = True
         self.assertIn("provenance", failed_checks(gates.run_gates(briefing, now=NOW)))
 
+    def test_thin_edition_from_many_candidates_fails(self) -> None:
+        briefing = good_briefing()
+        briefing["candidate_count"] = 295
+        self.assertIn("schema", failed_checks(gates.run_gates(briefing, now=NOW)))
+        briefing["candidate_count"] = 10
+        self.assertNotIn("schema", failed_checks(gates.run_gates(briefing, now=NOW)))
+
     def test_empty_sections_fail_schema(self) -> None:
         briefing = good_briefing()
         briefing["sections"] = {"UAS / Drones": []}
@@ -211,6 +218,28 @@ class ProvenanceAndSchemaTests(unittest.TestCase):
         self.assertIn("relevance", failed_checks(gates.run_gates(briefing, now=NOW)))
         report = gates.run_gates(good_briefing(), now=NOW, require_status_class=True)
         self.assertIn("relevance", failed_checks(report))
+
+
+class PruneTests(unittest.TestCase):
+    def test_dead_links_are_removed_and_echo_summaries_blanked_with_a_record(self) -> None:
+        briefing = good_briefing()
+        briefing["sections"]["UAS / Drones"][1]["url"] = "https://dead.example.com/a"
+        briefing["sections"]["Autonomous Vehicles"][0]["summary"] = "NHTSA grants Zoox exemption."
+        statuses = {"https://dead.example.com/a": 404}
+        removed = gates.prune_unusable_stories(briefing, lambda url: statuses.get(url, 200))
+        self.assertEqual({r["reason"] for r in removed}, {"dead link (HTTP 404)", "summary restated headline; blanked"})
+        self.assertEqual(len(briefing["sections"]["UAS / Drones"]), 1)
+        self.assertEqual(briefing["sections"]["Autonomous Vehicles"][0]["summary"], "")
+
+    def test_unreachable_and_5xx_are_removed_but_paywall_and_bot_blocks_stay(self) -> None:
+        briefing = good_briefing()
+        urls = ["https://a.example.com/1", "https://b.example.com/2"]
+        for story, url in zip(briefing["sections"]["UAS / Drones"], urls):
+            story["url"] = url
+        removed = gates.prune_unusable_stories(briefing, lambda url: None if url == urls[0] else 200)
+        self.assertEqual([r["url"] for r in removed], [urls[0]])
+        report = gates.run_gates(briefing, now=NOW, fetch_status=lambda url: 402 if url == urls[1] else 200)
+        self.assertNotIn("links", failed_checks(report))
 
 
 class KnownBadEditionTests(unittest.TestCase):
