@@ -39,7 +39,7 @@ def good_briefing() -> dict:
                 {
                     "title": "NHTSA grants Zoox exemption",
                     "summary": "Regulators approved a temporary exemption for 2,500 vehicles.",
-                    "url": "https://www.nhtsa.gov/zoox",
+                    "url": "https://www.nhtsa.gov/press-releases/zoox-exemption-granted",
                 }
             ],
         },
@@ -118,7 +118,7 @@ class DuplicateTests(unittest.TestCase):
             {
                 "title": "Regulators exempt Zoox robotaxi from steering rules",
                 "summary": "Different words entirely.",
-                "url": "https://www.nhtsa.gov/zoox/?utm_campaign=y",
+                "url": "https://www.nhtsa.gov/press-releases/zoox-exemption-granted/?utm_campaign=y",
             }
         )
         self.assertIn("duplicates", failed_checks(gates.run_gates(briefing, now=NOW)))
@@ -223,9 +223,9 @@ class ProvenanceAndSchemaTests(unittest.TestCase):
 class PruneTests(unittest.TestCase):
     def test_dead_links_are_removed_and_echo_summaries_blanked_with_a_record(self) -> None:
         briefing = good_briefing()
-        briefing["sections"]["UAS / Drones"][1]["url"] = "https://dead.example.com/a"
+        briefing["sections"]["UAS / Drones"][1]["url"] = "https://dead.example.com/news/story-one-dead"
         briefing["sections"]["Autonomous Vehicles"][0]["summary"] = "NHTSA grants Zoox exemption."
-        statuses = {"https://dead.example.com/a": 404}
+        statuses = {"https://dead.example.com/news/story-one-dead": 404}
         removed = gates.prune_unusable_stories(briefing, lambda url: statuses.get(url, 200))
         self.assertEqual({r["reason"] for r in removed}, {"dead link (HTTP 404)", "summary restated headline; blanked"})
         self.assertEqual(len(briefing["sections"]["UAS / Drones"]), 1)
@@ -233,7 +233,7 @@ class PruneTests(unittest.TestCase):
 
     def test_unreachable_and_5xx_are_removed_but_paywall_and_bot_blocks_stay(self) -> None:
         briefing = good_briefing()
-        urls = ["https://a.example.com/1", "https://b.example.com/2"]
+        urls = ["https://a.example.com/news/story-alpha-one", "https://b.example.com/news/story-beta-two"]
         for story, url in zip(briefing["sections"]["UAS / Drones"], urls):
             story["url"] = url
         removed = gates.prune_unusable_stories(briefing, lambda url: None if url == urls[0] else 200)

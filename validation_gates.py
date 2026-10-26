@@ -353,16 +353,85 @@ NON_ARTICLE_HOSTS = frozenset(
      "youtube.com", "youtu.be", "instagram.com", "tiktok.com", "wikipedia.org", "en.wikipedia.org",
      "finance.yahoo.com", "sg.finance.yahoo.com", "quote.cnbc.com"}
 )
-NON_ARTICLE_PATH = re.compile(r"/(?:topics?|tags?|category|categories|search|quote|hashtag)(?:/|$)", re.IGNORECASE)
+NON_ARTICLE_PATH = re.compile(r"/(?:topics?|tags?|category|categories|search|quote|hashtag|document-library|library)(?:/|$)", re.IGNORECASE)
+# A URL whose last path segment is one of these is a section/index page, not a story.
+INDEX_SEGMENTS = frozenset(
+    {"news", "newsroom", "press", "press-releases", "press_releases", "press-release", "press_release",
+     "media", "media-center", "media-room", "articles", "blog", "updates", "latest", "latest-news",
+     "headlines", "releases", "announcements", "home", "index", "index.html", "index.htm", "feed", "rss"}
+)
+# Titles that name a listing page or an SEO roundup instead of reporting an event.
+NON_ARTICLE_TITLE = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"^(?:press releases?|newsroom|latest news|headlines|media (?:center|room)|announcements)\b",
+        r"\bpress releases?\b(?:\s+and\s+announcements)?\s*[-|–—]",
+        r"\bnews\s+20\d\d\b",
+        r"\[20\d\d\]",
+        r"^(?:the\s+)?(?:top|best)\s+\d+\b",
+        r",\s*ranked$",
+        r"^tracking every\b",
+        r"[-|]\s*(?:reddit|youtube|facebook|linkedin|x \(formerly twitter\))\s*$",
+    )
+)
 
 
 def is_non_article_url(url: str) -> bool:
-    """Social posts, stock-quote pages, and topic/tag index pages are not news articles."""
+    """Social posts, quote pages, topic/index pages, year archives and home pages are not stories."""
     parsed = urlparse(url.strip())
     host = parsed.netloc.casefold().removeprefix("www.")
     if host in NON_ARTICLE_HOSTS or host.endswith(".reddit.com"):
         return True
-    return bool(NON_ARTICLE_PATH.search(parsed.path)) or parsed.path.rstrip("/") == ""
+    path = parsed.path.rstrip("/")
+    if not path or NON_ARTICLE_PATH.search(path + "/"):
+        return True
+    segments = [segment for segment in path.split("/") if segment]
+    last = segments[-1].casefold()
+    if last in INDEX_SEGMENTS:
+        return True
+    # Year or year/month archive pages (".../news/army-news/2026", ".../2026/10").
+    if re.fullmatch(r"(?:19|20)\d\d", last) or (
+        len(segments) >= 2 and re.fullmatch(r"(?:19|20)\d\d", segments[-2]) and re.fullmatch(r"\d{1,2}", last)
+    ):
+        return True
+    # One short, digit-free segment (".../futureflight") is a section front, not a slug.
+    # A query string with an id (".../index.cfm?id=76") marks an individual article.
+    if (
+        len(segments) == 1
+        and not re.search(r"\d", parsed.query)
+        and not re.search(r"\d", last)
+        and len(re.split(r"[-_]", last)) < 2
+    ):
+        return True
+    return False
+
+
+def is_non_article_title(title: str) -> bool:
+    text = " ".join(str(title or "").split())
+    return any(pattern.search(text) for pattern in NON_ARTICLE_TITLE)
+
+
+def is_non_article(title: str, url: str) -> bool:
+    return is_non_article_title(title) or is_non_article_url(url)
+
+
+def drop_non_articles(
+    articles: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Remove listing pages, social posts and SEO roundups from the candidate pool.
+
+    Editor-vetted (required) records are never dropped. Returns (kept, removed records).
+    """
+    kept: list[dict[str, Any]] = []
+    removed: list[dict[str, str]] = []
+    for article in articles:
+        if not article.get("required_include") and is_non_article(
+            str(article.get("title", "")), str(article.get("url", ""))
+        ):
+            removed.append({"title": str(article.get("title", ""))[:120], "url": str(article.get("url", ""))})
+        else:
+            kept.append(article)
+    return kept, removed
 
 
 def prune_unusable_stories(
@@ -388,7 +457,7 @@ def prune_unusable_stories(
             for story in items
             if str(story.get("url", "")).startswith(("http://", "https://"))
             and not is_aggregator_url(str(story.get("url", "")))
-            and not is_non_article_url(str(story.get("url", "")))
+            and not is_non_article(str(story.get("title", "")), str(story.get("url", "")))
         }
     )
     with ThreadPoolExecutor(max_workers=8) as pool:
@@ -397,9 +466,9 @@ def prune_unusable_stories(
         kept = []
         for story in items:
             url = str(story.get("url", "")).strip()
-            if story.get("required_include") is not True and url.startswith(("http://", "https://")) and is_non_article_url(url):
+            if story.get("required_include") is not True and url.startswith(("http://", "https://")) and is_non_article(str(story.get("title", "")), url):
                 removed.append({"section": section, "title": str(story.get("title", ""))[:120],
-                                "url": url, "reason": "not a news article (social, quote, topic or home page)"})
+                                "url": url, "reason": "not a news article (listing, social, quote, topic, home or roundup page)"})
                 continue
             if url.startswith(("http://", "https://")) and not is_aggregator_url(url):
                 status = cache[url]

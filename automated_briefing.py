@@ -34,6 +34,7 @@ from tracker.core import refresh as refresh_tracker
 from url_resolver import resolve_articles
 from validation_gates import (
     check_url_status,
+    drop_non_articles,
     failing_checks,
     prune_unusable_stories,
     run_gates,
@@ -188,6 +189,10 @@ def build_briefing(
     raw_feed["articles"] = [
         item for item in raw_feed.get("articles", []) if not item.get("url_unresolved")
     ]
+    # Listing pages, social posts and SEO roundups are not stories; drop them before
+    # the model spends tokens on them (the same filter runs again before the gates).
+    raw_feed["articles"], dropped = drop_non_articles(raw_feed["articles"])
+    link_stats["non_article_dropped"] = len(dropped)
 
     supplemental_records = extract_supplemental_items(
         supplemental_text,
