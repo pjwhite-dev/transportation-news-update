@@ -19,6 +19,13 @@ if (-not $nssm) { throw "NSSM not found. Install it with: winget install NSSM.NS
 $credential = Get-Credential -UserName "$env:USERDOMAIN\$env:USERNAME" -Message "Windows password for the newsroom services"
 $password = $credential.GetNetworkCredential().Password
 
+# Fail fast on a wrong password instead of installing services that cannot log on.
+Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+$machine = New-Object System.DirectoryServices.AccountManagement.PrincipalContext("Machine")
+if (-not $machine.ValidateCredentials($env:USERNAME, $credential.GetNetworkCredential().Password)) {
+    throw "Windows rejected that password for $env:USERNAME. With a Microsoft account use the Microsoft account password (not the PIN); if it was changed recently, sign out and in once with the new password first."
+}
+
 function Install-NssmService {
     param([string]$Name, [string]$Exe, [string]$Arguments, [string[]]$Environment)
     if (-not $PSCmdlet.ShouldProcess($Name, "Install/refresh NSSM service")) { return }
@@ -40,6 +47,9 @@ function Install-NssmService {
     & $nssm set $Name AppRotateFiles 1 | Out-Null
     if ($Environment) { & $nssm set $Name AppEnvironmentExtra @Environment | Out-Null }
     & $nssm start $Name | Out-Null
+    Start-Sleep -Seconds 3
+    $state = (Get-Service $Name).Status
+    if ($state -ne "Running") { throw "$Name is $state, not Running. Check Event Viewer > System > Service Control Manager." }
     Write-Output "Installed and started $Name"
 }
 

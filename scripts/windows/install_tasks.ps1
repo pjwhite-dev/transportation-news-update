@@ -11,6 +11,13 @@ $ErrorActionPreference = "Stop"
 $python = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 $credential = Get-Credential -UserName "$env:USERDOMAIN\$env:USERNAME" -Message "Windows password for the newsroom tasks"
 
+# Fail fast on a wrong password instead of installing services that cannot log on.
+Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+$machine = New-Object System.DirectoryServices.AccountManagement.PrincipalContext("Machine")
+if (-not $machine.ValidateCredentials($env:USERNAME, $credential.GetNetworkCredential().Password)) {
+    throw "Windows rejected that password for $env:USERNAME. With a Microsoft account use the Microsoft account password (not the PIN); if it was changed recently, sign out and in once with the new password first."
+}
+
 function New-NewsroomTask {
     param([string]$Name, [string]$Execute, [string]$Arguments, $Trigger)
     $action = New-ScheduledTaskAction -Execute $Execute -Argument $Arguments -WorkingDirectory $RepoRoot
