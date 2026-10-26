@@ -78,6 +78,13 @@ class SiteDesignTests(unittest.TestCase):
         self.assertNotIn("Transportation Daily", self.index)
         self.assertNotIn("Transportation Daily", (self.out / "email.html").read_text(encoding="utf-8"))
 
+    def test_every_edition_page_carries_an_exact_edition_id_marker(self) -> None:
+        self.assertIn('<meta name="edition-id" content="2026-10-26">', self.index)
+        old = (self.out / "archive" / "2026-10-23" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('<meta name="edition-id" content="2026-10-23">', old)
+        self.assertNotIn('content="2026-10-26"', old)
+        self.assertNotIn("edition-id", (self.out / "search" / "index.html").read_text(encoding="utf-8"))
+
     def test_hero_leads_with_the_top_story_without_the_publisher_tag(self) -> None:
         hero = re.search(r'<div class="wrap hero">.*?</h1>', self.index, re.S).group(0)
         self.assertIn("NHTSA proposes cyan lights for robotaxis</a>", hero)

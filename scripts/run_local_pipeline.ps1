@@ -95,10 +95,10 @@ try {
     for ($attempt = 1; $attempt -le 10; $attempt++) {
         Start-Sleep -Seconds 30
         try {
-            $response = Invoke-WebRequest -Uri "https://news.peterjwhite.org" -TimeoutSec 20 -UseBasicParsing
-            $hasEditionMarker =
-                $response.Content -match [regex]::Escape($edition) -or
-                $response.Content -match [regex]::Escape($editionDisplay)
+            # Exact marker only: free text such as "October 26, 2026" also appears on the previous
+            # edition (docket dates), which once reported a false "verified".
+            $response = Invoke-WebRequest -Uri ("https://news.peterjwhite.org/?cb=" + [guid]::NewGuid().ToString("N")) -TimeoutSec 20 -UseBasicParsing
+            $hasEditionMarker = $response.Content -match ('<meta name="edition-id" content="' + [regex]::Escape($edition) + '">')
             if ($response.StatusCode -eq 200 -and $hasEditionMarker) {
                 $deploymentStatus = "verified"
                 break

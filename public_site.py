@@ -902,6 +902,7 @@ def page_shell(
     show_copy: bool = False,
     hero: str = "",
     active: str = "",
+    edition_id: str = "",
     description: str = "Daily public-source advanced transportation headlines and a searchable archive of past editions.",
 ) -> str:
     copy_controls = ""
@@ -922,6 +923,7 @@ def page_shell(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{html.escape(description, quote=True)}">
   <title>{html.escape(title)}</title>
+  {f'<meta name="edition-id" content="{html.escape(edition_id, quote=True)}">' if edition_id else ''}
   <link rel="canonical" href="{SITE_URL}{canonical_path}">
   {FONT_LINKS}
   <link rel="stylesheet" href="{prefix}assets/site.css">
@@ -983,6 +985,7 @@ def edition_page(payload: dict[str, Any], day: date, archived: bool) -> str:
         show_copy=True,
         hero=hero_html(payload, day, eyebrow=eyebrow),
         active="" if archived else "latest",
+        edition_id=day.isoformat(),
     )
 
 
