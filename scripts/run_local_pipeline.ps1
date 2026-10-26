@@ -26,6 +26,11 @@ catch {
     return
 }
 
+# Keep a transcript of every run (scheduled tasks have no console); .runtime is git-ignored.
+$logDir = Join-Path $repoRoot ".runtime\logs"
+New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+try { Start-Transcript -Path (Join-Path $logDir ("edition-" + (Get-Date -Format "yyyy-MM-dd-HHmmss") + ".log")) | Out-Null } catch { }
+
 Push-Location $repoRoot
 $supplementalPath = $null
 try {
@@ -132,4 +137,5 @@ finally {
     }
     Pop-Location
     if ($editionLock) { $editionLock.Dispose() }
+    try { Stop-Transcript | Out-Null } catch { }
 }
