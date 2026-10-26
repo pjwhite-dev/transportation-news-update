@@ -13,6 +13,7 @@ on:
       - "data/archive/**"
       - "data/latest_briefing.json"
       - "validation_gates.py"
+      - "summary_chain.py"
       - "tracker/**"
       - ".github/workflows/publish-news-site.yml"
 
@@ -53,7 +54,7 @@ jobs:
         run: >-
           python -m unittest tests.test_validation_gates
           tests.test_regulatory_tracker tests.test_ai_providers tests.test_url_resolver
-          tests.test_alerts tests.test_site_design tests.test_non_article_filter
+          tests.test_alerts tests.test_site_design tests.test_non_article_filter tests.test_summary_chain
 
       - name: Re-validate the edition (hard gates)
         run: python automated_briefing.py --validate-only data/latest_briefing.json

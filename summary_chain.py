@@ -49,6 +49,7 @@ VERIFIER_SYSTEM = """You are a fact checker. You are given a FACT SHEET and a nu
 - "supported": every factual claim in the sentence is stated in the fact sheet (names, numbers, dates, actions) and the cited ids are stories that state it.
 - "unsupported": the sentence contains a claim, number, date, cause, consequence or interpretation that the fact sheet does not state (including conclusions such as what something signals or reflects).
 - "status_error": the facts are in the sheet but the sentence misstates what kind of action it was (for example calls a proposal, plan, test or announcement a completed rule, approval or operation).
+- "fragment": the sentence is not a complete, grammatical English sentence (for example it has no main verb, such as "Army to intercept unmanned aerial systems."), or it is cut off, or its subject is missing or unclear. Check this for every sentence, including ones whose facts are supported.
 Be strict. Respond with JSON only."""
 
 VERIFIER_SCHEMA = {
@@ -60,7 +61,7 @@ VERIFIER_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "n": {"type": "integer"},
-                    "verdict": {"type": "string", "enum": ["supported", "unsupported", "status_error"]},
+                    "verdict": {"type": "string", "enum": ["supported", "unsupported", "status_error", "fragment"]},
                     "note": {"type": "string"},
                 },
                 "required": ["n", "verdict", "note"],
@@ -193,6 +194,9 @@ def verify(verifier: AIProvider, sheet: list[dict[str, str]], rows: list[dict[st
         # A sentence the verifier did not answer is treated as unsupported.
         row["verdict"] = item["verdict"] if item else "unsupported"
         row["note"] = item["note"] if item else "not checked"
+        if len(row["plain"].split()) < 6 and row["verdict"] == "supported":
+            row["verdict"] = "fragment"
+            row["note"] = "too short to be a complete sentence"
         if not row["cited"]:
             row["verdict"] = "unsupported"
             row["note"] = (row["note"] + " | no valid citation").strip(" |")
@@ -217,7 +221,8 @@ def _by_paragraph(rows: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
 
 def _feedback(problems: list[dict[str, Any]]) -> str:
     lines = ["A fact checker flagged these sentences. Rewrite the summary without them, or restate them so "
-             "that they say only what the cited story states. Keep every other rule."]
+             "that they say only what the cited story states, as complete grammatical sentences with a subject and a verb. "
+             "Keep every other rule."]
     for row in problems:
         lines.append(f'- "{row["plain"]}" -> {row["verdict"]}: {row["note"]}')
     return "\n".join(lines)
@@ -255,7 +260,8 @@ def run_chain(
         add(verify(verifier, sheet, rows))
         problems = _problem_rows(rows)
         rounds.append({"attempt": attempt, "sentences": len(rows), "flagged": len(problems),
-                       "status_errors": sum(r["verdict"] == "status_error" for r in rows)})
+                       "status_errors": sum(r["verdict"] == "status_error" for r in rows),
+                       "fragments": sum(r["verdict"] == "fragment" for r in rows)})
         if not problems:
             break
         messages = base + [
@@ -288,6 +294,20 @@ def run_chain(
             "seconds": round(time.monotonic() - started, 1),
         },
     )
+
+
+def check_verifier(verifier: OllamaProvider) -> None:
+    """Fail early (before any generation) if the verifier model is not installed."""
+    import requests
+
+    try:
+        response = verifier.session.get(f"{verifier.base_url}/api/tags", timeout=15)
+        response.raise_for_status()
+        names = {str(item.get("name", "")) for item in response.json().get("models", [])}
+    except (requests.RequestException, ValueError) as exc:
+        raise RuntimeError(f"Cannot list Ollama models to find the verifier: {exc}") from exc
+    if verifier.model not in names:
+        raise RuntimeError(f"Verifier model {verifier.model!r} is not installed (ollama pull {verifier.model}).")
 
 
 def verifier_from_env(environ: dict[str, str] | None = None) -> OllamaProvider:

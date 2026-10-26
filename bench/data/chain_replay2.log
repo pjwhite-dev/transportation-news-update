@@ -1,0 +1,2 @@
+2026-10-25 OK [{'attempt': 0, 'sentences': 16, 'flagged': 3, 'status_errors': 0, 'fragments': 0}, {'attempt': 1, 'sentences': 14, 'flagged': 1, 'status_errors': 0, 'fragments': 0}, {'attempt': 2, 'sentences': 15, 'flagged': 2, 'status_errors': 0, 'fragments': 0}] 343.5 s
+2026-10-26 OK [{'attempt': 0, 'sentences': 10, 'flagged': 2, 'status_errors': 0, 'fragments': 1}, {'attempt': 1, 'sentences': 10, 'flagged': 2, 'status_errors': 0, 'fragments': 1}, {'attempt': 2, 'sentences': 10, 'flagged': 2, 'status_errors': 0, 'fragments': 1}] 294.9 s

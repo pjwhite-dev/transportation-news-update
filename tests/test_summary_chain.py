@@ -132,6 +132,19 @@ class ChainTests(unittest.TestCase):
         self.assertNotIn("finalized", result.text)
         self.assertEqual(result.verification["rounds"][0]["status_errors"], 1)
 
+    def test_fragments_are_flagged_rewritten_or_dropped(self) -> None:
+        fragment = GOOD.replace("over the next several years [S5][S6].", "over the next several years [S5][S6]. Army to intercept drones [S3].")
+        verifier = FakeVerifier(lambda s: "fragment" if s.startswith("Army to intercept") else None)
+        result = chain.run_chain(FakeWriter([fragment, fragment, fragment]), verifier, sections())
+        self.assertNotIn("Army to intercept", result.text)
+        self.assertEqual(result.verification["sentences_dropped"], 1)
+
+    def test_very_short_sentences_are_treated_as_fragments_even_if_the_verifier_agrees(self) -> None:
+        short = GOOD.replace("over the next several years [S5][S6].", "over the next several years [S5][S6]. Army tests drones [S3].")
+        result = chain.run_chain(FakeWriter([short, GOOD]), FakeVerifier(), sections())
+        self.assertNotIn("Army tests drones", result.text)
+        self.assertEqual(result.verification["rounds"][0]["fragments"], 1)
+
     def test_too_little_verified_text_fails_the_run(self) -> None:
         verifier = FakeVerifier(lambda s: "unsupported")
         with self.assertRaisesRegex(chain.SummaryChainError, "refusing to publish"):

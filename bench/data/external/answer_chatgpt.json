@@ -1,0 +1,22 @@
+{
+  "days": [
+    {"day": 1, "unsupported_counts": {"A": 4, "B": 6, "C": 0, "D": 0, "E": 2}, "status_errors": {"A": 0, "B": 0, "C": 0, "D": 0, "E": 1},
+     "accuracy_ranking": ["D", "C", "E", "A", "B"], "readability_ranking": ["E", "D", "C", "B", "A"], "best_overall": "D",
+     "notes": "D combines broad coverage with accurate reporting of proposals, contracts, and operational developments."},
+    {"day": 2, "unsupported_counts": {"A": 0, "B": 1, "C": 0, "D": 7, "E": 3}, "status_errors": {"A": 0, "B": 0, "C": 0, "D": 2, "E": 0},
+     "accuracy_ranking": ["A", "C", "B", "E", "D"], "readability_ranking": ["B", "A", "C", "E", "D"], "best_overall": "A",
+     "notes": "A accurately covers the most consequential developments across transportation, defense, and geopolitical security."},
+    {"day": 3, "unsupported_counts": {"A": 1, "B": 0, "C": 1, "D": 0, "E": 9}, "status_errors": {"A": 2, "B": 0, "C": 0, "D": 0, "E": 0},
+     "accuracy_ranking": ["B", "D", "C", "A", "E"], "readability_ranking": ["B", "D", "C", "A", "E"], "best_overall": "B",
+     "notes": "B reports consequential actions precisely without exaggerating testing results or commercial readiness."},
+    {"day": 4, "unsupported_counts": {"A": 0, "B": 6, "C": 1, "D": 8, "E": 0}, "status_errors": {"A": 0, "B": 1, "C": 0, "D": 0, "E": 1},
+     "accuracy_ranking": ["A", "C", "E", "B", "D"], "readability_ranking": ["E", "A", "C", "B", "D"], "best_overall": "A",
+     "notes": "A reports funding considerations, research awards, and planned deployments without material overstatement."},
+    {"day": 5, "unsupported_counts": {"A": 2, "B": 1, "C": 2, "D": 0, "E": 1}, "status_errors": {"A": 1, "B": 0, "C": 0, "D": 0, "E": 0},
+     "accuracy_ranking": ["D", "E", "B", "C", "A"], "readability_ranking": ["B", "E", "D", "A", "C"], "best_overall": "D",
+     "notes": "D provides extensive, factually grounded coverage while accurately distinguishing regulatory and operational milestones."},
+    {"day": 6, "unsupported_counts": {"A": 3, "B": 2, "C": 0, "D": 5, "E": 0}, "status_errors": {"A": 2, "B": 3, "C": 1, "D": 3, "E": 0},
+     "accuracy_ranking": ["E", "C", "B", "A", "D"], "readability_ranking": ["C", "B", "E", "A", "D"], "best_overall": "E",
+     "notes": "E offers the strongest factual coverage despite an obvious unfinished sentence fragment."}
+  ]
+}

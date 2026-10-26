@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "ai_provider": "ollama",
+  "model": "qwen3.8:27b-q4_K_M",
+  "raw_candidates_discovered": 313,
+  "searxng_candidates": 237,
+  "official_source_candidates": 11,
+  "supplemental_links_extracted": 0,
+  "supplemental_links_represented": 0,
+  "final_story_count": 22,
+  "administration_wins_count": 0,
+  "innovative_uas_uses_count": 0,
+  "tracker_count": 10,
+  "model_retries": 2,
+  "total_build_seconds": 1677.42,
+  "validation_status": "passed",
+  "pruned_items": 0,
+  "tracker_refresh_errors": [],
+  "saved": false
+}

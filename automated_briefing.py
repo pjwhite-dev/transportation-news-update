@@ -30,6 +30,7 @@ from news_engine import (
     story_summary_sentence_is_public,
 )
 from publication import briefing_date, briefing_payload
+from summary_chain import check_verifier, verifier_from_env
 from tracker.core import refresh as refresh_tracker
 from url_resolver import resolve_articles
 from validation_gates import (
@@ -336,6 +337,7 @@ def main() -> None:
 
     provider = provider_from_env()
     health = provider.health_check()
+    check_verifier(verifier_from_env())
     if args.health_check:
         print(json.dumps(health, indent=2))
         return
