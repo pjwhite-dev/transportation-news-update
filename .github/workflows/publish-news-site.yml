@@ -9,6 +9,7 @@ on:
       - "coverage_history.py"
       - "news_engine.py"
       - "public_site.py"
+      - "site_assets/**"
       - "data/archive/**"
       - "data/latest_briefing.json"
       - "validation_gates.py"
@@ -52,7 +53,7 @@ jobs:
         run: >-
           python -m unittest tests.test_validation_gates
           tests.test_regulatory_tracker tests.test_ai_providers tests.test_url_resolver
-          tests.test_alerts
+          tests.test_alerts tests.test_site_design tests.test_non_article_filter
 
       - name: Re-validate the edition (hard gates)
         run: python automated_briefing.py --validate-only data/latest_briefing.json

@@ -36,3 +36,8 @@ Next: owner runs docs/phase0-requests.md; then verify Monday 2026-10-26 04:30 ru
 Done: Telegram + Healthchecks + GitHub token stored in Credential Manager (verified: alert delivered, pc-alive green); services newsroom-ollama and newsroom-hermes-gateway running as boot services under the owner's account; newsroom-wsl boot task (SearXNG answering); tasks newsroom-edition (weekdays 04:30), newsroom-ensure (15 min), newsroom-heartbeat (5 min, ran OK from the scheduler, proving keyring works there), newsroom-tracker (04:00 daily). Fully-local override recorded (docs/plan-overrides.md).
 Not verified: first unattended edition (Monday 2026-10-26 04:30) — git push and keyring from a signed-out task are untested; reboot recovery untested; WSL linger not set; BIOS power-on setting pending.
 Next: check the 04:30 run (git log, Telegram, edition-verified ping); then Phase 1 runner/ledger.
+
+## 2026-10-26 (02:00 ET) — Night Desk redesign + non-article filter
+Done: tightened non-article filter (merged earlier, 55788ab); redesigned the public site (hero, mobile menu, collapsed docket, sidebar watch list, archive by month with lead headlines, client-side archive search over headlines only), renamed to Advanced Transportation Update. 10 new design tests pass; full suite unchanged vs baseline.
+Verified locally (built from real data, desktop + 375px phone): hero, stories, docket collapsed (summary "10 rulemakings tracked · Next date: November 25, 2026"), menu opens, no sideways scroll, search returns 86 hits for "waymo".
+Not done: market-data panel (awaiting owner decision); live site not yet viewed after deploy; Phase 2 will replace the interim hero/lead selection and add per-story summaries/status classes.

@@ -1,4 +1,4 @@
-# Advanced Transportation News Update
+# Advanced Transportation Update
 
 Local-first daily news production for [news.peterjwhite.org](https://news.peterjwhite.org). Python collects and validates public information, Ollama performs the editorial passes, n8n orchestrates the daily run, and GitHub Pages serves the generated archive.
 
@@ -118,4 +118,4 @@ Open `http://127.0.0.1:8765`. The server rejects non-loopback binding, requires 
 
 OpenAI is not required. To opt in deliberately, set `AI_PROVIDER=openai`, provide `OPENAI_API_KEY`, and invoke a manual build, or run the **Emergency OpenAI Briefing Build** workflow and type `USE OPENAI`. Merely setting an API key does nothing while `AI_PROVIDER=ollama` and `OPENAI_FALLBACK_ENABLED=false`.
 
-The visible title must remain **Advanced Transportation News Update** and the footer must remain exactly: **Public source, AI-assisted news update.**
+The visible title must remain **Advanced Transportation Update** and the footer must remain exactly: **Public source, AI-assisted news update.**

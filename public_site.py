@@ -32,7 +32,7 @@ from regulatory_tracker import build_regulatory_tracker
 
 
 SITE_URL = "https://news.peterjwhite.org"
-SITE_TITLE = "Advanced Transportation Daily"
+SITE_TITLE = "Advanced Transportation Update"
 
 SOURCE_CANONICAL_NAMES = {
     "aol": "AOL",
@@ -322,6 +322,23 @@ def canonical_source(value: str) -> str:
     return SOURCE_CANONICAL_NAMES.get(source.casefold(), source)
 
 
+_TITLE_SUFFIX = re.compile(r"\s+[-–—|]\s+([^-–—|]{2,40})$")
+
+
+def display_title(item: dict[str, Any]) -> str:
+    """Headline without a trailing " - Publisher" tag (the source is shown separately)."""
+    title = " ".join(str(item.get("title", "Untitled")).split())
+    match = _TITLE_SUFFIX.search(title)
+    if not match:
+        return title
+    suffix = match.group(1).strip().casefold()
+    source = canonical_source(str(item.get("source", ""))).casefold()
+    short = len(suffix.split()) <= 3
+    if suffix and (suffix in source or source in suffix or (short and suffix.replace(" ", "") in source.replace(" ", ""))):
+        return title[: match.start()].rstrip()
+    return title
+
+
 def story_anchor(item: dict[str, Any]) -> str:
     identity = str(item.get("url") or item.get("title") or "story")
     digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:12]
@@ -348,7 +365,7 @@ def _glance_groups(
 
 
 def story_html(item: dict[str, Any]) -> str:
-    title = html.escape(str(item.get("title", "Untitled")))
+    title = html.escape(display_title(item))
     summary = html.escape(
         sanitize_story_summary(
             str(item.get("title", "")), str(item.get("summary", ""))
@@ -378,108 +395,161 @@ def story_html(item: dict[str, Any]) -> str:
     use = str(item.get("innovative_uas_use", "")).strip()
     use_markup = '<span class="innovation-label">Innovative Drone Use</span>' if use else ""
     return f"""
-      <article class="story" id="{story_anchor(item)}">
+      <article class="story" id="{story_anchor(item)}"><div>
         <h3><a href="{_safe_url(item.get('url', ''))}">{title}</a>{use_markup}</h3>
         {summary_markup}
         <p class="meta">{source}{f' · {date_label}' if date_label else ''}</p>
         {related_markup}
-      </article>
+      </div></article>
     """
+
+
+def _plural(count: int, word: str) -> str:
+    if count == 1:
+        return f"{count} {word}"
+    plural = word[:-1] + "ies" if word.endswith("y") and not word.endswith(("ay", "ey", "oy")) else word + "s"
+    return f"{count} {plural}"
+
+
+def section_label(section: str) -> str:
+    return SECTION_NAV_LABELS.get(section, section)
+
+
+def ordered_stories(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        item
+        for _, items in _glance_groups(payload.get("sections", {}))
+        for item in items
+    ]
+
+
+def lead_story(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """The most important story of the day (first one wins a tie); None for an empty edition."""
+    stories = ordered_stories(payload)
+    if not stories:
+        return None
+    return max(stories, key=lambda item: int(item.get("importance", 0) or 0))
+
+
+_MONTH_DAY = re.compile(
+    r"^((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2})\s*[:,–—-]+\s*(.+)$"
+)
 
 
 def tracker_html(items: list[dict[str, Any]]) -> str:
+    """A quiet, collapsed docket at the foot of the edition; the summary line carries the news."""
     if not items:
         return ""
+    dated = [
+        item for item in items
+        if isinstance(item.get("days_remaining"), int) and item.get("comment_deadline")
+    ]
+    if dated:
+        nxt = min(dated, key=lambda item: item["days_remaining"])
+        headline = (
+            f"Next date: {html.escape(str(nxt.get('comment_deadline_label', '')))} "
+            f"— {html.escape(str(nxt.get('agency', '')))} comments close"
+        )
+    else:
+        headline = "No comment periods are open today"
+    verified = [str(item.get("verified_at", "")) for item in items if item.get("verified_at")]
+    checked = ""
+    if verified:
+        try:
+            checked_on = datetime.fromisoformat(max(verified)).astimezone(EASTERN).date()
+            checked = f'<p class="note">Each entry is checked against the Federal Register; last checked {_format_day(checked_on)}.</p>'
+        except ValueError:
+            checked = ""
     rows = []
     for item in items:
-        days = item.get("days_remaining")
-        days_label = str(days) if isinstance(days, int) else "—"
-        prefix = "Closes" if isinstance(days, int) else "Closed"
+        deadline = str(item.get("comment_deadline_label", ""))
+        status = html.escape(str(item.get("status", "")))
+        if deadline and deadline != "No concrete date published":
+            prefix = "Comments close" if isinstance(item.get("days_remaining"), int) else "Comments closed"
+            status += f" &middot; {prefix} {html.escape(deadline)}"
         rows.append(
             "<tr>"
-            f"<td>{html.escape(str(item.get('agency', '')))} — "
-            f"{html.escape(str(item.get('action', '')))} "
-            f"({html.escape(str(item.get('rin', '')))})</td>"
-            f"<td>{html.escape(str(item.get('status', '')))}</td>"
-            f"<td>{prefix} {html.escape(str(item.get('comment_deadline_label', '')))}</td>"
-            f"<td>{days_label}</td>"
+            f"<td>{html.escape(str(item.get('agency', '')))}</td>"
+            f"<td>{html.escape(str(item.get('action', '')))} ({html.escape(str(item.get('rin', '')))})</td>"
+            f"<td>{status}</td>"
             f'<td><a href="{_safe_url(item.get("source_url", ""))}">Official source</a></td>'
             "</tr>"
         )
-    return """
-      <section class="newsletter-section tracker" id="tracker">
-        <h2>Regulatory Tracker</h2>
-        <div class="table-scroll" role="region" tabindex="0" aria-label="Regulatory deadlines table"><table>
-          <thead><tr><th>Agency / Rule (and RIN)</th><th>Current Status</th><th>Deadline / Next Known Date</th><th>Days Remaining</th><th>Source</th></tr></thead>
-          <tbody>""" + "".join(rows) + """</tbody>
-        </table></div>
-      </section>
-    """
+    return (
+        '<details class="docket" id="tracker"><summary>'
+        f"<h2>Regulatory docket</h2><span>{_plural(len(items), 'rulemaking')} tracked &middot; {headline}</span></summary>"
+        f"{checked}"
+        '<table><thead><tr><th>Agency</th><th>Rulemaking</th><th>Status</th><th>Source</th></tr></thead>'
+        f"<tbody>{''.join(rows)}</tbody></table></details>"
+    )
 
 
-def headline_index_html(sections: dict[str, list[dict[str, Any]]]) -> str:
-    groups = []
-    for section, items in _glance_groups(sections):
-        links = "".join(
-            f'<li><a href="#{story_anchor(item)}">'
-            f'{html.escape(str(item.get("title", "Untitled")))}</a></li>'
-            for item in items
+def watch_html(items: list[Any]) -> str:
+    entries = []
+    for raw in items:
+        text = " ".join(str(raw).split())
+        if not text:
+            continue
+        match = _MONTH_DAY.match(text)
+        when, what = (match.group(1), match.group(2)) if match else ("", text)
+        entries.append(
+            f"<li><time>{html.escape(when)}</time><span>{html.escape(what)}</span></li>"
         )
-        groups.append(
-            f'<div class="glance-section"><h4>{html.escape(section)}</h4>'
-            f'<ul>{links}</ul></div>'
-        )
-    if not groups:
+    if not entries:
         return ""
     return (
-        '<section class="headline-index"><h2>Headlines at a Glance</h2>'
-        + "".join(groups)
-        + "</section>"
+        '<section class="box" id="watch"><h2 class="label">What to watch</h2>'
+        f'<ul class="watch">{"".join(entries)}</ul></section>'
     )
 
 
 def section_nav_html(payload: dict[str, Any]) -> str:
-    links = ['<a href="#summary">Summary</a>']
+    """Desktop: a sticky row of chips. Phone: a collapsible menu (no sideways scrolling)."""
+    links = [("summary", "Summary")]
     sections = payload.get("sections", {})
     for section in SECTION_ORDER:
         if sections.get(section):
-            links.append(
-                f'<a href="#{SECTION_ANCHORS[section]}">{SECTION_NAV_LABELS[section]}</a>'
-            )
-    if payload.get("regulatory_tracker"):
-        links.append('<a href="#tracker">Tracker</a>')
+            links.append((SECTION_ANCHORS[section], section_label(section)))
     if payload.get("what_to_watch"):
-        links.append('<a href="#watch">Watch</a>')
+        links.append(("watch", "What to watch"))
+    links.append(("tracker", "Docket"))
+    anchors = "".join(f'<a href="#{target}">{html.escape(label)}</a>' for target, label in links)
     return (
-        '<nav class="section-nav no-copy" aria-label="Edition sections">'
-        + "".join(links)
-        + "</nav>"
+        '<div class="sections-bar no-copy"><div class="wrap">'
+        f'<nav class="chips" aria-label="Edition sections">{anchors}</nav>'
+        '<details class="menu"><summary>Jump to a section</summary>'
+        f'<nav class="menu-grid" aria-label="Edition sections">{anchors}</nav></details>'
+        "</div></div>"
     )
 
 
-def top_highlights_html(payload: dict[str, Any]) -> str:
-    cards = []
-    uses = []
-    seen = set()
-    for items in payload.get("sections", {}).values():
-        for item in items:
-            value = clean_innovative_uas_use(
-                str(item.get("innovative_uas_use", ""))
-            )
-            identity = str(item.get("url") or item.get("id") or value).casefold()
-            if value and identity not in seen:
-                seen.add(identity)
-                uses.append(item)
-    if uses:
-        cards.append(
-            '<aside class="top-highlight"><strong>Innovative Drone Uses in This Update</strong><ul>'
-            + "".join(
-                f'<li><a href="{_safe_url(item.get("url", ""))}">{html.escape(str(item.get("title", "")))}</a></li>'
-                for item in uses
-            )
-            + '</ul></aside>'
-        )
-    return f'<div class="top-highlights">{"".join(cards)}</div>' if cards else ""
+def hero_html(payload: dict[str, Any], day: date, *, eyebrow: str) -> str:
+    lead = lead_story(payload)
+    stories = ordered_stories(payload)
+    sector_count = len({section for section, items in _glance_groups(payload.get("sections", {})) if items})
+    window = _format_time(payload.get("window_end", ""))
+    facts = [
+        f"<li><b>{len(stories)}</b> stories</li>",
+        f"<li><b>{sector_count}</b> sectors</li>",
+    ]
+    tracker = payload.get("regulatory_tracker", [])
+    if tracker:
+        facts.append(f"<li><b>{len(tracker)}</b> rulemakings tracked</li>")
+    if window:
+        facts.append(f"<li>Coverage through {html.escape(window)}</li>")
+    if lead is None:
+        headline = html.escape(_format_day(day))
+        deck = ""
+    else:
+        headline = f'<a href="#{story_anchor(lead)}">{html.escape(display_title(lead))}</a>'
+        text = sanitize_story_summary(str(lead.get("title", "")), str(lead.get("summary", "")))
+        deck = f'<p class="deck">{html.escape(text)}</p>' if text else ""
+    return (
+        '<div class="wrap hero">'
+        f'<p class="eyebrow">{html.escape(eyebrow)} &middot; {html.escape(_format_day(day))}</p>'
+        f"<h1>{headline}</h1>{deck}"
+        f'<ul class="facts">{"".join(facts)}</ul></div>'
+    )
 
 
 def _email_spacer(height: int) -> str:
@@ -643,7 +713,7 @@ def outlook_email_html(payload: dict[str, Any], day: date) -> str:
             bgcolor="#FFFFFF" style="width:720px;max-width:720px;border-collapse:collapse;background:#FFFFFF">
           <tr><td bgcolor="#153A5A" style="padding:24px 28px 22px;background:#153A5A;
               font-family:Arial,Helvetica,sans-serif"><div style="font-size:30px;line-height:35px;
-              font-weight:bold;color:#FFFFFF">Advanced Transportation Daily</div>
+              font-weight:bold;color:#FFFFFF">{html.escape(SITE_TITLE)}</div>
               <div style="padding-top:7px;font-size:14px;line-height:19px;color:#DCE8F0">
               {html.escape(_format_day(day))}</div>
               <div style="padding-top:9px;font-size:15px;line-height:21px;color:#FFFFFF">{deck}</div>
@@ -779,23 +849,19 @@ def _outlook_watch(items: list[str]) -> str:
 
 
 def edition_content(payload: dict[str, Any], day: date) -> str:
+    """The copyable reading column: executive summary, sector stories, docket."""
     sections = payload.get("sections", {})
-    kind = payload.get("edition_kind", "automated")
-    if kind == "editorial":
+    if payload.get("edition_kind", "automated") == "editorial":
         intro = (
-            '<section class="executive-summary" id="summary"><h2>Executive Summary</h2>'
-            f'<p>{summary_html(payload)}</p></section>'
+            '<section class="summary" id="summary"><h2 class="label">Executive summary</h2>'
+            f"<p>{summary_html(payload)}</p></section>"
         )
-        status = "Daily executive briefing"
     else:
         shown = sum(len(items) for items in sections.values())
-        status = "Automatically updated public-source headline edition"
-        intro = f"""
-          <section class="automated-note" id="summary">
-            <strong>{shown} current headlines</strong>
-            <span>Grouped by subject and checked against earlier editions.</span>
-          </section>
-        """
+        intro = (
+            '<section class="summary" id="summary"><h2 class="label">Today\'s headlines</h2>'
+            f"<p>{_plural(shown, 'current headline')}, grouped by subject and checked against earlier editions.</p></section>"
+        )
 
     section_markup = []
     for section in SECTION_ORDER:
@@ -803,30 +869,28 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
         if not items:
             continue
         section_markup.append(
-            f'<section class="newsletter-section" id="{SECTION_ANCHORS[section]}">'
-            f'<h2>{html.escape(section)}</h2>'
+            f'<section class="sector" id="{SECTION_ANCHORS[section]}">'
+            f"<h2>{html.escape(section)}</h2>"
             + "".join(story_html(item) for item in items)
             + "</section>"
         )
+    return intro + "".join(section_markup) + tracker_html(payload.get("regulatory_tracker", []))
 
-    tracker = tracker_html(payload.get("regulatory_tracker", []))
 
-    return f"""
-      <div class="edition-heading">
-        <p class="eyebrow">{html.escape(status)}</p>
-        <h1>{html.escape(_format_day(day))}</h1>
-        <p class="coverage">Coverage through {_format_time(payload.get('window_end', ''))}</p>
-      </div>
-      {section_nav_html(payload)}
-      {intro}
-      {top_highlights_html(payload)}
-      {headline_index_html(sections)}
-      <div class="briefing-sections" id="briefing-sections">
-        {''.join(section_markup)}
-        {tracker}
-      </div>
-      <footer>This summary is AI generated.</footer>
-    """
+FONT_LINKS = (
+    '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600'
+    '&family=Hanken+Grotesk:wght@400;500;600&display=swap">'
+)
+
+CHART_SVG = (
+    '<svg class="chart" viewBox="0 0 640 640" aria-hidden="true"><g fill="none" stroke="#3B5B8C" stroke-width="1" opacity=".55">'
+    '<circle cx="400" cy="240" r="90"/><circle cx="400" cy="240" r="170"/><circle cx="400" cy="240" r="250"/>'
+    '<circle cx="400" cy="240" r="330"/><path d="M400-100V580M60 240H740M160 0 640 480M640 0 160 480"/></g>'
+    '<path d="M40 470C190 300 300 330 410 230S560 120 640 70" fill="none" stroke="#F2B33D" stroke-width="1.6" '
+    'stroke-dasharray="3 7"/><circle cx="410" cy="230" r="5" fill="#F2B33D"/></svg>'
+)
 
 
 def page_shell(
@@ -836,44 +900,62 @@ def page_shell(
     canonical_path: str,
     prefix: str = "",
     show_copy: bool = False,
+    hero: str = "",
+    active: str = "",
+    description: str = "Daily public-source advanced transportation headlines and a searchable archive of past editions.",
 ) -> str:
     copy_controls = ""
     if show_copy:
         copy_controls = (
             '<button type="button" data-copy-edition>Copy for email</button>'
-            '<span class="copy-status" role="status" '
-            'aria-live="polite" data-copy-status></span>'
+            '<span class="copy-status" role="status" aria-live="polite" data-copy-status></span>'
         )
+
+    def nav_link(key: str, label: str, href: str) -> str:
+        current = ' aria-current="page"' if key == active else ""
+        return f'<a href="{href}"{current}>{label}</a>'
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Daily public-source advanced transportation headlines and archived editions.">
+  <meta name="description" content="{html.escape(description, quote=True)}">
   <title>{html.escape(title)}</title>
   <link rel="canonical" href="{SITE_URL}{canonical_path}">
+  {FONT_LINKS}
   <link rel="stylesheet" href="{prefix}assets/site.css">
 </head>
 <body>
-  <header class="site-header no-copy">
-    <div class="masthead-inner">
-      <a class="brand" href="{prefix}" aria-label="{SITE_TITLE}">
-        <span>Advanced Transportation</span><small>Daily</small>
-      </a>
-      <div class="masthead-tools">
-        <nav aria-label="Primary navigation">
-          <a href="{prefix}">Latest</a>
-          <a href="{prefix}archive/">Archive</a>
-        </nav>
+  <div class="cover no-copy">
+    {CHART_SVG}
+    <header class="wrap topbar">
+      <a class="brand" href="{prefix or './'}" aria-label="{html.escape(SITE_TITLE)}">Advanced Transportation <i>Update</i></a>
+      <nav aria-label="Primary navigation">
+        {nav_link("latest", "Latest", prefix or "./")}
+        {nav_link("archive", "Archive", prefix + "archive/")}
+        {nav_link("search", "Search", prefix + "search/")}
         {copy_controls}
-      </div>
-    </div>
-  </header>
+      </nav>
+    </header>
+    {hero}
+  </div>
   {body}
+  <footer class="footer no-copy"><div class="wrap"><span>This summary is AI generated.</span><span>{html.escape(SITE_TITLE)} &middot; news.peterjwhite.org</span></div></footer>
   <script src="{prefix}assets/site.js" defer></script>
 </body>
 </html>
 """
+
+
+def side_html(payload: dict[str, Any]) -> str:
+    watch = watch_html(payload.get("what_to_watch", []))
+    about = (
+        '<p class="about">Compiled each weekday from public sources and checked against '
+        "earlier editions. Browse the <a href=\"{archive}\">archive</a> or "
+        "<a href=\"{search}\">search past headlines</a>.</p>"
+    )
+    return watch + about
 
 
 def edition_page(payload: dict[str, Any], day: date, archived: bool) -> str:
@@ -882,127 +964,110 @@ def edition_page(payload: dict[str, Any], day: date, archived: bool) -> str:
     email_content = base64.b64encode(
         outlook_email_html(payload, day).encode("utf-8")
     ).decode("ascii")
+    side = side_html(payload).replace("{archive}", prefix + "archive/").replace("{search}", prefix + "search/")
     body = f"""
-      <main>
-        <div class="newsletter" data-edition-content
+      {section_nav_html(payload)}
+      <main class="wrap page">
+        <div class="reading newsletter" data-edition-content
             data-outlook-email-b64="{email_content}">{content}</div>
+        <aside class="side no-copy" aria-label="Edition notes">{side}</aside>
       </main>
     """
     canonical = f"/archive/{day.isoformat()}/" if archived else "/"
+    eyebrow = "Weekend and Monday briefing" if day.weekday() == 0 else "Daily briefing"
     return page_shell(
         body=body,
         title=f"{SITE_TITLE} — {_format_day(day)}",
         canonical_path=canonical,
         prefix=prefix,
         show_copy=True,
+        hero=hero_html(payload, day, eyebrow=eyebrow),
+        active="" if archived else "latest",
     )
 
 
 def archive_page(editions: dict[date, dict[str, Any]]) -> str:
-    cards = []
+    months: dict[tuple[int, int], list[str]] = {}
     for day in sorted(editions, reverse=True):
         payload = editions[day]
-        story_count = sum(
-            len(items) for items in payload.get("sections", {}).values()
+        count = len(ordered_stories(payload))
+        lead = lead_story(payload)
+        lead_text = html.escape(display_title(lead)) if lead else ""
+        months.setdefault((day.year, day.month), []).append(
+            f'<li><a href="{day.isoformat()}/"><strong>{html.escape(day.strftime("%a, %b %d").replace(" 0", " "))}</strong>'
+            f'<span class="lead">{lead_text}</span><span class="count">{_plural(count, "story")}</span></a></li>'
         )
-        label = (
-            "Editorial edition"
-            if payload.get("edition_kind") == "editorial"
-            else "Automated headline edition"
-        )
-        cards.append(
-            f"""
-            <li>
-              <a href="{day.isoformat()}/">
-                <strong>{html.escape(_format_day(day))}</strong>
-                <span>{html.escape(label)} · {story_count} stories</span>
-              </a>
-            </li>
-            """
-        )
-    body = f"""
-      <main class="archive-page">
-        <div class="archive-heading">
-          <p class="eyebrow">Past editions</p>
-          <h1>News Archive</h1>
-          <p>Browse the daily editions and open any date to copy it for email.</p>
-        </div>
-        <ol class="archive-list">{''.join(cards)}</ol>
-      </main>
-    """
+    groups = "".join(
+        f'<h2>{html.escape(date(year, month, 1).strftime("%B %Y"))}</h2><ol>{"".join(rows)}</ol>'
+        for (year, month), rows in months.items()
+    )
+    hero = (
+        '<div class="wrap sub-hero"><p class="eyebrow">Past editions</p><h1>News archive</h1>'
+        '<p>Open any date to read the full edition, or <a href="../search/" style="color:#F2B33D">search every headline</a>.</p></div>'
+    )
+    body = f'<main class="wrap archive">{groups}</main>'
     return page_shell(
         body=body,
         title=f"Archive — {SITE_TITLE}",
         canonical_path="/archive/",
         prefix="../",
+        hero=hero,
+        active="archive",
     )
 
 
-SITE_CSS = """
-:root{--navy:#123752;--navy-dark:#08283f;--ink:#202a32;--muted:#687985;--line:#d9e1e6;--paper:#fff;--wash:#f3f6f8;--sand:#f7f2e7;--red:#8c2f2a;--wide:1120px;--reader:760px;color-scheme:light}
-*{box-sizing:border-box;min-width:0}
-html{font-size:16px;background:#eef2f4;scroll-behavior:smooth}
-body{margin:0;color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.58;-webkit-font-smoothing:antialiased}
-a{color:#15567e;text-underline-offset:3px;overflow-wrap:anywhere}
-a:focus-visible,button:focus-visible,.table-scroll:focus-visible{outline:3px solid #d2a92f;outline-offset:3px}
-.site-header{background:var(--navy-dark);color:#fff;border-bottom:3px solid #c9a13a}
-.masthead-inner{width:min(var(--wide),calc(100% - 40px));min-height:102px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:34px}
-.site-header a{color:#fff;text-decoration:none}.brand{display:flex;flex-direction:column;line-height:1.05;text-transform:uppercase}.brand span{font-size:1.2rem;font-weight:800;letter-spacing:.075em}.brand small{margin-top:7px;font-size:.72rem;font-weight:700;letter-spacing:.28em;color:#cbd9e3}.masthead-tools{display:flex;align-items:center;justify-content:flex-end;gap:24px}.site-header nav{display:flex;gap:20px;font-size:.82rem;font-weight:700}.site-header nav a:hover{text-decoration:underline}.masthead-tools button{min-height:42px;appearance:none;border:1px solid #88a0b2;border-radius:5px;background:transparent;color:#fff;padding:9px 13px;font:inherit;font-size:.8rem;font-weight:750;cursor:pointer}.masthead-tools button:hover{background:#153c58}.copy-status{position:absolute;margin-top:68px;font-size:.75rem;color:#d8e9d8}
-main{width:min(var(--wide),calc(100% - 40px));margin:30px auto 72px}
-.newsletter{width:100%;overflow:visible;background:var(--paper);border:1px solid #dfe5e9;box-shadow:0 16px 44px rgba(26,51,70,.07);padding:50px clamp(28px,6vw,72px) 42px}
-.edition-heading,.executive-summary,.automated-note,.newsletter-section:not(.tracker):not(.what-to-watch),footer{width:min(var(--reader),100%);margin-left:auto;margin-right:auto}
-.edition-heading{border-top:6px solid var(--navy);padding:20px 0 22px;margin-bottom:0}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.7rem;font-weight:800;color:#557286;margin:0 0 8px}.edition-heading h1,.archive-heading h1{font-size:clamp(2.15rem,5vw,2.9rem);line-height:1.05;color:var(--navy-dark);letter-spacing:-.035em;margin:0;overflow-wrap:break-word}.coverage{font-size:.79rem;color:var(--muted);margin:9px 0 0}
-.section-nav{position:sticky;top:0;z-index:10;display:flex;gap:4px;overflow-x:auto;white-space:nowrap;margin:0 0 34px;padding:7px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);border-bottom:1px solid var(--line);box-shadow:0 5px 15px rgba(24,52,70,.06);scrollbar-width:thin}.section-nav a{flex:0 0 auto;padding:7px 9px;color:#425c6e;text-decoration:none;font-size:.72rem;font-weight:750;border-radius:4px}.section-nav a:hover{background:var(--wash);color:var(--navy-dark)}
-.executive-summary{background:#edf4f8;border-left:4px solid #4d7898;padding:24px 26px;margin-bottom:34px}.executive-summary h2,.headline-index>h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.11em;color:#244d6b;margin:0 0 9px}.executive-summary p{font-size:1.075rem;line-height:1.65;margin:0;color:#253944;overflow-wrap:anywhere}
-.automated-note{display:flex;justify-content:space-between;gap:20px;background:var(--sand);border-left:4px solid #b89a50;padding:15px 17px;margin-bottom:30px;font-size:.88rem}.automated-note span{color:#675d43}
-.top-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 34px}.top-highlight{background:var(--sand);border-top:3px solid #b89a50;padding:16px 18px;margin:0;font-size:.84rem;color:#4c493f}.top-highlight>strong{text-transform:uppercase;letter-spacing:.075em;font-size:.69rem;color:#5c5239}.top-highlight p,.top-highlight ul{margin:7px 0 0}.top-highlight ul{padding-left:20px}.top-highlight:only-child{grid-column:1/-1}
-.headline-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;row-gap:2px;border:1px solid var(--line);background:#fafcfd;padding:23px 25px 18px;margin:0 0 54px}.headline-index>h2{grid-column:1/-1;margin-bottom:10px}.headline-index>div{margin:0}.headline-index h3{font-size:.69rem;text-transform:uppercase;letter-spacing:.075em;color:#607482;margin:0 0 7px}.headline-index h4{font-size:.74rem;line-height:1.3;color:#243b4b;margin:12px 0 6px}.headline-index ul{font-size:.855rem;line-height:1.45;margin:0;padding-left:18px}.headline-index li{margin:0 0 6px}.headline-index a{text-decoration:none}.headline-index a:hover{text-decoration:underline}.headline-index .view-all{grid-column:1/-1;width:max-content;margin-top:12px;font-size:.78rem;font-weight:750}
-.newsletter-section{margin-bottom:60px;scroll-margin-top:64px}.newsletter-section>h2{font-size:1.65rem;line-height:1.18;color:var(--navy-dark);border-bottom:2px solid #cbd6de;padding-bottom:10px;margin:0 0 22px;letter-spacing:-.025em}.empty-section{color:var(--muted);font-size:.9rem;margin:0 0 24px}.story{border-bottom:1px solid #e1e6ea;padding:0 0 24px;margin:0 0 24px;scroll-margin-top:62px}.story:last-child{margin-bottom:0}.story h3{font-size:1.2rem;line-height:1.35;margin:0 0 8px;letter-spacing:-.012em}.story h3 a{font-weight:725;text-decoration:none;color:#173c5e}.story h3 a:hover{text-decoration:underline}.story-summary{font-size:.975rem;line-height:1.58;margin:0 0 10px;color:#303d45}.meta,.related{font-size:.755rem;line-height:1.5;color:var(--muted);margin:7px 0 0}.innovation-label{margin:10px 0 0;padding-left:10px;border-left:2px solid #b9a45a;color:#66727a;font-size:.755rem;line-height:1.5}.innovation-label strong{text-transform:uppercase;letter-spacing:.055em;font-size:.67rem;color:#52616a;margin-right:6px}.win-callout{border-top:1px solid #d9b8b3;padding:11px 0 0;margin:13px 0 0;font-size:.82rem;color:#653631}.win-callout>strong{text-transform:uppercase;letter-spacing:.055em;font-size:.68rem}.win-callout p{margin:5px 0 0}.newsletter-section--wins{width:min(860px,100%)!important;background:#fff7f5;border-left:4px solid var(--red);padding:26px 28px 2px}.newsletter-section--wins>h2{color:#732822;border-bottom-color:#dfc2be}
-.tracker{background:#f4f7f9;border-top:5px solid var(--navy);padding:26px 28px 24px}.tracker>h2{border:0;margin-bottom:15px}.table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.tracker table{border-collapse:collapse;width:100%;font-size:.79rem}.tracker th{text-align:left;background:#e6edf1;color:#4d6371;text-transform:uppercase;font-size:.65rem;letter-spacing:.04em}.tracker th,.tracker td{padding:12px 10px;border-bottom:1px solid #d4dde3;vertical-align:top}.tracker th:nth-child(2){width:34%}.tracker th:nth-child(4){width:7%}.tracker td:nth-child(4){font-weight:800;color:#294f6d}.tracker tr:last-child td{border-bottom:0}
-.what-to-watch{width:100%!important;background:#edf3f7;border-top:4px solid #5a7b92;padding:28px 32px 22px}.what-to-watch>h2{border:0;margin-bottom:14px}.watch{margin:0;padding-left:24px;columns:2;column-gap:42px}.watch li{break-inside:avoid;margin:0 0 11px;padding-left:4px;font-size:.95rem}.watch li::marker{font-weight:800;color:#526f84}footer{border-top:1px solid var(--line);padding-top:17px;color:#7b848c;font-size:.73rem}
-.archive-page{width:min(800px,calc(100% - 40px))}.archive-heading{background:#fff;border:1px solid var(--line);padding:42px 46px;margin-bottom:16px;box-shadow:0 12px 35px rgba(26,51,70,.06)}.archive-heading p:last-child{margin-bottom:0;color:var(--muted)}.archive-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.archive-list a{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff;border:1px solid var(--line);padding:18px 21px;text-decoration:none;color:var(--navy)}.archive-list a:hover{border-color:#7892a4;box-shadow:0 5px 20px rgba(26,51,70,.07)}.archive-list span{font-size:.82rem;color:var(--muted);text-align:right}
-@media(max-width:760px){.masthead-inner{min-height:auto;padding:16px 0;align-items:flex-start;flex-wrap:wrap;gap:14px}.brand span{font-size:1rem}.brand small{font-size:.65rem}.masthead-tools{width:100%;justify-content:space-between;gap:12px}.masthead-tools button{min-height:44px}.copy-status{margin-top:50px;right:20px}.newsletter{padding:34px 22px}.top-highlights,.headline-index{grid-template-columns:1fr}.headline-index>h2,.headline-index .view-all{grid-column:1}.headline-index>div+div{margin-top:12px}.tracker{padding:23px 20px}.tracker table{min-width:760px}.what-to-watch{padding:25px 22px 18px}.watch{columns:1}.archive-heading{padding:32px 25px}}
-@media(max-width:440px){main,.archive-page{width:calc(100% - 20px);margin-top:12px}.masthead-inner{width:calc(100% - 28px)}.site-header nav{gap:15px}.newsletter{padding:27px 18px}.edition-heading{padding-top:17px}.edition-heading h1,.archive-heading h1{font-size:1.9rem}.section-nav{margin-left:-10px;margin-right:-10px;padding-left:10px}.automated-note,.archive-list a{align-items:flex-start;flex-direction:column;gap:4px}.archive-list span{text-align:left}.headline-index{padding:19px 17px 15px}.executive-summary{padding:20px}.newsletter-section>h2{font-size:1.4rem}.story h3{font-size:1.12rem}.newsletter-section--wins{padding:22px 19px 1px}.tracker,.what-to-watch{margin-left:-8px;width:calc(100% + 16px)!important}}
-.top-highlights{display:block}.top-highlight{background:#eef5fa;border-top:3px solid #4d7898;color:#173c5e}.top-highlight>strong{color:#173c5e}.top-highlight a{color:#174f86}
-.story h3 .innovation-label{display:inline-block;vertical-align:middle;margin:0 0 0 10px;padding:3px 7px;border:1px solid #a8c6dc;border-radius:12px;background:#eaf3fb;color:#174f86;font-size:.62rem;line-height:1.2;font-weight:700;letter-spacing:0;white-space:nowrap}
-@media print{html{background:#fff}.site-header,.no-copy{display:none!important}main{width:100%;margin:0}.newsletter{border:0;box-shadow:none;padding:0}}
-""".strip() + "\n"
+def search_page(story_count: int, edition_count: int) -> str:
+    hero = (
+        '<div class="wrap sub-hero"><p class="eyebrow">Archive search</p><h1>Search past headlines</h1>'
+        f'<p>Find stories across {edition_count:,} editions by headline, source, sector or year. '
+        "Searches cover headlines only, not the text of the articles.</p></div>"
+    )
+    body = f"""
+      <main class="wrap results">
+        <form class="searchbox no-copy" data-search data-index="../search-index.json" role="search" aria-label="Search the archive">
+          <input type="search" name="q" placeholder="Try &ldquo;Waymo&rdquo;, &ldquo;Part 108&rdquo; or &ldquo;counter-drone&rdquo;" aria-label="Search headlines" autocomplete="off">
+          <select data-section aria-label="Sector"><option value="">All sectors</option></select>
+          <select data-year aria-label="Year"><option value="">All years</option></select>
+        </form>
+        <p class="status" data-search-status role="status" aria-live="polite">Loading {story_count:,} headlines&hellip;</p>
+        <div data-results></div>
+        <p class="more" data-more hidden><button type="button">Show more</button></p>
+      </main>
+    """
+    return page_shell(
+        body=body,
+        title=f"Search — {SITE_TITLE}",
+        canonical_path="/search/",
+        prefix="../",
+        hero=hero,
+        active="search",
+        description="Search past Advanced Transportation Update headlines by keyword, sector and year.",
+    )
 
 
-SITE_JS = r"""
-(function () {
-  const button = document.querySelector('[data-copy-edition]');
-  const content = document.querySelector('[data-edition-content]');
-  const status = document.querySelector('[data-copy-status]');
-  if (!button || !content) return;
+def build_search_index(editions: dict[date, dict[str, Any]]) -> list[dict[str, str]]:
+    """One row per published story: headline, source, sector, date and a link. No article text."""
+    rows: list[dict[str, str]] = []
+    for day in sorted(editions, reverse=True):
+        for section, items in _glance_groups(editions[day].get("sections", {})):
+            for item in items:
+                row = {
+                    "d": day.isoformat(),
+                    "t": display_title(item).strip(),
+                    "s": section_label(section),
+                    "h": f"/archive/{day.isoformat()}/#{story_anchor(item)}",
+                }
+                source = canonical_source(str(item.get("source", "")))
+                if source and source != "Source":
+                    row["o"] = source
+                if row["t"]:
+                    rows.append(row)
+    return rows
 
-  button.addEventListener('click', async function () {
-    let rich = content.innerHTML;
-    const encoded = content.dataset.outlookEmailB64;
-    if (encoded) {
-      const bytes = Uint8Array.from(atob(encoded), function (character) {
-        return character.charCodeAt(0);
-      });
-      rich = new TextDecoder('utf-8').decode(bytes);
-    }
-    const plain = content.innerText.trim();
-    try {
-      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
-        await navigator.clipboard.write([new ClipboardItem({
-          'text/html': new Blob([rich], {type: 'text/html'}),
-          'text/plain': new Blob([plain], {type: 'text/plain'})
-        })]);
-      } else {
-        await navigator.clipboard.writeText(plain);
-      }
-      status.textContent = 'Copied.';
-      setTimeout(function () { status.textContent = ''; }, 2500);
-    } catch (error) {
-      status.textContent = 'Copy was blocked. Select the edition and copy it manually.';
-    }
-  });
-})();
-""".strip() + "\n"
+
+ASSET_DIR = Path(__file__).resolve().parent / "site_assets"
+SITE_CSS = (ASSET_DIR / "site.css").read_text(encoding="utf-8")
+SITE_JS = (ASSET_DIR / "site.js").read_text(encoding="utf-8")
 
 
 def build_public_site(root: Path, output: Path) -> dict[str, int]:
@@ -1046,11 +1111,19 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
             edition_page(payload, day, archived=True), encoding="utf-8"
         )
 
+    index_rows = build_search_index(editions)
+    (output / "search-index.json").write_text(
+        json.dumps(index_rows, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+    (output / "search").mkdir()
+    (output / "search" / "index.html").write_text(
+        search_page(len(index_rows), len(editions)), encoding="utf-8"
+    )
     (output / "assets" / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (output / "assets" / "site.js").write_text(SITE_JS, encoding="utf-8")
     (output / "CNAME").write_text("news.peterjwhite.org\n", encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")
-    return {"edition_count": len(editions), "latest_day": latest_day.toordinal()}
+    return {"edition_count": len(editions), "latest_day": latest_day.toordinal(), "search_rows": len(index_rows)}
 
 
 def main() -> None:
