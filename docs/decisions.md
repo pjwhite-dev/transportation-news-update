@@ -21,3 +21,5 @@ One line per judgment call: date — decision — reason.
 - 2026-10-25 — Cloned to C:\newsroom early (Phase 1 item 1) because the OneDrive checkout is dirty and the pipeline refuses unclean trees; the OneDrive copy stays untouched but unused.
 - 2026-10-25 — Published a Sunday edition once to prove the fixed path and replace the template-text Oct 22 edition that was still live; scheduled editions remain weekdays.
 - 2026-10-25 — Interim daily cut (45 total, 12 per section, importance >= 3) is a stopgap for the missing significance scoring; to be replaced in Phase 2.
+- 2026-10-26 — Owner override: fully local, no paid API fallback; failures alert instead. Recorded in docs/plan-overrides.md; removed the Emergency OpenAI workflow and the anthropic_api_key secret; AGENTS.md updated. Reason: owner's explicit instruction.
+- 2026-10-26 — install scripts: fixed three bugs found on first real run (native stderr under ErrorActionPreference=Stop, $PSScriptRoot in param defaults under PS 5.1, false "started" message) and added an up-front password validation.

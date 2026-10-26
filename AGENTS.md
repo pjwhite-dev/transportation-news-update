@@ -2,7 +2,7 @@
 
 This repository produces the daily **Advanced Transportation News Update**
 (https://news.peterjwhite.org, GitHub Pages). It is being rebuilt. The full plan
-is in `docs/rebuild-plan.md`; read it before changing anything. Keep the visible
+is in `docs/rebuild-plan.md`; read it, and `docs/plan-overrides.md` (which wins), before changing anything. Keep the visible
 site title, section set and footer unchanged unless the owner says otherwise.
 
 The previous OpenAI / GitHub Actions design described in older versions of this
@@ -31,8 +31,8 @@ file is obsolete. Its useful editorial rules are in `docs/editorial-rules-legacy
   never model judgment.
 - A failure that recurs twice gets a new deterministic recovery rule, not a
   cleverer prompt.
-- Budget: cloud spend at most $50/month; stop cloud calls at $45, fall back to
-  local, and alert.
+- Fully local: no paid API (OpenAI, Anthropic or any other) is ever called. If local generation
+  fails, the run fails and alerts the owner. See docs/plan-overrides.md (it overrides the plan).
 - Fallback/template text is a hard failure; it must never be saved as an edition.
 
 ## Session discipline

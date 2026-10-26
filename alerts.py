@@ -20,7 +20,6 @@ TELEGRAM_API = "https://api.telegram.org/bot{token}/sendMessage"
 MAX_MESSAGE_CHARS = 3500
 
 SECRET_NAMES = (
-    "anthropic_api_key",
     "telegram_bot_token",
     "telegram_chat_id",
     "github_token",
