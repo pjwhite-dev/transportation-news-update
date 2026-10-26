@@ -22,8 +22,14 @@ $password = $credential.GetNetworkCredential().Password
 function Install-NssmService {
     param([string]$Name, [string]$Exe, [string]$Arguments, [string[]]$Environment)
     if (-not $PSCmdlet.ShouldProcess($Name, "Install/refresh NSSM service")) { return }
-    & $nssm stop $Name 2>$null | Out-Null
-    & $nssm remove $Name confirm 2>$null | Out-Null
+    # First install: the service does not exist yet, so these print "Can't open service!".
+    # Windows PowerShell 5.1 turns native stderr into a terminating error under
+    # $ErrorActionPreference = "Stop", so relax it for just these two calls.
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    & $nssm stop $Name *> $null
+    & $nssm remove $Name confirm *> $null
+    $ErrorActionPreference = $previous
     & $nssm install $Name $Exe $Arguments | Out-Null
     & $nssm set $Name ObjectName $credential.UserName $password | Out-Null
     & $nssm set $Name Start SERVICE_AUTO_START | Out-Null
