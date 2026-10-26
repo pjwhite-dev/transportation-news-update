@@ -1,0 +1,227 @@
+{
+  "2026-07-14": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "C",
+      "D"
+    ],
+    "reason": "B is the cleanest summary: every claim is directly supported by the fact sheet, status verbs are precise (\"proposed,\" \"would serve as the first step\"), the lead (FAA supersonic proposal) is the most consequential regulatory development, and the style is plain and specific without invented embellishment. A is second: its core facts and status verbs are correct, but it adds unsupported details (\"across critical infrastructure,\" \"to enhance detection precision,\" \"expanding approved commercial applications for unmanned systems in hazardous environments\") and states the 6G/5G point as fact rather than attributing it to a single writeup. C is third: it contains the most invented interpretive language (\"sustained federal investment in securing critical infrastructure,\" \"further expanding the inventory of certified systems available for government use,\" \"indicating growing governmental support for sustainable aviation technologies\") and draws an unsupported causal link between the supersonic proposal and the avalanche-drone clearance. D ranks last because it commits a clear status error—calling the FAA's proposal an \"action to lift\" the ban, which presents a proposal as a completed act—and it is also the least specific, reading more as meta-commentary than an executive summary."
+  },
+  "2026-07-15": {
+    "ranking": [
+      "qwen3.8",
+      "gemma4",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "D",
+      "B",
+      "C"
+    ],
+    "reason": "A is the cleanest: accurate claims, correct status discipline (uses 'reportedly' for Neros, 'signaled' for Pentagon deployment), strong lead (NHTSA order), good specificity (cities, dollar figures), and plain active style with no invented details. D is second: solid structure and specificity, but commits a status error by stating the Neros $500M contract as confirmed fact when the fact sheet says 'A report said' and 'If confirmed,' and drops the 'Reports said' qualifier on the Pentagon handbook. B is third: invents the word 'immediate' (not in the fact sheet), adds editorializing ('signals that operational scaling will face stricter scrutiny,' 'accelerated'), and shifts 'a new counter-drone system' to 'additional counter-UAS systems.' C is last: invents the FAA (absent from every fact-sheet entry), uses process/meta language ('dominated the day,' 'coverage was lighter'), selects a weaker lead (Matternet/BRINC over the NHTSA order), provides minimal specificity (only one dollar figure), and includes no source attribution."
+  },
+  "2026-09-11": {
+    "ranking": [
+      "gemma4",
+      "qwen3.8",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "D",
+      "C"
+    ],
+    "reason": "B is the cleanest summary: every claim is directly supported by the fact sheet, status verbs match (uses 'said' where appropriate, 'marked the launch' is rendered as 'launched' which is a negligible shift), specificity is strong (names, dollar figures, company names), synthesis is reasonable without overreach, and the style is plain and active with minimal editorializing. A is accurate on the core facts but adds unsupported embellishments ('urban air mobility standards,' 'consortium,' 'major U.S. cities,' 'regulatory pathway') and layers on interpretive commentary ('growing global competition,' 'maturing rapidly,' 'robust international demand') that go beyond the fact sheet; still, no outright invented facts or wrong status verbs. D covers similar ground but commits clearer status/attribution errors: it drops the 'said' attribution on Iran ('Iran captured' vs. 'Iran said it captured'), uses 'securing' where the fact sheet says 'received,' and drops the 'in one version' hedge on the $50 million figure; it also ends with advisory language ('Executives should monitor…') that is not reporting. C contains an invented fact—'counter-drone training' appears nowhere in the fact sheet—and is the least specific of the four, omitting key details (LOCUST dollar figure, Volatus, Iran) while compressing the day into a single paragraph. Per the rubric, a summary with an invented fact must rank below all others without that fault, placing C last."
+  },
+  "2026-09-14": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "D",
+      "A",
+      "B",
+      "C"
+    ],
+    "reason": "D is the cleanest summary: every claim is directly supported by the fact sheet, status verbs are precise (e.g., 'knocked out' is softened to 'targeted,' a minor understatement rather than an overstatement), specificity is strong ($620,000, MAKO X1, Ivolga FG, JFK to Manhattan), and the sector-by-sector organization is clear without editorial inflation. A is a close second: accurate, well-sourced, and specific, with only a minor status slip ('prepared static displays' where S7 says 'set for,' implying upcoming rather than completed). B introduces unsupported claims not in the fact sheet—'establishing a legal precedent for enforcement' (S20 only reports a successful prosecution), 'signaling a strategic pivot' (editorial), and 'revenue-generating operations' (not stated in any source)—which constitute invented interpretive facts. C is the weakest: it is too brief to function as an executive summary, lacks specificity (no dollar figures, no named systems), and presents Houthi 'claims' of strikes (S2) as confirmed 'drone strikes on Saudi oil pipelines,' a status error. Per the rubric, summaries with wrong status or invented facts must rank below those without such faults, placing B and C below A and D."
+  },
+  "2026-09-15": {
+    "ranking": [
+      "gemma4",
+      "qwen3.8",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "D",
+      "B",
+      "C",
+      "A"
+    ],
+    "reason": "D is the cleanest summary: every claim is directly supported by the fact sheet, status verbs are precise (e.g., 'is launching Phase 2… with plans to double'), the lead is the most consequential development (NATO drone shootdown), and the synthesis (NATO incident → global counter-drone trend) is grounded in multiple fact-sheet entries. No invented facts, no misattributions, no process language.\n\nB is very thorough and well-organized, covering NATO, U.S. drone policy, counter-drone defense, and autonomous vehicles with specific names and numbers. Its one blemish is a subtle misattribution: it says the escalation 'could galvanize further international support,' whereas S1 says the alliance warns that *continued Russian strikes* could galvanize support. It also omits 'safety services' from the FCC description. These are minor but real accuracy slips.\n\nC is largely accurate and specific but contains a clearer factual error: it states the BEYOND program expansion 'aims to gather airborne coverage data for command and control and safety services,' attributing the FCC/DOT test's purpose to the BEYOND program. S11 and S12 describe these as separate actions. C also stretches synthesis by linking the NATO incident to 'the urgent need for effective counter-drone measures,' a connection the fact sheet does not explicitly draw.\n\nA must rank last because it includes an invented fact: 'the UK Civil Aviation Authority updated its airspace change process to reduce regulatory burdens.' No entry in the fact sheet mentions the UK CAA or any airspace-change-process update. Per the rubric, a summary containing an invented fact must rank below any summary without that fault."
+  },
+  "2026-09-24": {
+    "ranking": [
+      "gemma4",
+      "qwen3.8",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "D",
+      "B",
+      "A"
+    ],
+    "reason": "C is the cleanest summary: no invented facts, correct verb tenses matching the fact sheet (e.g., 'are investigating,' 'is operating,' 'is testing'), appropriate synthesis, and a strong lead. D is second: it includes the significant Pakistan-Afghanistan escalation (S9) and the proposed safety bill (S21), but it overstates the Joby milestone ('validates the technology's readiness,' 'accelerates the industry's transition') and inserts '5G' not present in the fact sheet—unsupported characterizations that edge toward invented claims. B is third: it is comprehensive and specific (Aurora's 30,000-truck target, Waymo Tampa, Jensen Huang), but it commits multiple clear status errors—'investigated' for an ongoing investigation, 'operated' for an ongoing operation, and 'tested' for a test the fact sheet describes in the present continuous. A ranks last because it introduces a wholly invented fact (Textron Systems completing UAS vertiport flights in Virginia), a claim that appears nowhere in the fact sheet, and it also drops the 'reportedly' qualifier on the Tesla license issue. Per the rubric, a summary containing an invented fact must rank below all summaries without one."
+  },
+  "2026-10-02": {
+    "ranking": [
+      "qwen3.6",
+      "gemma4",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "C",
+      "D"
+    ],
+    "reason": "B ranks first for the strongest synthesis (connecting C-UAS testing to Russia's steel-cutting warheads and to commercial BVLOS tech, and linking FAA Autoland certification to AV regulation as a shared automation-safety theme), a consequential lead, broad accurate scope, and clean active prose with no factual or status errors. A is second: accurate, well-organized, good lead, and specific, but its synthesis is thinner (the Minneapolis-ordinance/FAA-drone-rules pairing is a looser connection) and it omits the international drone-warfare context that B weaves in. C is third: it has the broadest coverage (adds Ukraine at NATO, Iran/Hormuz) and is accurate, but the summary is visibly truncated at the end (broken URL, incomplete sentence), which is a significant presentation flaw for an executive summary. D ranks last: it leads with a local city-council ordinance as the day's 'highlight' (a weak lead for an executive summary), compresses everything into a single undifferentiated paragraph, omits the robotics sector, the Pentagon study, the states' FAA challenge, and all international drone-warfare items, and opens with vague process language ('saw significant regulatory and operational shifts')."
+  },
+  "2026-10-05": {
+    "ranking": [
+      "qwen3.6",
+      "gemma4",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "D",
+      "C"
+    ],
+    "reason": "B is the strongest: accurate on every claim, proper status verbs (Florida is 'considering,' not 'redirecting'), well-organized thematically, comprehensive coverage (includes Bonta lawsuit, DoorDash, Amazon, Tesla FSD), and synthesis is supported (linking 15-state challenge and Bonta suit as related regulatory actions). A is solid and accurate with good specificity (India LNG train, 1,600 km figure), proper status discipline, and plain style; its only weakness is a slightly loose connection between Florida and FAA research in the same paragraph. D contains a significant mischaracterization—calling FAA BVLOS/detect-and-avoid/traffic-management research 'offensive drone capabilities'—plus heavy editorializing ('strategic pivot by state governments' for a single state's consideration, 'reshaping the competitive landscape'), and a pluralization error ('state governments' for one state). C contains a clear invented fact: 'the Department of Homeland Security tests counter-drone technologies with state and local law enforcement agencies' appears nowhere in the fact sheet. C also merges two potentially distinct events (S9 and S23) into a single 'coalition led by California' without support, and uses the hyperbolic framing 'intense regulatory scrutiny.' Per the rubric, invented facts and wrong characterizations force a summary below those without such faults, placing C last and D third."
+  },
+  "2026-10-15": {
+    "ranking": [
+      "qwen3.8",
+      "gemma4",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "D",
+      "C",
+      "A"
+    ],
+    "reason": "Summary B is the strongest: every claim is supported by the fact sheet, status verbs are precise (e.g., 'ceiling counter-drone radar slot' matches S8 exactly), the lead (eVTOL pilot launch) is the most consequential development, and it synthesizes same-day FAA announcements without overreaching. It is also the most comprehensive, covering defense, autonomous vehicles, and infrastructure with correct specificity. Summary D is accurate throughout, uses plain active style, and has no status errors, but it is less comprehensive and its lead (BEYOND expansion) is slightly less consequential than the eVTOL launch. Summary C is largely accurate but contains two status issues: it calls Leonardo DRS's 'ceiling…slot' a 'ceiling contract' (S8 says 'slot'), and it describes Tesla's Cybercab as 'initiating public testing' when S14 says it was 'launched' and people can hail one—downgrading the actual status. Summary A must rank last because it invents a fact not present in the fact sheet: a 'San Diego company' receiving a '$500 million contract to build and field systems that detect and defeat uncrewed aerial threats.' No such company or contract appears in any of the 25 source items. It also mischaracterizes the NHTSA probe as targeting 'robotaxis in school-zone safety' when S17 describes a 'school bus safety probe.' Per the rubric, an invented fact mandates ranking below all summaries without that fault."
+  },
+  "2026-10-16": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "A",
+      "D",
+      "B"
+    ],
+    "reason": "C ranks first: it is the most comprehensive and well-synthesized summary, correctly grouping AAM milestones, infrastructure investment, workforce expansion, and autonomous-vehicle items. Its verbs match the fact sheet (signed, completed, broke ground, hired, partnered, is moving to). Its minor interpretive phrases ('enables the deployment of directed-energy defenses in protected airspace,' 'increased air traffic density') are inferences but not contradicted by the source. A ranks second: accurate on every claim, no status errors, no invented facts, and includes the supersonic and drone-research items C omits. Its interpretive lines ('clears a regulatory hurdle,' 'marking a significant step toward commercial viability') are editorial but not factual errors. It is less comprehensive (omits the record hiring, college partnerships, and Charger/Kodiak deal). D ranks third: it covers a good range of items and is generally accurate, but it commits a status error—stating the FMCSA 'permitted' driverless trucks to use beacons when the fact sheet says it 'is moving to let' them, converting an in-progress proposal into a completed action. Per the rubric, a wrong status places it below summaries without that fault. B ranks last: it contains two facts that appear nowhere in the fact sheet (a Navy GPS-free drone ship landing and a four-star autonomous warfare command), which are invented. The rubric requires any summary with an invented fact to rank below all others."
+  },
+  "2026-10-20": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "C",
+      "B",
+      "D"
+    ],
+    "reason": "A is the strongest: it leads with the most consequential story (Part 108, described in the fact sheet as 'the single most consequential UAS rule in a decade'), covers the broadest set of fact-sheet items (20 of 25), synthesizes related stories coherently (municipal resistance vs. corporate expansion; eVTOL milestones; supersonic progress), and maintains accurate status verbs throughout. Its only minor blemish is calling the Waymo recall issue 'steering issues' where the fact-sheet text says 'did not behave correctly' (though the source URL slug does say 'steering-issues'). C is second: fully accurate, good lead, and a well-synthesized C-UAS paragraph that connects the U.S. laser clearance to the UK's £240M allocation and COTS evaluation. However, it omits the entire drone-delivery sector (S2–S6) and the entire civil-supersonic sector (S22–S25), which together account for nine of the twenty-five fact-sheet items. B is third: every claim it makes is accurate and its lead is appropriate, but it is the thinnest of the three, omitting all eVTOL stories (S14–S16), the Waymo expansion (S18), the 2031 truck rule (S21), Boom's 130 orders (S24), China's TMS-10 (S25), and the UK C-UAS items (S10–S11), leaving large sectors of the fact sheet unrepresented. D ranks last because it contains multiple facts that appear nowhere in the fact sheet—an F-22 commanding a Fury Loyal Wingman drone, an Air Force target of roughly 500 such drones by 2032, a Navy $1.2 billion contract for 30 unmanned surface vessels, a Chinese maglev reaching 800 km/h in 5.3 seconds, and California High-Speed Rail completing 66 structures. These are invented details. It also opens with the process phrase 'This Tuesday update' and leads with the laser C-UAS clearance rather than the more consequential Part 108 rulemaking. Per the rubric, a summary containing invented facts must rank below any summary without them."
+  },
+  "2026-10-21": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "B",
+      "D",
+      "A"
+    ],
+    "reason": "C is the strongest: it leads with the 737 MAX-10 certification (a major, completed action), maintains accurate status verbs throughout, offers the most specific detail (737-600 through -900ER model range, $351,000 penalty, 'through 2027'), and builds the best-supported syntheses—linking the border drone ban to JITF 401 and Echodyne/ACS as a coherent counter-UAS thread, and juxtaposing the NHTSA probe against the Cybercab no-incident data to create a genuine tension. B is a solid, complete summary with a good lead and clean status discipline, but it is less comprehensive (omits the FMCSA exemption, JITF 401, Echodyne/ACS, and the Cybercab incident data) and leans slightly more on interpretive language ('decisive step,' 'tangible milestone'). D selects a defensible lead (the border drone ban) and synthesizes well, but it is incomplete—cutting off mid-sentence at 'The Federal Motor Carrier Safety'—which is a significant structural flaw; it also omits the $351,000 penalty and the 2.8% pay deal. A is not a summary at all: it is a concatenated list of Federal Register and news headlines with no prose, no analysis, no prioritization, and no synthesis, failing on every evaluative criterion."
+  },
+  "2026-10-22": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "B",
+      "D",
+      "A"
+    ],
+    "reason": "C is the most factually disciplined summary: its lead (FAA border drone lockdown through 2027) is the most consequential development, its verbs match the fact sheet (issued, proposed, finalized, announced), and its interpretive language is minimal and mild. B is accurate in its core claims and well-structured, but it injects unsupported narrative—'marking a significant milestone in the return of the aircraft to commercial service' adds a 'return' story the fact sheet never states, and phrases like 'signaling continued enforcement of operational compliance standards' and 'underscore the administration's focus' are editorializing beyond the source. D commits the most serious accuracy faults: 'clears a major regulatory hurdle for the aircraft's commercial entry and stabilizes production timelines for the manufacturer' and 'signaling a dual focus on resolving legacy safety mandates while advancing new fleet capabilities' are entirely invented characterizations with no support in the fact sheet; it also treats a question-piece (S2) as confirmed evidence of a TSA 'move' into drone regulation. A is not a summary at all—it is a semicolon-separated list of headlines with no analysis, no significance assessment, no synthesis, and no prose structure, failing on every editorial criterion."
+  },
+  "2026-10-25": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "A",
+      "B",
+      "D"
+    ],
+    "reason": "C is the most accurate and disciplined: every claim is directly supported by the fact sheet, it includes specific details (258 units, Harry Reid International Airport), uses clean active prose without editorializing, and selects the Zoox fleet recall as its lead. A is accurate and comprehensive but adds a mild unsupported interpretation ('signaling heightened safety scrutiny') and drops the 258-unit detail. B is mostly accurate but commits two unsupported syntheses—calling the eVTOL announcements a 'coordinated push' and the infrastructure items a 'broader governmental commitment to modernizing transportation networks'—neither of which the fact sheet supports, violating the synthesis criterion. D contains two outright invented facts (an FAA 'draft design standards for vertical lift infrastructure' release and an L3Harris counter-drone interceptor contract, neither appearing in the fact sheet) and a status error (stating Lucid and Uber 'partnered…to extend robotaxi operations to Houston' when the fact sheet says they 'announced plans,' i.e., a proposal, not a completed action). Per the rubric, any summary with an invented fact or wrong status must rank below all others without those faults, placing D last."
+  },
+  "2026-10-26": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "C",
+      "B",
+      "D"
+    ],
+    "reason": "A is the strongest: its lead (China's drone export controls) is the most consequential single development, every claim is supported by the fact sheet, status verbs are precise ('proposed,' 'received approval,' 'is developing'), synthesis is thematic without inventing causal links, and the style is plain and active. C is a close second: accurate, measured, and well-organized, with only a minor unsupported reference to 'Level 4 automation' in the Waymo/NHTSA pairing. B is third: it is the most comprehensive in coverage but introduces hype ('decisive step toward routine operations,' 'driving industry-wide standardization and operational maturity,' 'rapid transition') and an unsupported causal link between the DoD letter and the Russian drone threat that the fact sheet does not state. D is last and is disqualified by an invented fact ('the U.S. Navy halted procurement of the Global Autonomous Reconnaissance Craft,' which appears nowhere in the fact sheet), compounded by status errors (calling proposed BVLOS rules 'streamlined rules,' rendering GM's ongoing expansion as completed 'expanded,' and presenting a reported clearance as an Archer announcement) and a vague thematic lead rather than a specific consequential event."
+  }
+}

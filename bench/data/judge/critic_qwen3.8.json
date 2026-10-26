@@ -1,0 +1,311 @@
+{
+  "shipped:2026-10-21": {
+    "kind": "known_bad",
+    "day": "2026-10-21",
+    "passed": false,
+    "average": 1.25,
+    "scores": {
+      "accuracy": 2,
+      "status_discipline": 2,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "Template/filler text: 'Today's Advanced Transportation News Update covers...' and 'Additional developments include...' are boilerplate framing phrases.",
+      "Headline list instead of prose: The entire summary is a semicolon-separated enumeration of source headlines with no narrative structure, no explanation, and no synthesis.",
+      "Source attribution leaked into body text: The pipe-delimited tag '| auto connected car news.' is a source label that should not appear in the summary.",
+      "No actual summarization: The summary merely concatenates headlines (S1, S7, S2, S8, S3, S4) without extracting, explaining, or connecting any of the underlying facts."
+    ]
+  },
+  "shipped:2026-10-22": {
+    "kind": "known_bad",
+    "day": "2026-10-22",
+    "passed": false,
+    "average": 1.25,
+    "scores": {
+      "accuracy": 2,
+      "status_discipline": 2,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "Template/filler text: 'Today's Advanced Transportation News Update covers...' and 'Additional developments include...' are pure template framing with no editorial substance.",
+      "Headline list instead of prose: The entire summary is a semicolon-separated enumeration of source headlines with no narrative, no context, and no editorial voice.",
+      "Workflow/process language: 'Agency Information Collection Activities; Submission to the Office of Management and Budget for Review and Approval; Request for Comment' is verbatim Federal Register procedural language, not a news summary.",
+      "A rhetorical question ('Should the TSA's move into drone regulation worry you?') is presented as a factual development, conflating an opinion-piece headline with a news event."
+    ]
+  },
+  "synthetic:template_text": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 1.75,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 3,
+      "lead_selection": 2,
+      "significance": 2,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "Template/filler text: 'Key developments include...' is explicitly prohibited boilerplate.",
+      "Headline list instead of prose: The entire summary is three source headlines joined by semicolons with no narrative, context, or connective tissue."
+    ]
+  },
+  "synthetic:headline_list": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 1.62,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 3,
+      "lead_selection": 2,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "Headline list instead of prose: the entire 'summary' is six article titles strung together with periods, with no narrative, no analysis, and no connective tissue.",
+      "Template/filler text: the final item includes a leaked source tag ('| The Independent'), which is a formatting artifact, not prose."
+    ]
+  },
+  "synthetic:workflow_language": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 3.88,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 5,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 3,
+      "novelty": 3
+    },
+    "blocking_defects": [
+      "Template/filler text: 'The supplied records were selected for this briefing.' is a meta-statement about the summarization process, not news content. This is workflow/process language and filler that should not appear in a published summary."
+    ]
+  },
+  "synthetic:status_mismatch": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 3.62,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 2,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "Status mismatch: The summary states 'the NHTSA finalized new regulations requiring cyan exterior lighting on driverless vehicles,' but the fact sheet (S3, S17) clearly indicates this is a PROPOSAL ('has proposed new regulations,' 'NHTSA proposes cyan lights'). A proposal is described as a completed/finalized action."
+    ]
+  },
+  "synthetic:invented_fact": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 3.38,
+    "scores": {
+      "accuracy": 2,
+      "status_discipline": 4,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 3,
+      "specificity": 4,
+      "style": 3,
+      "novelty": 3
+    },
+    "blocking_defects": [
+      "Unsupported claim: 'The administration also committed $4.2 billion to the program' — no such figure or commitment appears anywhere in the fact sheet. The cited URL points to the Zoox recall article (S1), which contains no reference to a $4.2 billion commitment. This is a fabricated statistic with a mismatched source."
+    ]
+  },
+  "good:qwen3.6:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 3.88,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 5,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 3,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 3
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.8:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 4.0,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 5,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 3,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "Unsupported trend: 'These developments indicate a coordinated push to scale commercial eVTOL services across major U.S. metropolitan areas.' The fact sheet presents Beta Technologies, BETA, and Archer as separate, independent company actions. There is no evidence of coordination or a shared program linking them. The summary fabricates a collective narrative not present in the sources.",
+      "Unsupported trend: 'These actions reflect a broader governmental commitment to modernizing transportation networks to accommodate emerging autonomous and high-speed technologies.' The fact sheet reports two discrete procurement/funding actions (Siemens trainset contract; truck parking investment) without framing them as part of a unified governmental commitment or policy direction. The summary imposes a macro-narrative the sources do not support."
+    ]
+  },
+  "good:gemma4:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": true,
+    "average": 4.0,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 5,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 3
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.6:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": false,
+    "average": 3.38,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 3,
+      "lead_selection": 3,
+      "significance": 3,
+      "synthesis": 3,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "Unsupported claim: 'This regulatory action supports Archer Aviation's announcement of air taxi networks' — no source establishes a causal or supportive relationship between the FAA vertiport standards and Archer's Texas network plans. The fact sheet (S17) links Archer's announcement to U.S. clearance of its eVTOL aircraft for passenger flights, not to the FAA vertiport standards.",
+      "Unsupported trend: 'The convergence of regulatory clarity and commercial deployment signals accelerating maturity in the urban air mobility sector.' No source states or implies 'accelerating maturity' as a trend.",
+      "Unsupported trend: 'These developments reflect a broader industry shift toward scaling Level 4 automation while addressing public safety concerns through standardized visual cues.' The fact sheet does not characterize these as a 'broader industry shift toward scaling Level 4 automation.'"
+    ]
+  },
+  "good:qwen3.8:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": false,
+    "average": 3.88,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 4,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 3,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "Unsupported causal claim: The summary states 'The U.S. Department of Defense addressed these challenges by issuing an open letter,' implying the Project Agincourt letter was a direct response to the Russian mesh-network deployment and Chinese export controls. The fact sheet (S2) describes the letter as outlining 'the development path for the Autonomous Warfare Command' and 'setting the tone for how the DoD will integrate autonomous systems into future military operations,' with no stated causal link to the specific threats mentioned in S3 or S9.",
+      "Unsupported trend: The summary claims the parallel Waymo and XPeng approvals are 'driving industry-wide standardization and operational maturity.' No source in the fact sheet mentions standardization or operational maturity as an outcome; S20 references only 'broader Chinese efforts to expand self-driving technology trials' and an 'autonomous vehicle deployment roadmap.'",
+      "Minor misattribution: The fact sheet (S2) attributes the open letter to 'Leaders of Project Agincourt,' while the summary attributes it to 'The U.S. Department of Defense.' While Project Agincourt is a DoD program, the specific issuing body is different."
+    ]
+  },
+  "good:gemma4:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": true,
+    "average": 4.5,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 4,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 4
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.6:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": false,
+    "average": 4.12,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 4,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 5,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "Minor accuracy slip: the summary states Walmart/Wing are 'promising delivery of thousands of items within 30 minutes,' but the source (S13) says 'in as fast as 30 minutes.' 'Within 30 minutes' implies a maximum delivery time; 'as fast as 30 minutes' implies 30 minutes is the fastest possible (deliveries could take longer). This reverses the meaning of the delivery-time claim."
+    ]
+  },
+  "good:qwen3.8:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": false,
+    "average": 4.12,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 5,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 4
+    },
+    "blocking_defects": [
+      "In the counter-UAS paragraph, the summary states the developments indicate 'a dual focus on both offensive drone capabilities and defensive countermeasures.' The two items cited in that paragraph—Powerus's defensive protection contract and the FAA's research funding for BVLOS/detect-and-avoid/traffic management—are both defensive or regulatory in nature. Neither supports the 'offensive drone capabilities' characterization. This is an unsupported analytical claim not grounded in the cited sources."
+    ]
+  },
+  "good:gemma4:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": false,
+    "average": 3.88,
+    "scores": {
+      "accuracy": 4,
+      "status_discipline": 4,
+      "lead_selection": 4,
+      "significance": 4,
+      "synthesis": 4,
+      "specificity": 4,
+      "style": 4,
+      "novelty": 3
+    },
+    "blocking_defects": []
+  }
+}

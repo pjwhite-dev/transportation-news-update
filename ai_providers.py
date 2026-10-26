@@ -96,6 +96,7 @@ class OllamaProvider:
         model: str = DEFAULT_OLLAMA_MODEL,
         timeout_seconds: int = 600,
         stall_timeout_seconds: int = 120,
+        think: bool = False,
         num_ctx: int = 32768,
         temperature: float = 0.1,
         num_predict: int | None = None,
@@ -104,6 +105,7 @@ class OllamaProvider:
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.stall_timeout_seconds = stall_timeout_seconds
+        self.think = think
         self.model = model.strip()
         self.timeout_seconds = timeout_seconds
         self.num_ctx = num_ctx
@@ -174,7 +176,7 @@ class OllamaProvider:
             payload = {
                 "model": self.model,
                 "messages": request_messages,
-                "think": False,
+                "think": self.think,
                 "options": {
                     "temperature": self.temperature,
                     "num_ctx": self.num_ctx,
@@ -212,7 +214,7 @@ class OllamaProvider:
             payload = {
                 "model": self.model,
                 "messages": request_messages,
-                "think": False,
+                "think": self.think,
                 "format": schema,
                 "options": {
                     "temperature": self.temperature,

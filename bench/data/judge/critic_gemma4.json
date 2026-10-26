@@ -1,0 +1,294 @@
+{
+  "shipped:2026-10-21": {
+    "kind": "known_bad",
+    "day": "2026-10-21",
+    "passed": false,
+    "average": 1.88,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 5,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 2,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "template or filler text (\"Today's Advanced Transportation News Update covers...\", \"Additional developments include...\")",
+      "a headline list instead of prose"
+    ]
+  },
+  "shipped:2026-10-22": {
+    "kind": "known_bad",
+    "day": "2026-10-22",
+    "passed": false,
+    "average": 2.25,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 3,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "template or filler text (\"Today's Advanced Transportation News Update covers...\", \"Additional developments include...\")",
+      "a headline list instead of prose"
+    ]
+  },
+  "synthetic:template_text": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 2.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "template or filler text (\"Key developments include...\")",
+      "a headline list instead of prose"
+    ]
+  },
+  "synthetic:headline_list": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 2.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 1,
+      "significance": 1,
+      "synthesis": 1,
+      "specificity": 1,
+      "style": 1,
+      "novelty": 1
+    },
+    "blocking_defects": [
+      "headline list instead of prose"
+    ]
+  },
+  "synthetic:workflow_language": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 4.88,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 4,
+      "novelty": 5
+    },
+    "blocking_defects": [
+      "template or filler text (\"The supplied records were selected for this briefing.\")"
+    ]
+  },
+  "synthetic:status_mismatch": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 4.38,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 2,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": [
+      "a status mismatch (a proposal or plan described as a completed action): The summary states the NHTSA \"finalized\" new regulations requiring cyan exterior lighting, but S3 and S17 state the NHTSA \"proposed\" these regulations."
+    ]
+  },
+  "synthetic:invented_fact": {
+    "kind": "known_bad",
+    "day": "2026-10-25",
+    "passed": false,
+    "average": 4.62,
+    "scores": {
+      "accuracy": 2,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": [
+      "an unsupported claim"
+    ]
+  },
+  "good:qwen3.6:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.8:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:gemma4:2026-10-25": {
+    "kind": "candidate",
+    "day": "2026-10-25",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.6:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.8:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:gemma4:2026-10-26": {
+    "kind": "candidate",
+    "day": "2026-10-26",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.6:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  },
+  "good:qwen3.8:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": false,
+    "average": 4.62,
+    "scores": {
+      "accuracy": 3,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 4,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": [
+      "an unsupported claim (the summary mentions a focus on 'offensive drone capabilities,' but the fact sheet only discusses defensive C-UAS and FAA safety/integration research)",
+      "an unsupported trend (the summary describes a 'strategic pivot by state governments' in the plural, while the fact sheet only mentions Florida)"
+    ]
+  },
+  "good:gemma4:2026-10-05": {
+    "kind": "candidate",
+    "day": "2026-10-05",
+    "passed": true,
+    "average": 5.0,
+    "scores": {
+      "accuracy": 5,
+      "status_discipline": 5,
+      "lead_selection": 5,
+      "significance": 5,
+      "synthesis": 5,
+      "specificity": 5,
+      "style": 5,
+      "novelty": 5
+    },
+    "blocking_defects": []
+  }
+}

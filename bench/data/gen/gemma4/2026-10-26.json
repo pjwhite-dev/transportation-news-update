@@ -1,0 +1,13 @@
+{
+  "model": "gemma4",
+  "tag": "gemma4:31b",
+  "day": "2026-10-26",
+  "text": "China announced new export controls on autonomous software, long-range autopilots, speed controllers, and high-power drone motors effective November 18, 2026, which may raise costs and complicate production for U.S. and European drone manufacturers [armyrecognition.com]. This development coincides with a trend of evolving drone warfare and defense, as Russian forces deployed decentralized mesh communication networks to bypass electronic jamming in Kyiv [streamlinefeed.co.ke], while L3Harris is developing a long-range ramjet missile for the U.S. Army to intercept drones [armyrecognition.com].\n\nThe autonomous vehicle sector is expanding into complex urban environments and larger vehicle classes. Waymo received approval to launch a robotaxi pilot in New York City [mashable.com], and General Motors announced plans to expand \"eyes-off\" autonomous driving technology to SUVs and pickup trucks [foxbusiness.com]. To improve safety, the National Highway Traffic Safety Administration proposed a rule requiring cyan exterior lighting on self-driving vehicles to help pedestrians and other drivers identify them [technology.org].\n\nIn advanced aviation and space, the Federal Aviation Administration issued proposed design standards for eVTOL vertiports to establish infrastructure requirements for the national airspace system [avbrief.com]. Simultaneously, Archer Aviation unveiled plans for air taxi networks in Houston, Dallas, and Austin [aerospacemanufacturinganddesign.com]. In lunar exploration, NASA and partners Blue Origin and SpaceX streamlined designs for crewed lunar landers, with the Artemis III mission scheduled for 2027 to test operations [nasa.gov].",
+  "seconds": 20.7,
+  "usage": {
+    "input_tokens": 3886,
+    "output_tokens": 328,
+    "total_tokens": 4214
+  },
+  "retries": 0
+}

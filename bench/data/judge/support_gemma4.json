@@ -1,0 +1,5414 @@
+{
+  "2026-07-14|published": {
+    "sentences": 3,
+    "supported": 3,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S11"
+        ],
+        "note": "The sentence mentions activity in drones, robotaxis, and eVTOLs (supported by S1, S3, S4, S11) and describes the FAA's proposal to end the supersonic flight ban via a noise-based standard (supported by S2)."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S5",
+          "S8"
+        ],
+        "note": "Counter-UAS demonstrations are mentioned in S8, border-defense contracting in S1, and Blue UAS certification in S5."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S4"
+        ],
+        "note": "Robotaxi expansion is supported by Tesla's Cybercab rides in S4, and safety/regulatory friction in D.C. and San Francisco is supported by S3."
+      }
+    ]
+  },
+  "2026-07-14|qwen3.6": {
+    "sentences": 6,
+    "supported": 2,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "The fact sheet does not state that the framework is 'standardized' or that it applies 'across critical infrastructure'."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The claim that this signals 'intensified federal investment in border security technologies' is a conclusion not present in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The fact sheet does not state that the integration of 6G capabilities was intended 'to enhance detection precision'."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects the proposal and its purpose as described in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The claim that this is 'expanding approved commercial applications for unmanned systems in hazardous environments' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately reflects the legislative debates in D.C. and the operational issues/fines in San Francisco."
+      }
+    ]
+  },
+  "2026-07-14|qwen3.8": {
+    "sentences": 8,
+    "supported": 2,
+    "unsupported": 6,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence adds a conclusion that the contract 'signals sustained federal investment in securing critical infrastructure against aerial threats' which is not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "The sentence adds a conclusion that the award 'aligns with a broader federal push to integrate counter-drone technologies' which is not stated in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact that AIRO Group announced its RQ-35 Heidrun drone was added to the U.S. Blue UAS list is stated in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The sentence adds a claim that the addition is 'further expanding the inventory of certified systems available for government use' which is not stated in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "This is a fragment referring to the Blue UAS list mentioned in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence adds a conclusion that 'Regulatory shifts are also reshaping the aviation landscape' which is not stated in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The sentence adds a conclusion that 'This regulatory evolution supports new operational capabilities' which is not stated in the fact sheet."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The sentence adds a conclusion that the pilot program is 'indicating growing governmental support for sustainable aviation technologies' which is not stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-07-14|gemma4": {
+    "sentences": 7,
+    "supported": 6,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects the FAA's proposal to replace the overland supersonic flight ban with a noise-based standard as a first step toward full authorization."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The sentence accurately states that the FAA cleared a drone for avalanche-control operations in the US."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S6"
+        ],
+        "note": "This is a connecting sentence that summarizes the actions of the DoD (S1) and FBI (S6) regarding counter-drone capabilities and frameworks."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S6"
+        ],
+        "note": "The sentence correctly identifies the $100 million DoD contract for CACI (S1) and the FBI's SAFER SKIES framework (S6)."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The sentence accurately states that AT&T and Ericsson demonstrated drone-detection technology near AT&T Stadium in Arlington."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "While the fact sheet mentions technical progress (S4) and regulatory friction (S3), it does not explicitly state that the sector 'shows a trend' of these simultaneous occurrences; this is an analytical conclusion."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S4"
+        ],
+        "note": "Despite being a fragment, the factual claims present (Tesla's employee rides at Gigafactory Texas and the mention of Washington, D.C. and San Francisco) are supported by S4 and S3 respectively."
+      }
+    ]
+  },
+  "2026-07-15|published": {
+    "sentences": 3,
+    "supported": 0,
+    "unsupported": 3,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2",
+          "S6"
+        ],
+        "note": "The sentence claims that drone delivery and public-safety drone growth 'dominated the day,' which is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1",
+          "S4"
+        ],
+        "note": "The fact sheet does not mention the FAA."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7",
+          "S10"
+        ],
+        "note": "The sentence claims that AAM/eVTOL coverage was 'lighter,' which is a conclusion not stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-07-15|qwen3.6": {
+    "sentences": 9,
+    "supported": 4,
+    "unsupported": 5,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet states NHTSA ordered robotaxi fixes, but does not specify that they were 'immediate'."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1",
+          "S8"
+        ],
+        "note": "The claim that this highlights 'the tension between rapid commercial deployment and safety compliance' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The claim that the directive 'signals that operational scaling will face stricter scrutiny as public safety concerns emerge' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact sheet mentions 'continued federal investment', but does not state that defense procurement activity 'accelerated'."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence accurately reflects the release of the handbook, the preparation to deploy a new system, and the continued emphasis on deterring hostile drones."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "Supported by the report that Neros won a $500 million U.S. Army drone deal."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "Supported by the statement that if confirmed, it would be a major domestic defense procurement for small UAS production."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2",
+          "S6",
+          "S10"
+        ],
+        "note": "The fact sheet describes ongoing expansion (S6) and plans to scale or operate (S2, S10), but does not state as a fact that operations 'expanded' (completed action) through these means."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects the funding amount, the purpose of scaling the network and manufacturing, and the goal of deploying drones at emergency stations (police and fire stations)."
+      }
+    ]
+  },
+  "2026-07-15|qwen3.8": {
+    "sentences": 8,
+    "supported": 8,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects that NHTSA ordered robotaxi fixes due to first-responder interference and that this increases regulatory pressure."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The sentence accurately states that Waymo and Tesla are expanding into Miami and Las Vegas and that this signals commercial competition."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The sentence accurately reflects the Department of War's finalization of FY26 APFIT awards over $2 billion with new software capabilities and the resulting indication of federal investment."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence accurately states the release of the counter-drone handbook and the plans to deploy a new system, as well as the emphasis on deterring hostile drones."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The claim that Neros reportedly won a $500 million U.S. contract is supported by S3."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The claim that the contract represents a major domestic defense procurement for small UAS production is supported by S3."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The mention of the Army drone contract is supported by S3."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S6"
+        ],
+        "note": "The claim that BRINC raised $125 million for its public safety drone network and U.S. manufacturing is supported by S2, and the general claim of commercial scaling is supported by S6."
+      }
+    ]
+  },
+  "2026-07-15|gemma4": {
+    "sentences": 10,
+    "supported": 10,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects the NHTSA order and the resulting regulatory pressure mentioned in S1."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The expansion of Waymo and Tesla into Miami and Las Vegas is explicitly stated in S8."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "note": "The prioritization is supported by the $500 million contract (S3), the new handbook and system deployment (S4), and the $2 billion in awards (S5)."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The release of the handbook and preparation for system deployment are stated in S4."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact that Neros won a $500 million U.S. Army contract is stated in S3."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The contract for small UAS production is mentioned in S3."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S5"
+        ],
+        "note": "The Army drone contract (S3) and the Department of War's FY26 APFIT awards over $2 billion (S5) are both supported."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S6",
+          "S7",
+          "S8",
+          "S10"
+        ],
+        "note": "Scaling is supported by BRINC's expansion (S2), Matternet's network expansion (S6), Eve's testing progress (S7), Waymo/Tesla's expansion (S8), and the South Korea partnership (S10)."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "BRINC raising $125 million for its drone network and U.S. manufacturing is stated in S2."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "Matternet's expansion of its Part 135 operator network is stated in S6."
+      }
+    ]
+  },
+  "2026-09-11|published": {
+    "sentences": 3,
+    "supported": 1,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence is an incomplete fragment and includes a subjective claim ('most significant') not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The facts regarding the eVTOL pilot program launch in Texas, Joby's demo flights, and the goals of shaping air-taxi operations and electric air mobility planning are all stated in S1."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11",
+          "S12",
+          "S13",
+          "S15"
+        ],
+        "note": "While the security bulletins (S12), manufacturing/battery discussions (S13, S15), and FTA funding (S11) are supported, the fact sheet contains no mention of 'counter-drone training'."
+      }
+    ]
+  },
+  "2026-09-11|qwen3.6": {
+    "sentences": 16,
+    "supported": 6,
+    "unsupported": 10,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence is a fragment but mentions entities present in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The launch of the eVTOL pilot program in Texas and its goals are stated in S1."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "While S1 mentions Joby beginning demo flights, it does not state that they are providing real-world data to inform regulatory frameworks for commercial urban air mobility."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet does not claim this is the 'most significant domestic policy advancement' or that it moves the sector from 'theoretical planning to active operational testing'."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The permit granted by Spain to Uber, WeRide, and Avomo for robotaxi testing in Madrid is stated in S3."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet does not state that this milestone signals growing global acceptance of high-level autonomy."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "While the $233 million delivery is mentioned in S11, the claim that it is 'reinforcing U.S. investment in ground-based advanced transportation systems' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "AeroVironment's first international order for the LOCUST system and the value of over $50 million are stated in S4."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The fact sheet does not mention growing demand among allied nations."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The sentence is a fragment but mentions the capture of a malfunctioning U.S. drone by Iran, which is in S8."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The capture of the Dive-LD drone and the resulting concerns about reverse engineering are stated in S8."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The conclusion regarding increasing geopolitical risks in contested environments is not in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that the sector is 'maturing' based on the convergence of these events is an analysis not present in the fact sheet."
+      },
+      {
+        "n": 14,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The comparison between U.S. focus and international acceleration is a summary conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 15,
+        "verdict": "unsupported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The claim that this serves as a reminder of security vulnerabilities in global supply chains is not in the fact sheet."
+      },
+      {
+        "n": 16,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet contains no recommendations for executives to monitor these events."
+      }
+    ]
+  },
+  "2026-09-11|qwen3.8": {
+    "sentences": 13,
+    "supported": 4,
+    "unsupported": 9,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence swaps the intended goals (accelerate planning for air-taxi operations vs shape future air-taxi operations) and adds the term 'standards', which is not in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence adds a conclusion about 'signaling a concrete step toward operationalizing advanced air mobility beyond the conceptual phase' that is not in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact that Duffy marked the launch is stated in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence contains conclusions and claims about 'significant federal commitment' and 'regulatory pathways' not stated in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "All factual claims regarding Spain's L4 permit, the companies involved, and the location are supported."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence makes claims about 'growing global competition' and 'jurisdictions outside the United States' that are not in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence contains speculative claims about regulatory frameworks maturing and influencing U.S. policy."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence adds a claim that 'Defense and counter-drone capabilities saw significant commercial activity', which is not stated in the fact sheet."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact that Volatus Aerospace won a five-year contract for the Canadian Army is supported."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence draws conclusions about 'robust international demand' and 'broader trends of allied nations' not found in the fact sheet."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The fact that the FTA delivered $233 million for rail transit infrastructure is supported."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The sentence adds claims about 'addressing critical maintenance and modernization needs in major U.S. cities' not stated in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence makes claims about the federal government's 'continued focus' and a 'broader advanced transportation strategy' not found in the fact sheet."
+      }
+    ]
+  },
+  "2026-09-11|gemma4": {
+    "sentences": 12,
+    "supported": 10,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The entities mentioned are present in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The launch of the eVTOL pilot program in Texas, the involvement of Joby demo flights, and the goals of shaping air-taxi operations and accelerating electric air mobility planning are all stated in S1."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states that Secretary Duffy marked the launch of the program."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "S11 confirms the FTA delivered $233 million to modernize rail transit infrastructure."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet lists several international permits and procurements, but it does not state that there is a 'trend' toward expanded operational permits and procurement."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms Spain granted its first Level 4 autonomous-vehicle permit to Uber, WeRide, and Avomo for robotaxi testing in Madrid."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S5"
+        ],
+        "note": "S5 confirms Volatus Aerospace won a five-year contract for the Canadian Army, and S4 confirms AeroVironment's first international order for the LOCUST system at more than $50 million in one version."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not explicitly state that 'Defense risks and industrial shifts also emerged this period'."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "S8 states that Iran said it captured a malfunctioning U.S. Dive-LD underwater drone."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "S8 confirms the capture of the Dive-LD underwater drone and the resulting concerns about reverse engineering."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The Dive-LD underwater drone is mentioned in S8."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "S13 confirms PDW CEO James Slider's statement that American drone manufacturing must scale domestic production of motors, batteries, electronics, and critical parts."
+      }
+    ]
+  },
+  "2026-09-14|published": {
+    "sentences": 3,
+    "supported": 3,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S6"
+        ],
+        "note": "The fact sheet confirms Uber's driverless robotaxi service in Croatia [S1], Tesla's launch of Cybercab robotaxis in Texas [S6], and a surge in autonomous vehicle commercialization [S1]."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet states that Texas started real-world air taxi flights under a new federal program and that Joby Aviation completed its first NYC eVTOL flights [S3]."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S5",
+          "S16",
+          "S21"
+        ],
+        "note": "The fact sheet mentions the vulnerability of energy infrastructure to geopolitical conflicts [S2], drone strikes on Saudi oil pipelines [S16, S21] leading to oil price surges [S2], and Russia's proposal of high-speed trains to India during BRICS sidelines [S5]."
+      }
+    ]
+  },
+  "2026-09-14|qwen3.6": {
+    "sentences": 7,
+    "supported": 5,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms Uber commenced operations of Europe's first fully driverless robotaxi service in Croatia with zero human safety drivers and that this highlights a surge in autonomous vehicle commercialization."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S6",
+          "S7"
+        ],
+        "note": "The fact sheet states Tesla launched Cybercab robotaxis in Texas (S6) and is set to display them in Beijing and Shanghai as part of its autonomous vehicle strategy (S7)."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet confirms TxDOT's confirmation of air taxis taking flight this fall under a new federal program and Joby Aviation's flights from JFK to Manhattan."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet mentions Russian drone strikes on a train near the Polish border, the resulting international outcry, and the vulnerability of transportation infrastructure to geopolitical conflicts."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S21"
+        ],
+        "note": "The fact sheet confirms Houthi claims led to oil surges past $107 and threats to global oil supply (S2), and that drones from Iraq knocked out a Saudi oil pipeline (S21)."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S22"
+        ],
+        "note": "While the EU releasing $7 billion for Ukraine to buy Patriot missiles and drones is supported, the fact sheet does not state that this was done 'in response to these threats' (the Houthi/Iraq/Russian drone strikes)."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The fact sheet confirms Freya Industries raised $620K, but it does not state the conclusion that 'Defense technology sectors saw significant capital and operational shifts'."
+      }
+    ]
+  },
+  "2026-09-14|qwen3.8": {
+    "sentences": 10,
+    "supported": 6,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet states Uber has commenced operations of Europe's first fully driverless robotaxi service in Croatia with zero human safety drivers."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S6"
+        ],
+        "note": "The fact sheet confirms Tesla launched Cybercab robotaxis in Texas and TxDOT confirmed air taxis are taking flight this fall under a new federal program."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not mention 'public revenue-generating operations' or a 'rapid shift from testing'."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S22"
+        ],
+        "note": "The fact sheet states the EU released $7 billion for Ukraine to buy Patriot missiles and drones, allowing them to order American interceptors."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet mentions Russian drone strikes on a train near the Polish border, the resulting international outcry, and the vulnerability of transportation infrastructure."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S23"
+        ],
+        "note": "While the contract is mentioned, the fact sheet does not state that this signals a 'strategic pivot toward cost-effective counter-drone technologies'."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet mentions 'broader regulatory movements' and 'global self-driving rules entering the real world'."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S20"
+        ],
+        "note": "The fact sheet confirms the prosecution but does not state that it established a 'legal precedent for enforcement'."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The fact sheet states Skyworx asked the FCC to exclude entertainment drones from restrictions and that a ban could put aerial light shows at risk."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence is incomplete and contains a conclusion not found in the fact sheet."
+      }
+    ]
+  },
+  "2026-09-14|gemma4": {
+    "sentences": 11,
+    "supported": 11,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet states Uber has commenced operations of Europe’s first fully driverless robotaxi service in Croatia, featuring zero human safety drivers and powered by Chinese software."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S6"
+        ],
+        "note": "S1 mentions a surge in autonomous vehicle commercialization and the Volkswagen ID. Buzz robotaxi, while S6 confirms Tesla launched its first Cybercab robotaxis in Texas."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states the Volkswagen ID. Buzz robotaxi is hitting LA streets."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms TxDOT stated air taxis are taking flight this fall under a new federal program."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 states Joby Aviation completed its first NYC eVTOL (electric vertical takeoff and landing) flights from JFK to Manhattan."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 lists numerous counter-drone developments (Freya Industries, Poland's MAKO X1, DroneShield, Leonardo/Kongsberg, Punjab Police, Moog), supporting the claim of a surge in activity."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 explicitly mentions Freya Industries raising $620K for drone detection in Europe and Poland unveiling the MAKO X1 man-portable counter-UAS system."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S22"
+        ],
+        "note": "S22 states the EU released $7 billion for Ukraine to buy Patriot missiles and drones."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 states that events highlight the vulnerability of transportation and energy infrastructure to geopolitical conflicts."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S21"
+        ],
+        "note": "S2 mentions Russian drone strikes hitting a train near the Polish border, and S21 mentions drones from Iraq knocking out a Saudi oil pipeline."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 states Russia has proposed building its Ivolga FG high-speed trains in India."
+      }
+    ]
+  },
+  "2026-09-15|published": {
+    "sentences": 3,
+    "supported": 2,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S11",
+          "S12"
+        ],
+        "note": "The FAA's plan to double the size of the BEYOND program is mentioned in S12, and the FCC's waiver for cellular network testing is mentioned in S11."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "While Waymo's Tokyo plans are in S2, there is no mention of the UK Civil Aviation Authority updating its airspace change process in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 explicitly states that NATO jets intercepted and shot down a drone in Lithuanian airspace and warns that Russian strikes could galvanize support for Ukraine."
+      }
+    ]
+  },
+  "2026-09-15|qwen3.6": {
+    "sentences": 12,
+    "supported": 10,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects the events and concerns mentioned in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms energy infrastructure attacks by both sides, specifically mentioning oil refineries and facilities near Kyiv."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1",
+          "S3"
+        ],
+        "note": "While the fact sheet mentions UN Security Council discussions (S1) and the urgent need for counter-drone measures (S3), it does not state that the UN discussions highlight this need; rather, S3 attributes the need to Houthi strikes."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": "The sentence matches the details regarding the FAA's BEYOND program Phase 2."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11",
+          "S12"
+        ],
+        "note": "The fact sheet mentions the BEYOND program expansion (S12) and the FCC waiver for cellular network testing (S11), but it does not state that the BEYOND expansion aims to gather the data mentioned in the FCC waiver."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The sentence accurately reflects Birdstop's use of Detroit's automotive supply chain."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence matches the details of Waymo's expansion into Tokyo."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet confirms the legal victory in Santa Monica."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately lists the partnerships and deployments mentioned as indicators of industry adoption and confidence."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence matches the details of Joby Aviation's demonstrations and flights."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence accurately reflects Surf Air Mobility's attendance at the Project Nexus event."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately reflects the British Army's deployment of Halo Shield and the US Air Force's Point Defense career path."
+      }
+    ]
+  },
+  "2026-09-15|qwen3.8": {
+    "sentences": 12,
+    "supported": 10,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence claims the 'escalation' (NATO shooting down the drone) is what the alliance warns could galvanize support, whereas the fact sheet states that 'continued Russian strikes' could galvanize support."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S12",
+          "S19"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S20",
+          "S24"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S4",
+          "S10"
+        ],
+        "note": ""
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The fact sheet does not state that Birdstop's actions indicate 'broader industry adoption of domestic production capabilities'."
+      }
+    ]
+  },
+  "2026-09-15|gemma4": {
+    "sentences": 7,
+    "supported": 7,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S20"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-09-24|published": {
+    "sentences": 6,
+    "supported": 5,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet states Joby Aviation completed its first fully autonomous cross-country flight of 3,199 miles without pilot intervention, marking a significant milestone."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms Beta Technologies launched operations under the federal eVTOL Integration Pilot Program (eIPP) in North Carolina for rural healthcare access and that Transportation Secretary Sean Duffy celebrated the launch."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "While the FCC's cellular network test is mentioned in S18, there is no mention of Textron Systems or UAS vertiport flights in Virginia in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet states authorities are investigating Comma AI's hands-off driving technology after fatal crashes and that Tesla is reportedly operating its Robotaxi service in Texas with an expired state license."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a sentence fragment that does not make a factual claim."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet states the US Coast Guard formed a new program office to oversee robotics and autonomous systems, signaling increased focus on maritime UAS security, and mentions other federal counter-drone efforts."
+      }
+    ]
+  },
+  "2026-09-24|qwen3.6": {
+    "sentences": 15,
+    "supported": 15,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states Joby Aviation completed a 3,199-mile fully autonomous cross-country flight without pilot intervention and that these developments underscore progress supporting commercial deployment."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 confirms Beta Technologies launched operations under the eVTOL Integration Pilot Program in North Carolina for rural healthcare and Archer Aviation identified coastal corridors in Doha."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 explicitly states that these developments underscore rapid progress in autonomous air mobility and regulatory frameworks supporting commercial deployment."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 states authorities are investigating Comma AI's hands-off driving technology following fatal crashes, raising safety concerns."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 confirms Tesla is reportedly operating Robotaxi in Texas with an expired license and its system misreads speed limits in Belgium."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 confirms Aurora's target of 30,000 driverless trucks by 2030 and Waymo's launch in Tampa and hearings in Minneapolis."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 states Jensen Huang rejected antitrust and liability relief for AI labs and mentions the complex interplay between technological advancement and public acceptance."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 states the US Coast Guard formed a new program office to oversee robotics and autonomous systems, signaling increased focus on maritime UAS security."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms the DoD's planned counter-drone laser shoot-off in December and US Marines fielding LMADIS counter-drone MRZRs in CENTCOM."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms the $26 million deal between Advanced Navigation and Kongsberg and KeyOptions' selection for mobile SkyControl C-UAS platforms."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms Ukraine signed a drone deal with Finland and Baltic countries are seeking EU funding."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S18"
+        ],
+        "note": "S18 states the FCC cleared a nationwide test of cellular networks for drones and asks if they can become the backbone of the drone fleet."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 confirms China is testing a supersonic jet to cut Beijing-Shanghai travel time by 75% and India's first bullet train is set to launch in 2027."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 confirms NASA is modernizing commercial airline systems and selected the PRIMA far-infrared telescope for the Probe Explorers mission class."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S10"
+        ],
+        "note": "S5 confirms Zimbabwe granted nationwide drone delivery approvals, and S10 confirms USVs deployed from Australia to monitor Southern Ocean carbon uptake."
+      }
+    ]
+  },
+  "2026-09-24|qwen3.8": {
+    "sentences": 19,
+    "supported": 10,
+    "unsupported": 9,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet mentions the flight as a 'significant milestone', but does not state that it 'demonstrates the operational viability... for commercial deployment'."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet does not state that the milestone 'validates the technology's readiness' or 'accelerates the industry's transition'."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S18"
+        ],
+        "note": "The fact sheet states the FCC is asking if cellular networks can become the backbone, not that this test 'could establish' it as such."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S18"
+        ],
+        "note": "Both the Joby flight and the FCC network test are mentioned in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S4",
+          "S18"
+        ],
+        "note": "This is a connective summary sentence supported by the actions of the Coast Guard, NASA, and FCC."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet explicitly mentions the Coast Guard forming a new program office for robotics and autonomous systems to focus on maritime UAS security."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet mentions the DoD laser shoot-off in December and the Marines fielding LMADIS counter-drone MRZRs in CENTCOM."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet does not state that these actions reflect a 'coordinated federal effort'."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "Both the Coast Guard office and the DoD test are mentioned in S3."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S9",
+          "S12"
+        ],
+        "note": "This is a connective summary sentence supported by the Comma AI investigation and the Pakistan-Afghanistan conflict."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet mentions safety concerns, but does not state that the investigation 'highlights the critical need for rigorous safety validation'."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The fact sheet mentions the strikes and a 'sharp escalation in recent fighting', but does not state that it 'illustrates the escalating use of unmanned systems in regional conflicts'."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2",
+          "S9"
+        ],
+        "note": "This is a conclusion not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S9"
+        ],
+        "note": "Both the Comma AI investigation and the Pakistan strikes are mentioned in the fact sheet."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S21"
+        ],
+        "note": "This is a connective summary sentence supported by the proposed US bill and the developments in China and India."
+      },
+      {
+        "n": 16,
+        "verdict": "unsupported",
+        "evidence": [
+          "S21"
+        ],
+        "note": "The fact sheet mentions the bill's requirements, but does not explicitly state that it is 'aiming to modernize safety protocols'."
+      },
+      {
+        "n": 17,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "Both China's supersonic jet and India's bullet train launch in 2027 are mentioned in S5."
+      },
+      {
+        "n": 18,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact sheet does not state that these initiatives 'demonstrate a global commitment'."
+      },
+      {
+        "n": 19,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S21"
+        ],
+        "note": "The existence of the bill and China's jet testing are both mentioned."
+      }
+    ]
+  },
+  "2026-09-24|gemma4": {
+    "sentences": 10,
+    "supported": 7,
+    "unsupported": 3,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects the details of Joby Aviation's flight and its significance as stated in S1."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects the launch of Beta Technologies' operations in North Carolina and Archer Aviation's identification of routes in Doha as stated in S1."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not explicitly state that federal agencies are expanding oversight and infrastructure for autonomous systems as a general claim."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S18"
+        ],
+        "note": "The US Coast Guard's new program office is mentioned in S3, and the FCC's cellular network test for drones is mentioned in S18."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The sentence accurately reflects NASA's modernization of commercial airline systems as stated in S4."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "While S2 mentions investigations and hearings, it does not explicitly state that the sector 'faces increased regulatory and safety scrutiny'."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects the investigation into Comma AI following fatal crashes as stated in S2."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects the reports about Tesla's Robotaxi license in Texas and Waymo's public hearings in Minneapolis as stated in S2."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that 'Global transportation investments continue' is not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately reflects the US Coast Guard's new office, the DoD's planned laser shoot-off, and the conclusion that these highlight growing investments as stated in S3."
+      }
+    ]
+  },
+  "2026-10-02|published": {
+    "sentences": 6,
+    "supported": 6,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence summarizes the regulatory shift and specifically cites the Minneapolis ordinance and local scrutiny, both of which are mentioned in S2."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "The FAA certification of Garmin Autoland on the Epic E1000 AX and its function are explicitly stated in S6."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a connecting fragment that does not add a new factual claim."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 confirms the Army's expansion of C-UAS infrastructure, the opening of test lanes in Arizona, and contracts with Fortem and Echodyne."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 confirms the $1.4 billion award to 16 companies for logistics support to streamline costs and the launch of the SpaceX Crew-13 mission."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 confirms the debut of Airo trainsets on the Cascades route and the bipartisan efforts to improve pay for federal railroad specialists to address workforce retention."
+      }
+    ]
+  },
+  "2026-10-02|qwen3.6": {
+    "sentences": 15,
+    "supported": 11,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "Fragment of a supported fact."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence attributes the 'strategic shift' to the opening of test lanes, whereas the fact sheet attributes it to the appointment of high-profile figures for a future-of-warfare study."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1",
+          "S15"
+        ],
+        "note": "The claim that military drones demonstrate 'increasing lethality in global conflicts' is not stated in the fact sheet; the sheet mentions 'growing threat perception'."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S13"
+        ],
+        "note": "Connects supported facts about company funding and the movement of defense tech into the commercial market."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2",
+          "S6"
+        ],
+        "note": "The claim that the certification 'supports broader trends in automation safety' is not in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "The fact sheet states the funding and the SpaceX launch happened 'concurrently', but does not state that the funding 'supports' the launch."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "All claims are stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-02|qwen3.8": {
+    "sentences": 16,
+    "supported": 16,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "This is a fragment referring to the subject of the following sentence and the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states the Army opened permanent test lanes in Arizona and that the military is expanding C-UAS infrastructure and procurement."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 mentions the strategic shift toward integrating AI and autonomous systems and that companies like Fortem and Echodyne secured contracts."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "S6 confirms FAA certification of Garmin Autoland on the Epic E1000 AX and its function for incapacitated pilots."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S6"
+        ],
+        "note": "This sentence synthesizes the defensive capabilities mentioned in S1 and the safety features mentioned in S6."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 confirms the Minneapolis ordinance and the increasing scrutiny of autonomous vehicle deployments by local governments."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 mentions broader public concerns, the Lyft lawsuit settlement, and the FMCSA robotruck beacon waiver challenge."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 confirms the introduction of Airo trainsets on the Cascades route and rising costs for high-speed rail projects."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 title and summary confirm the investment/expansion in robotics and Agility Robotics appointing 3 new board members."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms Amazon's expansion in Indiana and the Hitachi/Fanuc partnership for physical AI."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 confirms Hyundai's preparation of the Atlas robot and the trend toward industrial robotics integration."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 confirms the $1.4 billion award to 16 companies to standardize operational costs."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 explicitly mentions the commitment to efficient space operations and the goal of streamlining resource management."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S12",
+          "S15",
+          "S17",
+          "S18",
+          "S19",
+          "S20",
+          "S22"
+        ],
+        "note": "This is a summary conclusion supported by multiple reports of military drone usage and tensions in Ethiopia, Ukraine, and the Middle East."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "S14 confirms Ukraine showcased 11 naval drones and 8 UAVs at a NATO exercise."
+      },
+      {
+        "n": 16,
+        "verdict": "supported",
+        "evidence": [
+          "S15",
+          "S20"
+        ],
+        "note": "S15 confirms Russia's use of steel-cutting drones against energy infrastructure, and S20 confirms Iran's drone/missile attacks in the Strait of Hormuz."
+      }
+    ]
+  },
+  "2026-10-02|gemma4": {
+    "sentences": 14,
+    "supported": 14,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence is a fragment mentioning a supported entity."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states the Army opened permanent test lanes in Arizona and that the military is expanding C-UAS infrastructure and procurement."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states the Army opened permanent test lanes in Arizona."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 mentions Fortem, Echodyne, and Smart Shooter secured substantial contracts or funding."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 states the Pentagon named high-profile figures to lead a future-of-warfare study to integrate AI and autonomous systems."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 states local governments are increasingly scrutinizing autonomous vehicle deployments."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "S2 states Minneapolis passed an ordinance mandating human drivers in driverless vehicles."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "S10 states US States Challenge FAA Environmental Review of Commercial Drone Package Rules."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 states the robotics sector is experiencing investment and expansion, driven by private investment and strategic partnerships."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 title mentions Agility Robotics tapping 3 new board members and the summary mentions Hitachi and Fanuc's partnership for physical AI."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 states Amazon is expanding robotics manufacturing in Indiana and Hyundai is preparing the Atlas robot for factory use."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "S6 states Epic Aircraft received FAA certification for the Garmin Autoland system on the E1000 AX turboprop."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "S4 states NASA awarded $1.4 billion in logistics support service agreements to 16 companies to streamline operational costs and resource management."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 states Amtrak introduced new Airo trainsets on the Cascades route."
+      }
+    ]
+  },
+  "2026-10-05|published": {
+    "sentences": 6,
+    "supported": 4,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S9",
+          "S23"
+        ],
+        "note": "The sentence synthesizes the reallocation of funds in Florida (S1) and the legal challenges against the FAA (S9, S23) as regulatory scrutiny and resource reallocation."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9",
+          "S23"
+        ],
+        "note": "While the fact sheet mentions 15 states challenging the FAA (S23) and Attorney General Bonta of California suing (S9), it does not explicitly state that the coalition is 'led by California'."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The FAA funding for 19 research projects is supported by S8, but there is no mention of the Department of Homeland Security testing counter-drone technologies with state and local law enforcement."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "All factual claims regarding Kodiak AI, the year-end launch, the Dallas-Houston corridor, and the partnership with IKEA are stated in S2."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The claim that Florida is considering redirecting $200 million in federal EV charging funds toward air taxi infrastructure is stated in S1."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S3"
+        ],
+        "note": "The sentence connects the competing interests of ground electrification vs aerial mobility (S1) and the acceleration of counter-UAS for critical infrastructure and public events (S3)."
+      }
+    ]
+  },
+  "2026-10-05|qwen3.6": {
+    "sentences": 12,
+    "supported": 12,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects Florida's consideration of redirecting $200 million in federal EV charging funds to air taxi infrastructure and the potential for accelerating eVTOL adoption."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects the alignment with Joby Aviation's FAA certification progress and funding."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The sentence accurately reflects the FAA's $12 million award for 19 drone research projects, including BVLOS (beyond visual line of sight), detect-and-avoid, and traffic management."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S8",
+          "S9",
+          "S15",
+          "S23"
+        ],
+        "note": "The sentence connects the supported fact of UAS integration (S8) with the regulatory challenges evidenced by lawsuits and delays (S9, S15, S23)."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S9",
+          "S23"
+        ],
+        "note": "The sentence accurately reflects the challenge by 15 US states (S23) and the lawsuit by Attorney General Bonta (S9)."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S9",
+          "S13",
+          "S15",
+          "S23"
+        ],
+        "note": "The sentence connects the expansion of drone delivery (S13) with the regulatory challenges (S9, S15, S23)."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The sentence accurately reflects Walmart and Wing's plans to expand drone deliveries to Denver and Seattle with 30-minute delivery times."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S15"
+        ],
+        "note": "The sentence accurately reflects Amazon pausing its North Haven plan due to public feedback (S3) and delays in Westborough (S15)."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S19"
+        ],
+        "note": "The sentence accurately reflects DoorDash's claim that its drone is lighter and quieter than Amazon's."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects Kodiak AI's targeted year-end launch of driverless trucking on the Dallas-Houston corridor with IKEA."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately reflects Tesla's FSD becoming a sales driver for commercial fleets."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately reflects Powerus securing a $22.3 million contract for Middle East energy infrastructure and the resulting demand for counter-UAS solutions."
+      }
+    ]
+  },
+  "2026-10-05|qwen3.8": {
+    "sentences": 16,
+    "supported": 10,
+    "unsupported": 6,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects Florida's consideration to redirect $200 million in federal EV charging funds to air taxi infrastructure and the potential for eVTOL adoption."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence correctly identifies Joby Aviation's progress toward FAA certification and its $250 million funding."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet only mentions Florida, not 'state governments' in general, and does not discuss reshaping the competitive landscape for urban air mobility operators."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2"
+        ],
+        "note": "The sentence combines the fact about Florida's fund redirection and Kodiak AI's targeted year-end launch of driverless trucking on the Dallas-Houston corridor with IKEA."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim regarding 'expanding commercial viability' and the general goal of integrating technology into 'major retail supply chains' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The sentence accurately lists Tesla's FSD as a sales driver for commercial fleets and WeRide's potential expansion following a Slovakia alliance."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim about 'growing confidence in the reliability and economic efficiency' is an inference not present in the fact sheet."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S3"
+        ],
+        "note": "The sentence correctly mentions Kodiak AI's operations and Powerus's $22.3 million contract for Middle East energy infrastructure protection."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately links the Powerus contract to the demand for C-UAS solutions and mentions AeroVironment's $500 million Army contract."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The sentence correctly states the FAA's $12 million award for 19 drone research projects and the specific focus areas."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The conclusion regarding a 'dual focus on both offensive drone capabilities and defensive countermeasures' is not stated in the fact sheet."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S13"
+        ],
+        "note": "The sentence correctly mentions the Powerus contract and the expansion of Walmart and Wing drone deliveries to Denver and Seattle."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [
+          "S19"
+        ],
+        "note": "The fact sheet states DoorDash's drone is lighter and quieter than 'Amazon's', not 'competitors' in general."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S23"
+        ],
+        "note": "The sentence accurately reports that 15 U.S. states challenged the FAA's environmental review of commercial drone package rules."
+      },
+      {
+        "n": 15,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "While the fact sheet mentions Amazon pausing its North Haven drone plan due to public feedback, the analysis regarding the 'complex interplay' is not provided."
+      },
+      {
+        "n": 16,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The sentence accurately reflects the plan for Walmart and Wing to expand drone deliveries."
+      }
+    ]
+  },
+  "2026-10-05|gemma4": {
+    "sentences": 9,
+    "supported": 8,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet lists several security and regulatory challenges, but it does not explicitly state that these challenges are 'increasing'."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S23"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S7"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S7"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-15|published": {
+    "sentences": 6,
+    "supported": 2,
+    "unsupported": 2,
+    "status_error": 2,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S8",
+          "S9",
+          "S10",
+          "S11"
+        ],
+        "note": "This is a summary sentence that synthesizes the provided facts regarding counter-drone and advanced air capabilities."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": "The fact sheet mentions Leonardo DRS and MyDefence, but there is no mention of a $500 million contract awarded to a San Diego company."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a sentence fragment that does not make a factual claim."
+      },
+      {
+        "n": 4,
+        "verdict": "status_error",
+        "evidence": [
+          "S1",
+          "S11"
+        ],
+        "note": "The fact sheet states that a 'Federal eVTOL Pilot Program' was launched, but the sentence misstates this as putting taxis into 'real-world operation'."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17"
+        ],
+        "note": "The fact sheet mentions a 'school bus safety probe', not a probe into 'robotaxis in school-zone safety'."
+      },
+      {
+        "n": 6,
+        "verdict": "status_error",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "The fact sheet states that Alstom 'unveil[ed]' the first driverless trainset, whereas the sentence claims it 'delivered' it."
+      }
+    ]
+  },
+  "2026-10-15|qwen3.6": {
+    "sentences": 12,
+    "supported": 4,
+    "unsupported": 8,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The sentence includes a conclusion ('marking a decisive step toward integrating electric vertical takeoff and landing aircraft into the national airspace system') not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The facts regarding the $1.1 billion upgrade and the equipping of 3,000 runway vehicles at 61 airports are stated in S1."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The details about the SMART platform, its 200 data streams, and its purpose to improve airspace management and reduce delays are stated in S2."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence presents a conclusion ('signal a coordinated push to modernize aviation infrastructure while testing new mobility technologies') that is not stated in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7",
+          "S8",
+          "S9",
+          "S10"
+        ],
+        "note": "The sentence contains a conclusion ('expanding significantly') not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The $500 million ceiling contract for counter-drone radar with a Pentagon task force is stated in S8."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact sheet does not mention that Reston is in 'Virginia' or that the headquarters was opened 'to support domestic operations'."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The sentence includes a conclusion ('reflecting heightened security concerns') not stated in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The FAA's plan to double the BEYOND program by selecting up to eight additional lead participants is stated in S3."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The sentence contains a conclusion ('This regulatory push aligns with industry growth') not stated in the fact sheet."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "The fact sheet states Tesla launched the Cybercab in Austin, but it does not state that this initiated 'public testing of its autonomous vehicle technology'."
+      }
+    ]
+  },
+  "2026-10-15|qwen3.8": {
+    "sentences": 14,
+    "supported": 7,
+    "unsupported": 7,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The claim that the program marks a 'significant step toward commercializing advanced air mobility in the United States' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a sentence fragment that does not make a factual claim."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The fact sheet confirms Duffy celebrated the launch and mentions the goal to 'transform how Americans move' and references the state's aviation heritage (Wright Brothers at Kitty Hawk)."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet confirms the expansion of the BEYOND program, the doubling of its size, and the selection of up to eight additional entities for drone integration into the NAS."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that these moves 'signal a coordinated federal strategy' is an interpretation not present in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms the $1.1 billion for airport upgrades and the $10.9 million for 3,000 runway vehicle transmitters at 61 airports."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet confirms the SMART platform centralizes 200 data streams to improve airspace management and reduce delays."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that these investments support a 'broader goal of modernizing the aviation ecosystem to handle increased traffic from new aircraft types' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "While the contract is mentioned, the claim that it is 'strengthening U.S. capabilities against advanced unmanned threats' is an interpretation not in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a sentence fragment that does not make a factual claim."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The claim that this deployment 'reflects a growing emphasis on integrated air defense' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that these actions 'highlight a sustained trend' is an interpretation not present in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15"
+        ],
+        "note": "The fact sheet confirms Tesla launched the Cybercab in Austin and Pony.ai began testing Gen-7 Robotaxis in Manchester, expanding its UK presence to two cities."
+      },
+      {
+        "n": 14,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17"
+        ],
+        "note": "The claim that the probe 'indicates continued regulatory scrutiny of autonomous operations' is a conclusion not stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-15|gemma4": {
+    "sentences": 9,
+    "supported": 8,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "Sentence fragment that connects to the next sentence."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not state that these developments reflect a trend toward commercialization."
+      }
+    ]
+  },
+  "2026-10-16|published": {
+    "sentences": 5,
+    "supported": 4,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S10",
+          "S12",
+          "S14",
+          "S15"
+        ],
+        "note": "This is a summary sentence connecting supported facts."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S14",
+          "S15"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet contains no mention of the Navy, GPS-free drone ship landings, or a four-star autonomous warfare command."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S12"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S18",
+          "S22"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-16|qwen3.6": {
+    "sentences": 14,
+    "supported": 10,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet mentions a safety agreement and assessment, but does not state that this constitutes 'regulatory clearance' or that it 'enables the deployment' of the defenses."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet does not state that these selections 'signal accelerated integration of advanced air mobility into commercial service'."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not explicitly state that infrastructure investment 'supports these operational advances'."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet does not mention 'increased air traffic density' as a reason for the funding."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S6"
+        ],
+        "note": ""
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S6"
+        ],
+        "note": ""
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S18"
+        ],
+        "note": ""
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S19"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-16|qwen3.8": {
+    "sentences": 12,
+    "supported": 10,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The fact sheet does not mention 'clearing a regulatory hurdle' or 'critical national security zones'."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S15"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet does not state that these demonstrations mark a 'significant step toward commercial viability'."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S21"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S18"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S3",
+          "S7"
+        ],
+        "note": "This is a connecting sentence supported by the various infrastructure projects mentioned in the fact sheet."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-16|gemma4": {
+    "sentences": 10,
+    "supported": 9,
+    "unsupported": 0,
+    "status_error": 1,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S16",
+          "S17"
+        ],
+        "note": "The FAA's efforts to integrate AAM and next-gen aircraft are evidenced by the eVTOL Integration Pilot Program (S14), the selection of eight pilot programs for eVTOL/AAM (S15), and hybrid-electric flight demonstrations (S16, S17)."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S15"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "note": "Modernization is mentioned in S3, and workforce expansion is evidenced by the record hiring in S4 and the university partnerships in S5 and S6."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S7"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S8",
+          "S9",
+          "S10",
+          "S11",
+          "S12",
+          "S13"
+        ],
+        "note": "The trend is supported by drone research (S8), autonomy/counter-UAS startups (S9), laser counter-drone systems (S10), infrared sensing for counter-drone apps (S11), neuromorphic drone-detection (S12), and counter-UAS manufacturing (S13)."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S8",
+          "S10"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "status_error",
+        "evidence": [
+          "S18"
+        ],
+        "note": "The fact sheet states the FMCSA 'is moving to let' driverless trucks use beacons, whereas the sentence states the agency 'permitted' them, misstating a process/plan as a completed action."
+      }
+    ]
+  },
+  "2026-10-20|published": {
+    "sentences": 7,
+    "supported": 3,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not mention that this is a 'Tuesday update' or make a claim about 'continued momentum'."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The sentence accurately reflects the operational clearance of the high-energy laser system for the U.S.-Mexico border."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet contains no information regarding an F-22, Fury Loyal Wingman drones, or a 1.2 billion dollar Navy contract for unmanned surface vessels."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S17",
+          "S20",
+          "S21"
+        ],
+        "note": "All three claims (Waymo recall, brake-safety standard, and 2031 safety rule schedule) are supported by the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S22"
+        ],
+        "note": "All three claims (NASA X-59 flight, Joby Texas flights, and Archer SF Bay flights) are supported by the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet contains no information regarding Chinese maglev trains or California High-Speed Rail."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The sentence draws a conclusion about a 'durable buildout' that is not explicitly stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-20|qwen3.6": {
+    "sentences": 17,
+    "supported": 16,
+    "unsupported": 1,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The FAA targeted finalization of Part 108 by year-end, and the rule is described as the enabling path for commercial drone delivery and advanced aviation in U.S. airspace."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet explicitly states that Part 108 is the single most consequential UAS rule in a decade."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": "The fact sheet confirms the 351,000 dollar penalty for Creamer's Pilot Services and the 100,000 dollar penalty for another pilot involving 26 operations and 62 violations."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": "The fact sheet states these penalties reinforce the FAA's commitment to holding commercial UAS operators to federal rules."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The FAA and Army completed the first operational clearance of a high-energy laser C-UAS for the U.S.-Mexico border, extending proven capabilities into active duty."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "This is a fragment of the citation for S9."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S6"
+        ],
+        "note": "The fact sheet mentions growing local opposition in Kirkwood (S3) and growing municipal control in Philadelphia (S6), while corporate expansion is noted in S4 and S5."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S6"
+        ],
+        "note": "The fact sheet confirms the Kirkwood council voted to kill the Walmart plan and the Philadelphia council moved toward a 10-drone cap."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S5"
+        ],
+        "note": "The fact sheet confirms the Mount Laurel demo and the 2027 expansion plans for Denver and Seattle."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "Legislators requested an environmental review of a facility in Westborough, MA, putting the permitting process under political scrutiny."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S16"
+        ],
+        "note": "The fact sheet confirms Archer's SF Bay flights, Joby's Texas flights, and Joby's 10-state autonomy tour."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15"
+        ],
+        "note": "The fact sheet states these flights demonstrate readiness for commercial service in demanding urban environments and are steps in the commercial rollout."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17",
+          "S18"
+        ],
+        "note": "While the recall number and Waymo's expansion are correct, the fact sheet summary states the vehicles 'did not behave correctly' in construction zones, not specifically 'steering issues'."
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S20",
+          "S21"
+        ],
+        "note": "The fact sheet confirms NHTSA advanced brake safety standards and is on track for a 2031 safety rule for driverless trucks."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23",
+          "S24"
+        ],
+        "note": "Technical progress is shown by the X-59 (S22) and FAA noise threshold (S23), and commercial progress by Boom's orders (S24)."
+      },
+      {
+        "n": 16,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "The fact sheet confirms the X-59's Mach 1.53 flight and the FAA's 0.11 psf noise threshold proposal."
+      },
+      {
+        "n": 17,
+        "verdict": "supported",
+        "evidence": [
+          "S24",
+          "S25"
+        ],
+        "note": "The fact sheet confirms Boom's 130 firm orders and China's unveiling of the TMS-10 program."
+      }
+    ]
+  },
+  "2026-10-20|qwen3.8": {
+    "sentences": 14,
+    "supported": 14,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S11"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S11",
+          "S12"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S16"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S15",
+          "S16"
+        ],
+        "note": ""
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S16"
+        ],
+        "note": ""
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S17"
+        ],
+        "note": ""
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S17",
+          "S18"
+        ],
+        "note": ""
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S20",
+          "S21"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-20|gemma4": {
+    "sentences": 10,
+    "supported": 8,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9",
+          "S7",
+          "S8"
+        ],
+        "note": "The fact sheet does not explicitly state that the FAA 'increased' enforcement, only that it conducted large enforcement actions as part of a campaign."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S7",
+          "S8"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a conclusion/claim about a 'trend' that is not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S5"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S3",
+          "S6"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S17"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S20"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-21|published": {
+    "sentences": 3,
+    "supported": 3,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S7",
+          "S2"
+        ],
+        "note": "The sentence lists titles/topics found in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "This is part of the headline in S2."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S8",
+          "S3",
+          "S4"
+        ],
+        "note": "The sentence lists titles/topics found in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-21|qwen3.6": {
+    "sentences": 14,
+    "supported": 2,
+    "unsupported": 12,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The fact that the FAA issued certification for the Boeing 737 MAX-10 is supported, but the claim that this is a 'critical milestone that enables the aircraft to enter commercial service and expands the manufacturer’s narrow-body fleet capabilities' is not in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The fact that the FAA is adopting a new airworthiness directive for certain Boeing 737-600 through -900ER series airplanes is supported, but the claim that this 'highlight[s] ongoing regulatory oversight of the manufacturer’s safety compliance' is not in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact that the FMCSA finalized a decision to renew and modify an exemption for the Association of American Railroads and the American Short Line and Regional Railroad Association regarding hours of service is supported, but the claim that this is 'adjusting operational flexibility for rail carriers' is not in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "This is a fragment that connects to the following sentences and is supported by the titles in the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "This is a fragment that connects to the following sentences and is supported by the titles in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S22"
+        ],
+        "note": "The fact that Secretary Duffy announced the first-ever Special Airworthiness Market Survey Certificate for eVTOL aircraft is supported, but the claim that this is 'establishing a new regulatory pathway for advanced air mobility developers to conduct market surveys before full certification' is not in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S23"
+        ],
+        "note": "The fact that the Secretary announced New Mexico’s first demonstration flight under the eVTOL Integration Pilot Program is supported, but the claim that this is 'signaling progress in integrating these vehicles into the national airspace system' is not in the fact sheet."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that these developments reflect a broader trend of the FAA creating specific frameworks to manage emerging aviation technologies while maintaining safety standards is not in the fact sheet."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17",
+          "S18",
+          "S20"
+        ],
+        "note": "The fact that the FAA imposed a ban on unauthorized drones along the U.S.-Mexico border through 2027 to counter cartel threats is supported, but the claim that this is 'significantly restricting unmanned aircraft operations in that airspace' is not in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact that the Department of Defense marked one year of accelerating counter-UAS capabilities through Joint Interagency Task Force 401 is supported, but the claims that this 'aligns with' the drone ban or is 'demonstrating coordinated efforts to enhance airspace security' are not in the fact sheet."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S25"
+        ],
+        "note": "The fact that Echodyne and ACS signed a strategic collaboration agreement to advance counter-drone capabilities worldwide is supported, but the claim that this is 'indicating increased private sector investment in defense technologies' is not in the fact sheet."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact that the NHTSA opened a probe into Tesla robotaxis for alleged speeding and ignoring school zones is supported, but the claim that this is 'intensifying regulatory scrutiny on self-driving deployments' is not in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [
+          "S6"
+        ],
+        "note": "The fact that latest data showed Tesla Cybercabs recorded no major incidents is supported, but the claim that this is 'presenting a complex picture of safety performance versus operational compliance' is not in the fact sheet."
+      },
+      {
+        "n": 14,
+        "verdict": "unsupported",
+        "evidence": [
+          "S12"
+        ],
+        "note": "The fact that the FAA proposed a $351,000 civil penalty against Creamer Pilot Services for alleged unauthorized passenger-carrying operations is supported, but the claim that this is 'reinforcing enforcement actions against regulatory violations in general aviation' is not in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-21|qwen3.8": {
+    "sentences": 10,
+    "supported": 3,
+    "unsupported": 7,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The fact sheet confirms the certification was issued, but does not state that it is a 'decisive step that clears the path for the aircraft’s entry into commercial service and expands the fleet capacity available to U.S. airlines'."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S10",
+          "S13"
+        ],
+        "note": "The fact sheet confirms the certification and the adoption of the airworthiness directive, but does not state that this 'signals a continued focus on fleet safety and compliance'."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "This is a sentence fragment that introduces the topic of advanced air mobility, which is the subject of S22 and S23."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "This is a sentence fragment referring to the Transportation Secretary mentioned in S22 and S23."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S22"
+        ],
+        "note": "The fact sheet confirms the announcement of the certificate, but does not state that it is 'establishing a new regulatory framework for this emerging technology'."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S23"
+        ],
+        "note": "The fact sheet confirms the announcement of the demonstration flight, but does not state that it is 'marking a tangible milestone in the integration of these aircraft into the national airspace system'."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S16",
+          "S17",
+          "S20",
+          "S21"
+        ],
+        "note": "The fact sheet confirms the drone ban along the US-Mexico border, the security concerns, and the response to cartel threats."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S18"
+        ],
+        "note": "The fact sheet confirms the restriction through 2027, but does not state that it 'represents a significant shift in airspace management and counter-UAS policy, prioritizing national security over open access in border zones'."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact sheet confirms the probe into Tesla robotaxis, but does not state that 'regulatory scrutiny of autonomous vehicles remains intense'."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3",
+          "S5",
+          "S12"
+        ],
+        "note": "While the individual facts (the probe, Cybercab scaling questions, and the FAA penalty) are present, the claim that the investigation 'adds to ongoing questions regarding Cybercab scaling and safety' is an inference not stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-21|gemma4": {
+    "sentences": 10,
+    "supported": 6,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S16",
+          "S17",
+          "S18"
+        ],
+        "note": "S18 confirms the lockdown of the entire US-Mexico border airspace to drones through 2027, and S16 and S17 mention the goal of countering cartel threats."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S15",
+          "S20",
+          "S21",
+          "S25"
+        ],
+        "note": "The sentence connects the restriction on unauthorized drones (S20, S21), the collaboration between Echodyne and ACS (S25), and the anniversary of Joint Interagency Task Force 401 (S15)."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "S5 explicitly states that NHTSA opened a probe for Tesla Robotaxis speeding and ignoring school zones."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S2",
+          "S6"
+        ],
+        "note": "S6 confirms no major incidents in latest NHTSA data for the Cybercab, and S2 states Tesla was wanted until November to defend the Cybercab."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet provides individual events but does not state the conclusion that these events 'highlight increasing regulatory scrutiny'."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S23"
+        ],
+        "note": "S22 confirms the announcement of the Special Airworthiness Market Survey Certificate for eVTOL aircraft, and S23 confirms the announcement of New Mexico's first demonstration flight under the eVTOL Integration Pilot Program."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S13"
+        ],
+        "note": "S13 confirms the certification for the Boeing 737 MAX-10, and S10 confirms the adoption of a new airworthiness directive for certain Boeing 737 series airplanes."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      }
+    ]
+  },
+  "2026-10-22|published": {
+    "sentences": 3,
+    "supported": 3,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "note": "The sentence lists titles/topics found in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S8",
+          "S9"
+        ],
+        "note": "The sentence lists titles/topics found in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": "This is part of the headline in S4."
+      }
+    ]
+  },
+  "2026-10-22|qwen3.6": {
+    "sentences": 13,
+    "supported": 1,
+    "unsupported": 12,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet confirms the certification of the Boeing 737 MAX-10, but does not mention it being a 'significant milestone in the return of the aircraft to commercial service'."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S12"
+        ],
+        "note": "The fact sheet mentions the FAA is adopting a new airworthiness directive for Boeing airplanes, but does not state that this is 'reinforcing safety protocols for the manufacturer’s fleet'."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "The fact sheet confirms the proposed $351,000 civil penalty against Creamer Pilot Services, but does not state that this is 'signaling continued enforcement of operational compliance standards'."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S19",
+          "S20",
+          "S21",
+          "S23"
+        ],
+        "note": "The fact sheet confirms the FAA imposed a ban/restriction on unauthorized drones along the US-Mexico border (S20, S23), that this is through 2027 (S21), and that it is to counter cartel threats (S19, S20)."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S19"
+        ],
+        "note": "The fact sheet mentions the restriction of border drone operations, but does not state that this 'reflects a broader trend of heightened airspace security measures'."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that these actions 'underscore the administration’s focus on securing critical infrastructure and border regions' is a conclusion not present in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet confirms the audit of 1,000 Cybercabs and Tesla's 2026 sale target, but does not state that this is 'intensifying regulatory scrutiny on autonomous vehicle deployments'."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact sheet confirms the probe into Tesla robotaxis for speeding and ignoring school zones, but does not state that this is 'highlighting ongoing safety concerns with self-driving technology'."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The fact sheet confirms the final decision to renew and modify the exemption for railroad associations, but does not state that this is 'adjusting operational flexibility for rail operators'."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S25"
+        ],
+        "note": "The fact sheet confirms the announcement of the Special Airworthiness Market Survey Certificate for eVTOL aircraft, but does not state that this is 'establishing a new regulatory pathway for electric vertical takeoff and landing vehicles'."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claim that this development 'supports the growing urban air mobility sector by providing a framework for market validation and certification' is not in the fact sheet."
+      },
+      {
+        "n": 13,
+        "verdict": "unsupported",
+        "evidence": [
+          "S16"
+        ],
+        "note": "The fact sheet confirms the deal for a 2.8% pay increase for air traffic controllers, but does not state that this is 'addressing workforce compensation issues within the agency'."
+      }
+    ]
+  },
+  "2026-10-22|qwen3.8": {
+    "sentences": 11,
+    "supported": 2,
+    "unsupported": 9,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet confirms the certification was issued, but does not state that it clears a major regulatory hurdle or stabilizes production timelines."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S12",
+          "S15"
+        ],
+        "note": "The fact sheet mentions the adoption of a new airworthiness directive and the certification of the 737 MAX-10, but does not state that one follows the other or that they signal a dual focus on legacy safety and new fleet capabilities."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S25"
+        ],
+        "note": "The fact sheet confirms the announcement of the Special Airworthiness Market Survey Certificate for eVTOL aircraft, but does not state that this establishes a new regulatory pathway for the advanced air mobility sector."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact sheet confirms the probe into Tesla robotaxis for speeding and ignoring school zones, but does not state that regulatory scrutiny has 'intensified'."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3",
+          "S7"
+        ],
+        "note": "The fact sheet mentions the audit of 1,000 Cybercabs and Tesla's 2026 sale target, but does not state that these coincide with the probe or that the sale target is 'despite' the agency's review."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms the proposal for the Older Novice Driver Study, but does not mention an 'active enforcement posture' or that this indicates a 'broader expansion of data collection efforts'."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S19",
+          "S20",
+          "S23",
+          "S24"
+        ],
+        "note": "The fact sheet confirms the FAA imposed restrictions/bans on unauthorized drones along the US-Mexico border to counter cartel threats."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S21",
+          "S24"
+        ],
+        "note": "The fact sheet confirms the lockdown of border airspace to drones through 2027 and that this was done citing security concerns."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The fact sheet mentions the TSA's move into drone regulation, but does not state that this highlights a 'growing trend of agencies expanding their regulatory reach'."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "The fact sheet confirms the proposed $351,000 civil penalty against Creamer Pilot Services, but does not state that this demonstrates 'continued enforcement of aviation safety standards'."
+      },
+      {
+        "n": 11,
+        "verdict": "unsupported",
+        "evidence": [
+          "S16"
+        ],
+        "note": "The fact sheet confirms the deal for a 2.8% pay increase for air traffic controllers, but does not state that this addresses 'workforce stability within the aviation system'."
+      }
+    ]
+  },
+  "2026-10-22|gemma4": {
+    "sentences": 9,
+    "supported": 7,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S19",
+          "S20",
+          "S21",
+          "S23",
+          "S24"
+        ],
+        "note": "S21 confirms the lockdown of the entire US-Mexico border airspace to drones through 2027; S19 and S20 mention countering cartel threats; S23 and S24 mention the ban on unauthorized drones."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The fact sheet does not state that these actions reflect a 'broader trend of increased federal oversight'."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S3",
+          "S7"
+        ],
+        "note": "While the audit of 1,000 Cybercabs (S3) and the probe into Robotaxis (S7) are mentioned, the claim that NHTSA is 'intensifying its scrutiny' is not stated in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "S3 states 'Tesla Targets 2026 Sale' for Cybercabs."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S15",
+          "S25"
+        ],
+        "note": "S15 confirms certification for the Boeing 737 MAX-10 and S25 confirms the announcement of the Special Airworthiness Market Survey Certificate for eVTOL aircraft."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S25"
+        ],
+        "note": "S25 identifies Sean P. Duffy as the Transportation Secretary announcing the certificate."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "S14 confirms the proposed $351,000 civil penalty against Creamer Pilot Services for alleged unauthorized passenger-carrying operations."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "S9 confirms the final decision to renew and modify the hours-of-service exemption for the Association of American Railroads and the American Short Line and Regional Railroad Association."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "S1 confirms that NHTSA proposes to conduct the Older Novice Driver Study."
+      }
+    ]
+  },
+  "2026-10-25|published": {
+    "sentences": 6,
+    "supported": 4,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S10",
+          "S12"
+        ],
+        "note": "The claim that the FAA released draft design standards for vertical lift infrastructure is not mentioned in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S3",
+          "S17"
+        ],
+        "note": "Both the NHTSA proposal for cyan lighting and the Zoox software recall are supported by the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S4",
+          "S14",
+          "S22"
+        ],
+        "note": "Waymo's expansion to the Las Vegas airport and the Lucid/Uber partnership in Houston are both supported."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S5",
+          "S25"
+        ],
+        "note": "The Siemens Mobility contract and the Boom Supersonic factory expansion are both supported."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a connecting fragment that does not add any unsupported claims."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "While the F-22/YFQ-44 test is supported, there is no mention of L3Harris winning a contract for a counter-drone interceptor in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-25|qwen3.6": {
+    "sentences": 18,
+    "supported": 13,
+    "unsupported": 5,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet does not state that the recall signaled 'heightened safety scrutiny for autonomous ride-hailing operations'."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms a previous recall related to braking issues identified during an NHTSA investigation."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet states NHTSA proposed cyan exterior lighting to improve visibility and standardize visual identification."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S21"
+        ],
+        "note": "The fact sheet confirms NHTSA proposed regulations to facilitate the deployment of Tesla's Cybercab and address safety standards."
+      },
+      {
+        "n": 5,
+        "verdict": "unsupported",
+        "evidence": [
+          "S14",
+          "S15",
+          "S22"
+        ],
+        "note": "While the events are mentioned, the conclusion that the crash 'highlighted ongoing risks in complex driving conditions' is not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S11"
+        ],
+        "note": "The fact sheet confirms FAA clearance for Alia passenger demo flights and approval for A250 market surveys."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": "The fact sheet confirms Archer announced air taxi networks in Houston, Dallas, and Austin."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S25"
+        ],
+        "note": "The fact sheet confirms the $150 million expansion of the Centennial factory for the Overture aircraft and the potential for 500 jobs."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact sheet confirms the F-22 pilot controlled the unmanned YFQ-44 and that it demonstrated progress in manned-unmanned teaming."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The fact sheet confirms NATO deployed counter-drone protection at Brussels HQ using radar, optical, and RF sensors."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The fact sheet confirms DHS S&T Directorate field-tested four sensors with first responders to assess detection and response integration."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact sheet confirms Siemens Mobility was awarded a $772 million contract for the California High-Speed Rail project."
+      },
+      {
+        "n": 14,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 15,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence fragment."
+      },
+      {
+        "n": 16,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The fact sheet confirms Secretary Sean P. Duffy announced a $200 million investment for truck parking in 12 states."
+      },
+      {
+        "n": 17,
+        "verdict": "supported",
+        "evidence": [
+          "S24"
+        ],
+        "note": "The fact sheet confirms Tesla commenced production of the Optimus robot, transitioning from prototype to manufacturing."
+      },
+      {
+        "n": 18,
+        "verdict": "supported",
+        "evidence": [
+          "S18"
+        ],
+        "note": "The fact sheet confirms France established a regulatory pathway for AV approvals by 2027 with companies proposing pilots."
+      }
+    ]
+  },
+  "2026-10-25|qwen3.8": {
+    "sentences": 19,
+    "supported": 10,
+    "unsupported": 9,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence includes a conclusion ('signaling heightened regulatory and safety scrutiny') not stated in the fact sheet."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The fact sheet confirms a previous recall related to braking issues identified during an NHTSA investigation."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The fact sheet confirms NHTSA proposed cyan lighting to improve safety and standardize visual identification."
+      },
+      {
+        "n": 4,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17"
+        ],
+        "note": "The fact sheet states the move aims to 'improve public recognition', not to 'clarify the operational status'."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S10"
+        ],
+        "note": "The fact sheet confirms the FAA cleared Beta Technologies' Alia eVTOL for passenger demonstration flights under the AAM Integration Pilot Program."
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S11"
+        ],
+        "note": "The fact sheet confirms FAA approval for BETA to conduct market surveys for the A250 as a procedural step for commercial deployment."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": "The fact sheet confirms Archer Aviation announced air taxi networks in Houston, Dallas, and Austin."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 9,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a general summary claim not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "Sentence is a fragment."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S7"
+        ],
+        "note": "The fact sheet confirms the F-22 pilot controlled the YFQ-44 and that this demonstrates progress in manned-unmanned teaming."
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S8"
+        ],
+        "note": "The fact sheet confirms DHS S&T Directorate conducted field tests with first responders to assess four counter-UAS sensors."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": "The fact sheet confirms NATO deployed counter-drone protection at Brussels HQ using radar, optical cameras, and RF detection."
+      },
+      {
+        "n": 14,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a general summary claim not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 15,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": "The fact sheet confirms Siemens Mobility was awarded a $772 million contract for the California High-Speed Rail project."
+      },
+      {
+        "n": 16,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "Sentence is a fragment."
+      },
+      {
+        "n": 17,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "Sentence is a fragment."
+      },
+      {
+        "n": 18,
+        "verdict": "supported",
+        "evidence": [
+          "S13"
+        ],
+        "note": "The fact sheet confirms Secretary Sean P. Duffy announced a $200 million investment for truck parking in 12 states."
+      },
+      {
+        "n": 19,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a conclusion not stated in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-25|gemma4": {
+    "sentences": 14,
+    "supported": 12,
+    "unsupported": 2,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet provides the source date as October 24, but does not state that the accident itself occurred on that date."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S21"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S22",
+          "S4"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "Connecting sentence."
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S10",
+          "S11"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S12"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": ""
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "Connecting sentence."
+      },
+      {
+        "n": 12,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is a sentence fragment and does not contain a factual claim."
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S7"
+        ],
+        "note": ""
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S9",
+          "S8"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-26|published": {
+    "sentences": 6,
+    "supported": 4,
+    "unsupported": 1,
+    "status_error": 1,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "status_error",
+        "evidence": [
+          "S12",
+          "S16"
+        ],
+        "note": "The sentence states the FAA 'streamlined rules' for BVLOS drone flights, but S12 states that the 'proposed Part 108 rules aim to streamline' them."
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S17"
+        ],
+        "note": "All claims are supported by the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S19",
+          "S22"
+        ],
+        "note": "All claims are supported by the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "All claims are supported by the fact sheet."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [],
+        "note": "This is a transition fragment and does not contain a factual claim."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [
+          "S2"
+        ],
+        "note": "The claim that the Navy halted procurement of the Global Autonomous Reconnaissance Craft is not mentioned in the fact sheet."
+      }
+    ]
+  },
+  "2026-10-26|qwen3.6": {
+    "sentences": 10,
+    "supported": 6,
+    "unsupported": 4,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S16"
+        ],
+        "note": "The sentence accurately reflects the FAA's proposed design standards and their purpose as stated in S16."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S16",
+          "S17"
+        ],
+        "note": "While the fact sheet mentions both the FAA's proposed standards (S16) and Archer Aviation's announcement (S17), it does not state that the regulatory action supports the announcement."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This sentence provides a conclusion about the maturity of the urban air mobility sector that is not stated in the fact sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": "The sentence accurately reflects Waymo's approval for a robotaxi pilot in NYC as stated in S1."
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S19"
+        ],
+        "note": "The sentence accurately reflects the NHTSA's proposal for cyan exterior lighting as stated in S19."
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This sentence draws a conclusion about a 'broader industry shift' that is not explicitly stated in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": "The sentence accurately reflects China's new export controls, the effective date, and the resulting supply chain risks for the US and Europe as stated in S3."
+      },
+      {
+        "n": 8,
+        "verdict": "unsupported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The fact sheet states that L3Harris is developing the missile, but it does not state that this is 'in response to emerging threats'."
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S15"
+        ],
+        "note": "The sentence accurately reflects the purpose and technical nature of the L3Harris missile as stated in S15."
+      },
+      {
+        "n": 10,
+        "verdict": "supported",
+        "evidence": [
+          "S14"
+        ],
+        "note": "The sentence accurately reflects the DHS Science and Technology Directorate's testing of counter-drone technologies as stated in S14."
+      }
+    ]
+  },
+  "2026-10-26|qwen3.8": {
+    "sentences": 14,
+    "supported": 9,
+    "unsupported": 5,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "unsupported",
+        "evidence": [
+          "S16"
+        ],
+        "note": "The fact sheet states the standards 'aim to establish infrastructure requirements for the safe integration', but it does not state that they 'will determine the pace' of integration."
+      },
+      {
+        "n": 2,
+        "verdict": "unsupported",
+        "evidence": [
+          "S17"
+        ],
+        "note": "The claim that this 'signals a rapid transition from development to metropolitan deployment' is a conclusion not stated in the fact sheet."
+      },
+      {
+        "n": 3,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This sentence is a conclusion and is not supported by any facts in the sheet."
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S20"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "The claims regarding a 'competitive push', 'industry-wide standardization', and 'operational maturity' are not stated in the fact sheet."
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S9"
+        ],
+        "note": ""
+      },
+      {
+        "n": 10,
+        "verdict": "unsupported",
+        "evidence": [],
+        "note": "This is an incomplete sentence/fragment."
+      },
+      {
+        "n": 11,
+        "verdict": "supported",
+        "evidence": [
+          "S2"
+        ],
+        "note": ""
+      },
+      {
+        "n": 12,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": ""
+      },
+      {
+        "n": 13,
+        "verdict": "supported",
+        "evidence": [
+          "S5"
+        ],
+        "note": ""
+      },
+      {
+        "n": 14,
+        "verdict": "supported",
+        "evidence": [
+          "S25"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "2026-10-26|gemma4": {
+    "sentences": 9,
+    "supported": 9,
+    "unsupported": 0,
+    "status_error": 0,
+    "detail": [
+      {
+        "n": 1,
+        "verdict": "supported",
+        "evidence": [
+          "S3"
+        ],
+        "note": ""
+      },
+      {
+        "n": 2,
+        "verdict": "supported",
+        "evidence": [
+          "S9",
+          "S15"
+        ],
+        "note": ""
+      },
+      {
+        "n": 3,
+        "verdict": "supported",
+        "evidence": [
+          "S15"
+        ],
+        "note": ""
+      },
+      {
+        "n": 4,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S22"
+        ],
+        "note": ""
+      },
+      {
+        "n": 5,
+        "verdict": "supported",
+        "evidence": [
+          "S1",
+          "S22"
+        ],
+        "note": ""
+      },
+      {
+        "n": 6,
+        "verdict": "supported",
+        "evidence": [
+          "S19"
+        ],
+        "note": ""
+      },
+      {
+        "n": 7,
+        "verdict": "supported",
+        "evidence": [
+          "S16"
+        ],
+        "note": ""
+      },
+      {
+        "n": 8,
+        "verdict": "supported",
+        "evidence": [
+          "S17"
+        ],
+        "note": ""
+      },
+      {
+        "n": 9,
+        "verdict": "supported",
+        "evidence": [
+          "S4"
+        ],
+        "note": ""
+      }
+    ]
+  }
+}

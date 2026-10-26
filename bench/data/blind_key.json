@@ -1,0 +1,92 @@
+{
+  "2026-07-14": {
+    "A": "qwen3.6",
+    "B": "gemma4",
+    "C": "qwen3.8",
+    "D": "published"
+  },
+  "2026-07-15": {
+    "A": "qwen3.8",
+    "B": "qwen3.6",
+    "C": "published",
+    "D": "gemma4"
+  },
+  "2026-09-11": {
+    "A": "qwen3.8",
+    "B": "gemma4",
+    "C": "published",
+    "D": "qwen3.6"
+  },
+  "2026-09-14": {
+    "A": "qwen3.6",
+    "B": "qwen3.8",
+    "C": "published",
+    "D": "gemma4"
+  },
+  "2026-09-15": {
+    "A": "published",
+    "B": "qwen3.8",
+    "C": "qwen3.6",
+    "D": "gemma4"
+  },
+  "2026-09-24": {
+    "A": "published",
+    "B": "qwen3.6",
+    "C": "gemma4",
+    "D": "qwen3.8"
+  },
+  "2026-10-02": {
+    "A": "gemma4",
+    "B": "qwen3.6",
+    "C": "qwen3.8",
+    "D": "published"
+  },
+  "2026-10-05": {
+    "A": "gemma4",
+    "B": "qwen3.6",
+    "C": "published",
+    "D": "qwen3.8"
+  },
+  "2026-10-15": {
+    "A": "published",
+    "B": "qwen3.8",
+    "C": "qwen3.6",
+    "D": "gemma4"
+  },
+  "2026-10-16": {
+    "A": "qwen3.8",
+    "B": "published",
+    "C": "qwen3.6",
+    "D": "gemma4"
+  },
+  "2026-10-20": {
+    "A": "qwen3.6",
+    "B": "gemma4",
+    "C": "qwen3.8",
+    "D": "published"
+  },
+  "2026-10-21": {
+    "A": "published",
+    "B": "qwen3.8",
+    "C": "qwen3.6",
+    "D": "gemma4"
+  },
+  "2026-10-22": {
+    "A": "published",
+    "B": "qwen3.6",
+    "C": "gemma4",
+    "D": "qwen3.8"
+  },
+  "2026-10-25": {
+    "A": "qwen3.6",
+    "B": "qwen3.8",
+    "C": "gemma4",
+    "D": "published"
+  },
+  "2026-10-26": {
+    "A": "gemma4",
+    "B": "qwen3.8",
+    "C": "qwen3.6",
+    "D": "published"
+  }
+}

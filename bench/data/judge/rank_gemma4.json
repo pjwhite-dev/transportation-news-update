@@ -1,0 +1,227 @@
+{
+  "2026-07-14": {
+    "ranking": [
+      "gemma4",
+      "qwen3.8",
+      "published",
+      "qwen3.6"
+    ],
+    "labels": [
+      "B",
+      "C",
+      "D",
+      "A"
+    ],
+    "reason": "Summary B is the best because it selects the most consequential lead (the FAA's move to end the supersonic flight ban), maintains strict status discipline ('proposed'), and provides high specificity (names and numbers) without using process language or interpretive hype. Summary C is accurate and specific but uses interpretive language ('signals sustained federal investment', 'regulatory evolution supports') and a less consequential lead. Summary D is objective and has a good lead, but it lacks the specificity (numbers, names) required for an executive summary, acting more as a thematic overview. Summary A is the worst due to heavy use of process language ('coincides with', 'concurrently', 'in parallel') and a weaker lead selection."
+  },
+  "2026-07-15": {
+    "ranking": [
+      "qwen3.8",
+      "qwen3.6",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "B",
+      "D",
+      "C"
+    ],
+    "reason": "Summary A is the best as it maintains perfect status discipline (correctly noting the Neros contract is 'reportedly' won) and accurately synthesizes the NHTSA and Waymo/Tesla stories using the significance provided in the fact sheet. Summary B ranks second; while it introduces an invented detail ('immediate' fixes) and some analytical hype ('tension between...'), it handles the Neros contract status correctly. Summary D ranks third because it contains a wrong status, stating Neros 'won' the contract rather than reporting it as a claim that needs confirmation. Summary C is the worst due to an invented fact (attributing policy tightening to the FAA, which is not mentioned in the fact sheet) and the use of process language ('dominated the day'). All summaries A, B, and D are truncated, but A remains the most accurate."
+  },
+  "2026-09-11": {
+    "ranking": [
+      "gemma4",
+      "qwen3.8",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "D",
+      "C"
+    ],
+    "reason": "Summary B is the best because it adheres strictly to the facts, uses a plain and active style without hype or editorializing, and provides high specificity (names and numbers) while maintaining a logical structure. Summary A is second; while accurate and specific, it includes several instances of editorializing and interpretive analysis (e.g., 'signaling a concrete step', 'highlights the growing global competition'). Summary D ranks third because it contains excessive analysis and 'executive advice' that moves beyond a summary into speculative commentary, which violates the requirement for a plain style without hype. Summary C is the worst because it uses process language ('The day’s most significant... development was', 'the U.S. brief was dominated by') and lacks the specificity found in the other three summaries."
+  },
+  "2026-09-14": {
+    "ranking": [
+      "gemma4",
+      "published",
+      "qwen3.6",
+      "qwen3.8"
+    ],
+    "labels": [
+      "D",
+      "C",
+      "A",
+      "B"
+    ],
+    "reason": "Summary D is the best because it is complete, highly specific (including names, numbers, and locations), and maintains strict status discipline without using hype or process language. Summary C is complete and accurate but lacks the specificity and depth of D. Summaries A and B are both fundamentally flawed as they are cut off mid-sentence. Between the two incomplete summaries, A is ranked higher than B because B contains significantly more hype and process language ('critical commercialization milestone', 'rapid shift', 'strategic pivot') compared to A's single instance of hype ('major acceleration')."
+  },
+  "2026-09-15": {
+    "ranking": [
+      "qwen3.8",
+      "gemma4",
+      "qwen3.6",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "D",
+      "C",
+      "A"
+    ],
+    "reason": "Summary B is the best as it is comprehensive, accurate, and uses a strong lead. It correctly synthesizes related stories (e.g., US drone regulations and local deployments) and includes specific numbers and names from the fact sheet without using process language or hype. Summary D is also accurate and well-structured but is significantly less comprehensive than B. Summary C contains a synthesis error, incorrectly attributing the data-gathering goals of the FCC/DOT cellular network test to the FAA's BEYOND program. Summary A ranks last because it contains an invented fact (the UK Civil Aviation Authority updating its airspace change process), which is not mentioned in the fact sheet."
+  },
+  "2026-09-24": {
+    "ranking": [
+      "qwen3.6",
+      "gemma4",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "C",
+      "D",
+      "A"
+    ],
+    "reason": "Summary B is the best as it is comprehensive, accurate, and maintains a professional, objective tone without adding interpretive analysis. Summary C is also accurate and clean, but it is significantly less detailed than B. Summary D is accurate but fails the style requirement by using excessive interpretive and 'hype' language (e.g., 'validates the technology's readiness', 'accelerates the industry's transition', 'reflect a coordinated federal effort') that is not present in the fact sheet. Summary A is the worst because it contains an invented fact regarding Textron Systems and vertiport flights in Virginia, which are not mentioned in the provided fact sheet."
+  },
+  "2026-10-02": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "published",
+      "qwen3.8"
+    ],
+    "labels": [
+      "A",
+      "B",
+      "D",
+      "C"
+    ],
+    "reason": "Summary A is the best because it provides a strong, specific lead, maintains a plain and active style, and captures all the major developments from the fact sheet with high specificity (e.g., $1.4 billion, 16 companies, 3 board members) without using interpretive or process language. Summary B is also very strong and comprehensive, but it employs a more narrative and analytical style ('signaling a strategic shift', 'regulatory milestone supports broader trends') which is slightly less 'plain' than A. Summary D is ranked third because it uses a generic summary lead rather than a specific news lead and completely omits the significant robotics industry developments (Agility Robotics, Amazon, Hitachi/Fanuc, Hyundai). Summary C is ranked last because it is truncated, ending in the middle of a sentence and a URL."
+  },
+  "2026-10-05": {
+    "ranking": [
+      "qwen3.6",
+      "gemma4",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "A",
+      "D",
+      "C"
+    ],
+    "reason": "Summary B is the best because it provides the highest level of specificity (naming AG Bonta, North Haven, and Westborough) and demonstrates superior synthesis by grouping related stories (regulatory challenges and the competitive landscape of drone delivery) without inventing facts or using hype. Summary A is accurate and well-structured but lacks the depth and synthesis of B. Summary D is accurate but contains significant editorializing and hype ('strategic pivot', 'reshaping the competitive landscape', 'growing confidence'), which ranks it below A and B. Summary C ranks last because it contains an invented fact not found in the fact sheet (the claim that the Department of Homeland Security is testing counter-drone technologies with state and local law enforcement) and uses process language in its lead."
+  },
+  "2026-10-15": {
+    "ranking": [
+      "qwen3.8",
+      "qwen3.6",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "B",
+      "C",
+      "D",
+      "A"
+    ],
+    "reason": "Summary B is the best because it is comprehensive, accurate, and provides high-level synthesis without using process language or hype. It correctly captures the most significant developments (eVTOL, BEYOND, airport funding, SMART, counter-drone contracts, and the AV sector) and connects them logically. Summary C is also very strong and accurate but is slightly less comprehensive than B, omitting the Waymo and Pony.ai developments. Summary D is accurate but lacks the depth and synthesis of B and C, and its lead selection (the BEYOND program) is less consequential than the eVTOL launch or the $1.1 billion investment. Summary A is the worst due to multiple critical failures: it invents a fact (a $500 million contract for a San Diego company), contains a status error (claiming eVTOLs are already in real-world operation), and misrepresents the NHTSA probe (claiming it is about robotaxis in school zones rather than school bus safety). It also uses process language ('This week's update is dominated by...')."
+  },
+  "2026-10-16": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "A",
+      "D",
+      "B"
+    ],
+    "reason": "Summary C is the best because it is the most comprehensive, including the significant ATC trainee hiring record and college partnerships, while maintaining high accuracy and status discipline. Summary A is also accurate and well-structured but omits the ATC workforce developments. Summary D ranks below A and C because it contains a status error, stating that the FMCSA 'permitted' the use of beacons when the fact sheet says it 'is moving to let' (a proposal/ongoing process, not a completed rule). Summary B ranks last because it contains multiple invented facts not found in the fact sheet (the Navy drone ship landing and the four-star autonomous warfare command) and uses process language in the lead."
+  },
+  "2026-10-20": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "C",
+      "B",
+      "D"
+    ],
+    "reason": "Summary A is the best because it is the most comprehensive, covering nearly every story in the fact sheet with high specificity and excellent synthesis (e.g., contrasting municipal resistance with corporate expansion). It avoids process language and maintains a professional, active style. Summary C is second; while it is well-written and accurate, it omits the municipal drone delivery and supersonic aviation stories. Summary B is third; it is less comprehensive than A and C, omitting the AAM (Archer/Joby) and Waymo expansion stories. Summary D is the worst because it contains significant invented facts not found in the fact sheet (e.g., F-22/Fury, Navy USVs, Chinese maglev, California High-Speed Rail) and uses process language in the lead."
+  },
+  "2026-10-21": {
+    "ranking": [
+      "qwen3.6",
+      "qwen3.8",
+      "gemma4",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "B",
+      "D",
+      "A"
+    ],
+    "reason": "Summary C is the best because it is comprehensive, accurate, and synthesizes related stories (e.g., counter-UAS and Tesla robotaxis) without using hype or process language. Summary B is also accurate and professional but is less comprehensive than C and uses slightly more interpretive language (\"decisive step\", \"tangible milestone\"). Summary D is well-synthesized and accurate but is ranked below B and C because it is incomplete, cutting off mid-sentence at the end. Summary A is the worst as it is merely a list of headlines and contains process language (\"Today's Advanced Transportation News Update covers...\")."
+  },
+  "2026-10-22": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "C",
+      "B",
+      "D",
+      "A"
+    ],
+    "reason": "Summary C is the best because it is the most disciplined, using a plain, active style and avoiding the hype and interpretive analysis found in the other summaries. It accurately reports the facts with high specificity (e.g., 2027, 1,000 Cybercabs, $351,000) and selects a highly consequential lead. Summary B is second; while it covers more ground, it includes hype ('significant milestone') and inferred information not in the fact sheet ('return of the aircraft to commercial service'). Summary D ranks third because it contains significant invented context and analysis ('stabilizes production timelines', 'signaling a dual focus') that goes beyond the provided facts. Summary A is the worst as it is not a summary but rather a list of headlines containing process language."
+  },
+  "2026-10-25": {
+    "ranking": [
+      "qwen3.6",
+      "gemma4",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "C",
+      "B",
+      "D"
+    ],
+    "reason": "Summary A is the best as it is the most comprehensive, covering nearly all the key developments from the fact sheet with high specificity (numbers, names) and strong synthesis. It maintains accurate status discipline (e.g., 'proposed' for NHTSA rules) and a professional style. Summary C is also accurate and well-written but is less comprehensive than A, omitting several stories (Boom Supersonic, Tesla Optimus, France's AV path, and the truck parking investment). Summary B is accurate but contains more process language and hype ('witnessed significant milestones', 'coordinated push', 'broader governmental commitment') than A or C. Summary D is the worst because it contains invented facts not found in the fact sheet (FAA draft design standards for vertical lift infrastructure and an L3Harris contract) and has a poor lead selection."
+  },
+  "2026-10-26": {
+    "ranking": [
+      "gemma4",
+      "qwen3.6",
+      "qwen3.8",
+      "published"
+    ],
+    "labels": [
+      "A",
+      "C",
+      "B",
+      "D"
+    ],
+    "reason": "Summary A is the best because it selects the most consequential lead (China's drone export controls), maintains strict status discipline, and avoids the interpretive hype and analysis found in B and C. Summary C is second; while its lead is less significant than A's, it is more concise and objective than B. Summary B is third due to significant use of hype and analytical language not present in the fact sheet (e.g., 'determine the pace', 'decisive step', 'competitive push'). Summary D is ranked last because it contains an invented fact not found in the fact sheet (the U.S. Navy halting procurement of the Global Autonomous Reconnaissance Craft)."
+  }
+}
