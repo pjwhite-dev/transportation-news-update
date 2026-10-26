@@ -21,8 +21,10 @@ $user = "$env:USERDOMAIN\$env:USERNAME"
 $pythonw = Join-Path $RepoRoot ".venv\Scripts\pythonw.exe"
 if (-not (Test-Path $pythonw)) { throw "Missing $pythonw" }
 $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
-$hidden = "powershell.exe"
-$hiddenArgs = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass"
+# conhost --headless runs PowerShell with no console window at all. "-WindowStyle Hidden" alone
+# still flashes a black window for an instant on every launch, which is visible every 5 minutes.
+$hidden = "conhost.exe"
+$hiddenArgs = "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass"
 
 function New-NewsroomTask {
     param([string]$Name, [string]$Execute, [string]$Arguments, $Trigger, [switch]$LongRunning)
