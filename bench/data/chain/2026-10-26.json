@@ -1,0 +1,39 @@
+{
+  "day": "2026-10-26",
+  "ok": true,
+  "text": "China announced new export controls on high-power drone motors and autonomous software effective November 18, 2026, which are expected to raise costs and complicate production for drone manufacturers in the U.S., Europe, and other regions [1](https://www.armyrecognition.com/news/army-news/2026/china-tightens-drone-export-controls-raising-supply-chain-risks-for-the-us-europe-and-ukraine). The Federal Aviation Administration issued proposed design standards for eVTOL vertiports to establish infrastructure requirements for the safe integration of electric vertical takeoff and landing aircraft into the national airspace system [2](https://avbrief.com/faa-issues-proposed-evtol-vertiport-design-standards/). Archer Aviation unveiled plans for air taxi networks spanning Houston, Dallas, and Austin, Texas, coinciding with reports that the U.S. has cleared the company's eVTOL aircraft for passenger flights [3](https://www.aerospacemanufacturinganddesign.com/news/archer-unveils-texas-air-taxi-networks-across-houston-dallas-austin/).\n\nWaymo received approval to launch a robotaxi pilot in New York City, expanding its autonomous vehicle operations into a complex urban driving environment [4](https://mashable.com/article/waymo-driverless-cars-new-york-city). The National Highway Traffic Safety Administration proposed a rule requiring cyan exterior lighting on self-driving vehicles to help pedestrians and other drivers identify automated cars on U.S. roads [5](https://www.technology.org/2026/10/26/nhtsa-cyan-lights-self-driving-cars/)[6](https://www.motor1.com/news/813196/nhtsa-proposal-cyan-lights-self/). General Motors is expanding its 'eyes-off' autonomous driving technology to include pickup trucks and SUVs, broadening the application of advanced driver-assistance systems beyond sedans [7](https://www.foxbusiness.com/technology/gm-expands-eyes-off-autonomous-driving-plans-pickups-suvs.amp).\n\nNASA and commercial partners Blue Origin and SpaceX streamlined designs for future crewed lunar landers, with the Artemis III mission launching in 2027 to test future moon lander operations [8](https://www.nasa.gov/missions/artemis/nasa-partners-accelerate-lander-development-for-2028-moon-missions/). Teams at NASA’s Stennis Space Center tested RS-25 engine No. 10001 on October 21, conducting a hot fire test that lasted 500 seconds at 111% power level [9](https://www.nasa.gov/image-article/rs-25-engine-tests-at-nasa-stennis/). Army to intercept drones [10](https://www.armyrecognition.com/news/army-news/2026/l3harris-develops-new-long-range-ramjet-missile-for-u-s-army-to-intercept-drones).",
+  "verification": {
+    "verified_by": "gemma4:31b",
+    "writer": "qwen3.8:27b-q4_K_M",
+    "rounds": [
+      {
+        "attempt": 0,
+        "sentences": 10,
+        "flagged": 1,
+        "status_errors": 0
+      },
+      {
+        "attempt": 1,
+        "sentences": 10,
+        "flagged": 1,
+        "status_errors": 0
+      },
+      {
+        "attempt": 2,
+        "sentences": 10,
+        "flagged": 1,
+        "status_errors": 0
+      }
+    ],
+    "sentences_dropped": 1,
+    "unsupported_remaining": 0,
+    "status_errors_remaining": 0,
+    "seconds": 253.3
+  },
+  "usage": {
+    "input_tokens": 18726,
+    "output_tokens": 12489,
+    "total_tokens": 31215
+  },
+  "seconds": 253.3
+}

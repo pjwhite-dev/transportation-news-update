@@ -11,7 +11,7 @@ import requests
 from jsonschema import ValidationError, validate
 
 DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3.6:27b-q4_K_M"
+DEFAULT_OLLAMA_MODEL = "qwen3.8:27b-q4_K_M"
 DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
 OPENAI_RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
 TRANSIENT_STATUS_CODES = {408, 409, 425, 429, 500, 502, 503, 504}

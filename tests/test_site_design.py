@@ -139,6 +139,18 @@ class SiteDesignTests(unittest.TestCase):
         for page in (self.index, search, archive):
             self.assertIn("Search</a>", page)
 
+    def test_summary_renders_paragraphs_and_superscript_source_citations(self) -> None:
+        payload = {
+            "executive_summary": "First claim [1](https://example.com/a-story). Second claim [2](https://example.com/b-story).\n\nNew paragraph [1](https://example.com/a-story).",
+            "sections": {"Autonomous Vehicles": [{"url": "https://example.com/a-story"}, {"url": "https://example.com/b-story"}]},
+        }
+        paragraphs = public_site.summary_paragraphs(payload)
+        self.assertEqual(len(paragraphs), 2)
+        self.assertIn('claim<sup class="cite"><a href="https://example.com/a-story"', paragraphs[0])
+        self.assertNotIn("](", paragraphs[0])
+        payload["executive_summary"] += " Bad [3](https://evil.example/x)."
+        self.assertNotIn("evil.example", "".join(public_site.summary_paragraphs(payload)))
+
     def test_display_title_strips_only_a_matching_publisher_suffix(self) -> None:
         clean = public_site.display_title
         self.assertEqual(clean({"title": "Zoox recalls fleet - WION", "source": "wionews.com"}), "Zoox recalls fleet")

@@ -1,0 +1,62 @@
+{
+  "1": {
+    "day": "2026-07-14",
+    "labels": {
+      "A": "qwen3.6",
+      "B": "qwen3.8",
+      "C": "gemma4",
+      "D": "chain",
+      "E": "published"
+    }
+  },
+  "2": {
+    "day": "2026-09-14",
+    "labels": {
+      "A": "gemma4",
+      "B": "published",
+      "C": "chain",
+      "D": "qwen3.8",
+      "E": "qwen3.6"
+    }
+  },
+  "3": {
+    "day": "2026-09-24",
+    "labels": {
+      "A": "qwen3.6",
+      "B": "chain",
+      "C": "published",
+      "D": "gemma4",
+      "E": "qwen3.8"
+    }
+  },
+  "4": {
+    "day": "2026-10-05",
+    "labels": {
+      "A": "gemma4",
+      "B": "published",
+      "C": "qwen3.6",
+      "D": "qwen3.8",
+      "E": "chain"
+    }
+  },
+  "5": {
+    "day": "2026-10-25",
+    "labels": {
+      "A": "published",
+      "B": "gemma4",
+      "C": "qwen3.8",
+      "D": "chain",
+      "E": "qwen3.6"
+    }
+  },
+  "6": {
+    "day": "2026-10-26",
+    "labels": {
+      "A": "qwen3.6",
+      "B": "published",
+      "C": "gemma4",
+      "D": "qwen3.8",
+      "E": "chain"
+    }
+  }
+}

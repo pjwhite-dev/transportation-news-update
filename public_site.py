@@ -268,8 +268,12 @@ def _safe_url(value: str) -> str:
     return "#"
 
 
-def summary_html(payload: dict[str, Any]) -> str:
-    """Render source links from the final AI summary without allowing arbitrary HTML."""
+def summary_paragraphs(payload: dict[str, Any]) -> list[str]:
+    """Render the final AI summary as inline HTML paragraphs without allowing arbitrary HTML.
+
+    Labeled links to known story URLs are kept. A link whose label is just a number is a source
+    citation and renders as a small superscript right after the sentence it supports.
+    """
     summary = sanitize_executive_summary_citations(
         str(payload.get("executive_summary", ""))
     )
@@ -280,21 +284,40 @@ def summary_html(payload: dict[str, Any]) -> str:
         if str(item.get("url", "")).startswith(("https://", "http://"))
     }
     pattern = re.compile(r"\[([^\]]{1,120})\]\((https?://[^\s)]+)\)")
-    parts: list[str] = []
-    cursor = 0
-    for match in pattern.finditer(summary):
-        parts.append(html.escape(summary[cursor:match.start()]))
-        label, url = match.groups()
-        if url in allowed:
-            parts.append(
-                f'<a href="{_safe_url(url)}" style="color:#174F86;text-decoration:underline">'
-                f'{html.escape(label)}</a>'
-            )
-        else:
-            parts.append(html.escape(label))
-        cursor = match.end()
-    parts.append(html.escape(summary[cursor:]))
-    return "".join(parts)
+    paragraphs: list[str] = []
+    for paragraph in summary.split("\n\n"):
+        parts: list[str] = []
+        cursor = 0
+        for match in pattern.finditer(paragraph):
+            before = paragraph[cursor:match.start()]
+            label, url = match.groups()
+            citation = label.strip().isdigit()
+            if citation:
+                before = before.rstrip(" ")
+            parts.append(html.escape(before))
+            if url in allowed and citation:
+                parts.append(
+                    f'<sup class="cite"><a href="{_safe_url(url)}" style="color:#174F86;text-decoration:none" '
+                    f'aria-label="Source {html.escape(label)}">{html.escape(label)}</a></sup>'
+                )
+            elif url in allowed:
+                parts.append(
+                    f'<a href="{_safe_url(url)}" style="color:#174F86;text-decoration:underline">'
+                    f'{html.escape(label)}</a>'
+                )
+            elif not citation:
+                parts.append(html.escape(label))
+            cursor = match.end()
+        parts.append(html.escape(paragraph[cursor:]))
+        text = "".join(parts).strip()
+        if text:
+            paragraphs.append(text)
+    return paragraphs
+
+
+def summary_html(payload: dict[str, Any]) -> str:
+    """Single inline block (email): paragraphs separated by blank lines."""
+    return "<br><br>".join(summary_paragraphs(payload))
 
 
 def _format_day(day: date) -> str:
@@ -854,7 +877,8 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
     if payload.get("edition_kind", "automated") == "editorial":
         intro = (
             '<section class="summary" id="summary"><h2 class="label">Executive summary</h2>'
-            f"<p>{summary_html(payload)}</p></section>"
+            + "".join(f"<p>{paragraph}</p>" for paragraph in summary_paragraphs(payload))
+            + "</section>"
         )
     else:
         shown = sum(len(items) for items in sections.values())

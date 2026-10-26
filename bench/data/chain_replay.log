@@ -1,0 +1,13 @@
+2026-07-14 OK [{'attempt': 0, 'sentences': 12, 'flagged': 2, 'status_errors': 0}, {'attempt': 1, 'sentences': 12, 'flagged': 2, 'status_errors': 0}, {'attempt': 2, 'sentences': 12, 'flagged': 2, 'status_errors': 0}] 205.8 s
+2026-09-14 OK [{'attempt': 0, 'sentences': 15, 'flagged': 1, 'status_errors': 0}, {'attempt': 1, 'sentences': 14, 'flagged': 0, 'status_errors': 0}] 221.8 s
+2026-09-24 OK [{'attempt': 0, 'sentences': 13, 'flagged': 2, 'status_errors': 0}, {'attempt': 1, 'sentences': 14, 'flagged': 2, 'status_errors': 0}, {'attempt': 2, 'sentences': 12, 'flagged': 0, 'status_errors': 0}] 199.8 s
+2026-10-05 OK [{'attempt': 0, 'sentences': 10, 'flagged': 1, 'status_errors': 0}, {'attempt': 1, 'sentences': 10, 'flagged': 0, 'status_errors': 0}] 148.0 s
+2026-10-25 OK [{'attempt': 0, 'sentences': 15, 'flagged': 3, 'status_errors': 0}, {'attempt': 1, 'sentences': 15, 'flagged': 3, 'status_errors': 0}, {'attempt': 2, 'sentences': 15, 'flagged': 3, 'status_errors': 0}] 252.2 s
+2026-10-26 OK [{'attempt': 0, 'sentences': 10, 'flagged': 1, 'status_errors': 0}, {'attempt': 1, 'sentences': 10, 'flagged': 1, 'status_errors': 0}, {'attempt': 2, 'sentences': 10, 'flagged': 1, 'status_errors': 0}] 253.3 s
+audit 2026-07-14 {'supported': 10, 'unsupported': 0, 'status_error': 0}
+audit 2026-09-14 {'supported': 14, 'unsupported': 0, 'status_error': 0}
+audit 2026-09-24 {'supported': 12, 'unsupported': 0, 'status_error': 0}
+audit 2026-10-05 {'supported': 10, 'unsupported': 0, 'status_error': 0}
+audit 2026-10-25 {'supported': 12, 'unsupported': 0, 'status_error': 0}
+audit 2026-10-26 {'supported': 9, 'unsupported': 0, 'status_error': 0}
+AUDIT supported 67/67 = 100%

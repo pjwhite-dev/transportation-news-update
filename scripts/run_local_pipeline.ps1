@@ -13,7 +13,8 @@ if (-not (Test-Path -LiteralPath $python)) {
 
 if (-not $env:AI_PROVIDER) { $env:AI_PROVIDER = "ollama" }
 if (-not $env:OLLAMA_BASE_URL) { $env:OLLAMA_BASE_URL = "http://127.0.0.1:11434" }
-if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.6:27b-q4_K_M" }
+if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.8:27b-q4_K_M" }
+if (-not $env:OLLAMA_VERIFIER_MODEL) { $env:OLLAMA_VERIFIER_MODEL = "gemma4:31b" }
 if (-not $env:OPENAI_FALLBACK_ENABLED) { $env:OPENAI_FALLBACK_ENABLED = "false" }
 
 New-Item -ItemType Directory -Force -Path (Join-Path $repoRoot ".runtime") | Out-Null

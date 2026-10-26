@@ -1,0 +1,44 @@
+{
+  "2026-07-14": {
+    "sentences": 10,
+    "supported": 10,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  },
+  "2026-09-14": {
+    "sentences": 14,
+    "supported": 14,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  },
+  "2026-09-24": {
+    "sentences": 12,
+    "supported": 12,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  },
+  "2026-10-05": {
+    "sentences": 10,
+    "supported": 10,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  },
+  "2026-10-25": {
+    "sentences": 12,
+    "supported": 12,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  },
+  "2026-10-26": {
+    "sentences": 9,
+    "supported": 9,
+    "unsupported": 0,
+    "status_error": 0,
+    "flagged": []
+  }
+}

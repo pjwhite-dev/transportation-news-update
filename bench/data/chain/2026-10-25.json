@@ -1,0 +1,39 @@
+{
+  "day": "2026-10-25",
+  "ok": true,
+  "text": "Amazon’s Zoox unit issued a software recall for its entire fleet of 270 driverless vehicles following a crash in Las Vegas [1](https://www.wionews.com/autonews/zoox-recalls-robotaxis-after-self-driving-crash-in-las-vegas-9043732). The National Highway Traffic Safety Administration proposed new regulations requiring cyan exterior lighting on driverless vehicles to improve visibility and standardize visual identification [2](https://www.notateslaapp.com/news/4892/nhtsa-proposes-cyan-lights-for-driverless-cars-like-cybercab)[3](https://electrek.co/2026/10/24/nhtsa-proposes-cyan-lights-for-robotaxis-following-mercedes-china/). The Federal Aviation Administration cleared Beta Technologies for passenger demonstration flights of its Alia eVTOL aircraft, supporting the company's certification process under the Advanced Air Mobility Integration Pilot Program [4](https://www.ainonline.com/futureflight).\n\nSiemens Mobility was awarded a $772 million contract to supply trainsets for the California High-Speed Rail project [5](https://metrorailtoday.com/news/siemens-mobility-awarded-772-million-trainset-contract-for-california-high-speed-rail-project). Air Force successfully conducted a flight test in which an F-22 pilot controlled the unmanned YFQ-44 aircraft, demonstrating progress in manned-unmanned teaming capabilities [6](https://www.aero-news.net/index.cfm?do=main.textpost&id=7627FA03-CC92-4B79-B30A-DCC323A1726A). The Department of Homeland Security Science and Technology Directorate conducted field tests with first responders to assess four commercially available counter-unmanned-aircraft-system sensors [7](https://shattered.io/counter-drone-technology-first-responders-dhs-nustl-saver-2026/). NATO deployed additional counter-drone protection systems at its Brussels headquarters, combining radar, optical cameras, and radio-frequency detection systems [8](https://www.dronewatch.eu/nato-deploys-additional-counter-drone-protection-at-brussels-headquarters/).\n\nLucid Motors and Uber announced plans to expand their robotaxi partnership to Houston [9](https://insideevs.com/news/798932/lucid-gravity-robotaxi-houston-expansion-uber-nuro/). Waymo expanded its robotaxi service to include pickups at the Las Vegas airport [10](https://www.motorbiscuit.com/waymo-robotaxis-now-pick-up-at-the-las-vegas-airport-but-not-everyone-can-ride-yet/)[11](https://cedarnews.net/newstasks/1091617/us-waymo-launches-services-harry-reid-international/). Archer Aviation announced the launch of air taxi networks in Houston, Dallas, and Austin [12](https://aviationworld.in/archer-unveils-texas-air-taxi-networks-across-houston-dallas-and-austin/). Duffy announced a $200 million investment to expand truck parking facilities in 12 states [13](https://www.fmcsa.dot.gov/newsroom/press-releases). Boom Supersonic announced a $150 million expansion of its Centennial factory to support manufacturing for its Overture civil supersonic aircraft [14](https://avi-go.com/news/articles/5afebe98839c61e4c1d7a6d05161e8dd).",
+  "verification": {
+    "verified_by": "gemma4:31b",
+    "writer": "qwen3.8:27b-q4_K_M",
+    "rounds": [
+      {
+        "attempt": 0,
+        "sentences": 15,
+        "flagged": 3,
+        "status_errors": 0
+      },
+      {
+        "attempt": 1,
+        "sentences": 15,
+        "flagged": 3,
+        "status_errors": 0
+      },
+      {
+        "attempt": 2,
+        "sentences": 15,
+        "flagged": 3,
+        "status_errors": 0
+      }
+    ],
+    "sentences_dropped": 3,
+    "unsupported_remaining": 0,
+    "status_errors_remaining": 0,
+    "seconds": 252.2
+  },
+  "usage": {
+    "input_tokens": 18546,
+    "output_tokens": 11319,
+    "total_tokens": 29865
+  },
+  "seconds": 252.2
+}

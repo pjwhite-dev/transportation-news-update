@@ -220,6 +220,48 @@ class ProvenanceAndSchemaTests(unittest.TestCase):
         self.assertIn("relevance", failed_checks(report))
 
 
+def chain_briefing() -> dict:
+    briefing = good_briefing()
+    urls = [story["url"] for _, _, story in gates.iter_stories(briefing)]
+    sentence = "The agency published the rule and operators began flying under it across several states this week"
+    paragraphs = []
+    for index in range(3):
+        links = "".join(f"[{n + 1}]({urls[n]})" for n in range(len(urls)))
+        paragraphs.append(" ".join(f"{sentence} {links}." for _ in range(3)))
+    briefing["executive_summary"] = "\n\n".join(paragraphs)
+    briefing["summary_chain"] = gates.SUMMARY_CHAIN_VERSION
+    briefing["provenance"]["executive_summary"].update(
+        {"verified_by": "gemma4:31b", "unsupported_remaining": 0, "status_errors_remaining": 0}
+    )
+    return briefing
+
+
+class SummaryGateTests(unittest.TestCase):
+    def test_verified_chain_summary_passes_and_legacy_edition_is_lenient(self) -> None:
+        report = gates.run_gates(chain_briefing(), today=date(2026, 10, 26), now=NOW, require_summary_chain=True)
+        self.assertNotIn("summary", failed_checks(report), gates.failing_checks(report))
+        legacy = gates.run_gates(good_briefing(), now=NOW)
+        self.assertNotIn("summary", failed_checks(legacy))
+
+    def test_new_editions_must_carry_the_chain_marker(self) -> None:
+        report = gates.run_gates(good_briefing(), now=NOW, require_summary_chain=True)
+        self.assertIn("summary", failed_checks(report))
+
+    def test_each_failure_mode_is_caught(self) -> None:
+        def bad(mutate):
+            briefing = chain_briefing()
+            mutate(briefing)
+            return failed_checks(gates.run_gates(briefing, now=NOW, require_summary_chain=True))
+
+        self.assertIn("summary", bad(lambda b: b.update(executive_summary="Too short [1](https://www.faa.gov/newsroom/part108).")))
+        self.assertIn("summary", bad(lambda b: b.update(executive_summary=b["executive_summary"].replace("https://www.faa.gov/newsroom/part108", "https://invented.example/x"))))
+        self.assertIn("summary", bad(lambda b: b.update(executive_summary=b["executive_summary"] + " A landmark change.")))
+        self.assertIn("summary", bad(lambda b: b["provenance"]["executive_summary"].update(verified_by="")))
+        self.assertIn("summary", bad(lambda b: b["provenance"]["executive_summary"].update(unsupported_remaining=2)))
+        self.assertIn("summary", bad(lambda b: b.update(summary_chain=1)))
+        self.assertIn("summary", bad(lambda b: b.update(executive_summary="\n\n".join(b["executive_summary"].split("\n\n")[:1]))))
+
+
 class PruneTests(unittest.TestCase):
     def test_dead_links_are_removed_and_echo_summaries_blanked_with_a_record(self) -> None:
         briefing = good_briefing()

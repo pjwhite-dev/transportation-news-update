@@ -18,6 +18,7 @@ import requests
 from ai_providers import AIProvider, DEFAULT_OPENAI_MODEL, OpenAIProvider
 from coverage_history import annotate_previous_coverage
 from regulatory_tracker import build_regulatory_tracker
+from validation_gates import SUMMARY_CHAIN_VERSION
 from web_discovery import (
     enrich_article_metadata,
     fetch_official_feeds,
@@ -81,7 +82,14 @@ SUMMARY_MARKDOWN_LINK_PATTERN = re.compile(
 
 
 def sanitize_executive_summary_citations(value: str) -> str:
-    """Preserve labeled Markdown links but remove exposed URL citations."""
+    """Preserve labeled Markdown links and paragraph breaks; remove exposed URL citations."""
+    paragraphs = re.split(r"\n\s*\n", str(value or ""))
+    cleaned = [_sanitize_summary_paragraph(paragraph) for paragraph in paragraphs]
+    return "\n\n".join(paragraph for paragraph in cleaned if paragraph)
+
+
+def _sanitize_summary_paragraph(value: str) -> str:
+    """Preserve labeled Markdown links but remove exposed URL citations (one paragraph)."""
     protected: list[str] = []
 
     def protect(match: re.Match[str]) -> str:
@@ -2519,14 +2527,18 @@ def sanitize_compiled_executive_summary(
 ) -> str:
     """Keep final summary copy public-facing; raise rather than fall back to a template."""
     cleaned_value = sanitize_executive_summary_citations(value)
-    sentences = re.split(r"(?<=[.!?])\s+", cleaned_value)
-    public_sentences = [
-        sentence
-        for sentence in sentences
-        if sentence and executive_summary_sentence_is_public(sentence)
-    ]
-    if public_sentences:
-        return clean_spaces(" ".join(public_sentences))
+    kept_paragraphs = []
+    for paragraph in cleaned_value.split("\n\n"):
+        sentences = re.split(r"(?<=[.!?])\s+", paragraph)
+        public_sentences = [
+            sentence
+            for sentence in sentences
+            if sentence and executive_summary_sentence_is_public(sentence)
+        ]
+        if public_sentences:
+            kept_paragraphs.append(clean_spaces(" ".join(public_sentences)))
+    if kept_paragraphs:
+        return "\n\n".join(kept_paragraphs)
 
     # Never substitute template copy: an edition without model-written prose
     # must fail so the run is retried or alerts the owner (rebuild plan 6.0.4).
@@ -2545,25 +2557,16 @@ def generate_final_executive_summary(
     window_start: datetime,
     window_end: datetime,
     provider: AIProvider | None = None,
+    verifier: AIProvider | None = None,
 ) -> tuple[str, dict[str, Any], float | None]:
-    selected = provider or OpenAIProvider(api_key=api_key, model=model)
-    generation = selected.generate_text(
-        executive_summary_messages(
-            sections,
-            what_to_watch,
-            regulatory_tracker,
-            window_start,
-            window_end,
-        ),
-        max_output_tokens=1200,
-    )
-    usage = dict(generation.usage)
-    usage["_retries"] = generation.retries
-    return (
-        sanitize_compiled_executive_summary(generation.text, sections),
-        usage,
-        generation.estimated_cost,
-    )
+    from summary_chain import run_chain, verifier_from_env
+
+    writer = provider or OpenAIProvider(api_key=api_key, model=model)
+    chain = run_chain(writer, verifier or verifier_from_env(), sections)
+    usage = dict(chain.usage)
+    usage["_retries"] = sum(round_["attempt"] > 0 for round_ in chain.verification.get("rounds", []))
+    usage["_summary_verification"] = chain.verification
+    return sanitize_compiled_executive_summary(chain.text, sections), usage, 0.0
 
 
 def combine_usage(*passes: dict[str, Any]) -> dict[str, int]:
@@ -2718,9 +2721,14 @@ def generate_briefing_from_records(
         "window_end": end.isoformat(),
         "model": model,
         "ai_provider": provider.name if provider else "openai",
+        "summary_chain": SUMMARY_CHAIN_VERSION,
         "provenance": {
             "story_analysis": {"provider": provider.name if provider else "openai", "model": model},
-            "executive_summary": {"provider": provider.name if provider else "openai", "model": model},
+            "executive_summary": {
+                "provider": provider.name if provider else "openai",
+                "model": model,
+                **(summary_usage.get("_summary_verification") or {}),
+            },
             "fallback_text_used": False,
         },
         "model_retries": int(analysis_usage.get("_retries", 0) or 0)

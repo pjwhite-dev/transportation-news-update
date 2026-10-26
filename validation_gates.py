@@ -539,6 +539,61 @@ def gate_provenance(briefing: dict[str, Any]) -> GateResult:
     return GateResult("provenance", not evidence, evidence)
 
 
+SUMMARY_MIN_WORDS, SUMMARY_MAX_WORDS = 140, 350
+SUMMARY_BANNED = (
+    "landmark", "game-changer", "game changer", "poised to", "underscores", "amid",
+    "navigating the landscape", "it remains to be seen", "source headline", "watch for follow-up developments",
+)
+SUMMARY_PROCESS_WORDS = ("supplemental", "intake", "the feed", "this edition", "this briefing", "today's stories", "the stories below")
+_SUMMARY_LINK = re.compile(r"\[([^\]]{1,120})\]\((https?://[^\s)]+)\)")
+SUMMARY_CHAIN_VERSION = 2
+
+
+def gate_summary(briefing: dict[str, Any], *, require_chain: bool = False) -> GateResult:
+    """Executive Summary shape, source links and verification (plan 7.3).
+
+    Editions from before the verified chain carry no ``summary_chain`` marker and are validated
+    leniently (they are history); every new edition must carry the marker and pass in full.
+    """
+    marker = briefing.get("summary_chain")
+    if marker is None and not require_chain:
+        return GateResult("summary", True, [], ["legacy edition: verified summary chain not required"])
+    evidence: list[str] = []
+    if marker != SUMMARY_CHAIN_VERSION:
+        evidence.append("Edition was not produced by the verified summary chain.")
+    text = str(briefing.get("executive_summary", ""))
+    links = _SUMMARY_LINK.findall(text)
+    plain = _SUMMARY_LINK.sub("", text)
+    words = len(plain.split())
+    paragraphs = [p for p in text.split("\n\n") if p.strip()]
+    if not SUMMARY_MIN_WORDS <= words <= SUMMARY_MAX_WORDS:
+        evidence.append(f"Executive Summary has {words} words (allowed {SUMMARY_MIN_WORDS}-{SUMMARY_MAX_WORDS}).")
+    if not 2 <= len(paragraphs) <= 4:
+        evidence.append(f"Executive Summary has {len(paragraphs)} paragraphs (allowed 2-4).")
+    if len(links) < 3:
+        evidence.append(f"Executive Summary has {len(links)} source links (need at least 3).")
+    for number, paragraph in enumerate(paragraphs, start=1):
+        if not _SUMMARY_LINK.search(paragraph):
+            evidence.append(f"Paragraph {number} of the Executive Summary has no source link.")
+    story_urls = {str(story.get("url", "")) for _, _, story in iter_stories(briefing)}
+    for _, url in links:
+        if url not in story_urls:
+            evidence.append(f"Executive Summary links to a URL that is not a story in this edition: {url[:80]}")
+    lowered = plain.casefold()
+    for phrase in SUMMARY_BANNED:
+        if re.search(r"\b" + re.escape(phrase) + r"\b", lowered):
+            evidence.append(f"Executive Summary uses banned phrase {phrase!r}.")
+    for word in SUMMARY_PROCESS_WORDS:
+        if word in lowered:
+            evidence.append(f"Executive Summary uses process language {word!r}.")
+    record = (briefing.get("provenance") or {}).get("executive_summary") or {}
+    if not record.get("verified_by"):
+        evidence.append("Executive Summary has no recorded verifier model.")
+    if record.get("unsupported_remaining") != 0 or record.get("status_errors_remaining") != 0:
+        evidence.append("Executive Summary verification left unsupported or status-error sentences.")
+    return GateResult("summary", not evidence, evidence)
+
+
 def gate_schema(briefing: dict[str, Any]) -> GateResult:
     evidence = []
     if not str(briefing.get("executive_summary", "")).strip():
@@ -567,6 +622,7 @@ def run_gates(
     previous_cutoff: datetime | None = None,
     fetch_status: Callable[[str], int | None] | None = None,
     require_status_class: bool = False,
+    require_summary_chain: bool = False,
 ) -> dict[str, Any]:
     """Run every gate and return the validation report (never raises for a failed gate)."""
     results = [
@@ -578,6 +634,7 @@ def run_gates(
         gate_links(briefing, fetch_status=fetch_status),
         gate_tracker(briefing, now=now, fetch_status=fetch_status),
         gate_provenance(briefing),
+        gate_summary(briefing, require_chain=require_summary_chain),
         gate_schema(briefing),
     ]
     return {

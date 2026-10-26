@@ -264,6 +264,7 @@ def validate_complete_briefing(
         today=today,
         previous_cutoff=previous_cutoff,
         fetch_status=link_status if check_links else None,
+        require_summary_chain=today is not None,
     )
     errors.extend(failing_checks(report))
     briefing["validation_report"] = report

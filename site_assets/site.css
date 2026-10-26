@@ -146,3 +146,8 @@ aside.side{position:sticky;top:76px;display:grid;gap:22px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.menu summary::after{transition:none}}
 @media print{.cover,.sections-bar,aside.side,.no-copy{display:none!important}.page{display:block;padding:0}}
+
+/* ---- source citations in the executive summary ---- */
+.summary sup.cite{font:600 .62em var(--sans);margin-left:2px;vertical-align:super;line-height:0}
+.summary sup.cite a{color:var(--steel)!important;padding:0 2px;text-decoration:none}
+.summary sup.cite a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
