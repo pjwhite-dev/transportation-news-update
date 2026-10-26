@@ -31,7 +31,9 @@ if (-not (Get-Process -Name hermes -ErrorAction SilentlyContinue)) {
     Start-ScheduledTask -TaskName "newsroom-hermes-gateway" -ErrorAction SilentlyContinue
 }
 
-if ((wsl.exe -l --running 2>$null | Out-String) -notmatch "Ubuntu") {
+# wsl.exe writes UTF-16, so strip the NUL bytes before matching.
+$running = ((wsl.exe -l --running 2>$null | Out-String) -replace [char]0, "")
+if ($running -notmatch "Ubuntu") {
     Note "WSL not running; starting newsroom-wsl."
     Start-ScheduledTask -TaskName "newsroom-wsl" -ErrorAction SilentlyContinue
 }
