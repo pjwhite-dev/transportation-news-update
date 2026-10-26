@@ -4,10 +4,12 @@
 # Safe to re-run: existing tasks are replaced. Pass -WhatIf to preview.
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+    [string]$RepoRoot = ""
 )
 
 $ErrorActionPreference = "Stop"
+# $PSScriptRoot is empty inside param() defaults in Windows PowerShell 5.1, so resolve it here.
+if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path }
 $python = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 $credential = Get-Credential -UserName "$env:USERDOMAIN\$env:USERNAME" -Message "Windows password for the newsroom tasks"
 
