@@ -30,8 +30,12 @@ Push-Location $repoRoot
 $supplementalPath = $null
 try {
     if (-not $DryRun) {
+        # The tracker ledger is regenerated from the Federal Register on every run (and by the
+        # 04:00 tracker task), so uncommitted changes to just these two files are discarded.
+        # Anything else dirty still stops the run.
+        git checkout -- tracker/events.jsonl tracker/verifications.jsonl 2>$null
         $dirty = git status --porcelain
-        if ($dirty) { throw "Refusing production run because the repository is not clean." }
+        if ($dirty) { throw "Refusing production run because the repository is not clean: $($dirty -join '; ')" }
         git pull --ff-only origin main
         if ($LASTEXITCODE -ne 0) { throw "git pull --ff-only failed." }
     }
