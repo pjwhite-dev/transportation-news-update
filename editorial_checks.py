@@ -87,8 +87,9 @@ def off_topic_reason(item: dict[str, Any]) -> str:
     angle = compiled(config["portfolio_angle"])
     if item.get("required_include") or item.get("origin") == "Federal Register API":
         return ""
-    if off and (match := off.search(text)) and not (angle and angle.search(str(item.get("title", "")))):
-        return f"celebrity or off-topic story ({match.group(0).strip()!r})"
+    hook = compiled(config.get("off_topic_unless", []))
+    if off and (match := off.search(item_text(item))) and not (hook and hook.search(str(item.get("title", "")))):
+        return f"celebrity or human-interest story with no policy or safety hook ({match.group(0).strip()[:40]!r})"
     if angle and not angle.search(text):
         return "no drone, counter-UAS, AAM, AV, rail, supersonic or space-transport angle"
     return ""

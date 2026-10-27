@@ -145,7 +145,7 @@ sections:
     require_any: ['supersonic', 'x-59', 'overture', 'hermeus', 'sonic boom', 'hypersonic', 'mach \d']
   Advanced Rail / High-Speed Rail:
     definition: Rail, including high-speed, passenger and freight rail policy, funding, and technology.
-    require_any: ['\brail\b', 'railway', 'railroad', 'high-speed rail', '\btrains?\b', 'locomotive', 'amtrak', 'maglev', 'crisi', 'brightline', 'chsr', 'light rail', 'commuter rail', 'metro line']
+    require_any: ['\brail\b', 'railway', 'railroad', 'high-speed rail', '\btrains?\b', 'locomotive', 'amtrak', 'maglev', 'crisi', 'brightline', 'chsr', 'light rail', 'commuter rail', 'metro line', 'short ?line', 'trainsets?']
   UxS / Maritime / Ground Robotics:
     definition: Uncrewed surface, underwater and ground vehicles.
     require_any: ['uncrewed surface', 'unmanned surface', '\busv\b', '\buuv\b', 'autonomous (?:ship|vessel|boat)', 'maritime autonomy', 'ground robot', '\bugv\b', 'unmanned ground', 'uncrewed ground', 'underwater (?:drone|vehicle)']
@@ -160,5 +160,16 @@ sections:
     require_any: ['space (?:launch|transport|travel)', 'spaceport', 'launch (?:license|site|vehicle)', 'hyperloop', 'reentry', 'starship', 'commercial space']
 
 # Applies to every section: no general war, crime or celebrity coverage without a portfolio angle.
-portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'evtol', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev']
-off_topic_patterns: ['\bcelebrit', '\bactor\b', '\bactress\b', '\bsinger\b', '\brapper\b', '\binfluencer\b', 'kardashian', 'red carpet', 'riding in a', 'takes a ride']
+portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'evtol', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev', 'crisi', 'short ?line', 'trainsets?', 'locomotives?', 'amtrak', 'brightline', 'commuter rail', 'transit']
+off_topic_patterns:
+  - '\bcelebrit'
+  - '\bactor\b'
+  - '\bactress\b'
+  - '\bsinger\b'
+  - '\brapper\b'
+  - '\binfluencer\b'
+  - 'kardashian'
+  - 'red carpet'
+  - '\b(?:rides?|rode|riding|takes? a ride|joins?)\b[^.]{0,50}\b(?:cybercab|robotaxi|waymo|driverless|self-driving)\b'
+# A human-interest item is kept only when its headline carries a policy or safety hook.
+off_topic_unless: ['\bfaa\b', '\bnhtsa\b', '\bfmcsa\b', '\bdot\b', 'rule\b', 'rulemaking', 'regulat', '\blaw\b', '\bbill\b', 'congress', 'senate', 'permit', 'approv', 'recall', 'crash', 'investigat', 'lawsuit', 'safety']

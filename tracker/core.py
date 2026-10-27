@@ -47,8 +47,11 @@ DISCOVERY_TERMS = (
     "powered-lift", "vertiport", "eVTOL", "advanced air mobility",
 )
 DISCOVERY_RELEVANCE = re.compile(
-    r"unmanned aircraft|uas|drones?|counter-?uas|automated driving|ads|supersonic|powered.lift|vertiport|"
+    r"unmanned aircraft|\buas\b|\bdrones?\b|counter-?uas|automated driving|\bads\b|supersonic|powered.lift|vertiport|"
     r"evtol|advanced air mobility|beyond visual line", re.I)
+TRANSPORT_AGENCIES = re.compile(
+    r"\b(?:FAA|NHTSA|FMCSA|FRA|FTA|TSA|DOT|NASA|FCC|NTIA|PHMSA|MARAD|DHS)\b|transportation|aviation|"
+    r"communications commission|homeland security|defense|space|aeronautics", re.I)
 DISCOVERY_LOOKBACK_DAYS = 3
 # Federal Register document types that matter to rulemaking status.
 RULEMAKING_TYPES = {"Rule", "Proposed Rule"}
@@ -410,8 +413,13 @@ def discover(
         except (requests.RequestException, ValueError, AttributeError):
             continue
         for doc in results:
-            text = f"{doc.get('title', '')} {doc.get('abstract', '') or ''}"
-            if not DISCOVERY_RELEVANCE.search(text):
+            names = " ".join(
+                f"{(a or {}).get('short_name', '')} {(a or {}).get('name', '')}" for a in doc.get("agencies") or []
+            )
+            in_title = DISCOVERY_RELEVANCE.search(str(doc.get("title", "")))
+            in_abstract = DISCOVERY_RELEVANCE.search(str(doc.get("abstract", "") or ""))
+            # A passing mention in an unrelated agency's abstract (a wildlife rule that cites drone surveys) is noise.
+            if not (in_title or (in_abstract and TRANSPORT_AGENCIES.search(names))):
                 continue
             rins = [r for r in doc.get("regulation_id_numbers") or [] if r]
             dockets = [d for d in doc.get("docket_ids") or [] if d]

@@ -16,7 +16,6 @@ from typing import Any
 from coverage_history import (
     canonical_url,
     noteworthy_signals,
-    numeric_facts,
     same_covered_event,
     title_tokens,
 )
@@ -29,6 +28,23 @@ _DOCKET = re.compile(r"\b([A-Z]{2,6}-\d{4}-\d{3,5})\b")
 _FCC_DOCKET = re.compile(r"\b(?:SB|GN|WC|ET|MB|CG|PS|WT|IB) Docket No\.? ?(\d{2}-\d{1,4})\b", re.I)
 _HOUSE_REPORT = re.compile(r"\bH(?:ouse)?\.? ?Rept?\.? ?(\d{3}-\d{1,4})\b|\bhouse-report/(\d+)\b", re.I)
 _RULE_TERMS_PATH = Path(__file__).resolve().parent / "tracker" / "rulemakings.yaml"
+
+
+_UNIT_NUMBER = re.compile(
+    r"\$\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:million|billion))?"
+    r"|\d[\d,]*(?:\.\d+)?\s?(?:%|percent|million|billion|vehicles?|aircraft|drones?|flights?|miles?|jobs|states)\b",
+    re.I,
+)
+
+
+_DESIGNATOR = re.compile(r"\b(?:part|parts|no\.?|nos\.?|section|sec\.?|fmvss|docket|title|rept\.?|h\.r\.?)\s*\d[\d.-]*", re.I)
+
+
+def unit_numbers(story: dict[str, Any]) -> set[str]:
+    """Figures with a unit or currency (rule numbers like 'No. 108' are identifiers, not new facts)."""
+    text = f"{story.get('title', '')} {story.get('summary', '')}"
+    text = _DESIGNATOR.sub(" ", text)
+    return {re.sub(r"\s+", " ", m.group(0).casefold()).replace(",", "") for m in _UNIT_NUMBER.finditer(text)}
 
 
 def _rulemaking_terms() -> list[tuple[str, list[str]]]:
@@ -155,7 +171,7 @@ def store_entry(story: dict[str, Any], edition: str) -> dict[str, Any]:
             canonical_url(str(e.get("url", "") if isinstance(e, dict) else e)) for e in story.get("also_covered") or []}),
         "identifiers": sorted(_strong(identifiers(story))),
         "tokens": sorted(title_tokens(story)),
-        "numbers": sorted(numeric_facts(story)),
+        "numbers": sorted(unit_numbers(story)),
         "summary": str(story.get("summary", "")),
         "led": bool(story.get("led_summary", False)),
     }
@@ -187,10 +203,24 @@ def build_store(archive_dir: Path, today: date, days: int = STORE_DAYS) -> list[
 
 
 def lead_urls(briefing: dict[str, Any]) -> set[str]:
-    """Canonical URLs cited by the first sentence of an edition's Executive Summary (the story that led it)."""
+    """Canonical URLs of the story that led an edition's Executive Summary.
+
+    Editions with numbered citation links use the links in the first sentence. Older editions have none,
+    so the story whose headline words mostly appear in the first sentence is taken as the lead.
+    """
     text = str(briefing.get("executive_summary", "")).strip()
     first = re.split(r"(?<=[.!?])(?:\[\d+\]\([^)]*\))*\s+(?=[A-Z])", text, maxsplit=1)[0] if text else ""
-    return {canonical_url(u) for u in re.findall(r"\]\((https?://[^)\s]+)\)", first)}
+    linked = {canonical_url(u) for u in re.findall(r"\]\((https?://[^)\s]+)\)", first)}
+    if linked or not first:
+        return linked
+    words = set(re.findall(r"[a-z0-9]{4,}", first.casefold()))
+    leads: set[str] = set()
+    for items in (briefing.get("sections") or {}).values():
+        for item in items:
+            tokens = set(re.findall(r"[a-z0-9]{4,}", str(item.get("title", "")).casefold()))
+            if len(tokens) >= 3 and len(tokens & words) / len(tokens) >= 0.6:
+                leads.add(canonical_url(str(item.get("url", ""))))
+    return leads
 
 
 def write_store(root: Path, store: list[dict[str, Any]], today: date) -> Path:
@@ -218,8 +248,8 @@ def previous_match(story: dict[str, Any], store: list[dict[str, Any]]) -> dict[s
 def new_facts_since(story: dict[str, Any], entry: dict[str, Any]) -> str:
     """A reason the story is a genuine update of an earlier group, or '' when it only repeats it."""
     old = set(entry.get("numbers", []))
-    now = numeric_facts(story)
-    fresh = sorted(n for n in now - old if len(n) > 2)
+    now = unit_numbers(story)
+    fresh = sorted(now - old)
     signals = noteworthy_signals(story) - noteworthy_signals({"title": entry["title"], "summary": entry.get("summary", "")})
     if signals:
         return "new development: " + ", ".join(sorted(signals))

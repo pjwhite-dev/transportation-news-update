@@ -36,6 +36,11 @@ _MONTHS = {m: i for i, m in enumerate(
      "november", "december"], start=1)}
 _MONTH_DATE = re.compile(
     r"\b(" + "|".join(m[:3] + r"[a-z]*\.?" for m in _MONTHS) + r")\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(20\d\d)\b", re.I)
+_DAY_FIRST = re.compile(
+    r"\b(\d{1,2})(?:st|nd|rd|th)?\s+(" + "|".join(m[:3] + r"[a-z]*\.?" for m in _MONTHS) + r")\s*,?\s+(20\d\d)\b", re.I)
+_LABELLED = re.compile(
+    r"(?:first published|published(?: on| at)?|posted(?: on)?|publication date|date published|originally published)"
+    r"\s*[:\-\u2013|]?\s*([^\n|]{6,40})", re.I)
 _SLASH_DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(20\d\d)\b")
 _URL_DATES = (
     re.compile(r"/(20\d\d)/(\d{1,2})/(\d{1,2})(?:/|$)"),
@@ -92,6 +97,13 @@ def parse_date(text: str, *, assume_hour: int = 12) -> datetime | None:
             return datetime(int(found.group(3)), month, int(found.group(2)), assume_hour, tzinfo=EASTERN)
         except ValueError:
             return None
+    found = _DAY_FIRST.search(value)
+    if found:
+        month = _MONTHS.get(next((m for m in _MONTHS if m.startswith(found.group(2)[:3].lower())), ""), 0)
+        try:
+            return datetime(int(found.group(3)), month, int(found.group(1)), assume_hour, tzinfo=EASTERN)
+        except ValueError:
+            return None
     found = _SLASH_DATE.search(value)
     if found:
         try:
@@ -119,7 +131,8 @@ class _PageParser(HTMLParser):
         self.meta: dict[str, str] = {}
         self.title = ""
         self.h1: list[str] = []
-        self.times: list[tuple[str, bool]] = []  # (datetime attribute, looks like the publication date)
+        self.times: list[tuple[str, bool, bool]] = []  # (datetime attribute, looks like the publication date, inside <article>)
+        self.text: list[str] = []
         self.json_ld: list[str] = []
         self.paragraphs: list[tuple[str, bool]] = []  # (text, inside <article>/<main>)
         self.links: list[tuple[str, str]] = []
@@ -148,7 +161,7 @@ class _PageParser(HTMLParser):
             self.canonical = a.get("href", "")
         elif tag == "time" and a.get("datetime"):
             hint = " ".join([a.get("itemprop", ""), a.get("class", ""), a.get("pubdate", "")]).lower()
-            self.times.append((a["datetime"], "publish" in hint or "pubdate" in hint or "datepublished" in hint))
+            self.times.append((a["datetime"], "publish" in hint or "pubdate" in hint or "datepublished" in hint, self._in_article > 0))
         elif tag in ("article", "main"):
             self._in_article += 1
         elif tag in ("title", "h1", "p") and not self._skip:
@@ -180,6 +193,8 @@ class _PageParser(HTMLParser):
             self._link_href = ""
 
     def handle_data(self, data: str) -> None:
+        if not self._skip and not self._ld and data.strip():
+            self.text.append(" ".join(data.split()))
         if self._ld:
             self._ld_buffer.append(data)
         if self._capture:
@@ -240,12 +255,21 @@ def extract_page(html: str, url: str = "") -> PageFacts:
                 facts.published, facts.date_source = parsed, f"meta {key}"
                 break
     if not facts.published:
-        ordered = sorted(parser.times, key=lambda t: not t[1])
-        for value, _ in ordered:
-            parsed = parse_date(value)
+        # A visible 'Published: 6 October 2026' line near the headline beats an unlabeled <time>, which is
+        # often a related-story widget. Look in the first part of the page text only.
+        head_text = " ".join(parser.text[:400])
+        for match in _LABELLED.finditer(head_text):
+            parsed = parse_date(match.group(1))
             if parsed:
-                facts.published, facts.date_source = parsed, "<time datetime>"
+                facts.published, facts.date_source = parsed, "labelled 'Published' text"
                 break
+    if not facts.published:
+        stamped = [(v, hint, inside) for v, hint, inside in parser.times if parse_date(v)]
+        pick = next((v for v, hint, _ in stamped if hint), None) or next((v for v, _, inside in stamped if inside), None)
+        if pick is None and stamped and len({parse_date(v).date() for v, _, _ in stamped}) == 1:
+            pick = stamped[0][0]  # every <time> on the page agrees, so it is not a mixed related-stories widget
+        if pick:
+            facts.published, facts.date_source = parse_date(pick), "<time datetime>"
     if not facts.published:
         parsed = date_from_url(url)
         if parsed:
