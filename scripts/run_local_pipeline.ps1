@@ -130,8 +130,13 @@ try {
 }
 catch {
     # No silent failures: every failed or incomplete run alerts the owner directly.
+    # The 04:30 run and the last retry alert with a sound; retries 1-3 repeat the same news quietly.
+    $attempt = 0
+    if ($env:NEWSROOM_ATTEMPT) { $attempt = [int]$env:NEWSROOM_ATTEMPT }
     $failure = "Edition run FAILED: $($_.Exception.Message)"
-    & $python alerts.py critical $failure
+    if ($attempt -ge 1) { $failure = "Retry $attempt of 4 failed: $($_.Exception.Message)" }
+    if ($attempt -eq 4) { $failure += " (last automatic retry; the ensure task has stopped for today.)" }
+    if ($attempt -ge 1 -and $attempt -le 3) { & $python alerts.py quiet $failure } else { & $python alerts.py critical $failure }
     & $python alerts.py ping edition-verified --fail
     throw
 }

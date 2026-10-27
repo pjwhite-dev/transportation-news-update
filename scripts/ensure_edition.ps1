@@ -41,6 +41,7 @@ try {
 
     Set-Content -Path $attemptsFile -Value ($attempts + 1)
     if ($DryRun) { Write-Output "Would start edition run $($attempts + 1) for $today."; return }
+    $env:NEWSROOM_ATTEMPT = [string]($attempts + 1)
     & (Join-Path $PSScriptRoot "run_local_pipeline.ps1")
 }
 finally {

@@ -36,8 +36,10 @@ from url_resolver import resolve_articles
 from validation_gates import (
     check_url_status,
     drop_non_articles,
+    edition_date,
     failing_checks,
     prune_unusable_stories,
+    repair_story_failures,
     run_gates,
 )
 from supplemental_email import (
@@ -275,6 +277,42 @@ def validate_complete_briefing(
     return briefing
 
 
+MINIMUM_STORIES_AFTER_REPAIR = 12
+REPAIR_ROUNDS = 3
+
+
+def repair_briefing(
+    briefing: dict[str, Any],
+    *,
+    today: date | None,
+    check_links: bool,
+    rounds: int = REPAIR_ROUNDS,
+    minimum_stories: int = MINIMUM_STORIES_AFTER_REPAIR,
+) -> dict[str, Any]:
+    """Run the gates, fix item-level failures, and run them again (a few rounds at most).
+
+    The hard gates still decide publication afterwards; this only stops one bad story or link
+    from failing an edition that is otherwise sound. A thin edition still fails.
+    """
+    briefing = normalize_reader_features(briefing)
+    for _ in range(rounds):
+        report = run_gates(
+            briefing,
+            today=today,
+            fetch_status=link_status if check_links else None,
+            require_summary_chain=today is not None,
+        )
+        removed = repair_story_failures(briefing, report, link_status if check_links else None)
+        if not removed:
+            break
+        briefing.setdefault("pruned_items", []).extend(removed)
+        print(f"Repair round removed or fixed {len(removed)} item(s): " + "; ".join(r["reason"] for r in removed[:5]))
+    count = sum(len(items) for items in briefing["sections"].values())
+    if count < minimum_stories:
+        raise ValueError(f"Only {count} stories remain after repairs (minimum {minimum_stories}); refusing to publish a thin edition.")
+    return briefing
+
+
 def save_briefing(root: Path, briefing: dict[str, Any]) -> tuple[Path, Path]:
     data_dir = root / "data"
     archive_dir = data_dir / "archive"
@@ -301,6 +339,11 @@ def main() -> None:
     parser.add_argument("--skip-metadata-fetch", action="store_true")
     parser.add_argument("--health-check", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--fresh",
+        action="store_true",
+        help="Ignore today's saved draft and regenerate the whole briefing.",
+    )
     parser.add_argument("--validate-only", type=Path, metavar="BRIEFING_JSON")
     parser.add_argument(
         "--require-today",
@@ -353,13 +396,30 @@ def main() -> None:
     # Refresh the official-source ledger first; a source outage is recorded and the
     # tracker gate reports any verification that is stale or missing.
     tracker_refresh = refresh_tracker()
-    briefing = build_briefing(
-        root,
-        raw_file=args.raw_file,
-        supplemental_text=supplemental_text,
-        fetch_metadata=not args.skip_metadata_fetch,
-        provider=provider,
-    )
+    today = datetime.now(EASTERN).date()
+    draft_path = root / ".runtime" / f"draft-{today.isoformat()}.json"
+    briefing = None
+    if not (args.fresh or args.dry_run or args.raw_file) and draft_path.exists():
+        # An earlier run today finished generating but failed validation or publishing. The expensive
+        # part (analysis and the verified summary) is reused; links and gates are re-checked fresh.
+        try:
+            candidate = json.loads(draft_path.read_text(encoding="utf-8"))
+            if edition_date(candidate) == today and candidate.get("summary_chain"):
+                briefing = candidate
+                print(f"Resuming from today's saved draft ({draft_path.name}); skipping generation.")
+        except (OSError, ValueError):
+            briefing = None
+    if briefing is None:
+        briefing = build_briefing(
+            root,
+            raw_file=args.raw_file,
+            supplemental_text=supplemental_text,
+            fetch_metadata=not args.skip_metadata_fetch,
+            provider=provider,
+        )
+        if not args.dry_run and not args.raw_file:
+            draft_path.parent.mkdir(exist_ok=True)
+            draft_path.write_text(json.dumps(briefing, indent=1, ensure_ascii=False), encoding="utf-8")
     if args.dry_run:
         # Keep the raw model output so gate/prune changes can be tested without regenerating.
         scratch = root / ".runtime"
@@ -372,9 +432,10 @@ def main() -> None:
     briefing["pruned_items"] = (
         [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
     )
+    briefing = repair_briefing(briefing, today=today, check_links=not args.skip_link_check)
     briefing = validate_complete_briefing(
         briefing,
-        today=datetime.now(EASTERN).date(),
+        today=today,
         check_links=not args.skip_link_check,
     )
     if args.supplemental_file and int(briefing.get("supplemental_count", 0) or 0) == 0:
@@ -386,6 +447,7 @@ def main() -> None:
     archive_path: Path | None = None
     if not args.dry_run:
         latest_path, archive_path = save_briefing(root, briefing)
+        draft_path.unlink(missing_ok=True)
     story_count = sum(
         len(items) for items in briefing["sections"].values()
     )

@@ -508,6 +508,88 @@ def prune_unusable_stories(
     return removed
 
 
+_EVIDENCE_LABEL = re.compile(r"^(?P<section>.+?)\[(?P<index>\d+)\](?P<field>\.[a-z_]+)?")
+
+
+def repair_story_failures(
+    briefing: dict[str, Any],
+    report: dict[str, Any],
+    fetch_status: Callable[[str], int | None] | None = None,
+) -> list[dict[str, str]]:
+    """Fix failures that belong to one story so one bad item cannot sink the whole edition.
+
+    Only item-level evidence is repaired (headline echo, template text in a story field, duplicate
+    stories, unusable story or also-covered links, unknown status class). Anything about the edition
+    itself (freshness, summary, tracker, provenance, schema) is left alone and still fails. The gates
+    run again on whatever remains, so this never weakens a gate; every change is returned as a record.
+    """
+    sections = briefing.get("sections")
+    if not isinstance(sections, dict):
+        return []
+    drop: dict[tuple[str, int], str] = {}
+    blank: dict[tuple[str, int, str], str] = {}
+    extras: set[tuple[str, int]] = set()
+    for check in report.get("checks", []):
+        if check.get("passed"):
+            continue
+        name = check.get("check")
+        for evidence in check.get("evidence", []):
+            match = _EVIDENCE_LABEL.match(str(evidence))
+            if not match or match["section"] not in sections:
+                continue
+            key = (match["section"], int(match["index"]))
+            field = (match["field"] or "").lstrip(".")
+            if name == "headline_echo":
+                blank[(*key, "summary")] = "summary restated headline; blanked"
+            elif name == "template_text" and field in ("summary", "win_explanation"):
+                blank[(*key, field)] = f"template text in {field}; blanked"
+            elif name == "duplicates":
+                drop[key] = "duplicate of an earlier story"
+            elif name == "links":
+                if field == "also_covered":
+                    extras.add(key)
+                else:
+                    drop[key] = "unusable story link"
+            elif name == "relevance":
+                drop[key] = "unusable category or status"
+    removed: list[dict[str, str]] = []
+
+    def story_at(key: tuple[str, int]) -> dict[str, Any] | None:
+        items = sections.get(key[0])
+        return items[key[1] - 1] if isinstance(items, list) and 0 < key[1] <= len(items) and isinstance(items[key[1] - 1], dict) else None
+
+    def record(story: dict[str, Any], section: str, reason: str, url: str = "") -> None:
+        removed.append({"section": section, "title": str(story.get("title", ""))[:120],
+                        "url": url or str(story.get("url", "")), "reason": f"repaired: {reason}"})
+
+    for (section, index, field), reason in blank.items():
+        story = story_at((section, index))
+        if story and (section, index) not in drop and str(story.get(field, "")).strip():
+            story[field] = ""
+            record(story, section, reason)
+    for key in sorted(extras - set(drop)):
+        story = story_at(key)
+        if not story:
+            continue
+        kept = []
+        for extra in story.get("also_covered") or []:
+            url = str(extra.get("url", "") if isinstance(extra, dict) else extra).strip()
+            status = fetch_status(url) if fetch_status and url.startswith(("http://", "https://")) else None
+            bad = (not url.startswith(("http://", "https://")) or is_aggregator_url(url)
+                   or (fetch_status is not None and status != 200 and status not in ANTI_BOT_STATUSES))
+            if bad:
+                record(story, key[0], "unusable also-covered link dropped", url)
+            else:
+                kept.append(extra)
+        story["also_covered"] = kept
+    for key in sorted(drop, key=lambda k: (k[0], -k[1])):
+        story = story_at(key)
+        if story is not None:
+            record(story, key[0], drop[key])
+            del sections[key[0]][key[1] - 1]
+    return removed
+
+
 def gate_tracker(
     briefing: dict[str, Any],
     *,
