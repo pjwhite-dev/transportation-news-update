@@ -59,7 +59,24 @@ data files, workflows, secrets or alerts. A code_fix must also include "regressi
 source of a new unittest module that FAILS on the current code and PASSES once your edits are applied (import
 the project modules directly, use only in-memory data, no network, no model calls). If the failure is
 operational (service down, network, dirty checkout) or you are not sure, set kind to "operational" or
-"unknown", give no edits and an empty regression_test. Be brief."""
+"unknown", give no edits and an empty regression_test.
+A validation-gate failure caused by ONE bad item (one dead link, one blank or templated summary, one
+duplicate story) is NOT operational: the edition should not be lost to a single story. The gates stay
+exactly as they are; the fix is a deterministic repair that runs BEFORE the gate, in validation_gates.py
+(see repair_story_failures and prune_unusable_stories) or automated_briefing.py (repair_briefing): drop or
+blank the offending item, leaving enough stories. If a repair for that evidence already exists and still
+failed, fix why it missed (for example an unmatched evidence pattern). Only when the failure is genuinely
+edition-wide, such as too few stories, or external, such as the whole network down, use "operational".
+Be brief."""
+
+DIAGNOSIS_ATTEMPTS = 4
+
+GATE_TASK = (
+    "\n\nTASK: a validation gate rejected the finished edition. Unless the evidence is edition-wide "
+    "(too few stories, whole-network outage), kind must be code_fix: add a deterministic repair that "
+    "removes or blanks the offending item BEFORE the gate runs, leave the gate untouched, and include a "
+    "regression_test that exercises the repair."
+)
 
 SCHEMA = {
     "type": "object",
@@ -118,6 +135,15 @@ def traceback_files(log_text: str, repo: Path) -> list[Path]:
         if relative.as_posix() not in {p.as_posix() for p in seen} and path.exists() and ".venv" not in relative.parts:
             seen.append(relative)
     return seen
+
+
+def context_files(cause: str, log_text: str, repo: Path) -> list[Path]:
+    """Traceback files, plus the repair rules for a gate failure (placed last so they are shown first)."""
+    files = traceback_files(log_text, repo)
+    gates = Path("validation_gates.py")
+    if cause == "gate_failure" and (repo / gates).exists() and gates not in files:
+        files.append(gates)
+    return files
 
 
 def source_context(repo: Path, files: list[Path]) -> str:
@@ -225,11 +251,17 @@ def record_incident(repo: Path, day: str, key: str, branch: str | None) -> int:
 def diagnose(log_text: str, repo: Path, files: list[Path], provider: Any) -> dict[str, Any]:
     status = run(["git", "status", "--short"], repo).stdout.strip()[:600]
     body = f"LOG TAIL\n{log_text}\n\nGIT STATUS\n{status or '(clean)'}\n\nSOURCE\n{source_context(repo, files)}"
-    result = provider.generate_structured(
-        [{"role": "system", "content": SYSTEM}, {"role": "user", "content": body}],
-        schema_name="diagnosis", schema=SCHEMA, max_output_tokens=4000,
-    )
-    return result.value
+    if "Complete briefing validation failed" in log_text:
+        body += GATE_TASK
+    verdict: dict[str, Any] = {}
+    for _ in range(DIAGNOSIS_ATTEMPTS):  # a code_fix with no usable edits or test is a miss, not a verdict
+        verdict = provider.generate_structured(
+            [{"role": "system", "content": SYSTEM}, {"role": "user", "content": body}],
+            schema_name="diagnosis", schema=SCHEMA, max_output_tokens=4000,
+        ).value
+        if verdict.get("kind") != "code_fix" or (verdict.get("edits") and verdict.get("regression_test")):
+            break
+    return verdict
 
 
 def main() -> int:
@@ -261,7 +293,7 @@ def main() -> int:
         from ai_providers import provider_from_env
 
         try:
-            verdict = diagnose(log_text, repo, traceback_files(log_text, repo), provider_from_env())
+            verdict = diagnose(log_text, repo, context_files(cause, log_text, repo), provider_from_env())
         except Exception as exc:  # the model itself may be down; the log classification still stands
             verdict = {"kind": "unknown", "cause": f"model unavailable ({type(exc).__name__})", "next_step": "Read the run log.", "edits": []}
         message += f" {verdict['cause']} Next: {verdict['next_step']}"

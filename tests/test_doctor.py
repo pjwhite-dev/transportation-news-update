@@ -87,10 +87,6 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(doctor.live_edition(Session()), "2026-10-27")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class IncidentTests(unittest.TestCase):
     def test_key_ignores_numbers_and_urls_but_not_the_kind_of_failure(self) -> None:
         a = doctor.incident_key("gate_failure", "ValueError: x\n- links: Military[1] returned HTTP None: https://a.com/1")
@@ -112,3 +108,37 @@ class BranchGateTests(unittest.TestCase):
         branch, note = doctor.prepare_branch(root, "2026-10-27", [{"file": "a.py", "old": "x", "new": "y"}], "", "python")
         self.assertIsNone(branch)
         self.assertIn("regression test", note)
+
+
+class GateContextTests(unittest.TestCase):
+    def test_gate_failure_shows_repair_rules_first(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            (repo / "validation_gates.py").write_text("x = 1\n", encoding="utf-8")
+            files = doctor.context_files("gate_failure", "no traceback here", repo)
+            self.assertEqual([f.as_posix() for f in files], ["validation_gates.py"])
+            self.assertEqual(doctor.context_files("code_error", "no traceback here", repo), [])
+
+    def test_prompt_treats_single_item_gate_failures_as_fixable(self) -> None:
+        self.assertIn("ONE bad item", doctor.SYSTEM)
+        self.assertIn("exactly as they are", doctor.SYSTEM)
+
+    def test_empty_code_fix_is_retried_until_it_has_edits(self) -> None:
+        empty = {"kind": "code_fix", "cause": "c", "next_step": "n", "edits": [], "regression_test": ""}
+        good = {**empty, "edits": [{"file": "a.py", "old": "x", "new": "y"}], "regression_test": "import unittest"}
+        replies = [empty, empty, good]
+
+        class Provider:
+            def generate_structured(self, *args, **kwargs):
+                class Result:
+                    value = replies.pop(0)
+                return Result()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            verdict = doctor.diagnose("Complete briefing validation failed", Path(tmp), [], Provider())
+        self.assertEqual(verdict, good)
+        self.assertEqual(replies, [])
+
+
+if __name__ == "__main__":
+    unittest.main()
