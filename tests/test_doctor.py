@@ -89,3 +89,26 @@ class EvidenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class IncidentTests(unittest.TestCase):
+    def test_key_ignores_numbers_and_urls_but_not_the_kind_of_failure(self) -> None:
+        a = doctor.incident_key("gate_failure", "ValueError: x\n- links: Military[1] returned HTTP None: https://a.com/1")
+        b = doctor.incident_key("gate_failure", "ValueError: x\n- links: Military[7] returned HTTP None: https://b.org/99")
+        c = doctor.incident_key("gate_failure", "ValueError: x\n- freshness: Edition date is not today")
+        self.assertEqual(a, b)
+        self.assertNotEqual(a, c)
+
+    def test_repeats_are_counted_from_the_ledger(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        self.assertEqual(doctor.record_incident(root, "2026-10-27", "k", None), 0)
+        self.assertEqual(doctor.record_incident(root, "2026-10-29", "k", "doctor/2026-10-29"), 1)
+        self.assertEqual(doctor.record_incident(root, "2026-10-30", "other", None), 0)
+
+
+class BranchGateTests(unittest.TestCase):
+    def test_a_fix_without_a_regression_test_is_not_kept(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        branch, note = doctor.prepare_branch(root, "2026-10-27", [{"file": "a.py", "old": "x", "new": "y"}], "", "python")
+        self.assertIsNone(branch)
+        self.assertIn("regression test", note)

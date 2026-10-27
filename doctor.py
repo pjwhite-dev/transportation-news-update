@@ -55,8 +55,11 @@ A daily edition failed to publish. You get the tail of the failing run's log, gi
 source of the files named in the traceback. Diagnose the root cause. Only if it is a code defect with a
 small, certain fix, propose edits as exact search-and-replace pairs: "old" must appear exactly once in the
 named file. Never propose weakening, skipping or loosening a validation gate or its thresholds, never touch
-data files, workflows, secrets or alerts. If the failure is operational (service down, network, dirty
-checkout) or you are not sure, set kind to "operational" or "unknown" and give no edits. Be brief."""
+data files, workflows, secrets or alerts. A code_fix must also include "regression_test": the complete
+source of a new unittest module that FAILS on the current code and PASSES once your edits are applied (import
+the project modules directly, use only in-memory data, no network, no model calls). If the failure is
+operational (service down, network, dirty checkout) or you are not sure, set kind to "operational" or
+"unknown", give no edits and an empty regression_test. Be brief."""
 
 SCHEMA = {
     "type": "object",
@@ -64,6 +67,7 @@ SCHEMA = {
         "kind": {"type": "string", "enum": ["code_fix", "operational", "unknown"]},
         "cause": {"type": "string"},
         "next_step": {"type": "string"},
+        "regression_test": {"type": "string"},
         "edits": {
             "type": "array",
             "items": {
@@ -73,7 +77,7 @@ SCHEMA = {
             },
         },
     },
-    "required": ["kind", "cause", "next_step", "edits"],
+    "required": ["kind", "cause", "next_step", "edits", "regression_test"],
 }
 
 
@@ -161,23 +165,61 @@ def failing_tests(python: str, cwd: Path) -> set[str]:
     return set(re.findall(r"^(?:FAIL|ERROR): (\S+)", out, re.M))
 
 
-def prepare_branch(repo: Path, day: str, edits: list[dict[str, Any]], python: str) -> tuple[str | None, str]:
-    """Apply the edits on a doctor/* branch; keep it only if no test that passed before fails now."""
+def run_test_module(python: str, cwd: Path, module: str) -> bool:
+    return run([python, "-m", "unittest", module], cwd).returncode == 0
+
+
+def prepare_branch(
+    repo: Path, day: str, edits: list[dict[str, Any]], regression_test: str, python: str,
+) -> tuple[str | None, str]:
+    """Keep a doctor/* branch only if a new test fails before the edits, passes after, and nothing else breaks."""
     branch, tree = f"doctor/{day}", repo / ".wt" / f"doctor-{day}"
+    module, relative = f"tests.test_incident_{day.replace('-', '_')}", f"tests/test_incident_{day.replace('-', '_')}.py"
+    if not regression_test.strip() or "def test" not in regression_test:
+        return None, "No regression test was proposed, so the fix was not kept."
     baseline = failing_tests(python, repo)
     if run(["git", "worktree", "add", str(tree), "-b", branch, "main"], repo).returncode != 0:
         return None, "Could not create the doctor worktree."
+    (tree / relative).write_text(regression_test, encoding="utf-8", newline="")
+    if run_test_module(python, tree, module):
+        return None, "The proposed regression test passes on the unfixed code, so it does not reproduce the failure; discarded."
     try:
         changed = apply_edits(tree, edits)
     except (ValueError, OSError) as exc:
         return None, f"The proposed edit was rejected: {exc}"
+    if not run_test_module(python, tree, module):
+        return None, "The proposed edit does not make its own regression test pass; discarded."
     after = failing_tests(python, tree)
     if after - baseline:
-        run(["git", "checkout", "--", "."], tree)
-        return None, f"The proposed edit broke {len(after - baseline)} test(s); discarded."
+        return None, f"The proposed edit broke {len(after - baseline)} existing test(s); discarded."
     run(["git", "add", "-A"], tree)
-    run(["git", "commit", "-m", f"Doctor: proposed fix for the {day} edition failure ({', '.join(changed)})"], tree)
-    return branch, f"Fix prepared on branch {branch} ({', '.join(changed)}); tests show no new failures."
+    run(["git", "commit", "-m", f"Doctor: proposed fix for the {day} edition failure ({', '.join(changed)}) with regression test"], tree)
+    return branch, f"Fix prepared on branch {branch} ({', '.join(changed)}) with a regression test that fails before and passes after."
+
+
+def incident_key(cause: str, log_text: str) -> str:
+    """Stable label for 'the same kind of failure': cause class plus the last error line, digits and URLs removed."""
+    errors = re.findall(r"^\s*([A-Za-z_.]*(?:Error|Exception)[^\n]*)$", log_text, re.M) or re.findall(r"^- (.+)$", log_text, re.M)
+    line = errors[-1] if errors else ""
+    line = re.sub(r"https?://\S+|\d+", "#", line)
+    gates = sorted(set(re.findall(r"^- ([a-z_]+):", log_text, re.M)))
+    return f"{cause}: {line.strip()[:120]} [{','.join(gates)}]"
+
+
+def record_incident(repo: Path, day: str, key: str, branch: str | None) -> int:
+    """Append to the incident ledger (kept in .runtime, not in git); return how many times this key was seen before."""
+    ledger = repo / ".runtime" / "incidents.jsonl"
+    ledger.parent.mkdir(exist_ok=True)
+    seen = 0
+    if ledger.exists():
+        for line in ledger.read_text(encoding="utf-8").splitlines():
+            try:
+                seen += json.loads(line).get("key") == key
+            except ValueError:
+                continue
+    with ledger.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps({"day": day, "key": key, "branch": branch}) + "\n")
+    return seen
 
 
 def diagnose(log_text: str, repo: Path, files: list[Path], provider: Any) -> dict[str, Any]:
@@ -210,6 +252,7 @@ def main() -> int:
     log_text = latest_log(repo, day)
     cause, recovery = classify(log_text)
     message = f"Doctor: no edition for {day}. Cause: {cause}."
+    branch_made: str | None = None
     if cause == "running":
         return 0
     if recovery:
@@ -224,14 +267,19 @@ def main() -> int:
         message += f" {verdict['cause']} Next: {verdict['next_step']}"
         if verdict["kind"] == "code_fix" and verdict["edits"] and not args.dry_run:
             python = str(repo / ".venv" / "Scripts" / "python.exe") if (repo / ".venv").exists() else sys.executable
-            branch, note = prepare_branch(repo, day, verdict["edits"], python)
+            branch_made, note = prepare_branch(repo, day, verdict["edits"], str(verdict.get("regression_test", "")), python)
             message += f" {note}"
-            if branch:
-                message += " Review and merge it yourself."
+            if branch_made:
+                message += f" To approve, merge, rerun and verify: scripts\\approve_doctor.ps1 -Branch {branch_made}"
+    repeats = 0
+    if not args.dry_run:
+        repeats = record_incident(repo, day, incident_key(cause, log_text), branch_made)
+    if repeats:
+        message = f"REPEAT FAILURE (seen {repeats + 1} times). " + message + " A repeat needs a deterministic rule, not another patch."
     message = redact(message)[:900]
     print(message)
     if not args.dry_run:
-        send_telegram(message, critical=False)
+        send_telegram(message, critical=bool(repeats))
     return 0
 
 
