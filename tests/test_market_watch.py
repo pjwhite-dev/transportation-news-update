@@ -54,7 +54,7 @@ class FetchTests(unittest.TestCase):
 
     def test_missing_key_or_too_few_quotes_returns_none(self):
         self.assertIsNone(market_watch.fetch_snapshot(session=FakeSession(all_quotes()), secrets=lambda n: None))
-        few = FakeSession(all_quotes(), fail=[s for s, _, _ in market_watch.WATCHLIST][:8])
+        few = FakeSession(all_quotes(), fail=[s for s, _, _ in market_watch.WATCHLIST][:len(market_watch.WATCHLIST) - market_watch.MINIMUM_QUOTES + 1])
         self.assertIsNone(market_watch.fetch_snapshot(session=few, secrets=lambda n: "k"))
 
     def test_one_failed_symbol_is_skipped(self):
@@ -70,7 +70,7 @@ class FetchTests(unittest.TestCase):
 
 
 class LoadTests(unittest.TestCase):
-    def snapshot(self, as_of="2026-10-27T08:00:00+00:00", count=12):
+    def snapshot(self, as_of="2026-10-27T08:00:00+00:00", count=len(market_watch.WATCHLIST)):
         quotes = [
             {"symbol": s, "name": n, "group": g, "price": 10.0, "change": 1.0, "percent": 1.0 if i % 2 else -1.0}
             for i, (s, n, g) in enumerate(market_watch.WATCHLIST[:count])
@@ -85,7 +85,7 @@ class LoadTests(unittest.TestCase):
 
     def test_fresh_snapshot_loads(self):
         path = self.write(self.snapshot())
-        self.assertEqual(len(market_watch.load_snapshot(path, today=date(2026, 10, 28))["quotes"]), 12)
+        self.assertEqual(len(market_watch.load_snapshot(path, today=date(2026, 10, 28))["quotes"]), len(market_watch.WATCHLIST))
 
     def test_stale_missing_malformed_or_thin_snapshots_are_hidden(self):
         self.assertIsNone(market_watch.load_snapshot(self.write(self.snapshot()), today=date(2026, 11, 20)))
