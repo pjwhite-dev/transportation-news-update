@@ -41,7 +41,11 @@ try {
         # these files are discarded.
         # Anything else dirty still stops the run.
         git checkout -- tracker/events.jsonl tracker/verifications.jsonl data/market.json 2>$null
-        $dirty = git status --porcelain
+        # A failed earlier run today leaves its collected feed behind (the collector rewrites both
+        # files at the start of every run), which used to make every retry refuse to start.
+        git checkout -- data/latest_raw_news.json 2>$null
+        $todayRaw = "data/raw_archive/" + (Get-Date).ToString("yyyy-MM-dd", [Globalization.CultureInfo]::InvariantCulture) + ".json"
+        $dirty = @(git status --porcelain | Where-Object { $_ -ne "?? $todayRaw" })
         if ($dirty) { throw "Refusing production run because the repository is not clean: $($dirty -join '; ')" }
         git pull --ff-only origin main
         if ($LASTEXITCODE -ne 0) { throw "git pull --ff-only failed." }

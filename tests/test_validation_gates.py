@@ -284,6 +284,18 @@ class PruneTests(unittest.TestCase):
         self.assertNotIn("links", failed_checks(report))
 
 
+    def test_a_dead_also_covered_link_is_dropped_and_the_story_stays(self) -> None:
+        briefing = good_briefing()
+        story = briefing["sections"]["UAS / Drones"][0]
+        dead, live = "https://dead.example.com/news/extra-dead", "https://ok.example.com/news/extra-ok"
+        story["also_covered"] = [{"title": "Dead", "url": dead}, {"title": "Live", "url": live}]
+        removed = gates.prune_unusable_stories(briefing, lambda url: None if url == dead else 200)
+        self.assertEqual([r["reason"] for r in removed], ["dead also-covered link dropped (HTTP None)"])
+        self.assertEqual(story["also_covered"], [{"title": "Live", "url": live}])
+        report = gates.run_gates(briefing, now=NOW, fetch_status=lambda url: 200)
+        self.assertNotIn("links", failed_checks(report))
+
+
 class NonArticleTests(unittest.TestCase):
     def test_social_quote_topic_and_home_pages_are_removed(self) -> None:
         briefing = good_briefing()

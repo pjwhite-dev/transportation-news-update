@@ -441,6 +441,7 @@ def prune_unusable_stories(
     """Deterministic pre-validation cleanup; every removal is recorded, none is silent.
 
     - A story whose link is dead (404/410/5xx/unreachable) is removed.
+    - A dead "also covered" link is dropped from its story (the story itself stays).
     - A summary that restates its headline is blanked (the headline stands alone).
     The hard gates then re-verify what remains.
     """
@@ -450,6 +451,9 @@ def prune_unusable_stories(
     sections = briefing.get("sections")
     if not isinstance(sections, dict):
         return removed
+    def extra_url(extra: Any) -> str:
+        return str(extra.get("url", "") if isinstance(extra, dict) else extra).strip()
+
     urls = sorted(
         {
             str(story.get("url", "")).strip()
@@ -458,6 +462,13 @@ def prune_unusable_stories(
             if str(story.get("url", "")).startswith(("http://", "https://"))
             and not is_aggregator_url(str(story.get("url", "")))
             and not is_non_article(str(story.get("title", "")), str(story.get("url", "")))
+        }
+        | {
+            extra_url(extra)
+            for items in sections.values()
+            for story in items
+            for extra in story.get("also_covered") or []
+            if extra_url(extra).startswith(("http://", "https://")) and not is_aggregator_url(extra_url(extra))
         }
     )
     with ThreadPoolExecutor(max_workers=8) as pool:
@@ -476,6 +487,17 @@ def prune_unusable_stories(
                     removed.append({"section": section, "title": str(story.get("title", ""))[:120],
                                     "url": url, "reason": f"dead link (HTTP {status})"})
                     continue
+            live_extras = []
+            for extra in story.get("also_covered") or []:
+                target = extra_url(extra)
+                status = cache.get(target)
+                if target in cache and (status is None or status in (404, 410) or status >= 500):
+                    removed.append({"section": section, "title": str(story.get("title", ""))[:120],
+                                    "url": target, "reason": f"dead also-covered link dropped (HTTP {status})"})
+                else:
+                    live_extras.append(extra)
+            if "also_covered" in story:
+                story["also_covered"] = live_extras
             summary = str(story.get("summary", ""))
             if summary.strip() and headline_echo_ratio(str(story.get("title", "")), summary) > HEADLINE_ECHO_THRESHOLD:
                 story["summary"] = ""
