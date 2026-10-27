@@ -62,3 +62,12 @@ Not verified: the repair loop and the draft resume on a real run; Tuesday's edit
 - Tuning: the doctor's first dry run on the 10-27 dead-link failure called it "operational". Fixes: gate failures now show validation_gates.py to the model, the prompt treats a one-item gate failure as repairable (gates themselves never touched), a gate-specific task line is appended, and an empty code_fix is retried up to 4 times. Measured on the pre-fix code: about 1 in 4 single tries gave a usable fix before retries.
 - Daily Transportation Raw News Collection failed on 10-26 and 10-27 at the "commit to raw-feed" step (collection itself succeeded). Likely cause (job logs need a login so unconfirmed): `git checkout -B raw-feed` aborted because main's data/latest_raw_news.json, published by the local run, differs from raw-feed's. Changed to `git checkout -f -B`; the data was already copied to /tmp. Verify on the next 04:15 run.
 - Doctor self-approval added (doctor.auto_merge_ok, apply_branch, incident_count; tests/test_doctor_auto.py). See decisions.md.
+
+## 2026-10-27 (evening): editorial quality overhaul
+Branch `feat/editorial-quality`. New modules: `article_extract.py` (dates, headlines, article-ness), `calendar_rules.py`,
+`editorial_config.py` + `config/editorial.yaml`, `grounding.py`, `story_groups.py`, `editorial_checks.py`,
+`quality_pass.py`, `qa_report.py`. Changed: `tracker/core.py` (status from FR data, OIRA, FCC docket, discovery),
+`market_watch.py`, `public_site.py`, `summary_chain.py`, `automated_briefing.py`, `news_engine.py`, pipeline script.
+Pipeline map: `docs/pipeline-map.md`. 48 new regression tests in `tests/test_editorial_quality.py` (fixtures in
+`tests/fixtures/editorial/`; `*_reconstructed.html` files could not be fetched because congress.gov and AP return 403).
+Live yield check on the Oct 27 raw feed: 285 resolved candidates, 120 passed the article check.
