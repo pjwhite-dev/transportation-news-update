@@ -289,6 +289,14 @@ def extract_page(html: str, url: str = "") -> PageFacts:
                 facts.published, facts.date_source = parsed, "labelled 'Published' text"
                 break
     if not facts.published:
+        # Some publishers put 'Published: Sun, Oct 25, 2026' in the page title or description only.
+        for key in ("og:title", "twitter:title", "og:description", "description", "twitter:description"):
+            match = _LABELLED.search(parser.meta.get(key, ""))
+            parsed = parse_date(match.group(1)) if match else None
+            if parsed:
+                facts.published, facts.date_source = parsed, "labelled 'Published' in page title"
+                break
+    if not facts.published:
         early = next((h for h in [*(str(n.get("headline", "")) for n in ld_nodes), parser.meta.get("og:title", ""),
                                   parser.h1[0] if parser.h1 else ""] if " ".join(h.split())), "")
         parsed = byline_date(parser.text, early)

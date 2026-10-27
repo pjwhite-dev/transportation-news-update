@@ -599,5 +599,62 @@ class QualityPassTests(unittest.TestCase):
         self.assertEqual(summary_chain.enforce_lead(rows, sheet)[0]["ids"], ["S1"])
 
 
+class RepeatMatchStrictnessTests(unittest.TestCase):
+    """Replay of 2026-10-25 dropped two different stories as repeats because they shared a company or region."""
+
+    @staticmethod
+    def _entry(title: str, url: str) -> dict:
+        return {"edition": "2026-10-20", "title": title, "url": url, "identifiers": [], "urls": [], "numbers": [], "section": ""}
+
+    def test_same_company_different_event_is_not_a_repeat(self) -> None:
+        entry = self._entry("Archer Midnight Air Taxi Completes San Francisco Bay Demo Flights", "https://a.example/1")
+        story = {"title": "Archer unveils Texas Air Taxi networks across Houston, Dallas, and Austin",
+                 "url": "https://b.example/2", "section": "AAM / eVTOL / Advanced Aviation"}
+        self.assertIsNone(groups.previous_match(story, [entry]))
+
+    def test_same_region_different_event_is_not_a_repeat(self) -> None:
+        entry = self._entry("Lawsuit Challenges California High-Speed Rail Merced Station Plan", "https://a.example/1")
+        story = {"title": "Siemens Mobility awarded $772 million Trainset Contract for California",
+                 "url": "https://b.example/2", "section": "Advanced Rail / High-Speed Rail"}
+        self.assertIsNone(groups.previous_match(story, [entry]))
+
+    def test_same_event_reworded_is_still_a_repeat(self) -> None:
+        entry = self._entry("NHTSA proposes cyan lights for driverless cars like Tesla Cybercab", "https://a.example/1")
+        story = {"title": "NHTSA Proposes Cyan Lights for Driverless Cars Like Cybercab", "url": "https://b.example/2", "section": "Autonomous Vehicles"}
+        self.assertIsNotNone(groups.previous_match(story, [entry]))
+
+    def test_published_line_in_page_title_dates_the_article(self) -> None:
+        html = ("<html><head><title>YFQ-44 | Published: Sun, Oct 25, 2026 | Aero-News Network</title>"
+                "<meta property='og:title' content='YFQ-44 flight | Published: Sun, Oct 25, 2026 | Aero-News Network'>"
+                "</head><body><p>text</p></body></html>")
+        facts = ax.extract_page(html, "https://www.aero-news.net/index.cfm?id=1")
+        self.assertEqual(facts.published.date().isoformat(), "2026-10-25")
+
+
+class PriorityTierTests(unittest.TestCase):
+    """Replay of 2026-10-27 led with a NASA flight-test photo story; the lead must be a policy action first."""
+
+    def test_government_flight_test_story_is_not_a_policy_action(self) -> None:
+        from quality_pass import priority_tier
+        story = {"title": "NASA's X-59 Aircraft and Test Pilot", "summary": "NASA test pilot Mike Lippert flew the X-59 on Oct. 21.",
+                 "url": "https://www.nasa.gov/image-article/nasas-x-59-aircraft-and-test-pilot/", "section": "Civil Supersonics / High-Speed Aviation"}
+        self.assertEqual(priority_tier(story), 2)
+
+    def test_federal_register_and_policy_sections_lead(self) -> None:
+        from quality_pass import priority_tier
+        self.assertEqual(priority_tier({"origin": "Federal Register API", "section": "UAS / Drones", "title": "x", "url": "https://www.federalregister.gov/d/1"}), 1)
+        self.assertEqual(priority_tier({"section": "Federal Policy & Implementation", "title": "x", "url": "https://example.com/1"}), 1)
+
+    def test_government_source_announcing_a_proposal_is_a_policy_action(self) -> None:
+        from quality_pass import priority_tier
+        story = {"title": "FAA issues proposed design standards for eVTOL vertiports", "summary": "An advisory circular would supersede heliport standards.",
+                 "url": "https://www.faa.gov/newsroom/vertiport-ac", "section": "AAM / eVTOL / Advanced Aviation"}
+        self.assertEqual(priority_tier(story), 1)
+
+    def test_foreign_and_military_come_last(self) -> None:
+        from quality_pass import priority_tier
+        self.assertEqual(priority_tier({"section": "Military UAS", "title": "x", "url": "https://example.com/1"}), 3)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -234,12 +234,15 @@ def previous_match(story: dict[str, Any], store: list[dict[str, Any]]) -> dict[s
     ids = identifiers(story)
     strong = _strong(ids)
     urls = {i[4:] for i in ids if i.startswith("url:")}
-    candidate = {"title": story.get("title", ""), "url": story.get("url", ""), "section": story.get("section", "")}
+    # Dropping a story is stricter than hinting the model about one: sections are ignored (a story can be
+    # re-sectioned) but the headline thresholds are the strict ones, so two Archer stories about different
+    # events are not treated as the same event.
+    candidate = {"title": story.get("title", ""), "url": story.get("url", ""), "section": ""}
     for entry in store:
         if (strong & set(entry.get("identifiers", []))) or (urls & set(entry.get("urls", []))):
             return entry
-        previous = {"title": entry["title"], "url": entry["url"], "section": entry.get("section", "")}
-        matched, _ = same_covered_event(candidate, previous, require_same_section=False)
+        previous = {"title": entry["title"], "url": entry["url"], "section": ""}
+        matched, _ = same_covered_event(candidate, previous, require_same_section=True)
         if matched:
             return entry
     return None

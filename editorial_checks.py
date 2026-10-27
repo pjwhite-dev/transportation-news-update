@@ -45,6 +45,7 @@ def source_label(raw_source: str, url: str = "", original_publisher: str = "") -
     config = load_config()
     host = _host(url)
     raw = " ".join(str(raw_source or "").split())
+    raw = re.split(r"\s+[|–—]\s+", raw)[0].strip()  # "Tuoi Tre News | The News Gateway to Vietnam" -> "Tuoi Tre News"
     syndicated = any(host == h or host.endswith("." + h) for h in config["syndication_hosts"]) or raw.casefold() in {
         "aol", "msn", "yahoo", "yahoo finance", "yahoo news", "futu", "futunn", "newsbreak"}
     if syndicated and original_publisher:

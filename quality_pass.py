@@ -9,6 +9,7 @@ report. Order matters: only stories that pass every step reach the Executive Sum
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Callable
@@ -21,6 +22,10 @@ from story_groups import drop_repeats, group_within_edition, previous_match, new
 POLICY_SECTIONS = {"Federal Policy & Implementation", "Federal Register", "Surface Transportation Reauthorization"}
 FOREIGN_MILITARY_SECTIONS = {"Military UAS", "International Security"}
 LEAD_LOOKBACK_EDITIONS = 2
+POLICY_ACTION = re.compile(
+    r"\b(proposed rule|proposes?|proposal|final rule|interim final|rulemaking|notice of|executive order|advisory circular|"
+    r"guidance|regulations?|legislation|bill|act|approves?|approved|approval|grants?|funding|awards?|waiver|exemption|"
+    r"standards?|directive|mandate|certif\w+|authoriz\w+|order)\b", re.I)
 
 
 @dataclass
@@ -52,7 +57,11 @@ def priority_tier(story: dict[str, Any]) -> int:
     """1 federal policy actions, 2 company and industry news, 3 foreign and military news."""
     from story_groups import source_tier
 
-    if story.get("origin") == "Federal Register API" or source_tier(story) == 1 or story.get("section") in POLICY_SECTIONS:
+    text = f"{story.get('title', '')} {story.get('summary', '')}"
+    if story.get("origin") == "Federal Register API" or story.get("section") in POLICY_SECTIONS:
+        return 1
+    # A government source alone is not a policy action: a NASA flight-test photo story is not one.
+    if source_tier(story) == 1 and POLICY_ACTION.search(text):
         return 1
     if story.get("section") in FOREIGN_MILITARY_SECTIONS:
         return 3

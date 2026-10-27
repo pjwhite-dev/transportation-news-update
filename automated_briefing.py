@@ -484,17 +484,27 @@ def main() -> None:
         )
     # Deterministic cleanup first (dead links, headline-echo summaries); every removal is
     # recorded in the edition, then the hard gates verify what remains.
-    briefing["pruned_items"] = (
-        [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
-    )
-    briefing = repair_briefing(briefing, today=today, check_links=not args.skip_link_check)
-    # Final style pass on reader-facing prose (money, executive-order titles), then the QA report.
-    briefing = apply_house_style(briefing)
-    briefing = validate_complete_briefing(
-        briefing,
-        today=today,
-        check_links=not args.skip_link_check,
-    )
+    qa_snapshot = json.loads(json.dumps(briefing.get("qa_report") or {}))
+    try:
+        briefing["pruned_items"] = (
+            [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
+        )
+        briefing = repair_briefing(briefing, today=today, check_links=not args.skip_link_check)
+        # Final style pass on reader-facing prose (money, executive-order titles), then the QA report.
+        briefing = apply_house_style(briefing)
+        briefing = validate_complete_briefing(
+            briefing,
+            today=today,
+            check_links=not args.skip_link_check,
+        )
+    except ValueError as error:
+        # A refused edition still leaves its QA report, so the reason for every drop is on disk.
+        if qa_snapshot.get("events") is not None:
+            qa_snapshot["events"].append({"stage": "edition-refused", "title": "", "url": "", "reason": str(error)[:300]})
+            failed_dir = (root / ".runtime" / "dryrun-qa") if args.dry_run else root / ".runtime" / "failed-qa"
+            failed_dir.mkdir(parents=True, exist_ok=True)
+            QAReport.from_dict(qa_snapshot).write(failed_dir)
+        raise
     if args.supplemental_file and int(briefing.get("supplemental_count", 0) or 0) == 0:
         raise ValueError(
             "The supplied email yielded no supplemental article links; "
