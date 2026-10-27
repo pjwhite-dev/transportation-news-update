@@ -93,8 +93,10 @@ class SiteDesignTests(unittest.TestCase):
     def test_phone_gets_a_collapsible_menu_instead_of_a_scroll_row(self) -> None:
         self.assertIn('<details class="menu"><summary>Jump to a section</summary>', self.index)
         css = (self.out / "assets" / "site.css").read_text(encoding="utf-8")
-        self.assertRegex(css, r"(?s)@media \(max-width:760px\)\{.*\.chips\{display:none\}.*\.menu\{display:block\}")
-        self.assertEqual(self.index.count('href="#autonomous-vehicles"'), 2)  # chips + menu
+        self.assertNotIn("chips", css)  # no sideways-scrolling button row at any width
+        self.assertRegex(css, r"@media \(min-width:1180px\)\{\s*\.sections-bar\{display:none\}")
+        self.assertIn('<nav class="toc no-copy"', self.index)
+        self.assertEqual(self.index.count('href="#autonomous-vehicles"'), 2)  # left column + phone menu
 
     def test_docket_is_collapsed_at_the_foot_and_summarised_in_one_line(self) -> None:
         match = re.search(r'<details class="docket" id="tracker">.*?</details>', self.index, re.S)

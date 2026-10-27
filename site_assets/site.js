@@ -39,6 +39,27 @@
     });
   }
 
+  /* ---- Left column: highlight the section being read ---- */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc a[data-toc]'));
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    var marks = tocLinks.map(function (a) { return document.getElementById(a.dataset.toc); });
+    var setActive = function () {
+      var line = window.innerHeight * 0.3, active = 0;
+      marks.forEach(function (el, i) { if (el && el.getBoundingClientRect().top <= line) active = i; });
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) active = marks.length - 1;
+      tocLinks.forEach(function (a, i) {
+        a.classList.toggle('on', i === active);
+        if (i === active) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+      });
+    };
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; setActive(); }); }
+    }, {passive: true});
+    window.addEventListener('resize', setActive);
+    setActive();
+  }
+
   /* ---- Archive search: headlines, sources, sections and dates only (never article text) ---- */
   var root = document.querySelector('[data-search]');
   if (!root) return;

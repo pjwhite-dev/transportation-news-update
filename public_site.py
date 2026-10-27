@@ -568,18 +568,29 @@ def market_html(snapshot: dict[str, Any] | None) -> str:
     )
 
 
-def section_nav_html(payload: dict[str, Any]) -> str:
-    """Desktop: a sticky row of chips. Phone: a collapsible menu (no sideways scrolling)."""
+def _nav_links(payload: dict[str, Any]) -> list[tuple[str, str]]:
     links = [("summary", "Summary")]
     sections = payload.get("sections", {})
     for section in SECTION_ORDER:
         if sections.get(section):
             links.append((SECTION_ANCHORS[section], section_label(section)))
     links.append(("tracker", "Docket"))
-    anchors = "".join(f'<a href="#{target}">{html.escape(label)}</a>' for target, label in links)
+    return links
+
+
+def toc_html(payload: dict[str, Any]) -> str:
+    """Wide screens: a quiet left column that stays in view and highlights the section being read."""
+    anchors = "".join(
+        f'<a href="#{target}" data-toc="{target}">{html.escape(label)}</a>' for target, label in _nav_links(payload)
+    )
+    return f'<nav class="toc no-copy" aria-label="Edition sections"><p class="toc-title">In this edition</p>{anchors}</nav>'
+
+
+def section_nav_html(payload: dict[str, Any]) -> str:
+    """Narrower screens: a collapsible menu (no sideways scrolling). Wide screens use the left column."""
+    anchors = "".join(f'<a href="#{target}">{html.escape(label)}</a>' for target, label in _nav_links(payload))
     return (
         '<div class="sections-bar no-copy"><div class="wrap">'
-        f'<nav class="chips" aria-label="Edition sections">{anchors}</nav>'
         '<details class="menu"><summary>Jump to a section</summary>'
         f'<nav class="menu-grid" aria-label="Edition sections">{anchors}</nav></details>'
         "</div></div>"
@@ -1033,7 +1044,8 @@ def edition_page(payload: dict[str, Any], day: date, archived: bool, market: dic
     side = side_html(payload, market).replace("{archive}", prefix + "archive/").replace("{search}", prefix + "search/")
     body = f"""
       {section_nav_html(payload)}
-      <main class="wrap page">
+      <main class="wrap page has-toc">
+        {toc_html(payload)}
         <div class="reading newsletter" data-edition-content
             data-outlook-email-b64="{email_content}">{content}</div>
         <aside class="side no-copy" aria-label="Edition notes">{side}</aside>
