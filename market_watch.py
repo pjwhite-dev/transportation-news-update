@@ -26,7 +26,11 @@ MAX_AGE_DAYS = 5
 MINIMUM_QUOTES = 6
 
 # (symbol, business name, group). Order is display order within each group.
+# The free plan has no index levels, so the overview uses the ETFs that track each index.
 WATCHLIST: tuple[tuple[str, str, str], ...] = (
+    ("SPY", "S&P 500 (SPDR S&P 500 ETF)", "Market overview"),
+    ("DIA", "Dow Jones Industrial Average (SPDR Dow Jones ETF)", "Market overview"),
+    ("QQQ", "Nasdaq-100 (Invesco QQQ ETF)", "Market overview"),
     ("BA", "Boeing", "Aerospace & defense"),
     ("LMT", "Lockheed Martin", "Aerospace & defense"),
     ("RTX", "RTX Corporation", "Aerospace & defense"),

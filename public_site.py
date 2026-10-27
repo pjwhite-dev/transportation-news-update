@@ -553,7 +553,7 @@ def market_html(snapshot: dict[str, Any] | None) -> str:
     return (
         '<section class="box market" id="market"><h2 class="label">Market watch</h2>'
         f'{body}<p class="note">{stamp} Delayed, for context only; not investment advice. '
-        "Hover or tap a ticker for the company name.</p></section>"
+        "Overview rows are ETFs that track each index. Hover or tap a ticker for its full name.</p></section>"
     )
 
 
