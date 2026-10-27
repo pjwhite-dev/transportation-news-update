@@ -11,6 +11,7 @@ import hashlib
 import html as htmllib
 import json
 import re
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
@@ -226,6 +227,30 @@ def _publisher_name(node: dict[str, Any]) -> str:
     return str(publisher or "") if isinstance(publisher, str) else ""
 
 
+_BYLINE_DATE = re.compile(
+    r"\b20\d\d-\d{2}-\d{2}(?:[ T]\d{2}:\d{2})?\b|\b\d{1,2}/\d{1,2}/20\d\d\b"
+    r"|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s+20\d\d\b"
+    r"|\b\d{1,2}(?:st|nd|rd|th)?\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+20\d\d\b",
+    re.I,
+)
+
+
+def byline_date(chunks: list[str], headline: str, window: int = 25) -> datetime | None:
+    """A date printed in the few text lines right after the headline (the byline), if there is one."""
+    key = " ".join(headline.split()).casefold()[:24]
+    if len(key) < 12:
+        return None
+    for index, chunk in enumerate(chunks):
+        if chunk.casefold().startswith(key):
+            for follower in chunks[index + 1: index + 1 + window]:
+                found = _BYLINE_DATE.search(follower)
+                parsed = parse_date(found.group(0)) if found else None
+                if parsed:
+                    return parsed
+            return None
+    return None
+
+
 def extract_page(html: str, url: str = "") -> PageFacts:
     parser = _PageParser()
     try:
@@ -263,6 +288,12 @@ def extract_page(html: str, url: str = "") -> PageFacts:
             if parsed:
                 facts.published, facts.date_source = parsed, "labelled 'Published' text"
                 break
+    if not facts.published:
+        early = next((h for h in [*(str(n.get("headline", "")) for n in ld_nodes), parser.meta.get("og:title", ""),
+                                  parser.h1[0] if parser.h1 else ""] if " ".join(h.split())), "")
+        parsed = byline_date(parser.text, early)
+        if parsed:
+            facts.published, facts.date_source = parsed, "byline beside the headline"
     if not facts.published:
         stamped = [(v, hint, inside) for v, hint, inside in parser.times if parse_date(v)]
         pick = next((v for v, hint, _ in stamped if hint), None) or next((v for v, _, inside in stamped if inside), None)
@@ -305,6 +336,10 @@ def extract_page(html: str, url: str = "") -> PageFacts:
     scoped = [t for t, inside in parser.paragraphs if inside]
     paragraphs = scoped if sum(len(t.split()) for t in scoped) >= 60 else [t for t, _ in parser.paragraphs]
     paragraphs = [t for t in paragraphs if len(t.split()) >= 5]
+    if sum(len(t.split()) for t in paragraphs) < 60:
+        loose = [t for t in parser.text if len(t.split()) >= 8]
+        if sum(len(t.split()) for t in loose) > sum(len(t.split()) for t in paragraphs):
+            paragraphs = list(dict.fromkeys(loose))
     facts.body_text = "\n".join(paragraphs)[:BODY_CHARS * 4]
     facts.word_count = sum(len(t.split()) for t in paragraphs)
     facts.links = parser.links
@@ -345,7 +380,8 @@ def headline_problems(headline: str, *, publication_names: list[str] | None = No
     if found:
         problems.append(f"looks like a page label or slug ({found.group(0).strip()!r})")
     words = re.findall(r"[A-Za-z0-9']+", text)
-    if words and words[-1].casefold() in {w.casefold() for w in config["cut_off_last_words"]}:
+    cut_offs = config["cut_off_last_words"]
+    if words and (words[-1] in cut_offs or (len(words[-1]) > 2 and words[-1].casefold() in {w.casefold() for w in cut_offs})):
         problems.append("ends on a cut-off word")
     if re.search(r"\b\w+(?:-\w+)*-\d{5,}\b", text):
         problems.append("contains a numeric ID")
@@ -428,16 +464,23 @@ def fetch_page(url: str, session: requests.Session, timeout: float) -> tuple[int
     return response.status_code, response.text, response.url
 
 
+_INDEX_LOCK = threading.Lock()
+
+
 def save_fetched(directory: Path, url: str, body: str) -> None:
     """Keep the exact HTML of every fetched page so a problem can be reproduced offline."""
     try:
         directory.mkdir(parents=True, exist_ok=True)
         name = hashlib.sha1(url.encode("utf-8")).hexdigest()[:16]
         (directory / f"{name}.html.gz").write_bytes(gzip.compress(body.encode("utf-8", "replace")))
-        index = directory / "index.json"
-        known = json.loads(index.read_text(encoding="utf-8")) if index.exists() else {}
-        known[name] = url
-        index.write_text(json.dumps(known, indent=1), encoding="utf-8")
+        with _INDEX_LOCK:  # fetches run in threads; the index file is shared
+            index = directory / "index.json"
+            try:
+                known = json.loads(index.read_text(encoding="utf-8")) if index.exists() else {}
+            except ValueError:
+                known = {}
+            known[name] = url
+            index.write_text(json.dumps(known, indent=1), encoding="utf-8")
     except OSError:
         pass
 
@@ -495,6 +538,8 @@ def evaluate_candidate(
         if not body:
             return Verdict(False, f"page could not be fetched (HTTP {status}), so it cannot be confirmed as an article")
         words_needed = int(freshness["min_body_words"])
+        if urlparse(url).netloc.casefold().endswith((".gov", ".mil")):
+            words_needed = min(words_needed, 60)  # agency pages and image articles are short but primary
         if facts.word_count < words_needed:
             return Verdict(False, f"not an article: only {facts.word_count} words of body text (need {words_needed})")
         if facts.h1_count > 1 and not facts.is_article_type:
@@ -503,21 +548,28 @@ def evaluate_candidate(
     wanted_names = [facts.site_name, facts.original_publisher, *names]
     headline = strip_site_suffix(facts.headline, *wanted_names) if facts.headline else ""
     fallback = strip_site_suffix(str(record.get("title", "")), *wanted_names)
-    chosen, problems = headline, headline_problems(headline, publication_names=wanted_names) if headline else ["no headline"]
+
+    def prepare(text: str) -> tuple[str, list[str], str]:
+        """(English headline, problems, original-language headline). Foreign headlines are translated first."""
+        original = ""
+        if text and looks_non_english(text):
+            if translate is None:
+                return text, ["non-English headline and no translator available"], ""
+            english = " ".join(str(translate(text) or "").split())
+            if not english or looks_non_english(english):
+                return text, ["non-English headline could not be translated cleanly"], ""
+            original, text = text, english
+        return text, (headline_problems(text, publication_names=wanted_names) if text else ["no headline"]), original
+
+    chosen, problems, original = prepare(headline)
     if problems and fallback and fallback != headline:
-        fallback_problems = headline_problems(fallback, publication_names=wanted_names)
-        if not fallback_problems:
-            chosen, problems = fallback, []
+        alt, alt_problems, alt_original = prepare(fallback)
+        if not alt_problems:
+            chosen, problems, original = alt, [], alt_original
     if problems:
         return Verdict(False, f"bad headline {chosen!r}: {'; '.join(problems)}")
-    if looks_non_english(chosen):
-        if translate is None:
-            return Verdict(False, f"non-English headline {chosen!r} and no translator available")
-        english = " ".join(str(translate(chosen) or "").split())
-        if not english or headline_problems(english, publication_names=wanted_names) or looks_non_english(english):
-            return Verdict(False, f"non-English headline {chosen!r} could not be translated cleanly")
-        record = {**record, "title_original_language": chosen}
-        chosen = english
+    if original:
+        record = {**record, "title_original_language": original}
 
     enriched = {
         **record,
@@ -562,8 +614,8 @@ def enrich_candidates(
     def work(record: dict[str, Any]) -> Verdict:
         url = str(record.get("url", ""))
         official_api = record.get("origin") == "Federal Register API"
-        page = None if official_api else get(url) if url.startswith(("http://", "https://")) else None
         try:
+            page = None if official_api else get(url) if url.startswith(("http://", "https://")) else None
             return evaluate_candidate(record, page, now=now, translate=translate, follow=get)
         except Exception as exc:  # one odd page must not stop the run
             return Verdict(False, f"could not be evaluated ({type(exc).__name__})")

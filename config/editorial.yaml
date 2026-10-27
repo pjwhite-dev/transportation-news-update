@@ -40,7 +40,7 @@ bad_headline_patterns:
   - 'live updates?\b'
   - '\bnews and\b'
   - '\.(?:html?|php|aspx?|pdf|cfm)\b'
-  - '(?:^|[\s_-])\d{6,}(?:$|[\s_.-])'
+  - '[_-]\d{6,}(?:$|[\s_.-])'
   - '(?:\.\.\.|…)\s*$'
 
 # Words a headline cannot end on; it was cut off mid-phrase.

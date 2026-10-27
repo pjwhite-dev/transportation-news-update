@@ -510,6 +510,13 @@ def main() -> None:
         qa_dir = (root / ".runtime" / "dryrun-qa") if args.dry_run else root
         qa_dir.mkdir(parents=True, exist_ok=True)
         QAReport.from_dict(qa_data).write(qa_dir)
+    if args.dry_run:
+        # The finished, validated edition, for before/after comparison with what was published.
+        scratch = root / ".runtime"
+        scratch.mkdir(exist_ok=True)
+        (scratch / f"dryrun-{today.isoformat()}.json").write_text(
+            json.dumps(briefing, indent=1, ensure_ascii=False), encoding="utf-8"
+        )
     if not args.dry_run:
         latest_path, archive_path = save_briefing(root, briefing)
         write_store(root, build_store(root / "data" / "archive", today + timedelta(days=1)), today)
