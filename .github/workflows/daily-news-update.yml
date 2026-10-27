@@ -57,9 +57,9 @@ jobs:
             echo "Save attempt ${attempt}..."
             if git ls-remote --exit-code --heads origin raw-feed >/dev/null 2>&1; then
               git fetch origin raw-feed
-              git checkout -B raw-feed origin/raw-feed
+              git checkout -f -B raw-feed origin/raw-feed
             else
-              git checkout -B raw-feed origin/main
+              git checkout -f -B raw-feed origin/main
             fi
 
             mkdir -p data/raw_archive
