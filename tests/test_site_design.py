@@ -106,8 +106,10 @@ class SiteDesignTests(unittest.TestCase):
         self.assertGreater(self.index.index('id="tracker"'), self.index.rindex('class="sector"'))
         self.assertNotIn("Regulatory Tracker", self.index)
 
-    def test_what_to_watch_lives_in_the_sidebar_with_its_date_split_out(self) -> None:
-        self.assertRegex(self.index, r'<aside class="side no-copy".*<time>Nov\. 25</time><span>Comments due')
+    def test_what_to_watch_is_not_on_the_site_sidebar(self) -> None:
+        aside = self.index[self.index.index('<aside class="side no-copy"'):]
+        self.assertNotIn("What to watch", aside)
+        self.assertNotIn('href="#watch"', self.index)
 
     def test_copy_for_email_still_wired_to_the_edition_content(self) -> None:
         self.assertIn("data-copy-edition", self.index)

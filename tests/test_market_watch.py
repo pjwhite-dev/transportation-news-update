@@ -107,6 +107,8 @@ class RenderTests(unittest.TestCase):
         self.assertIn("▲", markup)
         self.assertIn("▼", markup)
         self.assertIn("not investment advice", markup)
+        self.assertIn('class="tiles"', markup)
+        self.assertIn("chg down", markup)
 
     def test_no_snapshot_renders_nothing(self):
         self.assertEqual(public_site.market_html(None), "")

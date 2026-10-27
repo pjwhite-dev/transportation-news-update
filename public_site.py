@@ -528,32 +528,43 @@ def watch_html(items: list[Any]) -> str:
 
 
 def market_html(snapshot: dict[str, Any] | None) -> str:
-    """Compact, grouped quote list. Hidden entirely when there is no fresh snapshot."""
+    """Compact market box: index tiles on top, grouped quote rows below. Hidden without a fresh snapshot."""
     if not snapshot:
         return ""
-    groups: dict[str, list[str]] = {}
-    for quote in snapshot["quotes"]:
+
+    def parts(quote: dict[str, Any]) -> tuple[str, str, str, str, str]:
         percent = float(quote["percent"])
         tone, arrow = ("up", "▲") if percent > 0 else ("down", "▼") if percent < 0 else ("flat", "–")
         name = html.escape(str(quote.get("name", quote["symbol"])), quote=True)
-        symbol = html.escape(str(quote["symbol"]))
-        groups.setdefault(str(quote.get("group", "Markets")), []).append(
-            f'<li><abbr title="{name}" tabindex="0">{symbol}</abbr>'
-            f'<span class="px">{float(quote["price"]):,.2f}</span>'
-            f'<span class="chg {tone}">{arrow} {abs(percent):.2f}%</span></li>'
+        return (
+            html.escape(str(quote["symbol"])), name, f"{float(quote['price']):,.2f}", tone, f"{arrow} {abs(percent):.2f}%",
         )
-    body = "".join(
+
+    tiles, groups = [], {}
+    for quote in snapshot["quotes"]:
+        symbol, name, price, tone, change = parts(quote)
+        if quote.get("group") == "Market overview":
+            tiles.append(
+                f'<li class="tile {tone}"><abbr title="{name}" tabindex="0">{symbol}</abbr>'
+                f'<span class="px">{price}</span><span class="chg {tone}">{change}</span></li>'
+            )
+        else:
+            groups.setdefault(str(quote.get("group", "Markets")), []).append(
+                f'<li><abbr title="{name}" tabindex="0">{symbol}</abbr>'
+                f'<span class="px">{price}</span><span class="chg {tone}">{change}</span></li>'
+            )
+    body = (f'<ul class="tiles">{"".join(tiles)}</ul>' if tiles else "") + "".join(
         f'<h3>{html.escape(group)}</h3><ul class="quotes">{"".join(rows)}</ul>' for group, rows in groups.items()
     )
     try:
         as_of = datetime.fromisoformat(snapshot["as_of"]).astimezone(EASTERN).date()
-        stamp = f"Prior-day prices as of {_format_day(as_of)}."
+        stamp = f"Prior-day close, {as_of.strftime('%b')} {as_of.day}."
     except (KeyError, ValueError):
-        stamp = "Prior-day prices."
+        stamp = "Prior-day close."
     return (
         '<section class="box market" id="market"><h2 class="label">Market watch</h2>'
-        f'{body}<p class="note">{stamp} Delayed, for context only; not investment advice. '
-        "Overview rows are ETFs that track each index. Hover or tap a ticker for its full name.</p></section>"
+        f'{body}<p class="note">{stamp} Delayed; not investment advice. Index tiles use the ETFs that track '
+        "each index. Hover or tap a ticker for its full name.</p></section>"
     )
 
 
@@ -564,8 +575,6 @@ def section_nav_html(payload: dict[str, Any]) -> str:
     for section in SECTION_ORDER:
         if sections.get(section):
             links.append((SECTION_ANCHORS[section], section_label(section)))
-    if payload.get("what_to_watch"):
-        links.append(("watch", "What to watch"))
     links.append(("tracker", "Docket"))
     anchors = "".join(f'<a href="#{target}">{html.escape(label)}</a>' for target, label in links)
     return (
@@ -1006,7 +1015,7 @@ def page_shell(
 
 
 def side_html(payload: dict[str, Any], market: dict[str, Any] | None = None) -> str:
-    watch = watch_html(payload.get("what_to_watch", [])) + market_html(market)
+    watch = market_html(market)
     about = (
         '<p class="about">Compiled each weekday from public sources and checked against '
         "earlier editions. Browse the <a href=\"{archive}\">archive</a> or "
