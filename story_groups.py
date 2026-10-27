@@ -38,7 +38,7 @@ def _rulemaking_terms() -> list[tuple[str, list[str]]]:
         entries = yaml.safe_load(_RULE_TERMS_PATH.read_text(encoding="utf-8"))["rulemakings"]
     except (OSError, ValueError, KeyError):
         return []
-    return [(e["rin"], [t.casefold() for t in e.get("match_terms", [])]) for e in entries if e.get("match_terms")]
+    return [(e.get("rin") or e["id"], [t.casefold() for t in e.get("match_terms", [])]) for e in entries if e.get("match_terms")]
 
 
 def identifiers(story: dict[str, Any]) -> set[str]:
