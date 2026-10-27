@@ -16,16 +16,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 /* ---- cover: header + hero ---- */
 .cover{background:var(--night);color:var(--ice);position:relative;overflow:hidden}
 .cover svg.chart{position:absolute;right:-60px;top:-40px;width:640px;height:640px;opacity:.9;pointer-events:none}
-.topbar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:20px}
-.brand{font:600 1.1rem/1.2 var(--serif);color:var(--ice);text-decoration:none;letter-spacing:.01em}
-.brand i{color:var(--amber);font-style:normal}
+.topbar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:22px 18px;border-bottom:1px solid rgba(159,176,200,.22)}
+.brand{font:500 clamp(1.2rem,4.6vw,2.15rem)/1.1 var(--serif);color:var(--ice);text-decoration:none;letter-spacing:-.005em;font-optical-sizing:auto}
+.brand i{color:var(--amber);font-style:italic;font-weight:400}
 .topbar nav{display:flex;align-items:center;gap:22px;font-size:.84rem}
 .topbar nav a{color:#C5D2E6;text-decoration:none}
 .topbar nav a:hover,.topbar nav a[aria-current]{color:#fff}
 .topbar button,.btn-line{appearance:none;font:600 .8rem var(--sans);color:var(--ice);background:transparent;border:1px solid #5E78A0;border-radius:6px;padding:8px 13px;cursor:pointer;min-height:40px;text-decoration:none;display:inline-flex;align-items:center}
 .topbar button:hover,.btn-line:hover{background:var(--night-2)}
 .copy-status{position:absolute;right:0;top:64px;font-size:.75rem;color:#BFE3C4}
-.hero{position:relative;padding-block:38px 56px}
+.hero{position:relative;padding-block:34px 56px}
 .eyebrow{margin:0 0 16px;font:600 .75rem var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
 .hero h1{font:400 clamp(2rem,5.2vw,3.7rem)/1.05 var(--serif);letter-spacing:-.02em;margin:0 0 20px;max-width:17em;text-wrap:balance;font-optical-sizing:auto}
 .hero h1 a{text-decoration:none;color:inherit}
