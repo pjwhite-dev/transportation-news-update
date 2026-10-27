@@ -656,5 +656,21 @@ class PriorityTierTests(unittest.TestCase):
         self.assertEqual(priority_tier({"section": "Military UAS", "title": "x", "url": "https://example.com/1"}), 3)
 
 
+class ScopeAnglesFromReplayTests(unittest.TestCase):
+    """Replay of 2026-10-25 wrongly dropped two on-topic stories because their headlines used shorthand."""
+
+    def test_cuas_spelled_without_hyphen_is_a_portfolio_angle(self) -> None:
+        item = {"title": "L3Harris Wins Up-to-$60M Army Interceptor Contract", "summary": "",
+                "url": "https://defenceagenda.com/l3harris-60m-long-range-cuas-interceptor"}
+        self.assertEqual(checks.off_topic_reason(item), "")
+        self.assertTrue(checks.scope_fits(item, "Counter-UAS / Airspace Security"))
+
+    def test_beta_a250_is_an_evtol_story(self) -> None:
+        item = {"title": "US’s BETA receives FAA approval for A250 market surveys", "summary": "",
+                "url": "https://www.ch-aviation.com/news/173167-uss-beta-receives-faa-approval-for-a250-market-surveys"}
+        self.assertEqual(checks.off_topic_reason(item), "")
+        self.assertTrue(checks.scope_fits(item, "AAM / eVTOL / Advanced Aviation"))
+
+
 if __name__ == "__main__":
     unittest.main()

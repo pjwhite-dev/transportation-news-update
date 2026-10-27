@@ -133,7 +133,7 @@ sections:
     require_any: ['\butm\b', 'uas traffic management', 'unmanned traffic management', 'airspace integration', 'detect and avoid', 'strategic deconfliction', 'digital flight rules', 'u-?space', 'laanc', 'uss provider', 'remote id']
   AAM / eVTOL / Advanced Aviation:
     definition: Electric and powered-lift aircraft, air taxis, vertiports and advanced air mobility.
-    require_any: ['evtol', 'e-?vtol', 'air taxi', 'air taxis', 'advanced air mobility', '\baam\b', 'powered.lift', 'vertiport', 'urban air mobility', 'electric (?:aircraft|airplane)', 'eipp', 'joby', 'archer aviation', 'beta technologies', 'wisk', 'eve air mobility', 'vertical aerospace', 'lilium', 'eh?ang']
+    require_any: ['evtol', 'e-?vtol', 'air taxi', 'air taxis', 'advanced air mobility', '\baam\b', 'powered.lift', 'vertiport', 'urban air mobility', 'electric (?:aircraft|airplane)', 'eipp', '\ba250\b', '\balia\b', 'joby', 'archer aviation', 'beta technologies', 'wisk', 'eve air mobility', 'vertical aerospace', 'lilium', 'eh?ang']
   Autonomous Vehicles:
     definition: Self-driving cars, trucks and shuttles, and the rules that govern them.
     require_any: ['autonomous (?:vehicle|truck|car|driving|shuttle|bus)', 'self-driving', 'driverless', 'robotaxi', 'robo-?taxi', 'cybercab', 'automated driving', '\bads\b', '\bavs?\b', 'waymo', 'zoox', 'aurora innovation', 'kodiak', 'motional', 'nuro', 'fmvss', 'full self-driving', '\bfsd\b']
@@ -160,7 +160,7 @@ sections:
     require_any: ['space (?:launch|transport|travel)', 'spaceport', 'launch (?:license|site|vehicle)', 'hyperloop', 'reentry', 'starship', 'commercial space']
 
 # Applies to every section: no general war, crime or celebrity coverage without a portfolio angle.
-portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'evtol', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev', 'crisi', 'short ?line', 'trainsets?', 'locomotives?', 'amtrak', 'brightline', 'commuter rail', 'transit']
+portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'c-?uas', 'evtol', '\ba250\b', '\bbeta technologies\b', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev', 'crisi', 'short ?line', 'trainsets?', 'locomotives?', 'amtrak', 'brightline', 'commuter rail', 'transit']
 off_topic_patterns:
   - '\bcelebrit'
   - '\bactor\b'
