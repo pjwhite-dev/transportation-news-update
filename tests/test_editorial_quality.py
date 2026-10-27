@@ -530,5 +530,74 @@ class EnrichStageTests(unittest.TestCase):
         self.assertEqual(dropped, [])
 
 
+class QualityPassTests(unittest.TestCase):
+    BODY = ("The Federal Aviation Administration said on Monday that it approved 12 drone corridors in Texas. "
+            "The corridors let operators fly beyond visual line of sight below 400 feet. "
+            "Officials said the first flights begin next month.")
+
+    def story(self, title, url, section, **extra):
+        return {"id": url, "title": title, "summary": "feed text", "url": url, "section": section, "importance": 5, "source": "https://aapnews.aap.com.au/",
+                "published": "2026-10-27T05:00:00-04:00", "date_label": "Oct. 27, 2026", "also_covered": [], "page_text": self.BODY, **extra}
+
+    def run_pass(self, sections, store=None):
+        from qa_report import QAReport
+        from quality_pass import QualityContext, quality_pass
+
+        context = QualityContext(
+            report=QAReport("2026-10-27"), today=date(2026, 10, 27), store=store or [],
+            write=lambda title, source, why: "The FAA approved 12 drone corridors in Texas that let operators fly beyond visual line of sight below 400 feet.",
+            entail=lambda source, sentences: [(True, "")] * len(sentences),
+        )
+        return quality_pass(sections, context), context
+
+    def test_pass_labels_sources_regrounds_summaries_and_drops_off_scope_items(self):
+        sections = {
+            "UAS / Drones": [self.story("FAA approves 12 drone corridors in Texas", "https://example.com/faa-corridors", "UAS / Drones"),
+                             self.story("Siemens wins California High-Speed Rail trainset order", "https://example.com/siemens-rail", "UAS / Drones")],
+            "Military UAS": [self.story("2 US Navy ships collide in Caribbean", "https://example.com/navy", "Military UAS")],
+            "Advanced Rail / High-Speed Rail": [],
+        }
+        result, context = self.run_pass(sections)
+        faa = result["UAS / Drones"][0]
+        self.assertEqual(faa["source"], "AAP")
+        self.assertTrue(faa["summary"].startswith("The FAA approved 12 drone corridors"))
+        self.assertNotIn("page_text", faa)
+        self.assertEqual(faa["summary_method"], "model")
+        self.assertEqual([s["title"] for s in result["Advanced Rail / High-Speed Rail"]], ["Siemens wins California High-Speed Rail trainset order"])
+        self.assertEqual(result["Military UAS"], [])
+        self.assertTrue(any(e["stage"] == "scope" for e in context.report.events))
+
+    def test_pass_drops_a_repeat_of_an_earlier_edition_and_blocks_a_repeat_lead(self):
+        story = self.story("FAA approves 12 drone corridors in Texas", "https://example.com/faa-corridors", "UAS / Drones")
+        prior = groups.store_entry({**story, "page_text": ""}, "2026-10-26")
+        prior["led"] = True
+        result, context = self.run_pass({"UAS / Drones": [story]}, store=[prior])
+        self.assertEqual(result["UAS / Drones"], [])
+        self.assertTrue(any(e["stage"] == "cross-edition" for e in context.report.events))
+
+    def test_pass_groups_two_outlets_covering_the_same_event(self):
+        a = self.story("FAA approves 12 drone corridors in Texas", "https://example.com/a", "UAS / Drones")
+        b = self.story("FAA approves 12 drone corridors in Texas, officials say", "https://example.org/b", "UAS / Drones", source="Reuters")
+        result, _ = self.run_pass({"UAS / Drones": [a, b]})
+        self.assertEqual(len(result["UAS / Drones"]), 1)
+        self.assertEqual(len(result["UAS / Drones"][0]["also_covered"]), 1)
+        self.assertTrue(result["UAS / Drones"][0]["lead_ok"])
+        self.assertEqual(result["UAS / Drones"][0]["priority_tier"], 2)
+
+    def test_executive_summary_fact_sheet_puts_federal_policy_first_and_marks_blocked_leads(self):
+        import summary_chain
+
+        policy = {"title": "FAA approves 12 drone corridors in Texas", "url": "https://www.faa.gov/news/corridors", "summary": "x", "importance": 3,
+                  "priority_tier": 1, "lead_ok": True, "source": "FAA", "date_label": "Oct. 27, 2026"}
+        company = {"title": "Joby starts piloted tests", "url": "https://joby.example/tests", "summary": "y", "importance": 9, "priority_tier": 2,
+                   "lead_ok": False, "source": "Joby", "date_label": "Oct. 27, 2026"}
+        sheet = summary_chain.build_fact_sheet({"Federal Policy & Implementation": [policy], "AAM / eVTOL / Advanced Aviation": [company]})
+        self.assertEqual([s["url"] for s in sheet], [policy["url"], company["url"]])
+        self.assertEqual(sheet[1]["lead_ok"], "no")
+        rows = [{"ids": ["S2"], "paragraph": 0, "raw": "Joby began tests [S2].", "plain": "Joby began tests.", "cited": True},
+                {"ids": ["S1"], "paragraph": 0, "raw": "The FAA approved corridors [S1].", "plain": "The FAA approved corridors.", "cited": True}]
+        self.assertEqual(summary_chain.enforce_lead(rows, sheet)[0]["ids"], ["S1"])
+
+
 if __name__ == "__main__":
     unittest.main()

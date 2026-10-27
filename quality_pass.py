@@ -111,7 +111,8 @@ def quality_pass(sections: dict[str, list[dict[str, Any]]], ctx: QualityContext)
     stories = _flatten(scoped)
 
     # 7. Executive Summary inputs: priority tier, and no repeat lead unless it moved.
-    recent_leads = [e for e in ctx.store if e.get("led") and _days_between(ctx.today, e["edition"]) <= LEAD_LOOKBACK_EDITIONS]
+    last_editions = sorted({e["edition"] for e in ctx.store if e["edition"] < ctx.today.isoformat()}, reverse=True)[:LEAD_LOOKBACK_EDITIONS]
+    recent_leads = [e for e in ctx.store if e.get("led") and e["edition"] in last_editions]
     for story in stories:
         story["priority_tier"] = priority_tier(story)
         match = previous_match(story, recent_leads) if recent_leads else None
@@ -121,7 +122,3 @@ def quality_pass(sections: dict[str, list[dict[str, Any]]], ctx: QualityContext)
                        str(story.get("url", "")))
     report.note("stories_after_quality_pass", len(stories))
     return _regroup(stories, template)
-
-
-def _days_between(today: date, edition: str) -> int:
-    return (today - date.fromisoformat(edition)).days

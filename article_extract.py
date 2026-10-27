@@ -464,6 +464,22 @@ def fetch_page(url: str, session: requests.Session, timeout: float) -> tuple[int
     return response.status_code, response.text, response.url
 
 
+def prune_old_fetches(parent: Path, *, keep_days: int, today: date) -> None:
+    """Saved HTML is for reproducing recent problems; folders named by date older than ``keep_days`` are removed."""
+    import shutil
+
+    try:
+        for folder in parent.iterdir():
+            try:
+                age = (today - date.fromisoformat(folder.name)).days
+            except ValueError:
+                continue
+            if folder.is_dir() and age > keep_days:
+                shutil.rmtree(folder, ignore_errors=True)
+    except OSError:
+        pass
+
+
 _INDEX_LOCK = threading.Lock()
 
 
@@ -506,8 +522,6 @@ def evaluate_candidate(
     if rejection:
         # One hop: a listing/author page that links to the very story we were sent for.
         target = resolve_listing_to_article(body, final_url or url, str(record.get("title", ""))) if body else ""
-        if not target and follow is None:
-            return Verdict(False, f"not an article: {rejection}")
         if not target:
             return Verdict(False, f"not an article: {rejection}")
         page = follow(target) if follow else None
@@ -602,6 +616,8 @@ def enrich_candidates(
     config = load_config()["freshness"]
     http = session or requests.Session()
     timeout = float(config["fetch_timeout_seconds"])
+    if fetched_dir is not None:
+        prune_old_fetches(fetched_dir.parent, keep_days=14, today=now.date())
 
     def get(url: str) -> tuple[int | None, str, str]:
         if fetch is not None:
