@@ -28,6 +28,7 @@ from news_engine import (
     sanitize_executive_summary_citations,
     sanitize_story_summary,
 )
+from market_watch import load_snapshot as load_market_snapshot
 from regulatory_tracker import build_regulatory_tracker
 
 
@@ -526,6 +527,36 @@ def watch_html(items: list[Any]) -> str:
     )
 
 
+def market_html(snapshot: dict[str, Any] | None) -> str:
+    """Compact, grouped quote list. Hidden entirely when there is no fresh snapshot."""
+    if not snapshot:
+        return ""
+    groups: dict[str, list[str]] = {}
+    for quote in snapshot["quotes"]:
+        percent = float(quote["percent"])
+        tone, arrow = ("up", "▲") if percent > 0 else ("down", "▼") if percent < 0 else ("flat", "–")
+        name = html.escape(str(quote.get("name", quote["symbol"])), quote=True)
+        symbol = html.escape(str(quote["symbol"]))
+        groups.setdefault(str(quote.get("group", "Markets")), []).append(
+            f'<li><abbr title="{name}" tabindex="0">{symbol}</abbr>'
+            f'<span class="px">{float(quote["price"]):,.2f}</span>'
+            f'<span class="chg {tone}">{arrow} {abs(percent):.2f}%</span></li>'
+        )
+    body = "".join(
+        f'<h3>{html.escape(group)}</h3><ul class="quotes">{"".join(rows)}</ul>' for group, rows in groups.items()
+    )
+    try:
+        as_of = datetime.fromisoformat(snapshot["as_of"]).astimezone(EASTERN).date()
+        stamp = f"Prior-day prices as of {_format_day(as_of)}."
+    except (KeyError, ValueError):
+        stamp = "Prior-day prices."
+    return (
+        '<section class="box market" id="market"><h2 class="label">Market watch</h2>'
+        f'{body}<p class="note">{stamp} Delayed, for context only; not investment advice. '
+        "Hover or tap a ticker for the company name.</p></section>"
+    )
+
+
 def section_nav_html(payload: dict[str, Any]) -> str:
     """Desktop: a sticky row of chips. Phone: a collapsible menu (no sideways scrolling)."""
     links = [("summary", "Summary")]
@@ -974,8 +1005,8 @@ def page_shell(
 """
 
 
-def side_html(payload: dict[str, Any]) -> str:
-    watch = watch_html(payload.get("what_to_watch", []))
+def side_html(payload: dict[str, Any], market: dict[str, Any] | None = None) -> str:
+    watch = watch_html(payload.get("what_to_watch", [])) + market_html(market)
     about = (
         '<p class="about">Compiled each weekday from public sources and checked against '
         "earlier editions. Browse the <a href=\"{archive}\">archive</a> or "
@@ -984,13 +1015,13 @@ def side_html(payload: dict[str, Any]) -> str:
     return watch + about
 
 
-def edition_page(payload: dict[str, Any], day: date, archived: bool) -> str:
+def edition_page(payload: dict[str, Any], day: date, archived: bool, market: dict[str, Any] | None = None) -> str:
     prefix = _relative_prefix(archived)
     content = edition_content(payload, day)
     email_content = base64.b64encode(
         outlook_email_html(payload, day).encode("utf-8")
     ).decode("ascii")
-    side = side_html(payload).replace("{archive}", prefix + "archive/").replace("{search}", prefix + "search/")
+    side = side_html(payload, market).replace("{archive}", prefix + "archive/").replace("{search}", prefix + "search/")
     body = f"""
       {section_nav_html(payload)}
       <main class="wrap page">
@@ -1116,7 +1147,10 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     # archive for continuity, but never let it replace the last complete briefing.
     latest_day = max(editorial_days) if editorial_days else max(editions)
     (output / "index.html").write_text(
-        edition_page(editions[latest_day], latest_day, archived=False),
+        edition_page(
+            editions[latest_day], latest_day, archived=False,
+            market=load_market_snapshot(root / "data" / "market.json", today=latest_day),
+        ),
         encoding="utf-8",
     )
     (output / "email.html").write_text(

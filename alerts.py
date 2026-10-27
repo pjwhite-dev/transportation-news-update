@@ -24,6 +24,7 @@ SECRET_NAMES = (
     "telegram_chat_id",
     "github_token",
     "regulations_gov_api_key",
+    "finnhub_api_key",
     "hc_pc_alive",
     "hc_edition_verified",
     "hc_discovery",

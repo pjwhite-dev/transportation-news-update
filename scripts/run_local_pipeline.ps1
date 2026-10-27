@@ -37,9 +37,10 @@ $supplementalPath = $null
 try {
     if (-not $DryRun) {
         # The tracker ledger is regenerated from the Federal Register on every run (and by the
-        # 04:00 tracker task), so uncommitted changes to just these two files are discarded.
+        # 04:00 tracker task) and the market snapshot is refetched, so uncommitted changes to just
+        # these files are discarded.
         # Anything else dirty still stops the run.
-        git checkout -- tracker/events.jsonl tracker/verifications.jsonl 2>$null
+        git checkout -- tracker/events.jsonl tracker/verifications.jsonl data/market.json 2>$null
         $dirty = git status --porcelain
         if ($dirty) { throw "Refusing production run because the repository is not clean: $($dirty -join '; ')" }
         git pull --ff-only origin main
@@ -71,10 +72,13 @@ try {
 
     & $python automated_briefing.py --validate-only data/latest_briefing.json --require-today
     if ($LASTEXITCODE -ne 0) { throw "Publication gate failed." }
+    # Market watch is optional: market_watch.py never fails the run, and the site hides a stale box.
+    & $python market_watch.py
     & $python public_site.py --output _site
     if ($LASTEXITCODE -ne 0) { throw "Static site build failed." }
 
     git add -- data/latest_raw_news.json data/raw_archive data/latest_briefing.json data/archive tracker/events.jsonl tracker/verifications.jsonl
+    if (Test-Path data/market.json) { git add -- data/market.json }
     if ($LASTEXITCODE -ne 0) { throw "git add failed." }
     git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) { Write-Output "No publication changes."; return }
