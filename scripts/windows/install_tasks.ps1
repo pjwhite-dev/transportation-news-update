@@ -76,6 +76,8 @@ New-NewsroomTask "newsroom-edition" $hidden "$hiddenArgs -File `"$RepoRoot\scrip
 New-NewsroomTask "newsroom-ensure" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\ensure_edition.ps1`"" (Every 15)
 New-NewsroomTask "newsroom-services-check" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\ensure_services.ps1`"" (Every 5)
 New-NewsroomTask "newsroom-heartbeat" $pythonw "alerts.py ping pc-alive" (Every 5)
+$weekdays815 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday -At 8:15AM
+New-NewsroomTask "newsroom-doctor" $pythonw "doctor.py" $weekdays815
 New-NewsroomTask "newsroom-tracker" $pythonw "-m tracker.core" (New-ScheduledTaskTrigger -Daily -At 4:00AM)
 
 # 4. Start the logon tasks now so nothing waits for the next sign-in.

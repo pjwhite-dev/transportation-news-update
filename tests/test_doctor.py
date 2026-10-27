@@ -1,0 +1,91 @@
+from __future__ import annotations
+
+import tempfile
+import unittest
+from pathlib import Path
+
+import doctor
+
+
+class ClassifyTests(unittest.TestCase):
+    def test_known_signatures_get_a_plain_recovery(self) -> None:
+        for text, cause in [
+            ("throw Refusing production run because the repository is not clean: M x", "dirty_tree"),
+            ("Ollama health check failed.", "ollama_down"),
+            ("git push failed; the local commit is preserved", "push_failed"),
+            ("the live deployment was not verified within five minutes", "deploy_unverified"),
+            ("Another edition run is active; exiting.", "running"),
+        ]:
+            found, recovery = doctor.classify(text)
+            self.assertEqual(found, cause)
+            self.assertTrue(recovery)
+
+    def test_gate_failures_and_tracebacks_go_to_the_model_and_plain_noise_is_unknown(self) -> None:
+        self.assertEqual(doctor.classify("ValueError: Complete briefing validation failed:\n- links: x")[0], "gate_failure")
+        self.assertEqual(doctor.classify("Traceback (most recent call last):\n  File x")[0], "code_error")
+        self.assertEqual(doctor.classify("nothing recognisable")[0], "unknown")
+
+
+class EditTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.root = Path(tempfile.mkdtemp())
+        (self.root / "tests").mkdir()
+        (self.root / "thing.py").write_text("x = 1\ny = 2\n", encoding="utf-8")
+
+    def test_unique_edit_applies(self) -> None:
+        changed = doctor.apply_edits(self.root, [{"file": "thing.py", "old": "x = 1", "new": "x = 3"}])
+        self.assertEqual(changed, ["thing.py"])
+        self.assertEqual((self.root / "thing.py").read_text(encoding="utf-8"), "x = 3\ny = 2\n")
+
+    def test_missing_ambiguous_or_noop_edits_are_rejected_without_changes(self) -> None:
+        (self.root / "thing.py").write_text("a\na\n", encoding="utf-8")
+        for old in ("a", "zzz"):
+            with self.assertRaises(ValueError):
+                doctor.apply_edits(self.root, [{"file": "thing.py", "old": old, "new": "b"}])
+        with self.assertRaises(ValueError):
+            doctor.apply_edits(self.root, [{"file": "thing.py", "old": "a\na", "new": "a\na"}])
+        self.assertEqual((self.root / "thing.py").read_text(encoding="utf-8"), "a\na\n")
+
+    def test_only_code_files_may_be_edited(self) -> None:
+        for name in ("data/latest_briefing.json", ".github/workflows/publish-news-site.yml", "alerts.py", "doctor.py",
+                     "../outside.py", "scripts/run_local_pipeline.ps1", "tests/regression/known_bad/x.json"):
+            self.assertFalse(doctor.allowed_edit({"file": name}), name)
+        for name in ("validation_gates.py", "tests/test_x.py", "tracker/core.py"):
+            self.assertTrue(doctor.allowed_edit({"file": name}), name)
+
+    def test_a_failed_second_edit_leaves_the_first_unapplied(self) -> None:
+        with self.assertRaises(ValueError):
+            doctor.apply_edits(self.root, [
+                {"file": "thing.py", "old": "x = 1", "new": "x = 9"},
+                {"file": "thing.py", "old": "nope", "new": "q"},
+            ])
+        self.assertEqual((self.root / "thing.py").read_text(encoding="utf-8"), "x = 1\ny = 2\n")
+
+
+class EvidenceTests(unittest.TestCase):
+    def test_traceback_files_stay_inside_the_repo(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        (root / "mod.py").write_text("pass\n", encoding="utf-8")
+        log = f'File "{root / "mod.py"}", line 3\nFile "C:\\Windows\\other.py", line 4'
+        self.assertEqual([p.as_posix() for p in doctor.traceback_files(log, root)], ["mod.py"])
+
+    def test_log_tail_is_redacted(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        logs = root / ".runtime" / "logs"
+        logs.mkdir(parents=True)
+        (logs / "edition-2026-10-27-043002.log").write_text("token sk-ABCDEFGHIJKLMNOPQRSTUV leaked\n", encoding="utf-8")
+        self.assertNotIn("sk-ABCDEFGHIJKLMNOPQRSTUV", doctor.latest_log(root, "2026-10-27"))
+
+    def test_live_edition_reads_the_marker(self) -> None:
+        class Page:
+            text = '<meta name="edition-id" content="2026-10-27">'
+
+        class Session:
+            def get(self, url, params=None, timeout=None):
+                return Page()
+
+        self.assertEqual(doctor.live_edition(Session()), "2026-10-27")
+
+
+if __name__ == "__main__":
+    unittest.main()
