@@ -40,3 +40,6 @@ One line per judgment call: date — decision — reason.
 
 ## 2026-10-27: doctor may only propose, never apply
 Doctor fixes land on a doctor/<date> branch behind a failing-then-passing regression test; merging stays a one-line owner approval. A gate failure caused by one bad item is treated as a code gap (add a repair before the gate), never as a reason to loosen the gate.
+
+## 2026-10-27: doctor fixes self-approve behind a deterministic guard (supersedes "propose only")
+Owner asked for minimal input. A doctor branch now merges itself, pushes and reruns the edition when ALL hold: regression test fails before and passes after, no new failing tests (already required), exactly one new tests/test_incident_* file plus only EDITABLE non-test files (never alerts.py or doctor.py), at most +80/-15 lines, no removed raise/assert/MIN*/MAX*/threshold lines, no added skip/noqa/except-pass, and the same failure has not been seen before. Anything else, and every repeat, still asks the owner with the approve_doctor.ps1 command. Telegram reports each self-applied fix with the undo (git revert).

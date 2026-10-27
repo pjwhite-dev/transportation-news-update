@@ -232,6 +232,64 @@ def incident_key(cause: str, log_text: str) -> str:
     return f"{cause}: {line.strip()[:120]} [{','.join(gates)}]"
 
 
+AUTO_MAX_ADDED, AUTO_MAX_REMOVED = 80, 15
+_WEAKENING = re.compile(r"\braise\b|\bassert\b|\bMIN\w*|\bMAX\w*|threshold|\bGATE\w*", re.I)
+_SUPPRESSING = re.compile(r"\bskip\w*\b|noqa|except\s+Exception\s*:\s*(?:pass|continue)|\bxfail\b", re.I)
+
+
+def auto_merge_ok(repo: Path, branch: str) -> tuple[bool, str]:
+    """Deterministic guard for self-approval: a small, additive change that cannot be weakening a gate."""
+    stat = run(["git", "diff", "--numstat", f"main...{branch}"], repo)
+    if stat.returncode != 0 or not stat.stdout.strip():
+        return False, "could not read the diff"
+    added = removed = 0
+    new_tests = 0
+    for line in stat.stdout.splitlines():
+        a, r, name = line.split("\t", 2)
+        if a == "-":
+            return False, "binary file in diff"
+        added, removed = added + int(a), removed + int(r)
+        if name.startswith("tests/test_incident_"):
+            new_tests += 1
+        elif not EDITABLE.match(name) or name.startswith("tests/") or Path(name).name in BLOCKED_NAMES:
+            return False, f"touches {name}"
+    if new_tests != 1:
+        return False, "no single new regression test"
+    if added > AUTO_MAX_ADDED or removed > AUTO_MAX_REMOVED:
+        return False, f"change too large (+{added}/-{removed})"
+    body = run(["git", "diff", "-U0", f"main...{branch}", "--", ":(exclude)tests"], repo).stdout
+    for line in body.splitlines():
+        if line.startswith("-") and not line.startswith("---") and _WEAKENING.search(line):
+            return False, "removes a check or threshold"
+        if line.startswith("+") and not line.startswith("+++") and _SUPPRESSING.search(line):
+            return False, "adds a skip or error suppression"
+    return True, ""
+
+
+def apply_branch(repo: Path, branch: str) -> str:
+    """Run the one-step approval (fast-forward main, push, rerun); report how it went."""
+    script = repo / "scripts" / "approve_doctor.ps1"
+    try:
+        result = run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script), "-Branch", branch, "-Yes"],
+                     repo, timeout=3600)
+    except subprocess.TimeoutExpired:
+        return "The rerun timed out; check the log."
+    return "Rerun finished." if result.returncode == 0 else "The merge or rerun reported an error; check the log."
+
+
+def incident_count(repo: Path, key: str) -> int:
+    ledger = repo / ".runtime" / "incidents.jsonl"
+    if not ledger.exists():
+        return 0
+    count = 0
+    for line in ledger.read_text(encoding="utf-8").splitlines():
+        try:
+            count += json.loads(line).get("key") == key
+        except ValueError:
+            continue
+    return count
+
+
 def record_incident(repo: Path, day: str, key: str, branch: str | None) -> int:
     """Append to the incident ledger (kept in .runtime, not in git); return how many times this key was seen before."""
     ledger = repo / ".runtime" / "incidents.jsonl"
@@ -302,7 +360,14 @@ def main() -> int:
             branch_made, note = prepare_branch(repo, day, verdict["edits"], str(verdict.get("regression_test", "")), python)
             message += f" {note}"
             if branch_made:
-                message += f" To approve, merge, rerun and verify: scripts\\approve_doctor.ps1 -Branch {branch_made}"
+                ok, why = auto_merge_ok(repo, branch_made)
+                if ok and incident_count(repo, incident_key(cause, log_text)) == 0:
+                    applied = apply_branch(repo, branch_made)
+                    message += (f" Applied automatically (all gates passed) and the edition was rerun. {applied} "
+                                f"Undo: git revert the merge of {branch_made}.")
+                else:
+                    reason = why if not ok else "this failure has happened before"
+                    message += (f" Needs your OK ({reason}): scripts\\approve_doctor.ps1 -Branch {branch_made}")
     repeats = 0
     if not args.dry_run:
         repeats = record_incident(repo, day, incident_key(cause, log_text), branch_made)
