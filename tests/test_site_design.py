@@ -103,7 +103,7 @@ class SiteDesignTests(unittest.TestCase):
         self.assertIsNotNone(match)
         docket = match.group(0)
         self.assertNotIn(" open", docket.split(">", 1)[0])
-        self.assertIn("2 rulemakings tracked", docket)
+        self.assertIn("2 proceedings tracked", docket)
         self.assertIn("Next date: November 25, 2026", docket)
         self.assertGreater(self.index.index('id="tracker"'), self.index.rindex('class="sector"'))
         self.assertNotIn("Regulatory Tracker", self.index)
@@ -126,7 +126,7 @@ class SiteDesignTests(unittest.TestCase):
         self.assertTrue(all(set(row) <= {"d", "t", "s", "o", "h"} for row in rows))
         blob = json.dumps(rows)
         self.assertNotIn("A concrete summary", blob)  # summaries and article text are not indexed
-        self.assertNotIn("Electrek", blob)
+        self.assertNotIn("cyan lights for robotaxis - Electrek", blob)  # the "- Publisher" tail is stripped; the source is its own field
         for row in rows:
             day, anchor = re.fullmatch(r"/archive/(\d{4}-\d\d-\d\d)/#(story-[0-9a-f]{12})", row["h"]).groups()
             page = (self.out / "archive" / day / "index.html").read_text(encoding="utf-8")

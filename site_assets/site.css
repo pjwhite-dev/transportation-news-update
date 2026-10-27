@@ -73,7 +73,12 @@ h2.label{font:600 .72rem var(--sans);letter-spacing:.18em;text-transform:upperca
 .docket table{width:100%;border-collapse:collapse;font-size:.88rem;margin:4px 0 12px}
 .docket th{font:600 .66rem var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--line)}
 .docket td{padding:11px 12px 11px 0;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft)}
-.docket td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+.docket td:first-child{font-weight:400;color:var(--ink);min-width:150px}
+.docket td:first-child strong{font-weight:600}
+.docket .rin{font:500 .74rem var(--sans);letter-spacing:.04em;color:var(--faint)}
+.docket .oira{display:inline-block;margin-top:3px;font:600 .74rem var(--sans);color:var(--steel)}
+.docket .days{font:600 .74rem var(--sans);color:var(--steel)}
+.docket td:nth-child(2){max-width:240px}
 .docket td a{color:var(--steel)}
 .docket .note{font-size:.78rem;color:var(--faint);margin:0 0 6px}
 
@@ -174,3 +179,5 @@ aside.side{position:sticky;top:76px;display:grid;gap:22px;max-height:calc(100vh 
 .summary sup.cite{font:600 .62em var(--sans);margin-left:2px;vertical-align:super;line-height:0}
 .summary sup.cite a{color:var(--steel)!important;padding:0 2px;text-decoration:none}
 .summary sup.cite a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
+.fn{font-size:.7em;margin-left:1px;color:var(--faint)}
+.footnote{font-size:.78rem;color:var(--faint);margin:6px 0 0}

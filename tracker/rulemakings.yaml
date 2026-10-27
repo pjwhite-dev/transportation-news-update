@@ -8,58 +8,77 @@ rulemakings:
     agency: FAA
     action: Routine BVLOS drone operations / Part 108
     required: true
+    match_terms: ["part 108", "normalizing unmanned aircraft systems beyond visual line"]
+    # Owner-supplied 2026-10-27: reginfo.gov blocks automated meeting searches, so upcoming EO 12866 meetings are listed here.
+    oira_meetings: ["2026-10-29"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL82
   - rin: 1652-AA80
     id: tsa-bvlos-security
     agency: TSA
     action: BVLOS operator security requirements
     required: true
+    match_terms: ["tsa bvlos", "security requirements for bvlos"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=1652-AA80&pubId=202510
   - rin: 2120-AL33
     id: section-2209-uafr
     agency: FAA
     action: Section 2209 fixed-site UAS flight restrictions / Part 74
     required: true
+    match_terms: ["section 2209", "part 74 flight restriction"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL33
   - rin: 2120-AM15
     id: supersonic-overland-flight
     agency: FAA
     action: Civil supersonic overland flight / interim noise standard
     required: true
+    match_terms: ["supersonic overland", "civil supersonic overland"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AM15
   - rin: 2127-AM70
     id: fmvss-108-lighting-ads
     agency: NHTSA
     action: FMVSS No. 108 lighting for ADS vehicles without manual controls
     required: true
+    match_terms: ["fmvss no. 108", "fmvss 108", "cyan lights", "cyan lamps", "cyan turn"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM70&pubId=202510
   - rin: 2127-AM71
     id: fmvss-103-104-visibility-ads
     agency: NHTSA
     action: FMVSS Nos. 103 and 104 (windshield defrosting and wiping) for ADS vehicles
     required: true
+    match_terms: ["fmvss no. 103", "fmvss nos. 103", "windshield defrost"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM71&pubId=202510
   - rin: 2127-AM72
     id: fmvss-102-transmission-ads
     agency: NHTSA
     action: FMVSS No. 102 (transmission control) for ADS vehicles without manual controls
     required: true
+    match_terms: ["fmvss no. 102", "transmission control for ads"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM72&pubId=202510
   - rin: 2127-AN00
     id: fmvss-135-braking-ads
     agency: NHTSA
     action: FMVSS No. 135 (braking) for ADS vehicles without manual controls
     required: true
+    match_terms: ["fmvss no. 135"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AN00&pubId=202510
   - rin: 2127-AM57
     id: part-555-temporary-exemptions
     agency: NHTSA
     action: Temporary exemption from motor vehicle safety and bumper standards (Part 555)
     required: true
+    match_terms: ["part 555", "temporary exemption from motor vehicle safety"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM57&pubId=202510
   - rin: 2126-AC17
     id: fmcsa-ads-cmv
     agency: FMCSA
     action: Operation of ADS-equipped commercial motor vehicles
     required: true
+    match_terms: ["ads-equipped commercial motor vehicle", "fmcsa automated driving"]
     agenda_source: https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2126-AC17&pubId=202510
+  - id: fcc-space-modernization
+    agency: FCC
+    docket: SB Docket No. 25-306
+    action: Space Modernization for the 21st Century (FNPRM; paragraph 23 covers drones)
+    required: true
+    match_terms: ["space modernization for the 21st century", "sb docket no. 25-306", "sb docket 25-306"]
+    agenda_source: https://www.fcc.gov/ecfs/search/docket-detail/25-306

@@ -40,12 +40,12 @@ try {
         # 04:00 tracker task) and the market snapshot is refetched, so uncommitted changes to just
         # these files are discarded.
         # Anything else dirty still stops the run.
-        git checkout -- tracker/events.jsonl tracker/verifications.jsonl data/market.json 2>$null
+        git checkout -- tracker/events.jsonl tracker/verifications.jsonl tracker/oira.json tracker/discovered.yaml data/market.json data/published_groups.json 2>$null
         # A failed earlier run today leaves its collected feed behind (the collector rewrites both
         # files at the start of every run), which used to make every retry refuse to start.
         git checkout -- data/latest_raw_news.json 2>$null
         $todayRaw = "data/raw_archive/" + (Get-Date).ToString("yyyy-MM-dd", [Globalization.CultureInfo]::InvariantCulture) + ".json"
-        $dirty = @(git status --porcelain | Where-Object { $_ -ne "?? $todayRaw" })
+        $dirty = @(git status --porcelain | Where-Object { $_ -ne "?? $todayRaw" -and $_ -notmatch "^\?\? (qa/|tracker/discovered\.yaml)" })
         if ($dirty) { throw "Refusing production run because the repository is not clean: $($dirty -join '; ')" }
         git pull --ff-only origin main
         if ($LASTEXITCODE -ne 0) { throw "git pull --ff-only failed." }
@@ -81,7 +81,8 @@ try {
     & $python public_site.py --output _site
     if ($LASTEXITCODE -ne 0) { throw "Static site build failed." }
 
-    git add -- data/latest_raw_news.json data/raw_archive data/latest_briefing.json data/archive tracker/events.jsonl tracker/verifications.jsonl
+    git add -- data/latest_raw_news.json data/raw_archive data/latest_briefing.json data/archive tracker/events.jsonl tracker/verifications.jsonl tracker/oira.json qa data/published_groups.json
+    if (Test-Path tracker/discovered.yaml) { git add -- tracker/discovered.yaml }
     if (Test-Path data/market.json) { git add -- data/market.json }
     if ($LASTEXITCODE -ne 0) { throw "git add failed." }
     git diff --cached --quiet

@@ -7,7 +7,7 @@ import binascii
 import json
 import os
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -33,6 +33,12 @@ from publication import briefing_date, briefing_payload
 from summary_chain import check_verifier, verifier_from_env
 from tracker.core import refresh as refresh_tracker
 from url_resolver import resolve_articles
+from article_extract import enrich_candidates
+from grounding import make_entailment_check, make_writer
+from qa_report import QAReport
+from quality_pass import QualityContext
+from story_groups import build_store, write_store
+from editorial_checks import scope_fits, style_text, strip_exclamations
 from validation_gates import (
     check_url_status,
     drop_non_articles,
@@ -133,7 +139,7 @@ def normalize_reader_features(briefing: dict[str, Any]) -> dict[str, Any]:
                         and inferred == "Autonomous Vehicles"
                     )
                 )
-                if should_move:
+                if should_move and scope_fits(item, inferred):
                     target = inferred
                     item["section"] = inferred
             moved[target].append(item)
@@ -172,6 +178,8 @@ def build_briefing(
     supplemental_text: str = "",
     fetch_metadata: bool = True,
     provider: AIProvider | None = None,
+    as_of: date | None = None,
+    verifier: AIProvider | None = None,
 ) -> dict[str, Any]:
     selected = provider or (
         OpenAIProvider(api_key=api_key, model=model)
@@ -197,11 +205,28 @@ def build_briefing(
     raw_feed["articles"], dropped = drop_non_articles(raw_feed["articles"])
     link_stats["non_article_dropped"] = len(dropped)
 
+    # Read each candidate's own page: real publication date, clean headline, article-ness, body text.
+    qa = QAReport((as_of or end.date()).isoformat())
+    qa.extend([{"stage": "non-article-url", "title": d["title"], "url": d["url"], "reason": "listing, social, quote, topic or roundup page"}
+               for d in dropped])
+    raw_feed["articles"], rejected = enrich_candidates(
+        raw_feed["articles"], now=end, fetched_dir=root / ".runtime" / "fetched" / end.date().isoformat(),
+        translate=make_translator(selected),
+    )
+    qa.extend(rejected)
+    qa.note("candidates_after_article_check", len(raw_feed["articles"]))
+
     supplemental_records = extract_supplemental_items(
         supplemental_text,
         fetch_metadata=fetch_metadata,
     ) if supplemental_text.strip() else []
     previous = load_published_history(root / "data" / "archive", end.date())
+    verifier = verifier or verifier_from_env()
+    day = as_of or end.date()
+    quality = QualityContext(
+        report=qa, today=day, store=build_store(root / "data" / "archive", day),
+        write=make_writer(selected), entail=make_entailment_check(verifier),
+    )
     briefing = generate_briefing_from_records(
         raw_feed,
         supplemental_records,
@@ -209,9 +234,37 @@ def build_briefing(
         selected.model,
         previous_coverage=previous,
         provider=selected,
+        quality=quality,
     )
     briefing["link_resolution"] = link_stats
+    briefing["qa_report"] = qa.to_dict()
+    briefing["quality_summary"] = qa.summary()
     return normalize_reader_features(briefing)
+
+
+def make_translator(provider: AIProvider):
+    """translate(headline) -> English headline, using the local writer model."""
+    schema = {"type": "object", "properties": {"headline": {"type": "string"}}, "required": ["headline"]}
+
+    def translate(headline: str) -> str:
+        result = provider.generate_structured(
+            [{"role": "system", "content": "Translate this news headline into clean, natural English. Keep names, numbers and places exactly. Return only the headline."},
+             {"role": "user", "content": headline}],
+            schema_name="headline_translation", schema=schema, max_output_tokens=120,
+        )
+        return str(result.value.get("headline", ""))
+
+    return translate
+
+
+def apply_house_style(briefing: dict[str, Any]) -> dict[str, Any]:
+    """Money as '$43.6 million', executive orders by official title, no exclamation points in tags."""
+    briefing["executive_summary"] = style_text(str(briefing.get("executive_summary", "")))
+    for items in briefing.get("sections", {}).values():
+        for story in items:
+            story["summary"] = style_text(str(story.get("summary", "")))
+            story["innovative_uas_use"] = strip_exclamations(str(story.get("innovative_uas_use", "")))
+    return briefing
 
 
 def validate_complete_briefing(
@@ -339,6 +392,7 @@ def main() -> None:
     parser.add_argument("--skip-metadata-fetch", action="store_true")
     parser.add_argument("--health-check", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--as-of", type=date.fromisoformat, help="Treat this date as the edition date (replays and backfills).")
     parser.add_argument(
         "--fresh",
         action="store_true",
@@ -396,7 +450,7 @@ def main() -> None:
     # Refresh the official-source ledger first; a source outage is recorded and the
     # tracker gate reports any verification that is stale or missing.
     tracker_refresh = refresh_tracker()
-    today = datetime.now(EASTERN).date()
+    today = args.as_of or datetime.now(EASTERN).date()
     draft_path = root / ".runtime" / f"draft-{today.isoformat()}.json"
     briefing = None
     if not (args.fresh or args.dry_run or args.raw_file) and draft_path.exists():
@@ -416,6 +470,7 @@ def main() -> None:
             supplemental_text=supplemental_text,
             fetch_metadata=not args.skip_metadata_fetch,
             provider=provider,
+            as_of=today,
         )
         if not args.dry_run and not args.raw_file:
             draft_path.parent.mkdir(exist_ok=True)
@@ -433,6 +488,8 @@ def main() -> None:
         [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
     )
     briefing = repair_briefing(briefing, today=today, check_links=not args.skip_link_check)
+    # Final style pass on reader-facing prose (money, executive-order titles), then the QA report.
+    briefing = apply_house_style(briefing)
     briefing = validate_complete_briefing(
         briefing,
         today=today,
@@ -445,8 +502,17 @@ def main() -> None:
         )
     latest_path: Path | None = None
     archive_path: Path | None = None
+    qa_data = briefing.pop("qa_report", None)
+    if qa_data:
+        for item in briefing.get("pruned_items", []):
+            qa_data["events"].append({"stage": "link-gate", "title": item.get("title", ""), "url": item.get("url", ""),
+                                      "reason": item.get("reason", "")})
+        qa_dir = (root / ".runtime" / "dryrun-qa") if args.dry_run else root
+        qa_dir.mkdir(parents=True, exist_ok=True)
+        QAReport.from_dict(qa_data).write(qa_dir)
     if not args.dry_run:
         latest_path, archive_path = save_briefing(root, briefing)
+        write_store(root, build_store(root / "data" / "archive", today + timedelta(days=1)), today)
         draft_path.unlink(missing_ok=True)
     story_count = sum(
         len(items) for items in briefing["sections"].values()

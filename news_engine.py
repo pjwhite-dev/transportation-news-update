@@ -1735,6 +1735,7 @@ def prompt_messages(
             "editor_title_override": item.get("editor_title_override", ""),
             "summary": item.get("summary", ""),
             "description": item.get("description", ""),
+            "article_lead": str(item.get("page_text", ""))[:500],
             "pasted_headline": item.get("pasted_headline", ""),
             "pasted_context": item.get("pasted_context", ""),
             "source": item.get("source", ""),
@@ -2391,6 +2392,10 @@ def cluster_to_story(
         ),
         "win_explanation": cluster["win_explanation"],
         "also_covered": related,
+        "origin": primary.get("origin", ""),
+        "page_text": primary.get("page_text", ""),
+        "page_original_publisher": primary.get("page_original_publisher", ""),
+        "date_source": primary.get("date_source", ""),
         "contains_supplemental": any(
             lookup[article_id].get("required_include", False)
             for article_id in cluster["article_ids"]
@@ -2648,6 +2653,7 @@ def generate_briefing_from_records(
     model: str = DEFAULT_OPENAI_MODEL,
     previous_coverage: list[dict[str, Any]] | None = None,
     provider: AIProvider | None = None,
+    quality: Any = None,
 ) -> dict[str, Any]:
     start = datetime.fromisoformat(raw_feed["window_start"]).astimezone(EASTERN)
     end = datetime.fromisoformat(raw_feed["window_end"]).astimezone(EASTERN)
@@ -2686,6 +2692,10 @@ def generate_briefing_from_records(
         if cluster["relevant"] and cluster["primary_article_id"] in lookup
     ]
     arranged = arrange_sections(stories)
+    if quality is not None:
+        from quality_pass import quality_pass
+
+        arranged = quality_pass(arranged, quality)
 
     included_counts = {
         section: len(items)

@@ -1,0 +1,164 @@
+# Editorial rules that are data, not code. Every value here is read by a deterministic check;
+# no model is asked to follow these. Change a number or a term here, not in the pipeline.
+
+freshness:
+  normal_hours: 48            # an item older than this before edition time is dropped
+  extended_hours: 72          # weekends and the day after a federal holiday
+  min_body_words: 150         # an article page needs about this much body text
+  fetch_timeout_seconds: 15
+  max_workers: 8
+  # Official records are dated by the record itself, not by a page scrape.
+  official_hosts: [federalregister.gov, congress.gov, regulations.gov, govinfo.gov]
+
+# Hosts that are never stories: shops, stock-quote aggregators, content farms, social and wiki pages.
+deny_hosts:
+  - basenor.com
+  - greenstocknews.com
+  - stocktitan.net
+  - marketbeat.com
+  - tipranks.com
+  - investing.com
+  - stockanalysis.com
+  - benzinga.com/quote
+  - seekingalpha.com/symbol
+  - finviz.com
+  - barchart.com
+  - zacks.com/stock
+  - quote.cnbc.com
+  - finance.yahoo.com/quote
+
+# URL paths that mark a hub, live blog, listing, author, tag, topic, quote or search page.
+non_article_path_patterns:
+  - '/(?:hub|hubs|live|live-blog|liveblog|live-updates|section|sections|category|categories|tag|tags|topic|topics|author|authors|people|profile|contributors?|search|quote|quotes|stock|stocks|symbol|ticker|archive|archives|page)(?:/|$)'
+  - '/(?:news|sitemap)/?$'
+
+# Titles that name a quote page, a roundup or a live feed.
+bad_headline_patterns:
+  - 'stock quote'
+  - 'news and stock'
+  - '\bbreaking news\b'
+  - 'live updates?\b'
+  - '\bnews and\b'
+  - '\.(?:html?|php|aspx?|pdf|cfm)\b'
+  - '(?:^|[\s_-])\d{6,}(?:$|[\s_.-])'
+  - '(?:\.\.\.|…)\s*$'
+
+# Words a headline cannot end on; it was cut off mid-phrase.
+cut_off_last_words: ["and", "or", "the", "of", "to", "for", "with", "in", "on", "at", "by", "from", "a", "an", "as", "that", "which", "eV", "e"]
+
+# Clean English names for sources. Keys are host names (no www) or lower-case raw labels.
+source_names:
+  aapnews.aap.com.au: AAP
+  aap.com.au: AAP
+  chosun.com: Chosun Ilbo
+  english.chosun.com: Chosun Ilbo
+  asiae.co.kr: Asia Business Daily
+  asiabusinessdaily.com: Asia Business Daily
+  europesays.com: EuropeSays
+  railwaygazette.com: Railway Gazette International
+  ainonline.com: AIN
+  apnews.com: AP
+  reuters.com: Reuters
+  defensenews.com: Defense News
+  breakingdefense.com: Breaking Defense
+  dronelife.com: DroneLife
+  dronedj.com: DroneDJ
+  thedrive.com: The Drive
+  military.com: Military.com
+  federalregister.gov: Federal Register
+  congress.gov: Congress.gov
+  nytimes.com: The New York Times
+  wsj.com: The Wall Street Journal
+  bloomberg.com: Bloomberg
+  cnbc.com: CNBC
+  uasvision.com: UAS Vision
+  thestar.com: Toronto Star
+  dailystar.co.uk: Daily Star
+
+# Syndication copies: the original publisher is used when the page names it.
+syndication_hosts: [aol.com, aol.co.uk, msn.com, yahoo.com, uk.news.yahoo.com, futunn.com, news.futunn.com, newsbreak.com, flipboard.com, smartnews.com]
+
+# Tier 1 = government primary record, 2 = trade and wire press, 3 = general news. Used to choose
+# the primary link of a group and nothing else; denial is the deny_hosts list above.
+source_tiers:
+  tier1_suffixes: [.gov, .mil]
+  tier1_hosts: [federalregister.gov, reginfo.gov, regulations.gov, congress.gov]
+  tier2_hosts: [apnews.com, reuters.com, aap.com.au, aapnews.aap.com.au, ainonline.com, aviationweek.com, flightglobal.com, defensenews.com, breakingdefense.com, dronelife.com, dronedj.com, railwaygazette.com, trains.com, utilitydive.com, bloomberg.com, wsj.com, nytimes.com, cnbc.com, thedrive.com, techcrunch.com, theverge.com, electrek.co]
+
+# Phrases that add no fact. A summary sentence containing one is removed unless the source says it too.
+filler_phrases:
+  - 'this development is part of the broader trend'
+  - 'part of (?:a|the) broader (?:trend|push|effort|movement)'
+  - 'marking a significant step'
+  - 'marks a significant (?:step|milestone|moment)'
+  - '\bhighlighting\b'
+  - 'highlights (?:the|a) (?:growing|importance|need|potential)'
+  - 'significant milestone'
+  - 'this move suggests'
+  - 'the incident has prompted an investigation'
+  - 'underscor(?:es|ing) the (?:growing|importance|need)'
+  - 'signals? a (?:shift|new era|growing)'
+  - 'as the industry continues to'
+  - 'remains to be seen'
+
+# Verbs of obligation: the summary may use one only if the source does.
+modal_terms: [requires, require, required, requiring, mandates, mandate, mandated, mandating, must, obligates, compels, orders, bans, prohibits, forbids]
+# Softeners: when the source uses one of these, the summary must not harden the claim.
+soft_terms: [optional, "if equipped", allows, allow, permits, permit, may, could, would allow, proposes, proposed, seeks to]
+# Descriptors a summary may not add on its own.
+descriptor_terms: [champion, ceo, chief executive, founder, first, record, largest, biggest, fastest, only, former, world-first, leading, longest, highest, lowest, youngest, oldest, winningest]
+
+# A section's scope test: an item must match `require_any` (and none of `exclude_any`) to stay in it.
+# `definition` is the plain-English rule the test enforces. Items that fail every scope are dropped.
+# Order is the tie-break when several scopes match.
+sections:
+  Federal Register:
+    definition: A Federal Register document on a portfolio topic.
+    origin: Federal Register API
+    require_any: ['federal register', 'notice of proposed rulemaking', 'final rule', 'proposed rule', 'rulemaking', 'advisory circular', 'docket']
+  Counter-UAS / Airspace Security:
+    definition: Detecting, tracking, defeating or regulating hostile or unauthorized drones.
+    require_any: ['counter-?uas', 'c-?uas', 'counter-?drone', 'anti-?drone', 'drone (?:defen[cs]e|detection|incursion|sightings?|mitigation)', 'drone wall', 'airspace security', 'jamm(?:er|ing)', 'interceptors?', 'directed.energy']
+  Military UAS:
+    definition: Uncrewed systems, drone warfare or counter-UAS in a military setting.
+    require_any: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'c-?uas', 'loitering munition', 'collaborative combat aircraft', '\bcca\b', 'autonomous (?:weapon|system|aircraft)', 'swarm']
+  International Security:
+    definition: Foreign security events or policy that turn on drones, counter-UAS or other uncrewed systems.
+    require_any: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'c-?uas', 'air defen[cs]e', 'loitering munition', 'autonomous (?:weapon|system)']
+  UAS / Drones:
+    definition: Civil, commercial or regulatory news about uncrewed aircraft.
+    require_any: ['drones?\b', '\buas\b', '\bsuas\b', '\buav\b', 'uncrewed aircraft', 'unmanned aircraft', 'uncrewed aerial', 'unmanned aerial', '\bbvlos\b', 'remote id', 'part 10[78]\b', 'drone as first responder', '\bdfr\b']
+  UTM / Airspace Integration:
+    definition: Traffic management and integration of uncrewed or advanced aircraft into the airspace.
+    require_any: ['\butm\b', 'uas traffic management', 'unmanned traffic management', 'airspace integration', 'detect and avoid', 'strategic deconfliction', 'digital flight rules', 'u-?space', 'laanc', 'uss provider', 'remote id']
+  AAM / eVTOL / Advanced Aviation:
+    definition: Electric and powered-lift aircraft, air taxis, vertiports and advanced air mobility.
+    require_any: ['evtol', 'e-?vtol', 'air taxi', 'air taxis', 'advanced air mobility', '\baam\b', 'powered.lift', 'vertiport', 'urban air mobility', 'electric (?:aircraft|airplane)', 'eipp', 'joby', 'archer aviation', 'beta technologies', 'wisk', 'eve air mobility', 'vertical aerospace', 'lilium', 'eh?ang']
+  Autonomous Vehicles:
+    definition: Self-driving cars, trucks and shuttles, and the rules that govern them.
+    require_any: ['autonomous (?:vehicle|truck|car|driving|shuttle|bus)', 'self-driving', 'driverless', 'robotaxi', 'robo-?taxi', 'cybercab', 'automated driving', '\bads\b', '\bavs?\b', 'waymo', 'zoox', 'aurora innovation', 'kodiak', 'motional', 'nuro', 'fmvss', 'full self-driving', '\bfsd\b']
+  Robotics:
+    definition: Robots and embodied AI used in transportation, logistics or infrastructure.
+    require_any: ['robot', 'robotics', 'humanoid', 'embodied ai', 'warehouse automation']
+  Civil Supersonics / High-Speed Aviation:
+    definition: Civil supersonic and high-speed flight.
+    require_any: ['supersonic', 'x-59', 'overture', 'hermeus', 'sonic boom', 'hypersonic', 'mach \d']
+  Advanced Rail / High-Speed Rail:
+    definition: Rail, including high-speed, passenger and freight rail policy, funding, and technology.
+    require_any: ['\brail\b', 'railway', 'railroad', 'high-speed rail', '\btrains?\b', 'locomotive', 'amtrak', 'maglev', 'crisi', 'brightline', 'chsr', 'light rail', 'commuter rail', 'metro line']
+  UxS / Maritime / Ground Robotics:
+    definition: Uncrewed surface, underwater and ground vehicles.
+    require_any: ['uncrewed surface', 'unmanned surface', '\busv\b', '\buuv\b', 'autonomous (?:ship|vessel|boat)', 'maritime autonomy', 'ground robot', '\bugv\b', 'unmanned ground', 'uncrewed ground', 'underwater (?:drone|vehicle)']
+  Surface Transportation Reauthorization:
+    definition: Federal surface transportation reauthorization legislation.
+    require_any: ['reauthoriz', 'surface transportation (?:bill|act|program|legislation)', 'highway bill', 'infrastructure investment and jobs act', '\biija\b']
+  Federal Policy & Implementation:
+    definition: Federal policy, legislation or agency action on drones, advanced aviation, automated vehicles, rail or space transport.
+    require_any: ['\bfaa\b', '\bdot\b', 'nhtsa', 'fmcsa', '\btsa\b', '\bfra\b', '\bfta\b', '\bdhs\b', 'white house', 'congress', 'senate', 'house of representatives', 'executive order', 'federal', 'secretary duffy', 'department of transportation']
+  Other Advanced Transportation:
+    definition: Space transport, hyperloop and other advanced transport with a technology angle not covered above.
+    require_any: ['space (?:launch|transport|travel)', 'spaceport', 'launch (?:license|site|vehicle)', 'hyperloop', 'reentry', 'starship', 'commercial space']
+
+# Applies to every section: no general war, crime or celebrity coverage without a portfolio angle.
+portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'evtol', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev']
+off_topic_patterns: ['\bcelebrit', '\bactor\b', '\bactress\b', '\bsinger\b', '\brapper\b', '\binfluencer\b', 'kardashian', 'red carpet', 'riding in a', 'takes a ride']
