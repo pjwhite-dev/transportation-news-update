@@ -26,6 +26,38 @@ class ClassifyTests(unittest.TestCase):
         self.assertEqual(doctor.classify("nothing recognisable")[0], "unknown")
 
 
+class CiLinkRuleTests(unittest.TestCase):
+    """2026-10-28: GitHub's re-check could not reach finance.biggo.com, so Pages never deployed the edition."""
+
+    def test_unreachable_hosts_are_read_from_the_ci_annotations(self) -> None:
+        from unittest import mock
+
+        def fake_get(url, params=None, timeout=0):
+            body = {
+                f"{doctor.CI_API}/actions/runs": {"workflow_runs": [{"id": 7, "name": "Publish Transportation News Website", "conclusion": "failure"}]},
+                f"{doctor.CI_API}/actions/runs/7/jobs": {"jobs": [{"id": 9}]},
+                f"{doctor.CI_API}/check-runs/9/annotations": [
+                    {"message": "- links: Robotics[4] returned HTTP None: https://finance.biggo.com/news/d680"},
+                    {"message": "- links: Robotics[2] returned HTTP 503: https://www.example.org/a"},
+                    {"message": "- links: Robotics[1] returned HTTP 404: https://dead.example.net/gone"},
+                ],
+            }[url]
+            return mock.Mock(json=lambda: body)
+
+        with mock.patch.object(doctor.requests, "get", fake_get):
+            self.assertEqual(doctor.ci_unreachable_hosts("abc"), ["finance.biggo.com", "example.org"])
+
+    def test_hosts_are_added_to_the_deny_list_once(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        (root / "config").mkdir()
+        (root / "config" / "editorial.yaml").write_text("\n".join(["deny_hosts:", "  - basenor.com", "other: 1", ""]), encoding="utf-8")
+        self.assertEqual(doctor.deny_hosts_in_config(root, ["finance.biggo.com", "basenor.com"]), ["finance.biggo.com"])
+        text = (root / "config" / "editorial.yaml").read_text(encoding="utf-8")
+        self.assertIn("  - finance.biggo.com" + chr(10), text)
+        self.assertEqual(text.count("basenor.com"), 1)
+        self.assertEqual(doctor.deny_hosts_in_config(root, ["finance.biggo.com"]), [])
+
+
 class EditTests(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(tempfile.mkdtemp())

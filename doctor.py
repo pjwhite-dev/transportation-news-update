@@ -311,6 +311,61 @@ def rerun_edition(repo: Path) -> str:
     return "The rerun finished." if result.returncode == 0 else "The rerun failed again; the next log will be diagnosed."
 
 
+CI_API = "https://api.github.com/repos/pjwhite-dev/transportation-news-update"
+CI_UNREACHABLE = re.compile(r"links: \S+ returned HTTP (?:None|5\d\d): (https?://\S+)")
+
+
+def ci_unreachable_hosts(sha: str) -> list[str]:
+    """Hosts the GitHub re-check could not reach for this commit (public API; the workflow echoes gate failures
+    as annotations). 2026-10-28: finance.biggo.com refuses GitHub's network, so the site never deployed."""
+    hosts: list[str] = []
+    try:
+        runs = requests.get(f"{CI_API}/actions/runs", params={"head_sha": sha, "per_page": 5}, timeout=20).json()
+        for item in runs.get("workflow_runs", []):
+            if not str(item.get("name", "")).startswith("Publish Transportation News Website") or item.get("conclusion") != "failure":
+                continue
+            jobs = requests.get(f"{CI_API}/actions/runs/{item['id']}/jobs", timeout=20).json().get("jobs", [])
+            for job in jobs:
+                notes = requests.get(f"{CI_API}/check-runs/{job['id']}/annotations", timeout=20).json()
+                for note in notes if isinstance(notes, list) else []:
+                    for url in CI_UNREACHABLE.findall(str(note.get("message", ""))):
+                        host = (re.match(r"https?://([^/]+)", url).group(1) or "").lower().removeprefix("www.")
+                        if host and host not in hosts:
+                            hosts.append(host)
+    except (requests.RequestException, ValueError, KeyError):
+        return []
+    return hosts
+
+
+def deny_hosts_in_config(repo: Path, hosts: list[str]) -> list[str]:
+    """Add hosts to deny_hosts in config/editorial.yaml (retail and quote sites are denied by the editorial rules)."""
+    path = repo / "config" / "editorial.yaml"
+    text = path.read_text(encoding="utf-8")
+    added = [h for h in hosts if re.search(rf"^\s*-\s*{re.escape(h)}\s*$", text, re.M) is None]
+    if added and "deny_hosts:\n" in text:
+        text = text.replace("deny_hosts:\n", "deny_hosts:\n" + "".join(f"  - {h}\n" for h in added), 1)
+        path.write_text(text, encoding="utf-8")
+        return added
+    return []
+
+
+def deny_unreachable_hosts_and_rerun(repo: Path, day: str) -> str:
+    """Recovery rule for a CI link failure: deny the host, commit and push the config, rebuild the edition."""
+    sha = run(["git", "rev-parse", "HEAD"], repo).stdout.strip()
+    hosts = ci_unreachable_hosts(sha)
+    if not hosts:
+        return ""
+    if not claim_rerun(repo, day):
+        return f"CI could not reach {', '.join(hosts)}, but today's automatic rerun was already used."
+    added = deny_hosts_in_config(repo, hosts)
+    if added:
+        run(["git", "add", "--", "config/editorial.yaml"], repo)
+        run(["git", "commit", "-m", f"Deny hosts that refuse GitHub's network: {', '.join(added)}\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"], repo)
+        if run(["git", "push", "origin", "HEAD:main"], repo).returncode != 0:
+            return f"Denied {', '.join(added)} locally but the push failed."
+    return f"CI could not reach {', '.join(hosts)}; denied {', '.join(added) or 'nothing new'} and rebuilt the edition. {rerun_edition(repo)}"
+
+
 def incident_count(repo: Path, key: str) -> int:
     ledger = repo / ".runtime" / "incidents.jsonl"
     if not ledger.exists():
@@ -383,6 +438,8 @@ def main() -> int:
         message += f" {recovery}"
         if cause in RERUN_CAUSES and not args.dry_run and claim_rerun(repo, day):
             message += f" Rerunning the edition now. {rerun_edition(repo)}"
+        if cause == "deploy_unverified" and not args.dry_run:
+            message += " " + deny_unreachable_hosts_and_rerun(repo, day)
     elif log_text and cause in ("gate_failure", "code_error", "script_error", "unknown"):
         from ai_providers import provider_from_env
 
