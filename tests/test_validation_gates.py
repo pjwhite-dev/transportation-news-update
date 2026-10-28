@@ -168,6 +168,17 @@ class TrackerTests(unittest.TestCase):
         self.assertIn("tracker", failed_checks(report))
         self.assertTrue(any("2126-AC17" in line for line in gates.failing_checks(report)))
 
+    def test_docket_requirement_applies_only_from_its_start_date(self) -> None:
+        """CI re-validates the already-published edition on every push; a rule added later must not fail it."""
+        briefing = good_briefing()
+        briefing["regulatory_tracker"] = [i for i in briefing["regulatory_tracker"] if i.get("rin") != "fcc-space-modernization"]
+        briefing["generated_at"] = "2026-10-27T07:21:00-04:00"
+        report = gates.run_gates(briefing, now=NOW)
+        self.assertFalse(any("FCC-SPACE-MODERNIZATION" in line for line in gates.failing_checks(report)))
+        briefing["generated_at"] = "2026-10-28T07:21:00-04:00"
+        report = gates.run_gates(briefing, now=NOW)
+        self.assertTrue(any("FCC-SPACE-MODERNIZATION" in line for line in gates.failing_checks(report)))
+
     def test_non_official_link_stale_verification_and_unsupported_final_fail(self) -> None:
         briefing = good_briefing()
         briefing["regulatory_tracker"][0]["source_url"] = "https://blog.example.com/rule"

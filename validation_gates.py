@@ -54,6 +54,9 @@ REQUIRED_RINS = (
 
 # Proceedings tracked by docket rather than RIN; they must be in every edition too.
 REQUIRED_KEYS = ("fcc-space-modernization",)
+# A requirement added later applies to editions dated on or after its start; the CI re-check of an older,
+# already-published edition must not fail on a rule that did not exist when it was built (2026-10-28).
+REQUIRED_KEYS_SINCE = {"fcc-space-modernization": "2026-10-28"}
 
 STATUS_CLASSES = (
     "completed operation",
@@ -607,7 +610,9 @@ def gate_tracker(
     if not isinstance(tracker, list):
         return GateResult("tracker", False, ["The regulatory tracker is missing."])
     by_rin = {str(item.get("rin") or item.get("key") or "").upper(): item for item in tracker if isinstance(item, dict)}
-    for rin in (*REQUIRED_RINS, *(k.upper() for k in REQUIRED_KEYS)):
+    edition_day = str(briefing.get("generated_at", ""))[:10]
+    keys = [k for k in REQUIRED_KEYS if not (edition_day and edition_day < REQUIRED_KEYS_SINCE.get(k, ""))]
+    for rin in (*REQUIRED_RINS, *(k.upper() for k in keys)):
         item = by_rin.get(rin)
         if item is None:
             evidence.append(f"Required rulemaking {rin} is missing.")
