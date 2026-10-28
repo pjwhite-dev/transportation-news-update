@@ -71,3 +71,11 @@ Branch `feat/editorial-quality`. New modules: `article_extract.py` (dates, headl
 Pipeline map: `docs/pipeline-map.md`. 48 new regression tests in `tests/test_editorial_quality.py` (fixtures in
 `tests/fixtures/editorial/`; `*_reconstructed.html` files could not be fetched because congress.gov and AP return 403).
 Live yield check on the Oct 27 raw feed: 285 resolved candidates, 120 passed the article check.
+
+## 2026-10-27 (night): replays of the 2026-10-25 to 10-27 editions
+Dry-run replays (`--dry-run --raw-file data/raw_archive/<day>.json --as-of <day>`) of the three editions through the new pipeline; before/after in `docs/replay-diff.md`, QA reports in `docs/replay-qa/`. Each replay takes about 40 minutes, the same as the current production edition.
+- First replays: Oct 27 passed (32 stories), Oct 26 passed (23), Oct 25 was refused at 5 stories (minimum 12).
+- Replay-driven fixes: repeat matching used the loose headline test and dropped two different stories (Archer, Siemens/CHSR); now strict. A "Published:" line that appears only in the page title now dates the article. A NASA flight-test photo story led the Oct 27 summary; a government source is now a policy action only when the text is about a rule, proposal, grant or order. "cuas" and "A250" were missing from the scope terms. A refused edition now still writes its QA report (`.runtime/failed-qa/`). Non-Latin and mis-cased publication names are mapped to English names (`name_fixes`, `source_names` in `config/editorial.yaml`).
+- Final replays: Oct 25 29 stories, Oct 27 30, Oct 26 see `docs/replay-diff.md`. The cyan-lights story is a full item on Oct 25 only.
+- Full test suite: the same 43 failures as main (identical test ids), no new ones.
+Not verified: the unattended 04:30 run with the new checks; the next 04:15 GitHub raw-collection run (the raw-feed fix).

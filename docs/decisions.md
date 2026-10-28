@@ -52,3 +52,8 @@ Owner asked for minimal input. A doctor branch now merges itself, pushes and rer
 - **Old status wording removed**: "Comment period closed; pending final rule" and "Open for comment" asserted things the record did not say (the FMCSA ADS error). Tests that pinned the old wording were rewritten to the new rule.
 - **Market label** comes from the quotes' own timestamps and the NYSE holiday calendar.
 - **No gate was weakened.** The docket gate now also requires the FCC docket.
+
+## 2026-10-27: thin weekend editions are not rescued by loosening a rule
+A first replay of Sunday Oct 25 was refused by the 12-story minimum (5 stories) because the raw feed had no official-source items and the strict date rule drops pages without a verifiable date. I did not lower the minimum or accept feed dates. The replay did expose two real bugs (scope terms, loose repeat matching), which were fixed, and the final replay passed. If a real weekend edition is refused, the previous edition stays live and the QA report in `.runtime/failed-qa/` lists every drop; a recurring pattern gets a deterministic recovery rule.
+## 2026-10-27: repeat drops use the strict headline test
+`story_groups.previous_match` ignores section (a story can be re-sectioned) but uses the strict thresholds of `coverage_history.same_covered_event`; the looser "same-day named event" test is fine for hinting the model but wrongly dropped different stories from the same company or region.
