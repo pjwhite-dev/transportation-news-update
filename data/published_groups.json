@@ -1,924 +1,8 @@
 {
- "as_of": "2026-10-27",
+ "as_of": "2026-10-28",
  "window_days": 7,
  "groups": [
   {
-   "edition": "2026-10-21",
-   "title": "FAA Proposes $351,000 Fine Against Creamer Pilot Services for Alleged Unauthorized Passenger-Carrying Operations",
-   "section": "Federal Policy & Implementation",
-   "url": "https://www.faa.gov/newsroom/faa-proposes-351000-fine-against-creamer-pilot-services-alleged-unauthorized-passenger",
-   "urls": [
-    "https://www.faa.gov/newsroom/faa-proposes-351000-fine-against-creamer-pilot-services-alleged-unauthorized-passenger"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "000",
-    "351",
-    "against",
-    "alleged",
-    "carrying",
-    "creamer",
-    "faa",
-    "fine",
-    "operations",
-    "passenger",
-    "pilot",
-    "proposes",
-    "services",
-    "unauthorized"
-   ],
-   "numbers": [
-    "$351",
-    "000"
-   ],
-   "summary": "The Federal Aviation Administration proposes a $351,000 civil penalty against Creamer Pilot Services for allegedly conducting unauthorized passenger-carrying operations.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA Restricts Border Drones to Counter Cartel Threats",
-   "section": "Federal Policy & Implementation",
-   "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPc1pjSzN4X2UteGJjMkRFdFFrYk13MHl5c1BGVmRma0NkZjJZc0tUZTVNaFdpMDg5TEx5QjdFTW03LUJnZHNmdFctX3BvNTJNcXZFYVgtZzdtcHdmOGFhWjc2X2NPbjI4c0dGMVNfNG5jQjNwMDdCRGpzbWVha05DQkJGSF92ZlJXNUV4c1o2SldrWlpHNUFpSmEwRks4MjNvUm5PVnpGS1JIeFlxM2g0MzJMU1RWTHpv?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPc1pjSzN4X2UteGJjMkRFdFFrYk13MHl5c1BGVmRma0NkZjJZc0tUZTVNaFdpMDg5TEx5QjdFTW03LUJnZHNmdFctX3BvNTJNcXZFYVgtZzdtcHdmOGFhWjc2X2NPbjI4c0dGMVNfNG5jQjNwMDdCRGpzbWVha05DQkJGSF92ZlJXNUV4c1o2SldrWlpHNUFpSmEwRks4MjNvUm5PVnpGS1JIeFlxM2g0MzJMU1RWTHpv?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "border",
-    "cartel",
-    "counter",
-    "drones",
-    "faa",
-    "restricts",
-    "threats"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA Restricts Border Drones to Counter Cartel Threats.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA Imposes Drone Ban Along US\u2011Mexico Border Amid Cartel Threats",
-   "section": "Federal Policy & Implementation",
-   "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE0yT2J0U1AwMVB3Z3JUcDN3WmE0ZXBCQmFaNHMwNlpSVExrQjg4MmsteTg1dC10c0xKXzh1a1RXdE5TRlkwcEhNZ2FZRGR6Q2JIWS1hOW01N0QzaFBDWmpUV1h3?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiYkFVX3lxTE0yT2J0U1AwMVB3Z3JUcDN3WmE0ZXBCQmFaNHMwNlpSVExrQjg4MmsteTg1dC10c0xKXzh1a1RXdE5TRlkwcEhNZ2FZRGR6Q2JIWS1hOW01N0QzaFBDWmpUV1h3?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "along",
-    "ban",
-    "border",
-    "cartel",
-    "drone",
-    "faa",
-    "imposes",
-    "mexico",
-    "threats"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA Imposes Drone Ban Along US\u2011Mexico Border Amid Cartel Threats.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA Locks Down Entire US-Mexico Border Airspace to Drones Through 2027",
-   "section": "Federal Policy & Implementation",
-   "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNdDg1dDI4Mm9ZVWhPUWc5RWxadlR5dFZHR0JENjU5QmVXRDBSVWJmTGxidzJqYXVheTQzeEJVLUtST0lVeHFtaDJkRVBrcVI5bExHRTg5M3FNSGF0REtOb0o5S3dERk42OUoxZWFqdFVaemkxclh2US1HaHVLblE2ZjBvenVkRHFKckJwZGNNQ2pySXd0TVUtbjh4akhPVUJiRlE?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiogFBVV95cUxNdDg1dDI4Mm9ZVWhPUWc5RWxadlR5dFZHR0JENjU5QmVXRDBSVWJmTGxidzJqYXVheTQzeEJVLUtST0lVeHFtaDJkRVBrcVI5bExHRTg5M3FNSGF0REtOb0o5S3dERk42OUoxZWFqdFVaemkxclh2US1HaHVLblE2ZjBvenVkRHFKckJwZGNNQ2pySXd0TVUtbjh4akhPVUJiRlE?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "2027",
-    "airspace",
-    "border",
-    "down",
-    "drones",
-    "entire",
-    "faa",
-    "locks",
-    "mexico",
-    "through"
-   ],
-   "numbers": [
-    "2027"
-   ],
-   "summary": "Source headline: FAA Locks Down Entire US-Mexico Border Airspace to Drones Through 2027.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Federal Aviation Administration Issues Certification for Boeing 737 MAX-10",
-   "section": "UAS / Drones",
-   "url": "https://www.faa.gov/newsroom/federal-aviation-administration-issues-certification-boeing-737-max-10",
-   "urls": [
-    "https://www.faa.gov/newsroom/federal-aviation-administration-issues-certification-boeing-737-max-10"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "737",
-    "administration",
-    "aviation",
-    "boeing",
-    "certification",
-    "federal",
-    "issues",
-    "max"
-   ],
-   "numbers": [
-    "10",
-    "737"
-   ],
-   "summary": "The FAA has issued the certification for Boeing\u2019s 737 MAX-10.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Trump\u2019s Transportation Department, Air Traffic Controller Union Announce 2.8% Pay Increase Deal",
-   "section": "UAS / Drones",
-   "url": "https://www.faa.gov/newsroom/trumps-transportation-department-air-traffic-controller-union-announce-28-pay-increase",
-   "urls": [
-    "https://www.faa.gov/newsroom/trumps-transportation-department-air-traffic-controller-union-announce-28-pay-increase"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "air",
-    "announce",
-    "controller",
-    "deal",
-    "department",
-    "increase",
-    "pay",
-    "traffic",
-    "transportation",
-    "trump",
-    "union"
-   ],
-   "numbers": [
-    "2.8"
-   ],
-   "summary": "The FAA and National Air Traffic Controllers Association have reached a deal to provide air traffic controllers with a 2.8% pay increase.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "The Drone Radio Show: FAA Part 2209, Protecting Critical Infrastructure with SkySafe's Melissa Swisher",
-   "section": "UAS / Drones",
-   "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOLXFGRXl0WmU4MlBtWkVndDdNVDU5Z21UeXQ4VWFqcnVkNWpPY0pUV21Rb0dZdG1BaFM5S1k0VGdRS1JYTy1tbHA4NHZJUDBYZ3hWdHJrRWdNb0JTdEVucFQ5bUVJcTBrWmN6Q2hERUVXQkg3UjNieGdXMzN4a3oyeDMzYkxiWms?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMihwFBVV95cUxOLXFGRXl0WmU4MlBtWkVndDdNVDU5Z21UeXQ4VWFqcnVkNWpPY0pUV21Rb0dZdG1BaFM5S1k0VGdRS1JYTy1tbHA4NHZJUDBYZ3hWdHJrRWdNb0JTdEVucFQ5bUVJcTBrWmN6Q2hERUVXQkg3UjNieGdXMzN4a3oyeDMzYkxiWms?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "2209",
-    "critical",
-    "drone",
-    "faa",
-    "infrastructure",
-    "melissa",
-    "part",
-    "protecting",
-    "radio",
-    "show",
-    "skysafe",
-    "swisher"
-   ],
-   "numbers": [
-    "2209"
-   ],
-   "summary": "Source headline: The Drone Radio Show: FAA Part 2209, Protecting Critical Infrastructure with SkySafe's Melissa Swisher.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Amazon Has Lobbied Washington on Drones for 52 Straight Quarters",
-   "section": "UAS / Drones",
-   "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOV2VBaEZwT21mQW81WHpUUzNqcjE2MmZINlIzMHlaUGxfZWQwcklTQW9BUTIyZGZ3eEhjbVJlc3Uwa1U4SkhWVnFMY2ZOdGtLNU9BWVNlWG14MXEweDBZSFN2RGZXOFB1N2Y5bTZVR2ZydjRCdEoyMy1jb3BLQkJDOC1WdkQtWEd0VlZv?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOV2VBaEZwT21mQW81WHpUUzNqcjE2MmZINlIzMHlaUGxfZWQwcklTQW9BUTIyZGZ3eEhjbVJlc3Uwa1U4SkhWVnFMY2ZOdGtLNU9BWVNlWG14MXEweDBZSFN2RGZXOFB1N2Y5bTZVR2ZydjRCdEoyMy1jb3BLQkJDOC1WdkQtWEd0VlZv?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "amazon",
-    "drones",
-    "lobbied",
-    "quarters",
-    "straight",
-    "washington"
-   ],
-   "numbers": [
-    "52"
-   ],
-   "summary": "Source headline: Amazon Has Lobbied Washington on Drones for 52 Straight Quarters.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Joint Interagency Task Force 401 Marks One Year of Accelerating Counter-UAS Capabilities",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://www.war.gov/News/News-Stories/Article/Article/4626931/joint-interagency-task-force-401-marks-one-year-of-accelerating-counter-uas-cap/",
-   "urls": [
-    "https://www.war.gov/News/News-Stories/Article/Article/4626931/joint-interagency-task-force-401-marks-one-year-of-accelerating-counter-uas-cap"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "401",
-    "accelerating",
-    "capabilities",
-    "counter",
-    "force",
-    "interagency",
-    "joint",
-    "marks",
-    "one",
-    "task",
-    "uas",
-    "year"
-   ],
-   "numbers": [
-    "401"
-   ],
-   "summary": "The War Department marked its first year since establishing Joint Interagency Task Force 401.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA bans unauthorized drones along US-Mexico border By Investing.com",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNaTRkbXdPSWpZWW8yY3pHcm1rNVhmOWlDU1gzMFVvMW9XXy1WaU41ekxZVUJQdFlqNHhtSVh6elg0NHNqeWtNekE3dFFGWHQ1Y0c5VnhZMVJnRW9ROFRZUkpITF83WWJuSDVjWjQ2NFdsMUY2QXM2M0FzUGFlTzNUWEhrSnJPT0dUNldZVzZjZlg3RWZfTWVkWVZ4amJvQ05DTkdIcmQzdlJQc1Y2b1U5UQ?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMisAFBVV95cUxNaTRkbXdPSWpZWW8yY3pHcm1rNVhmOWlDU1gzMFVvMW9XXy1WaU41ekxZVUJQdFlqNHhtSVh6elg0NHNqeWtNekE3dFFGWHQ1Y0c5VnhZMVJnRW9ROFRZUkpITF83WWJuSDVjWjQ2NFdsMUY2QXM2M0FzUGFlTzNUWEhrSnJPT0dUNldZVzZjZlg3RWZfTWVkWVZ4amJvQ05DTkdIcmQzdlJQc1Y2b1U5UQ?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "along",
-    "bans",
-    "border",
-    "com",
-    "drones",
-    "faa",
-    "investing",
-    "mexico",
-    "unauthorized"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA bans unauthorized drones along US-Mexico border By Investing.com.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA bars unauthorized drones along US-Mexico border, citing security concerns",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOYUk3MFJkMVBOQWlWUUZCa3I5STJaWV81bVJFNUc1WkpYODBYX0RUR2l3SzhjZVo2Q0pkbWhjWmxmS3NsdXhpVUVMU2xJS0hCYm9EbWlhZmJONE83aTZQalppTGJNTEROcmtmN2gyZmlUUnB6SDJjOF9Wc0xPSWxUam5UM0hjUWNRRkpCUy1FLTBUbVdxdmE0Q2VBNTF3NnFlVVBLeFJKNnNtcVk?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOYUk3MFJkMVBOQWlWUUZCa3I5STJaWV81bVJFNUc1WkpYODBYX0RUR2l3SzhjZVo2Q0pkbWhjWmxmS3NsdXhpVUVMU2xJS0hCYm9EbWlhZmJONE83aTZQalppTGJNTEROcmtmN2gyZmlUUnB6SDJjOF9Wc0xPSWxUam5UM0hjUWNRRkpCUy1FLTBUbVdxdmE0Q2VBNTF3NnFlVVBLeFJKNnNtcVk?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "along",
-    "bars",
-    "border",
-    "citing",
-    "concerns",
-    "drones",
-    "faa",
-    "mexico",
-    "security",
-    "unauthorized"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA bars unauthorized drones along US-Mexico border, citing security concerns.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Echodyne, ACS sign Strategic Collaboration Agreement to advance counter-UAS capabilities worldwide",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPZE5OZGI0QjVzVzlEQjhhWFZlOGxWUVhjQkZ0UFItZEh2dUNLUTRRY3lSaHl1Skp6RWpPS085VHRpYnVya1pBOENqV3hoTUNvQng1Ymx1aGw4ZTBRaEl1WG8tZldDTmlzdlVnalJYd3c4ZVhYM3BobnRJZ0tfQmJrY3lmTXVWYl9oQjRtajdsak5vRGJka1Y3Vm00ZHpQMG5HNXJYbnA5UHhLckVzMGxxXzd1ajcyYlJjRWctb18xNHlqRHRUSXk3MzB1WVFUdkpMbW1sWmF3?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPZE5OZGI0QjVzVzlEQjhhWFZlOGxWUVhjQkZ0UFItZEh2dUNLUTRRY3lSaHl1Skp6RWpPS085VHRpYnVya1pBOENqV3hoTUNvQng1Ymx1aGw4ZTBRaEl1WG8tZldDTmlzdlVnalJYd3c4ZVhYM3BobnRJZ0tfQmJrY3lmTXVWYl9oQjRtajdsak5vRGJka1Y3Vm00ZHpQMG5HNXJYbnA5UHhLckVzMGxxXzd1ajcyYlJjRWctb18xNHlqRHRUSXk3MzB1WVFUdkpMbW1sWmF3?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "acs",
-    "advance",
-    "agreement",
-    "capabilities",
-    "collaboration",
-    "counter",
-    "echodyne",
-    "sign",
-    "strategic",
-    "uas",
-    "worldwide"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Echodyne, ACS sign Strategic Collaboration Agreement to advance counter-UAS capabilities worldwide.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "2nd Marine Logistics Group holds Small, UAS, Counter-UAS Conference [Image 8 of 8]",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNTVQ1bFk0UEdGWlRSMkVFMFBMdlotLW40V2F5X2ViRDloYVA3WkFhTS13MkF4d2RYd0ZwT3A1MzlFQ0VwTlo2dndHUmxzeXd1ZFNWQU5qNkphLUltY1RqZm9KeGR5a3VsVGM2aVBSamp5MWxPRjM1N05QR29wNHByNE14VW1nVlV6TjBsYlItdGdqZ3lYUGZTSWYxQ1dEQVBFQXViV1FNN0M?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNTVQ1bFk0UEdGWlRSMkVFMFBMdlotLW40V2F5X2ViRDloYVA3WkFhTS13MkF4d2RYd0ZwT3A1MzlFQ0VwTlo2dndHUmxzeXd1ZFNWQU5qNkphLUltY1RqZm9KeGR5a3VsVGM2aVBSamp5MWxPRjM1N05QR29wNHByNE14VW1nVlV6TjBsYlItdGdqZ3lYUGZTSWYxQ1dEQVBFQXViV1FNN0M?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "2nd",
-    "conference",
-    "counter",
-    "group",
-    "holds",
-    "image",
-    "logistics",
-    "marine",
-    "small",
-    "uas"
-   ],
-   "numbers": [],
-   "summary": "Source headline: 2nd Marine Logistics Group holds Small, UAS, Counter-UAS Conference [Image 8 of 8].",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Oregon UAS Accelerator to Showcase 17 Autonomy, Counter-UAS & Defense-Tech Startups at Portland Investor Event on Nov 13",
-   "section": "Counter-UAS / Airspace Security",
-   "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxOaEVWSTNQS3B0Y0dSRlQzMGptVXhsaGlxWDI2Q3pMMy1uT0NXVlhJZDR4Y2tzbGozRFZHNTA3VDNITG14dXA2NTlUOG1pOWhWZnlGc1N3R1l5RnFrRGtQSGotdHYyNThxV3lnUXBwcmtaWFNyNXZfVU1IQVFRSXNVZG1HZEZrVmRvdEd2TWVYZGdNMXprcGFzMmFKNTFpYXZTalZvZ2h3ZWU0bmdmX0tmc1FYbEpUM2lGU3FXazZyQWlnZE4tS2pKLUo1a1RxdDVlcUJSOWxYOEpIWmg2QXlYV09JWGpXRXl4SnhLZ25qdkt1cXlvRXZ3?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMi9wFBVV95cUxOaEVWSTNQS3B0Y0dSRlQzMGptVXhsaGlxWDI2Q3pMMy1uT0NXVlhJZDR4Y2tzbGozRFZHNTA3VDNITG14dXA2NTlUOG1pOWhWZnlGc1N3R1l5RnFrRGtQSGotdHYyNThxV3lnUXBwcmtaWFNyNXZfVU1IQVFRSXNVZG1HZEZrVmRvdEd2TWVYZGdNMXprcGFzMmFKNTFpYXZTalZvZ2h3ZWU0bmdmX0tmc1FYbEpUM2lGU3FXazZyQWlnZE4tS2pKLUo1a1RxdDVlcUJSOWxYOEpIWmg2QXlYV09JWGpXRXl4SnhLZ25qdkt1cXlvRXZ3?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "accelerator",
-    "autonomy",
-    "counter",
-    "defense",
-    "event",
-    "investor",
-    "nov",
-    "oregon",
-    "portland",
-    "showcase",
-    "startups",
-    "tech",
-    "uas"
-   ],
-   "numbers": [
-    "13",
-    "17"
-   ],
-   "summary": "Source headline: Oregon UAS Accelerator to Showcase 17 Autonomy, Counter-UAS & Defense-Tech Startups at Portland Investor Event on Nov 13.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Trump\u2019s Transportation Secretary Sean P. Duffy Announces First-Ever Special Airworthiness Market Survey Certificate for eVTOL Aircraft",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://www.faa.gov/newsroom/trumps-transportation-secretary-sean-p-duffy-announces-first-ever-special-airworthiness",
-   "urls": [
-    "https://www.faa.gov/newsroom/trumps-transportation-secretary-sean-p-duffy-announces-first-ever-special-airworthiness"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "aircraft",
-    "airworthiness",
-    "announces",
-    "certificate",
-    "duffy",
-    "ever",
-    "evtol",
-    "first",
-    "market",
-    "sean",
-    "secretary",
-    "special",
-    "survey",
-    "transportation",
-    "trump"
-   ],
-   "numbers": [],
-   "summary": "U.S. Transportation Secretary Sean P. Duffy announced the first-ever Special Airworthiness Market Survey Certificate for eVTOL Aircraft.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Trump\u2019s Transportation Secretary Sean P. Duffy Announces New Mexico\u2019s First Advanced Air Mobility Demonstration Flight Under eVTOL Integration Program",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://www.faa.gov/newsroom/trumps-transportation-secretary-sean-p-duffy-announces-new-mexicos-first-advanced-air",
-   "urls": [
-    "https://www.faa.gov/newsroom/trumps-transportation-secretary-sean-p-duffy-announces-new-mexicos-first-advanced-air"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "advanced",
-    "air",
-    "announces",
-    "demonstration",
-    "duffy",
-    "evtol",
-    "first",
-    "flight",
-    "integration",
-    "mexico",
-    "mobility",
-    "program",
-    "sean",
-    "secretary",
-    "transportation",
-    "trump"
-   ],
-   "numbers": [],
-   "summary": "U.S. Transportation Secretary Sean P. Duffy announced New Mexico\u2019s first demonstration flight under the USDOT\u2019s Electric Vertical Takeoff and Landing Integration Pilot Program.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA Clears BETA\u2019s ALIA eVTOL for Demonstration Flights",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9jNUF3QVZjdngybDlDaWY3ODVheGxMd3dfbEdTdEROWEZPSFNvZWxUZFB0R1V3Wjh1LUlraUJSZC03dTRsSXRsY09NQkM2cmE3LWQ4cW5PRTJTUmlTTUc3R1VrWDNmTTRqcWRSRXBIX0Jma0RBa2VXWXg4ek15MmM?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMif0FVX3lxTE9jNUF3QVZjdngybDlDaWY3ODVheGxMd3dfbEdTdEROWEZPSFNvZWxUZFB0R1V3Wjh1LUlraUJSZC03dTRsSXRsY09NQkM2cmE3LWQ4cW5PRTJTUmlTTUc3R1VrWDNmTTRqcWRSRXBIX0Jma0RBa2VXWXg4ek15MmM?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "alia",
-    "beta",
-    "clears",
-    "demonstration",
-    "evtol",
-    "faa",
-    "flights"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA Clears BETA\u2019s ALIA eVTOL for Demonstration Flights.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "BETA Technologies secures FAA Approval for A250 flights",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNb0FHVUUxbTdVc3U1RksyeUZUd0pyTmpwdGdPaDlqWWhVNFhnX0Y5a2VqSEo4b0xRV2xxWER3bFJtRmVzamo1aTdIZkxadlpYMHBsejRNZ3ljOHBYNDgxT3JyQnc3VVV4bTVVanY5RXE3d1pPcENjN2RuZ1ZKemxRQ1IwYm8?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMihAFBVV95cUxNb0FHVUUxbTdVc3U1RksyeUZUd0pyTmpwdGdPaDlqWWhVNFhnX0Y5a2VqSEo4b0xRV2xxWER3bFJtRmVzamo1aTdIZkxadlpYMHBsejRNZ3ljOHBYNDgxT3JyQnc3VVV4bTVVanY5RXE3d1pPcENjN2RuZ1ZKemxRQ1IwYm8?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "a250",
-    "approval",
-    "beta",
-    "faa",
-    "flights",
-    "secures",
-    "technologies"
-   ],
-   "numbers": [],
-   "summary": "Source headline: BETA Technologies secures FAA Approval for A250 flights.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "FAA allows BETA Technologies to fly customers on ALIA eVTOL",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOUk9BcmRteEFMb1QyWVpQR0FoM3JwWnh3ekdYMEJCUmxpZ0JlVlJyck8xZm5LLU9GOTNvbkM4WFRzb1ZLMzlmWkhHOVFac0dKQUNrT0ozYWV5b3M5VXlFU2J4VDdyd1FCeWFKbGw3VDk2S281VzlEbnZxbkdQYWR2NUp4Vjc0aUpSTkNEVmh4WmtGS0ZnWURocmxn0gGfAUFVX3lxTE4wT3ZCMUliRjZCaVRSME9naXVCcnpaeF9NS2VKRjNHN1drWWhSTnNmenh3WlJJanZsZy1NcHJjZzh6Qm0yVXdoeWJONjNpZWFJM2oxOXU5MnFGVGh4WnppRFd3aWFBVzZZSUhiSkl5NDVEcmIweHYzQTRPbURxdG95b01hWVpwZ1lSWE1hS1A5QmEzYm5nRVA2WjBweTlYQQ?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMimgFBVV95cUxOUk9BcmRteEFMb1QyWVpQR0FoM3JwWnh3ekdYMEJCUmxpZ0JlVlJyck8xZm5LLU9GOTNvbkM4WFRzb1ZLMzlmWkhHOVFac0dKQUNrT0ozYWV5b3M5VXlFU2J4VDdyd1FCeWFKbGw3VDk2S281VzlEbnZxbkdQYWR2NUp4Vjc0aUpSTkNEVmh4WmtGS0ZnWURocmxn0gGfAUFVX3lxTE4wT3ZCMUliRjZCaVRSME9naXVCcnpaeF9NS2VKRjNHN1drWWhSTnNmenh3WlJJanZsZy1NcHJjZzh6Qm0yVXdoeWJONjNpZWFJM2oxOXU5MnFGVGh4WnppRFd3aWFBVzZZSUhiSkl5NDVEcmIweHYzQTRPbURxdG95b01hWVpwZ1lSWE1hS1A5QmEzYm5nRVA2WjBweTlYQQ?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "alia",
-    "allows",
-    "beta",
-    "customers",
-    "evtol",
-    "faa",
-    "fly",
-    "technologies"
-   ],
-   "numbers": [],
-   "summary": "Source headline: FAA allows BETA Technologies to fly customers on ALIA eVTOL.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "BETA receives first FAA approval for electric VTOL aircraft By Investing.com",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNczlOaEZXdzlETGtPU2lFWDlpR0RVYzJMc1lRSmU3MDM0Q1BZd2k4QV83OHVZOHhVU2VEYnkyQm5sbFp6bVhscGhIdUZSR1NGUG5LTmpFdXhieVpUUEFzSG5qQ0lXcWo5bzdmSXVsZEFpRFhKMGxSdXpqd3M2cFpzOFZFTno3dENHY3NUU2VMZERHSFlKazZHLWJsNVB6Zkptek1pdE9Tb2JrRUd4VzdON29ncG1VQ3JjNlJfdw?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMivAFBVV95cUxNczlOaEZXdzlETGtPU2lFWDlpR0RVYzJMc1lRSmU3MDM0Q1BZd2k4QV83OHVZOHhVU2VEYnkyQm5sbFp6bVhscGhIdUZSR1NGUG5LTmpFdXhieVpUUEFzSG5qQ0lXcWo5bzdmSXVsZEFpRFhKMGxSdXpqd3M2cFpzOFZFTno3dENHY3NUU2VMZERHSFlKazZHLWJsNVB6Zkptek1pdE9Tb2JrRUd4VzdON29ncG1VQ3JjNlJfdw?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "aircraft",
-    "approval",
-    "beta",
-    "com",
-    "electric",
-    "faa",
-    "first",
-    "investing",
-    "receives",
-    "vtol"
-   ],
-   "numbers": [],
-   "summary": "Source headline: BETA receives first FAA approval for electric VTOL aircraft By Investing.com.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "BETA receives landmark FAA authorization for market surveys",
-   "section": "AAM / eVTOL / Advanced Aviation",
-   "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNX3hKc0VDQ2FOZ2dQcUE5TVBEVzRYRzRzMmJTc1QxakZGeHF2cmRpNE1ubHIxbGNQUWFYWUVKMTBzZ2hBUEd6a0ZjcFo2ZVc2OXRkeWJQSHd5WUhOcll1dWN5ajBtdVlTRDkzaGI3dlNqUWRxYjBfb0J1Zm01RVY0WTQ4Zl9HTmJ0ZkY4VXhQeEZUUU0xVlhob0UydDJ0VjJh?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMioAFBVV95cUxNX3hKc0VDQ2FOZ2dQcUE5TVBEVzRYRzRzMmJTc1QxakZGeHF2cmRpNE1ubHIxbGNQUWFYWUVKMTBzZ2hBUEd6a0ZjcFo2ZVc2OXRkeWJQSHd5WUhOcll1dWN5ajBtdVlTRDkzaGI3dlNqUWRxYjBfb0J1Zm01RVY0WTQ4Zl9HTmJ0ZkY4VXhQeEZUUU0xVlhob0UydDJ0VjJh?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "authorization",
-    "beta",
-    "faa",
-    "landmark",
-    "market",
-    "receives",
-    "surveys"
-   ],
-   "numbers": [],
-   "summary": "Source headline: BETA receives landmark FAA authorization for market surveys.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Tesla Wanted Until November to Defend the Cybercab. NHTSA Had Other Plans",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE03Z2hkdXlxdGc4OEM2dFF2dENFSFJva21aakdXRDRhZjVtdTh2TzBoTkU3cWhwd1ZZT1k2cEt1cVE0X0VCUEtCRzZSblBGZmw4eVdoSE1xc1lBNjZMR0pkMTExR3VmYzNRaE5v?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMia0FVX3lxTE03Z2hkdXlxdGc4OEM2dFF2dENFSFJva21aakdXRDRhZjVtdTh2TzBoTkU3cWhwd1ZZT1k2cEt1cVE0X0VCUEtCRzZSblBGZmw4eVdoSE1xc1lBNjZMR0pkMTExR3VmYzNRaE5v?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "cybercab",
-    "defend",
-    "had",
-    "nhtsa",
-    "november",
-    "other",
-    "plans",
-    "tesla",
-    "until",
-    "wanted"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Tesla Wanted Until November to Defend the Cybercab. NHTSA Had Other Plans.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Cybercab Scaling and NHTSA Review Top Q3 Earnings Questions",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPalRRSzVOTnFSYlZIbUh2SWkyalp3bHNZbXFGdGs2MzZBTHVtTGFnemNDZ0pTYnQ5LXNiMXRVNTBBaExvNVc4ZTZGcmliTmQ1TVp0Q1M1OHpRdGo1WHdhVHdIWWpjal9MOHJodW5EY0xnZndJbW9wa3FwMmctM2tXQzN0WEpZQ2hYUlFxdkVDSDRmMkpoclVvNzdn?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMimgFBVV95cUxPalRRSzVOTnFSYlZIbUh2SWkyalp3bHNZbXFGdGs2MzZBTHVtTGFnemNDZ0pTYnQ5LXNiMXRVNTBBaExvNVc4ZTZGcmliTmQ1TVp0Q1M1OHpRdGo1WHdhVHdIWWpjal9MOHJodW5EY0xnZndJbW9wa3FwMmctM2tXQzN0WEpZQ2hYUlFxdkVDSDRmMkpoclVvNzdn?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "cybercab",
-    "earnings",
-    "nhtsa",
-    "questions",
-    "review",
-    "scaling",
-    "top"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Cybercab Scaling and NHTSA Review Top Q3 Earnings Questions.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Autonomous & Self-Driving Vehicle News: NHTSA, Tesla, Waymo, Bot Auto, Lenovo, NVIDIA, PlusAI, Texas Ventures III, TomTom, DeepRoute.ai, Valeo, KE:SAI, TIER IV, Arm, Technical University of Munich, Taisei, Nissan & Volvo. | auto connected car news",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMixgJBVV95cUxPRmFjNXk1ZGVyVjRJVXlPMTRvc0tTdlc3UU81MDZfYXJ6bFVzYzVJeUZwR2t4bm5pMjZLajJGODJRN1pHU3V1c2p2ZFVZX1Q5bmM2cUt0clhiNjEzWXhoQS10eDliZ1pwc3ZwejBnZXBPUmhGTkxCUWtrejZrZDJRcElzeHo5RV93dnZ6bXk2WlRZM0J0a0czZGRQTmZBS1lRV0w1aU53VTc1Vy04SzgzcnBRbzdLR2tUUjlrdEhxeFFkaU44MHdQRC1zSU0zcUpZMTJpek94SkZkV1pXdlhQN242MG94OXZXS0RDRTE2c0J1MEttdUg3SGVoMWVZMElQcUUtNG1pcERUS2lWbURScXhmNi1yWS1XOWw3MHdpc0l4NURabWVDRWswRnpOZTZjV1k3RHNjWXNEWFJQMGRESWpET0dTdw?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMixgJBVV95cUxPRmFjNXk1ZGVyVjRJVXlPMTRvc0tTdlc3UU81MDZfYXJ6bFVzYzVJeUZwR2t4bm5pMjZLajJGODJRN1pHU3V1c2p2ZFVZX1Q5bmM2cUt0clhiNjEzWXhoQS10eDliZ1pwc3ZwejBnZXBPUmhGTkxCUWtrejZrZDJRcElzeHo5RV93dnZ6bXk2WlRZM0J0a0czZGRQTmZBS1lRV0w1aU53VTc1Vy04SzgzcnBRbzdLR2tUUjlrdEhxeFFkaU44MHdQRC1zSU0zcUpZMTJpek94SkZkV1pXdlhQN242MG94OXZXS0RDRTE2c0J1MEttdUg3SGVoMWVZMElQcUUtNG1pcERUS2lWbURScXhmNi1yWS1XOWw3MHdpc0l4NURabWVDRWswRnpOZTZjV1k3RHNjWXNEWFJQMGRESWpET0dTdw?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "arm",
-    "auto",
-    "autonomous",
-    "bot",
-    "car",
-    "connected",
-    "deeproute",
-    "driving",
-    "iii",
-    "lenovo",
-    "munich",
-    "nhtsa",
-    "nissan",
-    "nvidia",
-    "plusai",
-    "sai",
-    "self",
-    "taisei",
-    "technical",
-    "tesla",
-    "texas",
-    "tier",
-    "tomtom",
-    "university",
-    "valeo",
-    "vehicle",
-    "ventures",
-    "volvo",
-    "waymo"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Autonomous & Self-Driving Vehicle News: NHTSA, Tesla, Waymo, Bot Auto, Lenovo, NVIDIA, PlusAI, Texas Ventures III, TomTom, DeepRoute.ai, Valeo, KE:SAI, TIER IV, Arm, Technical University of Munich, Taisei, Nissan & Volvo. | auto connected car news.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "NHTSA Opens Probe For Tesla Robotaxis Speeding And Ignoring School Zones",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE8zQThsSmRPZXVoOHRjRmt6QllXU1lQYkJuQ0o1ckdVX2lDbmg0Nk4yTnlyamxqU0lnanc2Qk1sdVJZMlFRUE1BN1lwSFZiVzl3U2NBWFBWN1I5VDA4cEZFUHBEdkNYb1JhLS0xbmtCNlduQ1E?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMic0FVX3lxTE8zQThsSmRPZXVoOHRjRmt6QllXU1lQYkJuQ0o1ckdVX2lDbmg0Nk4yTnlyamxqU0lnanc2Qk1sdVJZMlFRUE1BN1lwSFZiVzl3U2NBWFBWN1I5VDA4cEZFUHBEdkNYb1JhLS0xbmtCNlduQ1E?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "ignoring",
-    "nhtsa",
-    "opens",
-    "probe",
-    "robotaxis",
-    "school",
-    "speeding",
-    "tesla",
-    "zones"
-   ],
-   "numbers": [],
-   "summary": "Source headline: NHTSA Opens Probe For Tesla Robotaxis Speeding And Ignoring School Zones.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Tesla Cybercab records no major incidents in latest NHTSA data",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNQUxDN1pTU2pteUZaVTcxR3BRN3QxOExzdGVtYl9CYzFwbDZlSkRva0FnYlk1ek1DVzYtbFhCMlJNdWFFcTFYVHA2cklXdDNzZHl5dGYtVGg3RjZDY3NfWEw5bEdIQ1NEVTRxR1BZenpSaTRtWm5oa3Yxd1hTRzVEVUdB?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMiggFBVV95cUxNQUxDN1pTU2pteUZaVTcxR3BRN3QxOExzdGVtYl9CYzFwbDZlSkRva0FnYlk1ek1DVzYtbFhCMlJNdWFFcTFYVHA2cklXdDNzZHl5dGYtVGg3RjZDY3NfWEw5bEdIQ1NEVTRxR1BZenpSaTRtWm5oa3Yxd1hTRzVEVUdB?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "cybercab",
-    "data",
-    "incidents",
-    "major",
-    "nhtsa",
-    "records",
-    "tesla"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Tesla Cybercab records no major incidents in latest NHTSA data.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Could Waymo accept riders in New Orleans? See proposed rules for the robotaxis",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNN0pGTXBPWGlGeWZfU2pJZUU3TUxjNVFjRGVzU1RXb0s2QkdqNnNDMWtlaWpFQlZmRUktWlQ4MENYNHgzWUItX0RtM05BdmtURWloZjZhNWd5ZXZBQVVxUThUV0dBWFhwSk9zR0FWMFBtTnhLajFkcGdDdHd3bnRXU1luOEgtcW1xVDRGdi13Q2t1ZnlLQWZFbnZiU2lDTVA3X000d2l6UTRmNkU3TmcyUjFOZk1QM0VZdGpfZWNlUkJFZG13cDR5NmUwT3JfSUnSAdQBQVVfeXFMTUQ1SVRJMXB4cTVibHFlbExQdFRpcmF5UkJPMV9rX0tRa19DYXhPaG13eWlPajE4Q2JaaEt6elVvSWJtX1c4LU1XTVpPa0NRdHpabnRCSE5pTTRHRkt3RE1saC01SFExTFZPZkM0Vk9Nd2dKdFpKdGNIdEZXN21kQ2FPU3hrbS1LOWRxbG1PcWRFWWwyMHVLbFZsYlNjemVfdDUxLWdTdmlXRFd1aF83WTl4dVd1Y0t2SnB3eWRtRnVJa1NjRzBkMnJrUDNnRVVkT3hlWkU?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMizwFBVV95cUxNN0pGTXBPWGlGeWZfU2pJZUU3TUxjNVFjRGVzU1RXb0s2QkdqNnNDMWtlaWpFQlZmRUktWlQ4MENYNHgzWUItX0RtM05BdmtURWloZjZhNWd5ZXZBQVVxUThUV0dBWFhwSk9zR0FWMFBtTnhLajFkcGdDdHd3bnRXU1luOEgtcW1xVDRGdi13Q2t1ZnlLQWZFbnZiU2lDTVA3X000d2l6UTRmNkU3TmcyUjFOZk1QM0VZdGpfZWNlUkJFZG13cDR5NmUwT3JfSUnSAdQBQVVfeXFMTUQ1SVRJMXB4cTVibHFlbExQdFRpcmF5UkJPMV9rX0tRa19DYXhPaG13eWlPajE4Q2JaaEt6elVvSWJtX1c4LU1XTVpPa0NRdHpabnRCSE5pTTRHRkt3RE1saC01SFExTFZPZkM0Vk9Nd2dKdFpKdGNIdEZXN21kQ2FPU3hrbS1LOWRxbG1PcWRFWWwyMHVLbFZsYlNjemVfdDUxLWdTdmlXRFd1aF83WTl4dVd1Y0t2SnB3eWRtRnVJa1NjRzBkMnJrUDNnRVVkT3hlWkU?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "accept",
-    "orleans",
-    "proposed",
-    "riders",
-    "robotaxis",
-    "rules",
-    "see",
-    "waymo"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Could Waymo accept riders in New Orleans? See proposed rules for the robotaxis.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Federal Motor Carrier Safety Administration (FMCSA) Grants a Crucial Regulatory Exemption for Autonomous Trucks",
-   "section": "Autonomous Vehicles",
-   "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxNQjItT3d6TUxmeUxoU3pjMzBFeVlWbDNxczZSRER0U1c0NFdwOTlMX2kyck1PWnpjbDkxOVdtX0tYY3RUbHd0Ymt5TGJrX1BUczFhVFVHYkxCb0xtQ2hZSFRVVjM4Z2VCZmV4NGt1SHhZNm9XSGhybGc4NWFxc3BvTTlPZVVtX1FZTmV2bkJ6WDI3NU1MdElqcThnazBaMl9PeDVOR243THctYXNPRF9SUnFTUnVhQmo0RnJ6T2N5LVZtSVAwQWpLSHFqMFN2RzNzYnA5T3NGUVNJVDB1RzBwRTl6b3lmRWNJb0loVzdjQUNFdmVHV0hmYnl2YWFXOTQ2?oc=5",
-   "urls": [
-    "https://news.google.com/rss/articles/CBMigAJBVV95cUxNQjItT3d6TUxmeUxoU3pjMzBFeVlWbDNxczZSRER0U1c0NFdwOTlMX2kyck1PWnpjbDkxOVdtX0tYY3RUbHd0Ymt5TGJrX1BUczFhVFVHYkxCb0xtQ2hZSFRVVjM4Z2VCZmV4NGt1SHhZNm9XSGhybGc4NWFxc3BvTTlPZVVtX1FZTmV2bkJ6WDI3NU1MdElqcThnazBaMl9PeDVOR243THctYXNPRF9SUnFTUnVhQmo0RnJ6T2N5LVZtSVAwQWpLSHFqMFN2RzNzYnA5T3NGUVNJVDB1RzBwRTl6b3lmRWNJb0loVzdjQUNFdmVHV0hmYnl2YWFXOTQ2?oc=5"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "administration",
-    "autonomous",
-    "carrier",
-    "crucial",
-    "exemption",
-    "federal",
-    "fmcsa",
-    "grants",
-    "motor",
-    "regulatory",
-    "safety",
-    "trucks"
-   ],
-   "numbers": [],
-   "summary": "Source headline: Federal Motor Carrier Safety Administration (FMCSA) Grants a Crucial Regulatory Exemption for Autonomous Trucks.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Agency Information Collection Activities; Submission to the Office of Management and Budget for Review and Approval; Request for Comment; Older Novice Driver Study",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/19/2026-21264/agency-information-collection-activities-submission-to-the-office-of-management-and-budget-for",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/19/2026-21264/agency-information-collection-activities-submission-to-the-office-of-management-and-budget-for"
-   ],
-   "identifiers": [
-    "fr:2026-21264"
-   ],
-   "tokens": [
-    "activities",
-    "agency",
-    "approval",
-    "budget",
-    "collection",
-    "comment",
-    "driver",
-    "information",
-    "management",
-    "novice",
-    "office",
-    "older",
-    "request",
-    "review",
-    "study",
-    "submission"
-   ],
-   "numbers": [],
-   "summary": "The National Highway Traffic Safety Administration proposes to conduct a new information collection, Older Novice Driver Study.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Hours of Service of Drivers: Association of American Railroads and American Short Line and Regional Railroad Association; Application for Exemption Renewal",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/21/2026-21488/hours-of-service-of-drivers-association-of-american-railroads-and-american-short-line-and-regional",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/21/2026-21488/hours-of-service-of-drivers-association-of-american-railroads-and-american-short-line-and-regional"
-   ],
-   "identifiers": [
-    "fr:2026-21488"
-   ],
-   "tokens": [
-    "american",
-    "application",
-    "association",
-    "drivers",
-    "exemption",
-    "hours",
-    "line",
-    "railroad",
-    "railroads",
-    "regional",
-    "renewal",
-    "service",
-    "short"
-   ],
-   "numbers": [],
-   "summary": "FMCSA announces its final decision to renew and modify the exemption granted to the Association of American Railroads and the American Short Line and Regional Railroad Association.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Parts and Accessories Necessary for Safe Operation; Application for an Exemption From Grote Industries, LLC",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/20/2026-21390/parts-and-accessories-necessary-for-safe-operation-application-for-an-exemption-from-grote",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/20/2026-21390/parts-and-accessories-necessary-for-safe-operation-application-for-an-exemption-from-grote"
-   ],
-   "identifiers": [
-    "fr:2026-21390"
-   ],
-   "tokens": [
-    "accessories",
-    "application",
-    "exemption",
-    "grote",
-    "industries",
-    "llc",
-    "necessary",
-    "operation",
-    "parts",
-    "safe"
-   ],
-   "numbers": [],
-   "summary": "FMCSA advises the public of new information relevant to the application from Grote Industries, LLC for an exemption from the requirement that exterior lighting devices on commercial motor vehicles be steady-burning.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Airworthiness Directives; Pratt & Whitney RTX Corporation (Type Certificate Previously Held by Pratt & Whitney Division United Technologies Corporation) Engines",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/19/2026-21298/airworthiness-directives-pratt-and-whitney-rtx-corporation-type-certificate-previously-held-by-pratt",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/19/2026-21298/airworthiness-directives-pratt-and-whitney-rtx-corporation-type-certificate-previously-held-by-pratt"
-   ],
-   "identifiers": [
-    "fr:2026-21298"
-   ],
-   "tokens": [
-    "airworthiness",
-    "certificate",
-    "corporation",
-    "directives",
-    "division",
-    "engines",
-    "held",
-    "pratt",
-    "previously",
-    "rtx",
-    "technologies",
-    "type",
-    "united",
-    "whitney"
-   ],
-   "numbers": [
-    "02",
-    "09",
-    "2026"
-   ],
-   "summary": "The FAA proposes to supersede Airworthiness Directive 2026-09-02, which applies to certain Pratt & Whitney RTX Corporation engines.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Airworthiness Directives; The Boeing Company Airplanes",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/19/2026-21332/airworthiness-directives-the-boeing-company-airplanes",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/19/2026-21332/airworthiness-directives-the-boeing-company-airplanes"
-   ],
-   "identifiers": [
-    "fr:2026-21332"
-   ],
-   "tokens": [
-    "airplanes",
-    "airworthiness",
-    "boeing",
-    "company",
-    "directives"
-   ],
-   "numbers": [
-    "600",
-    "700",
-    "737",
-    "800",
-    "900"
-   ],
-   "summary": "The FAA is adopting a new airworthiness directive for certain The Boeing Company Model 737-600, -700, -700C, -800, -900, and -900ER series airplanes.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-21",
-   "title": "Extension of Agency Information Collection Activity Under OMB Review: Transportation Security Officer (TSO) Medical Questionnaire",
-   "section": "Federal Register",
-   "url": "https://www.federalregister.gov/documents/2026/10/16/2026-21177/extension-of-agency-information-collection-activity-under-omb-review-transportation-security-officer",
-   "urls": [
-    "https://www.federalregister.gov/documents/2026/10/16/2026-21177/extension-of-agency-information-collection-activity-under-omb-review-transportation-security-officer"
-   ],
-   "identifiers": [
-    "fr:2026-21177"
-   ],
-   "tokens": [
-    "activity",
-    "agency",
-    "collection",
-    "extension",
-    "information",
-    "medical",
-    "officer",
-    "omb",
-    "questionnaire",
-    "review",
-    "security",
-    "transportation",
-    "tso"
-   ],
-   "numbers": [],
-   "summary": "The Transportation Security Administration has forwarded the Information Collection Request for the Transportation Security Officer Medical Questionnaire to OMB for review and approval.",
-   "led": false
-  },
-  {
    "edition": "2026-10-22",
    "title": "FAA Proposes $351,000 Fine Against Creamer Pilot Services for Alleged Unauthorized Passenger-Carrying Operations",
    "section": "Federal Policy & Implementation",
@@ -944,8 +28,7 @@
     "unauthorized"
    ],
    "numbers": [
-    "$351",
-    "000"
+    "$351000"
    ],
    "summary": "The Federal Aviation Administration proposes a $351,000 civil penalty against Creamer Pilot Services for allegedly conducting unauthorized passenger-carrying operations.",
    "led": false
@@ -1017,9 +100,7 @@
     "mexico",
     "through"
    ],
-   "numbers": [
-    "2027"
-   ],
+   "numbers": [],
    "summary": "Source headline: FAA Locks Down Entire US-Mexico Border Airspace to Drones Through 2027.",
    "led": false
   },
@@ -1043,7 +124,7 @@
    ],
    "numbers": [],
    "summary": "Source headline: Should the TSA\u2019s move into drone regulation worry you.",
-   "led": false
+   "led": true
   },
   {
    "edition": "2026-10-22",
@@ -1064,10 +145,7 @@
     "issues",
     "max"
    ],
-   "numbers": [
-    "10",
-    "737"
-   ],
+   "numbers": [],
    "summary": "The Federal Aviation Administration has issued certification for Boeing's 737 MAX-10.",
    "led": false
   },
@@ -1093,9 +171,7 @@
     "trump",
     "union"
    ],
-   "numbers": [
-    "2.8"
-   ],
+   "numbers": [],
    "summary": "The Federal Aviation Administration and National Air Traffic Controllers Association have reached a deal to provide air traffic controllers with a pay increase.",
    "led": false
   },
@@ -1122,9 +198,7 @@
     "skysafe",
     "swisher"
    ],
-   "numbers": [
-    "2209"
-   ],
+   "numbers": [],
    "summary": "Source headline: The Drone Radio Show: FAA Part 2209, Protecting Critical Infrastructure with SkySafe's Melissa Swisher.",
    "led": false
   },
@@ -1377,12 +451,9 @@
     "targets",
     "tesla"
    ],
-   "numbers": [
-    "000",
-    "2026"
-   ],
+   "numbers": [],
    "summary": "Source headline: NHTSA Audits 1,000 Cybercabs, Tesla Targets 2026 Sale.",
-   "led": false
+   "led": true
   },
   {
    "edition": "2026-10-22",
@@ -1621,7 +692,7 @@
    ],
    "numbers": [],
    "summary": "The National Highway Traffic Safety Administration proposes to conduct a new information collection, Older Novice Driver Study.",
-   "led": false
+   "led": true
   },
   {
    "edition": "2026-10-22",
@@ -1813,9 +884,7 @@
     "tech",
     "tested"
    ],
-   "numbers": [
-    "2026"
-   ],
+   "numbers": [],
    "summary": "The DHS Science and Technology Directorate's National Urban Security Technology Laboratory conducted field tests with first responders to assess four commercially available counter-unmanned-aircraft-system sensors. The evaluation focused on detection capabilities and response integration for public-safety partners.",
    "led": false
   },
@@ -1928,10 +997,7 @@
     "wion",
     "zoox"
    ],
-   "numbers": [
-    "258",
-    "270"
-   ],
+   "numbers": [],
    "summary": "Amazon\u2019s Zoox unit has issued a software recall for its entire fleet of 270 driverless vehicles following a crash in Las Vegas on April 8. This action follows a previous recall in April related to braking issues identified during an NHTSA investigation of 258 units.",
    "led": false
   },
@@ -2139,9 +1205,7 @@
     "vehicle",
     "wayve"
    ],
-   "numbers": [
-    "2027"
-   ],
+   "numbers": [],
    "summary": "France has established a regulatory pathway for autonomous vehicle approvals by 2027, with companies including Stellantis, Wayve, Bolt, and G7 proposing pilot programs to test automated driving systems.",
    "led": false
   },
@@ -2186,9 +1250,7 @@
     "uae",
     "vehicle"
    ],
-   "numbers": [
-    "2027"
-   ],
+   "numbers": [],
    "summary": "Chinese automaker Chery plans to launch robotaxi services in the United Arab Emirates in 2027, part of a broader strategy to expand its overseas vehicle production and automated mobility footprint.",
    "led": false
   },
@@ -2300,8 +1362,9 @@
     "unveils"
    ],
    "numbers": [
+    "$150",
     "$150 million",
-    "500"
+    "500 jobs"
    ],
    "summary": "Boom Supersonic has announced a $150 million expansion of its Centennial factory, a move expected to create up to 500 jobs and support the manufacturing scale-up for its Overture civil supersonic aircraft.",
    "led": false
@@ -2393,7 +1456,7 @@
     "war"
    ],
    "numbers": [
-    "800"
+    "800 drones"
    ],
    "summary": "Elon Musk accused Ukraine of breaching Starlink usage rules amid intensified Russian drone attacks, including jet-powered drones targeting Kyiv and other regions. Ukraine reported downing over 800 drones and using F-16s to intercept jet-powered threats, while Russian forces blocked the Azov-Don Sea Canal following Ukrainian strikes on ships.",
    "led": false
@@ -2417,8 +1480,6 @@
     "yfq"
    ],
    "numbers": [
-    "22",
-    "44",
     "44 aircraft"
    ],
    "summary": "The U.S. Air Force has successfully conducted a flight test in which an F-22 pilot controlled the unmanned YFQ-44 aircraft. This milestone demonstrates progress in manned-unmanned teaming capabilities, allowing manned fighters to direct unmanned assets during operations.",
@@ -2442,6 +1503,7 @@
     "wins"
    ],
    "numbers": [
+    "$60",
     "$60 million"
    ],
    "summary": "L3Harris Technologies has secured a three-year U.S. Army development contract valued at up to $60 million for a long-range interceptor under the Xtended Range Counter-sUAS Missile program. The company will advance a fully integrated design through flight-performance testing, though operational deployment has not yet been announced.",
@@ -2466,11 +1528,7 @@
     "rules",
     "zone"
    ],
-   "numbers": [
-    "2026",
-    "26",
-    "30"
-   ],
+   "numbers": [],
    "summary": "Citywide no-fly zones, banned items, and fines have been established for Lapu-Lapu City in the Philippines during the ASEAN Defence Ministers Meeting, scheduled for October 26-30, 2026. Visitors to Mactan are advised to adhere to these airspace restrictions.",
    "led": false
   },
@@ -2491,10 +1549,7 @@
     "ground",
     "land"
    ],
-   "numbers": [
-    "2026",
-    "72"
-   ],
+   "numbers": [],
    "summary": "Russia is exploring the deployment of unmanned T-72 tank units to support future assaults in Ukraine. This development reflects the increasing integration of autonomous ground systems into conventional military operations.",
    "led": false
   },
@@ -2565,10 +1620,7 @@
     "rules",
     "what"
    ],
-   "numbers": [
-    "108",
-    "2026"
-   ],
+   "numbers": [],
    "summary": "The FAA\u2019s proposed Part 108 rules aim to streamline Beyond Visual Line of Sight (BVLOS) operations by removing the need for individual waivers for compliant flights. Industry analysts suggest these regulations could significantly accelerate the U.S. drone delivery market and expand agricultural and commercial applications.",
    "led": false
   },
@@ -2596,10 +1648,7 @@
     "patrols",
     "republic"
    ],
-   "numbers": [
-    "12",
-    "50"
-   ],
+   "numbers": [],
    "summary": "Czech firm KBP International unveiled the Gryf C-UAS drone carrier at the Future Forces Forum in Prague. The system features a 50 kg payload capacity, 12-hour endurance, and four hardpoints for airborne interceptor missiles, designed for extended air defense patrols.",
    "led": false
   },
@@ -2670,7 +1719,7 @@
    ],
    "numbers": [],
    "summary": "The Federal Aviation Administration has issued proposed design standards for eVTOL vertiports, alongside draft design updates for broader vertical flight facilities. These regulatory actions aim to establish infrastructure requirements for the safe integration of electric vertical takeoff and landing aircraft into the national airspace system.",
-   "led": false
+   "led": true
   },
   {
    "edition": "2026-10-26",
@@ -2895,9 +1944,7 @@
     "humanoid",
     "rokae"
    ],
-   "numbers": [
-    "10"
-   ],
+   "numbers": [],
    "summary": "Spanish robotics company ROKAE has delivered its 10,000th humanoid force-controlled arm, marking a significant production milestone for the manufacturer. The achievement highlights growing industrial demand for collaborative robotic arms capable of precise force control in manufacturing and logistics applications.",
    "led": false
   },
@@ -2929,8 +1976,7 @@
     "turbines"
    ],
    "numbers": [
-    "$150 million",
-    "500"
+    "$150 million"
    ],
    "summary": "Boom Supersonic is hiring 500 employees and constructing a $150 million facility near Centennial Airport in Colorado. The plant will produce natural gas turbines for AI data centers, leveraging the company's jet engine technology to diversify revenue streams while supporting its supersonic aircraft development.",
    "led": false
@@ -3045,9 +2091,7 @@
     "industrial",
     "matthew"
    ],
-   "numbers": [
-    "16"
-   ],
+   "numbers": [],
    "summary": "The U.S. Navy has decided to cease purchasing the Global Autonomous Reconnaissance Craft (GARC), a 16-foot autonomous surface vehicle, according to reporting from Bloomberg. The cancellation marks a shift in the service's approach to unmanned maritime systems procurement.",
    "led": false
   },
@@ -3095,10 +2139,7 @@
     "warfare",
     "why"
    ],
-   "numbers": [
-    "000",
-    "5000"
-   ],
+   "numbers": [],
    "summary": "A Ukrainian drone strike has damaged one of Russia's rare long-range electronic warfare systems, the Murmansk-BN, located in occupied Crimea. The system is capable of jamming communications over distances up to 5,000 kilometers, representing a significant degradation of Russian electronic warfare capabilities in the region.",
    "led": false
   },
@@ -3172,9 +2213,7 @@
     "than",
     "ukraine"
    ],
-   "numbers": [
-    "100"
-   ],
+   "numbers": [],
    "summary": "Ukraine has introduced a new robotic supply runner capable of carrying more than 1,100 pounds, enhancing logistical support capabilities on the battlefield with heavy-load autonomous transport.",
    "led": false
   },
@@ -3200,10 +2239,7 @@
     "tightens",
     "ukraine"
    ],
-   "numbers": [
-    "18",
-    "2026"
-   ],
+   "numbers": [],
    "summary": "China has announced new export controls on high-power drone motors, speed controllers, long-range autopilots, and autonomous software, effective November 18, 2026. The restrictions are expected to impact supply chains for drone manufacturers in the U.S., Europe, and other regions, potentially raising costs and complicating production for both commercial and defense applications.",
    "led": false
   },
@@ -3226,10 +2262,7 @@
     "nasa",
     "partners"
    ],
-   "numbers": [
-    "2027",
-    "2028"
-   ],
+   "numbers": [],
    "summary": "NASA and commercial partners Blue Origin and SpaceX have streamlined designs and changed concepts of operations for future crewed lunar landers. The agency also announced that the Artemis III mission, launching in 2027, will test future moon lander operations before astronauts return to the lunar surface.",
    "led": false
   },
@@ -3248,13 +2281,7 @@
     "stennis",
     "tests"
    ],
-   "numbers": [
-    "10001",
-    "111",
-    "21",
-    "25",
-    "500"
-   ],
+   "numbers": [],
    "summary": "Teams at NASA\u2019s Stennis Space Center tested RS-25 engine No. 10001 on October 21. The hot fire test lasted 500 seconds at 111% power level, matching the duration and power profile of SLS rocket launches.",
    "led": false
   },
@@ -3307,9 +2334,7 @@
     "scientific",
     "swift"
    ],
-   "numbers": [
-    "20"
-   ],
+   "numbers": [],
    "summary": "NASA\u2019s Neil Gehrels Swift Observatory has ended its science mission after conducting its final observation on October 20. The spacecraft is now orbiting at an altitude where atmospheric drag prevents steady observation of astronomical targets.",
    "led": false
   },
@@ -3406,11 +2431,7 @@
     "suas",
     "takeover"
    ],
-   "numbers": [
-    "2026",
-    "401",
-    "89"
-   ],
+   "numbers": [],
    "summary": "The Department of War's Joint Interagency Task Force (JIATF) 401 has released its 2026 Counter-Small Unmanned Aircraft Systems Quick Reference Guide, an 89-page practical resource for the Joint Force and broader counter-UAS community. The guide addresses the evolving threat environment of small drones and highlights RF-cyber takeover capabilities.",
    "led": false
   },
@@ -3436,10 +2457,7 @@
     "national",
     "rept"
    ],
-   "numbers": [
-    "119",
-    "698"
-   ],
+   "numbers": [],
    "summary": "The House report for the FY27 National Defense Authorization Act includes provisions for the accelerated fielding of fixed Counter-UAS systems and directs the Secretary of Defense to develop a strategy for the procurement and deployment of small UAS to tactical units.",
    "led": false
   },
@@ -3485,11 +2503,7 @@
     "rule",
     "vertiport"
    ],
-   "numbers": [
-    "15",
-    "150",
-    "5390"
-   ],
+   "numbers": [],
    "summary": "The FAA has released a draft advisory circular for vertiport design that replaces existing standards with new pad sizes and a fixed downwash zone. The proposal includes 15:1 powered-lift approaches that the agency states it will not evaluate, prompting commercial operators to review the changes before they shape future air taxi infrastructure.",
    "led": false
   },
@@ -3540,9 +2554,7 @@
     "vehicle",
     "vehicles"
    ],
-   "numbers": [
-    "108"
-   ],
+   "numbers": [],
    "summary": "NHTSA has proposed amendments to Federal Motor Vehicle Safety Standard (FMVSS) No. 108 to remove unnecessary requirements and provide design flexibility for vehicles equipped with Automated Driving Systems (ADS). The proposed changes include amending test voltage specifications for integral beam type headlamps and removing requirements for vertical headlamp arrangements.",
    "led": true
   },
@@ -3651,13 +2663,9 @@
    ],
    "numbers": [
     "$99",
-    "2026.38",
-    "2030",
     "3 vehicles",
-    "3.13",
     "4 vehicles",
-    "5 million",
-    "5.11"
+    "5 million"
    ],
    "summary": "Tesla is expanding the rollout of its 2026.38.5.11 software update, which includes FSD v14.3.13 for Hardware 4 vehicles and FSD v14.3 Lite for Hardware 3 vehicles. The company also announced a partnership with Turo to boost Full Self-Driving adoption and aims to produce approximately 5 million vehicles annually by 2030.",
    "led": false
@@ -3681,9 +2689,7 @@
     "plans",
     "strong"
    ],
-   "numbers": [
-    "500"
-   ],
+   "numbers": [],
    "summary": "Charger Logistics has announced plans to deploy a fleet of 500 Aurora driverless trucks, marking a significant expansion in autonomous trucking operations in the United States.",
    "led": false
   },
@@ -3731,6 +2737,7 @@
     "robotics"
    ],
    "numbers": [
+    "$190",
     "$190 million"
    ],
    "summary": "Japan's KDDI has launched Elyza Robotics with a $190 million investment plan focused on physical AI, aiming to advance robotics and automation in the country.",
@@ -3804,9 +2811,7 @@
     "warehouse",
     "work"
    ],
-   "numbers": [
-    "80"
-   ],
+   "numbers": [],
    "summary": "AgiBot's G2 Max robot has begun working in JD Logistics' robotic warehouse, demonstrating a capacity to handle 80 boxes per hour. This deployment marks a step toward large-scale industrial application of embodied intelligence in logistics.",
    "led": false
   },
@@ -3854,9 +2859,7 @@
     "robot",
     "showcase"
    ],
-   "numbers": [
-    "2026"
-   ],
+   "numbers": [],
    "summary": "Hwaseong City is set to showcase physical AI at MARS 2026, including a robot that dances ballet. This event is part of efforts to advance physical AI and robotics in South Korea.",
    "led": false
   },
@@ -3969,9 +2972,6 @@
     "test"
    ],
    "numbers": [
-    "2026",
-    "21",
-    "59",
     "59 aircraft"
    ],
    "summary": "NASA test pilot Mike Lippert completed his first flight in the agency\u2019s X-59 quiet supersonic research aircraft on October 21, 2026. The X-59, which conducted its first supersonic flight in June 2026, continues its test campaign from NASA\u2019s Armstrong Flight Research Center.",
@@ -4041,9 +3041,7 @@
     "international",
     "railway"
    ],
-   "numbers": [
-    "220"
-   ],
+   "numbers": [],
    "summary": "Siemens Mobility has been selected to supply and maintain three American Pioneer 220 trainsets for the California High Speed Rail project's Initial Operating Section between Bakersfield and Merced.",
    "led": false
   },
@@ -4090,7 +3088,7 @@
     "southeastern"
    ],
    "numbers": [
-    "$43",
+    "$43.6",
     "$43.6 million"
    ],
    "summary": "A $43.6 million CRISI grant has been awarded to the Southeastern Short Line Improvement Project, which aims to improve rail safety and infrastructure in the Southeast. This grant is part of the Federal Railroad Administration's efforts to enhance rail safety and efficiency.",
@@ -4140,6 +3138,7 @@
     "rail"
    ],
    "numbers": [
+    "$164",
     "$164 million"
    ],
    "summary": "The Federal Transit Administration (FTA) has advanced a $164 million grant for the Broward County Commuter Rail Project, which will connect Fort Lauderdale and Miami. This project is a significant step in expanding commuter rail services in the region.",
@@ -4164,9 +3163,7 @@
     "ukraine",
     "war"
    ],
-   "numbers": [
-    "013027000"
-   ],
+   "numbers": [],
    "summary": "Russia launched strikes on Kyiv hours before a truce was scheduled to begin in the occupied city of Oleshky. The conflict continues with Russia deploying faster, harder-to-intercept drones while Ukraine conducts deep strikes into Russian territory.",
    "led": false
   },
@@ -4191,9 +3188,7 @@
     "star",
     "turkish"
    ],
-   "numbers": [
-    "300"
-   ],
+   "numbers": [],
    "summary": "Russian drones attacked a grain ship in the Black Sea, sinking a Turkish vessel and causing friction with NATO members Romania and Bulgaria. Ukrainian forces have struck over 300 Russian-linked vessels in recent weeks, escalating maritime hybrid warfare.",
    "led": false
   },
@@ -4216,7 +3211,7 @@
     "ukraine"
    ],
    "numbers": [
-    "000"
+    "1000 drones"
    ],
    "summary": "Ukraine has launched over 1,000 drones at Russian targets, including strikes on industrial zones and a major chemical plant in the Perm region. The conflict continues to see the use of faster, harder-to-intercept drones by Russian forces, while Starlink access has been restored in Ukraine.",
    "led": false
@@ -4269,10 +3264,7 @@
     "wounded",
     "year"
    ],
-   "numbers": [
-    "000",
-    "300"
-   ],
+   "numbers": [],
    "summary": "Ukrainian drone operations have reportedly eliminated or wounded 300,000 Russian personnel in under a year, highlighting the scale of drone warfare in the conflict.",
    "led": false
   },
@@ -4437,6 +3429,463 @@
    ],
    "numbers": [],
    "summary": "Indian Aviation Minister Rammohan Naidu stated that local startups can redefine aviation after meeting with indigenous eVTOL developers. The comments highlight the government's support for the country's emerging advanced air mobility sector.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Clearing the Way for Routine Drone Flights: Why the FAA\u2019s Part 108 Rule Raises the Stakes for Patent Strategy | Knobbe Martens",
+   "section": "UAS / Drones",
+   "url": "https://www.knobbe.com/blog/clearing-the-way-for-routine-drone-flights-why-the-faas-part-108-rule-raises-the-stakes-for-patent-strategy/",
+   "urls": [
+    "https://www.knobbe.com/blog/clearing-the-way-for-routine-drone-flights-why-the-faas-part-108-rule-raises-the-stakes-for-patent-strategy"
+   ],
+   "identifiers": [
+    "rin:2120-AL82"
+   ],
+   "tokens": [
+    "108",
+    "clearing",
+    "drone",
+    "faa",
+    "flights",
+    "knobbe",
+    "martens",
+    "part",
+    "patent",
+    "raises",
+    "routine",
+    "rule",
+    "stakes",
+    "strategy",
+    "way",
+    "why"
+   ],
+   "numbers": [],
+   "summary": "On July 10, 2026, the FAA sent its final Part 108 rule to the White House Office of Information and Regulatory Affairs for review. Once in effect, the rule may allow drone operators to fly routinely beyond the operator\u2019s line of sight without seeking individual FAA approval for each operation.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Why the government wants self-driving cars to glow cyan",
+   "section": "Autonomous Vehicles",
+   "url": "https://lasvegassun.com/news/2026/oct/28/why-the-government-wants-self-driving-cars-to-glow/",
+   "urls": [
+    "https://lasvegassun.com/news/2026/oct/28/why-the-government-wants-self-driving-cars-to-glow",
+    "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "cars",
+    "cyan",
+    "driving",
+    "glow",
+    "government",
+    "self",
+    "wants",
+    "why"
+   ],
+   "numbers": [],
+   "summary": "A Waymo fully-autonomous Ojai robotaxi arrives to pick up passengers Thursday, Sept. 17, 2026. Waymo launched its fully-autonomous robotaxi service in Las Vegas on Sept. 14.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Tesla\u2019s Self-Driving Launch in Slovakia: Premature Move or Progress?",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature/",
+   "urls": [
+    "https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "driving",
+    "launch",
+    "move",
+    "premature",
+    "progress",
+    "self",
+    "slovakia",
+    "tesla"
+   ],
+   "numbers": [],
+   "summary": "Latvia and Slovakia have recently joined the ranks of European nations endorsing Tesla\u2019s Assisted Driving (TAD) software, with Latvia becoming the tenth European nation to sanction the technology this Monday. In Slovakia, resident Igor Marcek, 35, who purchased his Tesla two years prior, finds himself increasingly exhilarated by the prospects of TAD\u2014formerly known as FSD.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Nuro Co-CEO Renews Case for LiDAR as Lucid-Uber Robotaxi Nears",
+   "section": "Autonomous Vehicles",
+   "url": "https://eletric-vehicles.com/nuro/nuro-co-ceo-renews-case-for-lidar-as-lucid-uber-robotaxi-nears/",
+   "urls": [
+    "https://eletric-vehicles.com/nuro/nuro-co-ceo-renews-case-for-lidar-as-lucid-uber-robotaxi-nears"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "case",
+    "ceo",
+    "lidar",
+    "lucid",
+    "nears",
+    "nuro",
+    "renews",
+    "robotaxi",
+    "uber"
+   ],
+   "numbers": [],
+   "summary": "Nuro Co-CEO Jiajun Zhu shared four memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, and that Level 4 driverless systems are distinct products from Level 2 driver assistance.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Korean taxis in LA \u2014 Waymo Robotaxis and Rising Gas Costs Crush Profits",
+   "section": "Autonomous Vehicles",
+   "url": "https://en.koreadaily.com/korean-taxis-in-la-waymo-robotaxis-rising-gas-costs/",
+   "urls": [
+    "https://en.koreadaily.com/korean-taxis-in-la-waymo-robotaxis-rising-gas-costs"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "costs",
+    "crush",
+    "gas",
+    "korean",
+    "profits",
+    "rising",
+    "robotaxis",
+    "taxis",
+    "waymo"
+   ],
+   "numbers": [],
+   "summary": "Do-il Yoon, CEO of Hana Taxi, stated on October 27 that many Korean taxi operators have seen revenues drop by about 30% since the introduction of unmanned taxis. According to the American Automobile Association (AAA), gas prices in the Los Angeles area rose 31% from a year ago.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Urban rail industry news round-up",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28/",
+   "urls": [
+    "https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "industry",
+    "rail",
+    "round",
+    "urban"
+   ],
+   "numbers": [
+    "$302"
+   ],
+   "summary": "The Royal Commission for Riyadh City awarded Siemens Mobility a contract for 27 four-car driverless trainsets and 52 cars for metro lines 1 and 2, while the Asian Development Bank approved a US$302\u00b738m loan to modernize the Baku Metro.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "WeRide launches global insurance program with Allianz and Ping An to support autonomous vehicle expansion.",
+   "section": "Autonomous Vehicles",
+   "url": "https://pluang.com/en/news-feed/weride-luncurkan-program-mitra-asuransi-global-untuk-perluas-kendaraan-otonom",
+   "urls": [
+    "https://pluang.com/en/news-feed/weride-luncurkan-program-mitra-asuransi-global-untuk-perluas-kendaraan-otonom"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "allianz",
+    "autonomous",
+    "expansion",
+    "global",
+    "insurance",
+    "launches",
+    "ping",
+    "program",
+    "support",
+    "vehicle",
+    "weride"
+   ],
+   "numbers": [],
+   "summary": "Grupo Aeroportuario del Pac\u00edfico (GAP) announced a dividend payment of 20.80 pesos per share, approved at its April 2026 shareholders' meeting. The dividend will be paid on November 6, 2026, to shareholders presenting coupon No. 42 of their share certificate.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Tesla Robotaxi service \u2018coming soon\u2019 to San Antonio, other cities",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.expressnews.com/business/article/tesla-robotaxi-service-san-antonio-22495640.php",
+   "urls": [
+    "https://www.expressnews.com/business/article/tesla-robotaxi-service-san-antonio-22495640.php"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "antonio",
+    "cities",
+    "coming",
+    "other",
+    "robotaxi",
+    "san",
+    "service",
+    "soon",
+    "tesla"
+   ],
+   "numbers": [],
+   "summary": "Tesla Inc. announced its robotaxi service is \u201ccoming soon\u201d to San Antonio, Jacksonville, Fla., Las Vegas, and Phoenix, while expanding its operating territory in six existing cities across Texas and Florida.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "America's About To Get New Color Marker Lights For Self-Driving Cars To Warn Other Drivers",
+   "section": "Autonomous Vehicles",
+   "url": "https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars/",
+   "urls": [
+    "https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "america",
+    "cars",
+    "color",
+    "drivers",
+    "driving",
+    "get",
+    "lights",
+    "marker",
+    "other",
+    "self",
+    "warn"
+   ],
+   "numbers": [],
+   "summary": "The NHTSA proposes standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, with the agency stating these lamps should be optional as opposed to mandatory. These proposed updates target Federal Motor Vehicle Safety Standard No. 108 and include new equipment requirements for beam-switching, hazard lights, and turn signals.",
+   "led": true
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "ANYbotics Begins Deliveries of Quaduped Inspection Robots for Explosive Industrial Environments",
+   "section": "Robotics",
+   "url": "https://theaiinsider.tech/2026/10/28/anybotics-begins-deliveries-of-quaduped-inspection-robots-for-explosive-industrial-environments/",
+   "urls": [
+    "https://theaiinsider.tech/2026/10/28/anybotics-begins-deliveries-of-quaduped-inspection-robots-for-explosive-industrial-environments"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "anybotics",
+    "begins",
+    "deliveries",
+    "environments",
+    "explosive",
+    "industrial",
+    "inspection",
+    "quaduped",
+    "robots"
+   ],
+   "numbers": [],
+   "summary": "ANYbotics has begun customer deliveries of ANYmal X, a four-legged inspection robot designed to operate in explosive environments at oil, gas and chemical facilities. The Zurich-based robotics company announced the system is shipping to customers including Equinor and DSM-Firmenich.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "XPeng's IRON Robot Solid-State Battery Rolls Off in Small-Batch Production, Scale Manufacturing Targeted by Year-End",
+   "section": "Robotics",
+   "url": "https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3",
+   "urls": [
+    "https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "batch",
+    "battery",
+    "end",
+    "iron",
+    "manufacturing",
+    "off",
+    "production",
+    "robot",
+    "rolls",
+    "scale",
+    "small",
+    "solid",
+    "state",
+    "targeted",
+    "xpeng",
+    "year"
+   ],
+   "numbers": [],
+   "summary": "Gu Jie, vice president of XPeng Group, revealed on October 28 that the solid-state battery for the IRON robot has completed small-batch production, with large-scale production targeted by the end of 2026 and deliveries beginning in 2027.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "LG Electronics launches Korea robot data factory, expands actuator push",
+   "section": "Robotics",
+   "url": "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/?outputType=amp",
+   "urls": [
+    "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M?outputType=amp"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "actuator",
+    "data",
+    "electronics",
+    "expands",
+    "factory",
+    "korea",
+    "launches",
+    "push",
+    "robot"
+   ],
+   "numbers": [],
+   "summary": "LG Electronics will begin full-scale operation of the robot data factory it built this fourth quarter in Umyeon-dong, Seocho-gu, Seoul. It will also expand mass-production preparations for actuators, a core robot component, and ramp up order-taking activities for global clients.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Shanghai Names Physical AI Equipment a Priority as Smart Factory Demand Drives Scaled Robot Deployment",
+   "section": "Robotics",
+   "url": "https://finance.biggo.com/news/d680d238-e3cc-4150-87ee-f8882b60ee0c",
+   "urls": [
+    "https://finance.biggo.com/news/d680d238-e3cc-4150-87ee-f8882b60ee0c"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "demand",
+    "deployment",
+    "drives",
+    "equipment",
+    "factory",
+    "names",
+    "physical",
+    "priority",
+    "robot",
+    "scaled",
+    "shanghai",
+    "smart"
+   ],
+   "numbers": [],
+   "summary": "Shanghai's Municipal Commission of Economy and Informatization issued the \"Shanghai Action Plan for Accelerating the Development of a New Generation of Smart Manufacturing,\" designating the \"development and promotion of Physical AI equipment\" as a key task. The plan supports innovative breakthroughs in humanoid robots, collaborative robots, and high-precision overload robots, using smart factory construction demand to drive large-scale application.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Tesla begins humanoid production in California",
+   "section": "Robotics",
+   "url": "https://www.manufacturingdive.com/news/tesla-begins-optimus-humanoid-production-california-shipments-2027/872864/",
+   "urls": [
+    "https://www.manufacturingdive.com/news/tesla-begins-optimus-humanoid-production-california-shipments-2027/872864"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "begins",
+    "california",
+    "humanoid",
+    "production",
+    "tesla"
+   ],
+   "numbers": [],
+   "summary": "Elon Musk said in an earnings call that customer shipments could be ready by next year as Tesla makes progress on its Optimus robotics line in Fremont. Tesla plans to leverage its Terafab facility in Texas to supply enough AI5 chips for Optimus, which will be integrated with the robot in April.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "GXO Extends Digit Humanoid Robot to North Carolina and Tennessee After 100,000-Tote Milestone",
+   "section": "Robotics",
+   "url": "https://www.techtimes.com/articles/329537/20261027/gxo-extends-digit-humanoid-robot-north-carolina-tennessee-after-100000-tote-milestone.htm",
+   "urls": [
+    "https://www.techtimes.com/articles/329537/20261027/gxo-extends-digit-humanoid-robot-north-carolina-tennessee-after-100000-tote-milestone.htm",
+    "https://www.tradingview.com/news/stocktwits:1241804fd094b:0-agility-robotics-highlights-commercial-momentum-and-growing-enterprise-demand-for-digit-humanoid-robot"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "000",
+    "100",
+    "carolina",
+    "digit",
+    "extends",
+    "gxo",
+    "humanoid",
+    "milestone",
+    "north",
+    "robot",
+    "tennessee",
+    "tote"
+   ],
+   "numbers": [],
+   "summary": "Agility Robotics announced Monday that GXO Logistics has signed a commercial agreement to deploy Digit humanoid robots at two additional U.S. facilities \u2014 one in Statesville, North Carolina, and one in Lebanon, Tennessee \u2014 with operations scheduled to begin in early 2027.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "At least 30 dead in crash between two trains in central Spain, media say",
+   "section": "Advanced Rail / High-Speed Rail",
+   "url": "https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php",
+   "urls": [
+    "https://fakti.bg/en/world/1094742-at-least-46-killed-in-train-collision-in-spain-video",
+    "https://www.bignewsnetwork.com/news/279401138/at-least-10-killed-in-high-speed-train-collision-in-southern-spain",
+    "https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php",
+    "https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833",
+    "https://www.straitstimes.com/world/europe/two-high-speed-trains-rear-end-in-spain-rail-operator-says"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "between",
+    "central",
+    "crash",
+    "dead",
+    "least",
+    "media",
+    "say",
+    "spain",
+    "trains",
+    "two"
+   ],
+   "numbers": [],
+   "summary": "A high-speed train slammed into the rear of another train that had stopped, derailing two cars and killing at least 30 people on Wednesday in central Spain, according to local media.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Army tests autonomous robots that hunt enemy targets",
+   "section": "Military UAS",
+   "url": "https://www.yahoo.com/news/us/articles/army-tests-autonomous-robots-hunt-145608351.html",
+   "urls": [
+    "https://www.yahoo.com/news/us/articles/army-tests-autonomous-robots-hunt-145608351.html"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "army",
+    "autonomous",
+    "enemy",
+    "hunt",
+    "robots",
+    "targets",
+    "tests"
+   ],
+   "numbers": [],
+   "summary": "Four robotic vehicles were sent hunting for enemy targets during a military demonstration at Fort Knox, Kentucky, recently, but only one initially moved. The four experimental vehicles were developed under the Defense Advanced Research Projects Agency's RACER program, which aims to give unmanned ground vehicles the ability to navigate difficult terrain without human drivers.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "ZAWYA: Oman advances drone innovation programme across six key sectors \u2014 TradingView News",
+   "section": "International Security",
+   "url": "https://www.tradingview.com/news/reuters.com,2026-10-28:newsml_Zaw3TtQCK:0-zawya-oman-advances-drone-innovation-programme-across-six-key-sectors/",
+   "urls": [
+    "https://www.omanobserver.om/ampArticle/1198663",
+    "https://www.tradingview.com/news/reuters.com,2026-10-28:newsml_Zaw3TtQCK:0-zawya-oman-advances-drone-innovation-programme-across-six-key-sectors"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "across",
+    "advances",
+    "drone",
+    "innovation",
+    "key",
+    "oman",
+    "programme",
+    "sectors",
+    "six",
+    "tradingview",
+    "zawya"
+   ],
+   "numbers": [],
+   "summary": "Oman's Ministry of Transport, Communications and Information Technology (MTCIT) and Civil Aviation Authority (CAA) have concluded the Expression of Interest (EOI) submission period for the Oman AAM Strategic Demonstrator Programme, which targets six priority sectors including air taxi services and healthcare. Shortlisted applicants are expected to be notified by November 15, ahead of live demonstrations planned for December 6\u201310 and a main showcase scheduled for December 8\u20139.",
    "led": false
   }
  ]
