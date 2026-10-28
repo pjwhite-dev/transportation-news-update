@@ -40,7 +40,7 @@ Rules, in order of importance:
 1. Every sentence states only facts that appear in the fact sheet, and ends with the id(s) of the story or stories that state those facts, like: The FAA cleared Beta Technologies for passenger demonstration flights [S4]. Never cite a story that does not state the fact. Never add a fact, number, date, name, cause or consequence the sheet does not contain.
 2. Do not interpret. No sentence may say what something signals, means, reflects, shows, suggests, supports, or aligns with, and none may describe a trend, unless a story states exactly that. Do not add background or context from your own knowledge.
 3. Verbs must match what actually happened: "issued", "finalized", "approved" only for completed actions; use "proposed", "announced plans to", "tested", "demonstrated", "said" for the rest. Never describe a proposal or plan as a finished action.
-4. Write 3 short paragraphs (4 at most), 160 to 260 words in total. The first sentence names the single most consequential development and the consequence its story states.
+4. Write 3 short paragraphs (4 at most), 160 to 260 words in total. The stories are listed in priority order: federal policy actions first, then company and industry news, then foreign and military news. Lead with the most consequential development among the earliest stories marked LEAD: yes, and state the consequence its story states. Never lead with a story marked LEAD: no (it led a recent edition). Cover one rulemaking or one event once, however many stories mention it.
 5. Active voice. Name an agency in full on first reference. Use numerals. No lists of headlines. No process language (never mention a feed, records, stories, sections or how this was assembled).
 6. Never use: {", ".join(BANNED_PHRASES[:8])}.
 Output only the summary text. Cite with ids in square brackets, [S3] or [S3][S5]. No URLs and no other brackets."""
@@ -96,7 +96,7 @@ def build_fact_sheet(sections: dict[str, list[dict[str, Any]]]) -> list[dict[str
         for item in items:
             if str(item.get("url", "")).startswith(("http://", "https://")) and item.get("title"):
                 stories.append((section, item))
-    stories.sort(key=lambda pair: -int(pair[1].get("importance", 0) or 0))
+    stories.sort(key=lambda pair: (int(pair[1].get("priority_tier", 2) or 2), -int(pair[1].get("importance", 0) or 0)))
     from public_site import display_title
 
     sheet = []
@@ -110,6 +110,7 @@ def build_fact_sheet(sections: dict[str, list[dict[str, Any]]]) -> list[dict[str
                 "date": str(item.get("date_label", "")),
                 "summary": " ".join(str(item.get("summary", "")).split()),
                 "url": str(item["url"]),
+                "lead_ok": "yes" if item.get("lead_ok", True) else "no",
             }
         )
     return sheet
@@ -120,7 +121,7 @@ def fact_sheet_text(sheet: list[dict[str, str]]) -> str:
     for story in sheet:
         lines.append(
             f"[{story['id']}] ({story['section']}) {story['headline']}\n"
-            f"    source: {story['source']} {story['date']}\n"
+            f"    source: {story['source']} {story['date']}   LEAD: {story.get('lead_ok', 'yes')}\n"
             f"    summary: {story['summary'] or '(none)'}"
         )
     return "\n".join(lines)
@@ -203,6 +204,22 @@ def verify(verifier: AIProvider, sheet: list[dict[str, str]], rows: list[dict[st
     return result.usage
 
 
+def enforce_lead(rows: list[dict[str, Any]], sheet: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """The first sentence must cite only stories allowed to lead (not a lead of the last two editions).
+
+    If the writer ignored the instruction, the earliest sentence that cites only eligible stories moves to the
+    front of the first paragraph. If none exists the order stands.
+    """
+    blocked = {s["id"] for s in sheet if s.get("lead_ok") == "no"}
+    if not rows or not blocked or not (set(rows[0]["ids"]) & blocked):
+        return rows
+    for index, row in enumerate(rows):
+        if row["ids"] and not (set(row["ids"]) & blocked):
+            moved = {**row, "paragraph": rows[0]["paragraph"]}
+            return [moved] + rows[:index] + rows[index + 1:]
+    return rows
+
+
 def _problem_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [row for row in rows if row["verdict"] != "supported"]
 
@@ -274,6 +291,7 @@ def run_chain(
         # Final safety: unverified sentences are removed by code; they are never published.
         dropped = len(_problem_rows(rows))
         rows = [row for row in rows if row["verdict"] == "supported"]
+    rows = enforce_lead(rows, sheet)
     text = _render(_by_paragraph(rows), sheet)
     plain_words = len(re.sub(r"\[\d+\]\([^)]*\)", "", text).split())
     citations = len(re.findall(r"\[\d+\]\(https?://", text))

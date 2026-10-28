@@ -52,6 +52,9 @@ REQUIRED_RINS = (
     "2126-AC17",
 )
 
+# Proceedings tracked by docket rather than RIN; they must be in every edition too.
+REQUIRED_KEYS = ("fcc-space-modernization",)
+
 STATUS_CLASSES = (
     "completed operation",
     "regulatory action",
@@ -603,8 +606,8 @@ def gate_tracker(
     tracker = briefing.get("regulatory_tracker")
     if not isinstance(tracker, list):
         return GateResult("tracker", False, ["The regulatory tracker is missing."])
-    by_rin = {str(item.get("rin", "")).upper(): item for item in tracker if isinstance(item, dict)}
-    for rin in REQUIRED_RINS:
+    by_rin = {str(item.get("rin") or item.get("key") or "").upper(): item for item in tracker if isinstance(item, dict)}
+    for rin in (*REQUIRED_RINS, *(k.upper() for k in REQUIRED_KEYS)):
         item = by_rin.get(rin)
         if item is None:
             evidence.append(f"Required rulemaking {rin} is missing.")

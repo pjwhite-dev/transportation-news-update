@@ -7,7 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 import validation_gates as gates
-from validation_gates import EASTERN, REQUIRED_RINS
+from validation_gates import EASTERN, REQUIRED_KEYS, REQUIRED_RINS
 
 KNOWN_BAD = Path(__file__).parent / "regression" / "known_bad"
 NOW = datetime(2026, 10, 26, 6, 30, tzinfo=EASTERN)
@@ -50,7 +50,7 @@ def good_briefing() -> dict:
                 "status": "Pending final rule",
                 "verified_at": "2026-10-26T04:45:00-04:00",
             }
-            for rin in REQUIRED_RINS
+            for rin in (*REQUIRED_RINS, *REQUIRED_KEYS)
         ],
         "provenance": {
             "story_analysis": {"provider": "ollama", "model": "qwen3.6:27b-q4_K_M"},

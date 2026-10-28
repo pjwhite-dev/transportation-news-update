@@ -11,13 +11,15 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import date, datetime, timezone
+from collections import Counter
+from datetime import date, datetime, time, timezone
 from pathlib import Path
 from typing import Any, Callable
 
 import requests
 
 from alerts import get_secret
+from calendar_rules import EASTERN, last_completed_nyse_session, session_label
 
 QUOTE_URL = "https://finnhub.io/api/v1/quote"
 SECRET = "finnhub_api_key"
@@ -90,6 +92,29 @@ def fetch_snapshot(
     return {"as_of": stamp.isoformat(), "source": "Finnhub", "quotes": quotes}
 
 
+def snapshot_label(snapshot: dict[str, Any], now: datetime | None = None) -> str:
+    """'Close, Mon., Oct. 26' for the last completed NYSE session; the data's real date when it differs.
+
+    The label comes from the quotes' own timestamps (America/New_York), never from the clock alone. A
+    snapshot with no usable timestamps has no label, and the site hides the panel.
+    """
+    stamps = []
+    for quote in snapshot.get("quotes", []):
+        try:
+            stamps.append(datetime.fromisoformat(str(quote["quote_time"])).astimezone(EASTERN))
+        except (KeyError, ValueError, TypeError):
+            continue
+    if not stamps:
+        return ""
+    day = Counter(stamp.date() for stamp in stamps).most_common(1)[0][0]
+    on_day = [stamp for stamp in stamps if stamp.date() == day]
+    intraday = sum(time(9, 30) <= stamp.time() < time(16, 0) for stamp in on_day) > len(on_day) / 2
+    expected = last_completed_nyse_session(now or datetime.now(EASTERN))
+    if day == expected and not intraday:
+        return session_label(day)
+    return session_label(day, "Intraday" if intraday else "Close")
+
+
 def load_snapshot(path: Path = SNAPSHOT, *, today: date | None = None) -> dict[str, Any] | None:
     """The saved snapshot, or None when it is missing, malformed or older than MAX_AGE_DAYS."""
     try:
@@ -103,7 +128,9 @@ def load_snapshot(path: Path = SNAPSHOT, *, today: date | None = None) -> dict[s
         return None
     if (today or date.today()).toordinal() - as_of.toordinal() > MAX_AGE_DAYS or len(quotes) < MINIMUM_QUOTES:
         return None
-    return {**data, "quotes": quotes}
+    snapshot = {**data, "quotes": quotes}
+    snapshot["session_label"] = snapshot_label(snapshot)
+    return snapshot
 
 
 def main() -> int:

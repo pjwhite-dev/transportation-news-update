@@ -72,7 +72,8 @@ class FetchTests(unittest.TestCase):
 class LoadTests(unittest.TestCase):
     def snapshot(self, as_of="2026-10-27T08:00:00+00:00", count=len(market_watch.WATCHLIST)):
         quotes = [
-            {"symbol": s, "name": n, "group": g, "price": 10.0, "change": 1.0, "percent": 1.0 if i % 2 else -1.0}
+            {"symbol": s, "name": n, "group": g, "price": 10.0, "change": 1.0, "percent": 1.0 if i % 2 else -1.0,
+             "quote_time": "2026-10-27T20:00:00+00:00"}
             for i, (s, n, g) in enumerate(market_watch.WATCHLIST[:count])
         ]
         return {"as_of": as_of, "source": "Finnhub", "quotes": quotes}

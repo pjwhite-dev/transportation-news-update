@@ -50,7 +50,8 @@ PROPOSED = {
 class WatchListTests(unittest.TestCase):
     def test_all_ten_required_rulemakings_are_watched(self) -> None:
         entries = core.load_watch_list()
-        self.assertEqual({e["rin"] for e in entries}, set(REQUIRED_RINS))
+        self.assertEqual({e["rin"] for e in entries if e.get("rin")}, set(REQUIRED_RINS))
+        self.assertIn("fcc-space-modernization", {e["id"] for e in entries})
         self.assertTrue(all(e["required"] for e in entries))
         for entry in entries:
             self.assertNotRegex(entry["action"], r"^(Create |Enable |Modernize |Decide )")
@@ -62,9 +63,9 @@ class WatchListTests(unittest.TestCase):
                 events_path=Path(tmp) / "e.jsonl",
                 verifications_path=Path(tmp) / "v.jsonl",
             )
-        self.assertEqual(len(items), 10)
+        self.assertEqual(len(items), 11)  # ten RINs plus the FCC docket
         for item in items:
-            self.assertTrue(item["source_url"].startswith("https://www.reginfo.gov/"))
+            self.assertTrue(item["source_url"].startswith(("https://www.reginfo.gov/", "https://www.fcc.gov/")))
             self.assertEqual(item["verified_at"], "")
 
 
@@ -75,14 +76,15 @@ class StatusRuleTests(unittest.TestCase):
         derived = core.derive_status(
             [event("R", "1", "Proposed Rule", "2026-10-01", "2026-11-03")], self.AS_OF
         )
-        self.assertEqual(derived["status"], "Open for comment")
+        self.assertEqual(derived["status"], "Proposed rule (Oct. 1, 2026); comments close Nov. 3, 2026")
         self.assertEqual(derived["comment_deadline"], "2026-11-03")
 
-    def test_closed_period_is_pending_final_rule_not_final(self) -> None:
+    def test_closed_period_says_closed_and_never_claims_a_pending_final_rule(self) -> None:
         derived = core.derive_status(
             [event("R", "1", "Proposed Rule", "2026-02-01", "2026-02-11")], self.AS_OF
         )
-        self.assertEqual(derived["status"], "Comment period closed; pending final rule")
+        self.assertEqual(derived["status"], "Proposed rule (Feb. 1, 2026); comments closed Feb. 11, 2026")
+        self.assertNotIn("pending", derived["status"])
         self.assertEqual(derived["final_rule_document"], "")
 
     def test_final_status_only_when_a_rule_document_exists(self) -> None:
@@ -92,7 +94,7 @@ class StatusRuleTests(unittest.TestCase):
         )
         self.assertNotIn("Final", notice_only["status"])
         with_rule = core.derive_status([event("R", "9", "Rule", "2026-10-01"), proposal], self.AS_OF)
-        self.assertEqual(with_rule["status"], "Final rule published October 1, 2026")
+        self.assertEqual(with_rule["status"], "Final rule published Oct. 1, 2026")
         self.assertEqual(with_rule["final_rule_document"], "9")
 
     def test_future_dated_document_is_on_public_inspection(self) -> None:
@@ -119,14 +121,16 @@ class LedgerAndRefreshTests(unittest.TestCase):
                 now=self.NOW,
                 session=fake_session([PROPOSED]),
                 status_check=lambda url: 200,
+                oira_fetch=lambda: None,
+                discover_new=False,
                 events_path=events,
                 verifications_path=verifications,
             )
             first = core.refresh(**kwargs)
             core.refresh(**kwargs)
             self.assertEqual(first["errors"], [])
-            self.assertEqual(len(core.read_jsonl(events)), 10)  # one per RIN, never duplicated
-            self.assertEqual(len(core.read_jsonl(verifications)), 20)
+            self.assertEqual(len(core.read_jsonl(events)), 11)  # one per proceeding, never duplicated
+            self.assertEqual(len(core.read_jsonl(verifications)), 22)
             items = core.build_tracker(
                 self.NOW.date(), events_path=events, verifications_path=verifications
             )
@@ -141,10 +145,12 @@ class LedgerAndRefreshTests(unittest.TestCase):
                 now=self.NOW,
                 session=session,
                 status_check=lambda url: 200,
+                oira_fetch=lambda: None,
+                discover_new=False,
                 events_path=Path(tmp) / "e.jsonl",
                 verifications_path=Path(tmp) / "v.jsonl",
             )
-            self.assertEqual(len(report["errors"]), 10)
+            self.assertEqual(len(report["errors"]), 11)
             self.assertFalse(Path(tmp, "v.jsonl").exists())
 
     def test_non_200_official_link_is_not_recorded_as_verified(self) -> None:
@@ -154,6 +160,8 @@ class LedgerAndRefreshTests(unittest.TestCase):
                 now=self.NOW,
                 session=fake_session([PROPOSED]),
                 status_check=lambda url: 404,
+                oira_fetch=lambda: None,
+                discover_new=False,
                 events_path=Path(tmp) / "e.jsonl",
                 verifications_path=verifications,
             )
@@ -164,7 +172,8 @@ class LedgerAndRefreshTests(unittest.TestCase):
 class CommittedLedgerTests(unittest.TestCase):
     def test_committed_tracker_has_ten_entries(self) -> None:
         items = build_regulatory_tracker(date(2026, 10, 24))
-        self.assertEqual({i["rin"] for i in items}, set(REQUIRED_RINS))
+        self.assertEqual({i["rin"] for i in items if i["rin"]}, set(REQUIRED_RINS))
+        self.assertIn("fcc-space-modernization", {i["key"] for i in items})
 
 
 if __name__ == "__main__":

@@ -295,7 +295,7 @@ def summary_paragraphs(payload: dict[str, Any]) -> list[str]:
             citation = label.strip().isdigit()
             if citation:
                 before = before.rstrip(" ")
-            parts.append(html.escape(before))
+            parts.append(rich(before))
             if url in allowed and citation:
                 parts.append(
                     f'<sup class="cite"><a href="{_safe_url(url)}" style="color:#174F86;text-decoration:none" '
@@ -309,7 +309,7 @@ def summary_paragraphs(payload: dict[str, Any]) -> list[str]:
             elif not citation:
                 parts.append(html.escape(label))
             cursor = match.end()
-        parts.append(html.escape(paragraph[cursor:]))
+        parts.append(rich(paragraph[cursor:]))
         text = "".join(parts).strip()
         if text:
             paragraphs.append(text)
@@ -343,7 +343,29 @@ def _relative_prefix(is_archive_page: bool) -> str:
 
 def canonical_source(value: str) -> str:
     source = " ".join(str(value or "Source").split())
-    return SOURCE_CANONICAL_NAMES.get(source.casefold(), source)
+    mapped = SOURCE_CANONICAL_NAMES.get(source.casefold())
+    if mapped:
+        return mapped
+    from editorial_checks import looks_like_url, source_label
+
+    return source_label(source) if looks_like_url(source) else source
+
+
+_ITALIC = re.compile(r"\*([^*\n]{3,140})\*")
+
+
+def rich(text: str) -> str:
+    """Escape text, then turn *Title* markers (executive-order titles) into italics with a dagger."""
+    return _ITALIC.sub(lambda m: f"<em>{m.group(1)}</em><sup class=\"fn\">&dagger;</sup>", html.escape(text))
+
+
+def eo_note(text: str) -> str:
+    """Footnote giving the executive-order number for each italicized title in ``text``."""
+    from news_engine import EO_DISPLAY_NAMES
+
+    numbers = {name: number.replace("EO ", "Executive Order ") for number, name in EO_DISPLAY_NAMES.items()}
+    notes = [f"<em>{html.escape(name)}</em> is {numbers[name]}." for name in dict.fromkeys(_ITALIC.findall(text)) if name in numbers]
+    return f'<p class="footnote">&dagger; {" ".join(notes)}</p>' if notes else ""
 
 
 _TITLE_SUFFIX = re.compile(r"\s+[-–—|]\s+([^-–—|]{2,40})$")
@@ -390,14 +412,11 @@ def _glance_groups(
 
 def story_html(item: dict[str, Any]) -> str:
     title = html.escape(display_title(item))
-    summary = html.escape(
-        sanitize_story_summary(
-            str(item.get("title", "")), str(item.get("summary", ""))
-        )
-    )
+    summary_text = sanitize_story_summary(str(item.get("title", "")), str(item.get("summary", "")))
+    summary = rich(summary_text)
     source = html.escape(canonical_source(str(item.get("source", "Source"))))
     date_label = html.escape(str(item.get("date_label", "")))
-    summary_markup = f'<p class="story-summary">{summary}</p>' if summary else ""
+    summary_markup = f'<p class="story-summary">{summary}</p>{eo_note(summary_text)}' if summary else ""
     related = []
     seen_urls = {item.get("url", "")}
     for related_item in item.get("also_covered", []):
@@ -464,46 +483,69 @@ def tracker_html(items: list[dict[str, Any]]) -> str:
     """A quiet, collapsed docket at the foot of the edition; the summary line carries the news."""
     if not items:
         return ""
-    dated = [
-        item for item in items
-        if isinstance(item.get("days_remaining"), int) and item.get("comment_deadline")
-    ]
+    def next_info(item: dict[str, Any]) -> dict[str, Any] | None:
+        """The item's next date; editions saved before the docket redesign carry only a comment deadline."""
+        if isinstance(item.get("next_date"), dict):
+            return item["next_date"]
+        if isinstance(item.get("days_remaining"), int) and item.get("comment_deadline"):
+            return {"date": str(item["comment_deadline"]), "label": f"{item.get('comment_deadline_label', '')} · Comments due",
+                    "kind": "deadline", "days_remaining": item["days_remaining"]}
+        return None
+
+    dated = [item for item in items if next_info(item)]
     if dated:
-        nxt = min(dated, key=lambda item: item["days_remaining"])
-        headline = (
-            f"Next date: {html.escape(str(nxt.get('comment_deadline_label', '')))} "
-            f"— {html.escape(str(nxt.get('agency', '')))} comments close"
-        )
+        nxt = min(dated, key=lambda item: next_info(item)["date"])
+        info = next_info(nxt)
+        headline = f"Next date: {html.escape(info['label'].replace(' · ', ' — '))} — {html.escape(str(nxt.get('agency', '')))}"
+        if isinstance(info.get("days_remaining"), int):
+            headline += f" ({info['days_remaining']} days)"
     else:
-        headline = "No comment periods are open today"
+        headline = "No open comment periods or scheduled dates"
     verified = [str(item.get("verified_at", "")) for item in items if item.get("verified_at")]
     checked = ""
     if verified:
         try:
             checked_on = datetime.fromisoformat(max(verified)).astimezone(EASTERN).date()
-            checked = f'<p class="note">Each entry is checked against the Federal Register; last checked {_format_day(checked_on)}.</p>'
+            checked = (
+                '<p class="note">Status comes from each proceeding&rsquo;s Federal Register record and OIRA review data, '
+                f'not from news coverage. Last checked {_format_day(checked_on)}.</p>'
+            )
         except ValueError:
             checked = ""
     rows = []
     for item in items:
-        deadline = str(item.get("comment_deadline_label", ""))
         status = html.escape(str(item.get("status", "")))
-        if deadline and deadline != "No concrete date published":
-            prefix = "Comments close" if isinstance(item.get("days_remaining"), int) else "Comments closed"
-            status += f" &middot; {prefix} {html.escape(deadline)}"
+        if item.get("oira_status"):
+            status += f'<br><span class="oira">{html.escape(str(item["oira_status"]))}</span>'
+        nxt = next_info(item)
+        if nxt:
+            label = html.escape(nxt["label"])
+            remaining = (
+                f'<br><span class="days">{nxt["days_remaining"]} days</span>'
+                if isinstance(nxt.get("days_remaining"), int) and nxt["days_remaining"] >= 0 else ""
+            )
+            next_cell = label + remaining
+        else:
+            next_cell = "&mdash;"
+        rule = html.escape(str(item.get("action", "")))
+        key = str(item.get("rin") or item.get("docket") or "")
+        citation = html.escape(str(item.get("citation", "")))
+        link_text = f"{citation} (Federal Register)" if citation else "Official record"
         rows.append(
             "<tr>"
-            f"<td>{html.escape(str(item.get('agency', '')))}</td>"
-            f"<td>{html.escape(str(item.get('action', '')))} ({html.escape(str(item.get('rin', '')))})</td>"
+            f"<td><strong>{html.escape(str(item.get('agency', '')))}</strong><br>{rule}<br>"
+            f'<span class="rin">{html.escape(key)}</span></td>'
+            f"<td>{html.escape(str(item.get('fr_title', '')))}</td>"
             f"<td>{status}</td>"
-            f'<td><a href="{_safe_url(item.get("source_url", ""))}">Official source</a></td>'
+            f"<td>{next_cell}</td>"
+            f'<td><a href="{_safe_url(item.get("source_url", ""))}">{link_text}</a></td>'
             "</tr>"
         )
     return (
         '<details class="docket" id="tracker"><summary>'
-        f"<h2>Regulatory docket</h2><span>{_plural(len(items), 'rulemaking')} tracked &middot; {headline}</span></summary>"
+        f"<h2>Regulatory docket</h2><span>{_plural(len(items), 'proceeding')} tracked &middot; {headline}</span></summary>"
         f"{checked}"
-        '<table><thead><tr><th>Agency</th><th>Rulemaking</th><th>Status</th><th>Source</th></tr></thead>'
+        '<table><thead><tr><th>Agency / Rule / RIN</th><th>Summary</th><th>Status</th><th>Next date</th><th>Official record</th></tr></thead>'
         f"<tbody>{''.join(rows)}</tbody></table></details>"
     )
 
@@ -556,11 +598,12 @@ def market_html(snapshot: dict[str, Any] | None) -> str:
     body = (f'<ul class="tiles">{"".join(tiles)}</ul>' if tiles else "") + "".join(
         f'<h3>{html.escape(group)}</h3><ul class="quotes">{"".join(rows)}</ul>' for group, rows in groups.items()
     )
-    try:
-        as_of = datetime.fromisoformat(snapshot["as_of"]).astimezone(EASTERN).date()
-        stamp = f"Prior-day close, {as_of.strftime('%b')} {as_of.day}."
-    except (KeyError, ValueError):
-        stamp = "Prior-day close."
+    from market_watch import snapshot_label
+
+    stamp = str(snapshot.get("session_label") or snapshot_label(snapshot))
+    if not stamp:
+        return ""  # no usable quote timestamps: hide the panel rather than guess a date
+    stamp += "."
     return (
         '<section class="box market" id="market"><h2 class="label">Market watch</h2>'
         f'{body}<p class="note">{stamp} Delayed; not investment advice. Index tiles use the ETFs that track '
@@ -617,7 +660,7 @@ def hero_html(payload: dict[str, Any], day: date, *, eyebrow: str) -> str:
     else:
         headline = f'<a href="#{story_anchor(lead)}">{html.escape(display_title(lead))}</a>'
         text = sanitize_story_summary(str(lead.get("title", "")), str(lead.get("summary", "")))
-        deck = f'<p class="deck">{html.escape(text)}</p>' if text else ""
+        deck = f'<p class="deck">{rich(text)}</p>' if text else ""
     return (
         '<div class="wrap hero">'
         f'<p class="eyebrow">{html.escape(eyebrow)} &middot; {html.escape(_format_day(day))}</p>'
@@ -929,6 +972,7 @@ def edition_content(payload: dict[str, Any], day: date) -> str:
         intro = (
             '<section class="summary" id="summary"><h2 class="label">Executive summary</h2>'
             + "".join(f"<p>{paragraph}</p>" for paragraph in summary_paragraphs(payload))
+            + eo_note(str(payload.get("executive_summary", "")))
             + "</section>"
         )
     else:
