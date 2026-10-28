@@ -47,7 +47,28 @@ bad_headline_patterns:
 cut_off_last_words: ["and", "or", "the", "of", "to", "for", "with", "in", "on", "at", "by", "from", "a", "an", "as", "that", "which", "eV", "e"]
 
 # Clean English names for sources. Keys are host names (no www) or lower-case raw labels.
+name_fixes:
+  bbc: BBC
+  tokenpost: TokenPost
+  sofx: SOFX
+  ua: UA.News
+  vietnam: Vietnam.vn
+  tdworld: T&D World
+  mrobusinesstoday: MRO Business Today
+  cxotoday: CXO Today
+  autonomyglobal: Autonomy Global
+  defenceagenda: Defence Agenda
+  clubalfa: Clubalfa
+  cebudavao: Cebu Davao
+  remio: Remio
 source_names:
+  mt.co.kr: Money Today
+  mk.co.kr: Maeil Business Newspaper
+  digitaltoday.co.kr: Digital Today
+  pravda.com.ua: Ukrainska Pravda
+  ua.news: UA.News
+  bbc.com: BBC
+  bbc.co.uk: BBC
   aapnews.aap.com.au: AAP
   aap.com.au: AAP
   chosun.com: Chosun Ilbo

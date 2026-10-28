@@ -38,7 +38,16 @@ def _host_to_name(host: str) -> str:
 
 
 def source_label(raw_source: str, url: str = "", original_publisher: str = "") -> str:
-    """A clean English publication name; never a raw URL.
+    """A clean English publication name: Latin letters only, known spellings fixed, never a raw URL."""
+    label = _source_label(raw_source, url, original_publisher)
+    label = (load_config().get("name_fixes") or {}).get(label.casefold(), label)
+    if re.search(r"[^\u0000-ɏ‘’–—]", label):  # Hangul, Cyrillic, CJK and so on
+        label = _named(_host(url)) or _host_to_name(_host(url))
+    return label
+
+
+def _source_label(raw_source: str, url: str = "", original_publisher: str = "") -> str:
+    """The publication name before the final cleanup.
 
     Syndicated copies (AOL, MSN, Yahoo...) use the original publisher when the page names one.
     """

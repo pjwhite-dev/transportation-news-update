@@ -672,5 +672,20 @@ class ScopeAnglesFromReplayTests(unittest.TestCase):
         self.assertTrue(checks.scope_fits(item, "AAM / eVTOL / Advanced Aviation"))
 
 
+class SourceNameCleanupTests(unittest.TestCase):
+    """Replay of 2026-10-25/27 showed Hangul, Cyrillic and host-derived names in the source line."""
+
+    def test_non_latin_names_become_english_publication_names(self) -> None:
+        self.assertEqual(checks.source_label("머니투데이", "https://www.mt.co.kr/a"), "Money Today")
+        self.assertEqual(checks.source_label("Українська правда", "https://www.pravda.com.ua/a"), "Ukrainska Pravda")
+
+    def test_known_spellings_are_fixed(self) -> None:
+        self.assertEqual(checks.source_label("Bbc", "https://ca.news.yahoo.com/x", "bbc"), "BBC")
+        self.assertEqual(checks.source_label("Tdworld", "https://www.tdworld.com/x"), "T&D World")
+
+    def test_tagline_is_stripped(self) -> None:
+        self.assertEqual(checks.source_label("Tuoi Tre News | The News Gateway to Vietnam", "https://tuoitrenews.vn/x"), "Tuoi Tre News")
+
+
 if __name__ == "__main__":
     unittest.main()
