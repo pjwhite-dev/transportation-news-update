@@ -59,7 +59,16 @@ jobs:
           tests.test_alerts tests.test_site_design tests.test_non_article_filter tests.test_summary_chain tests.test_market_watch tests.test_self_heal tests.test_doctor tests.test_doctor_auto tests.test_editorial_quality tests.test_edition_preflight
 
       - name: Re-validate the edition (hard gates)
-        run: python automated_briefing.py --validate-only data/latest_briefing.json
+        # The reasons are echoed as annotations so a failure e-mail/Checks page says what failed, not just "exit code 1".
+        run: |
+          set +e
+          python automated_briefing.py --validate-only data/latest_briefing.json > validate.out 2> validate.err
+          status=$?
+          cat validate.out validate.err
+          if [ "$status" -ne 0 ]; then
+            grep -E '^(- |ValueError|Traceback| *File )' validate.err | head -20 | while IFS= read -r line; do echo "::error title=Gate failure::${line:0:400}"; done
+            exit "$status"
+          fi
 
       - name: Build the public news archive
         run: python public_site.py --output _site
