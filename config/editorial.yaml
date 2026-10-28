@@ -13,6 +13,8 @@ freshness:
 # Hosts that are never stories: shops, stock-quote aggregators, content farms, social and wiki pages.
 deny_hosts:
   - basenor.com
+  - finance.biggo.com
+  - pluang.com
   - greenstocknews.com
   - stocktitan.net
   - marketbeat.com
