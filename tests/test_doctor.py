@@ -48,10 +48,21 @@ class EditTests(unittest.TestCase):
 
     def test_only_code_files_may_be_edited(self) -> None:
         for name in ("data/latest_briefing.json", ".github/workflows/publish-news-site.yml", "alerts.py", "doctor.py",
-                     "../outside.py", "scripts/run_local_pipeline.ps1", "tests/regression/known_bad/x.json"):
+                     "../outside.py", "tests/regression/known_bad/x.json", "scripts/sub/x.ps1"):
             self.assertFalse(doctor.allowed_edit({"file": name}), name)
-        for name in ("validation_gates.py", "tests/test_x.py", "tracker/core.py"):
+        for name in ("validation_gates.py", "tests/test_x.py", "tracker/core.py", "scripts/run_local_pipeline.ps1",
+                     "scripts/ensure_edition.ps1", "config/editorial.yaml", "edition_preflight.py"):
             self.assertTrue(doctor.allowed_edit({"file": name}), name)
+
+    def test_script_failure_is_classified_and_read_by_the_doctor(self) -> None:
+        log = ("Host Application: powershell.exe -NoProfile -File C:/newsroom/scripts/run_local_pipeline.ps1\n"
+               '>> TerminatingError(git.exe): "error: pathspec \'tracker/discovered.yaml\' did not match"')
+        self.assertEqual(doctor.classify(log)[0], "script_error")
+
+    def test_rerun_is_claimed_once_per_day(self) -> None:
+        self.assertTrue(doctor.claim_rerun(self.root, "2026-10-28"))
+        self.assertFalse(doctor.claim_rerun(self.root, "2026-10-28"))
+        self.assertTrue(doctor.claim_rerun(self.root, "2026-10-29"))
 
     def test_a_failed_second_edit_leaves_the_first_unapplied(self) -> None:
         with self.assertRaises(ValueError):

@@ -40,13 +40,11 @@ try {
         # 04:00 tracker task) and the market snapshot is refetched, so uncommitted changes to just
         # these files are discarded.
         # Anything else dirty still stops the run.
-        git checkout -- tracker/events.jsonl tracker/verifications.jsonl tracker/oira.json tracker/discovered.yaml data/market.json data/published_groups.json 2>$null
-        # A failed earlier run today leaves its collected feed behind (the collector rewrites both
-        # files at the start of every run), which used to make every retry refuse to start.
-        git checkout -- data/latest_raw_news.json 2>$null
-        $todayRaw = "data/raw_archive/" + (Get-Date).ToString("yyyy-MM-dd", [Globalization.CultureInfo]::InvariantCulture) + ".json"
-        $dirty = @(git status --porcelain | Where-Object { $_ -ne "?? $todayRaw" -and $_ -notmatch "^\?\? (qa/|tracker/discovered\.yaml)" })
-        if ($dirty) { throw "Refusing production run because the repository is not clean: $($dirty -join '; ')" }
+        # The logic is in edition_preflight.py (unit-tested against a real repository, and editable by the
+        # doctor). A failed earlier run today leaves its collected feed behind; that is discarded too.
+        $preflight = & $python edition_preflight.py
+        if ($LASTEXITCODE -ne 0) { throw ($preflight -join " ") }
+        Write-Output $preflight
         git pull --ff-only origin main
         if ($LASTEXITCODE -ne 0) { throw "git pull --ff-only failed." }
     }

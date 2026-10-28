@@ -33,7 +33,10 @@ SITE = "https://news.peterjwhite.org/"
 EDITION_META = re.compile(r'<meta name="edition-id" content="(\d{4}-\d{2}-\d{2})">')
 LOG_TAIL_LINES = 150
 CONTEXT_CHARS = 24_000
-EDITABLE = re.compile(r"^(?:[A-Za-z0-9_]+\.py|tests/[A-Za-z0-9_]+\.py|tracker/core\.py|bench/[A-Za-z0-9_]+\.py)$")
+EDITABLE = re.compile(
+    r"^(?:[A-Za-z0-9_]+\.py|tests/[A-Za-z0-9_]+\.py|tracker/core\.py|bench/[A-Za-z0-9_]+\.py"
+    r"|scripts/[A-Za-z0-9_]+\.(?:ps1|py)|config/[A-Za-z0-9_]+\.yaml|tracker/rulemakings\.yaml)$"
+)
 BLOCKED_NAMES = {"alerts.py", "doctor.py"}
 
 # (signature in the log, cause class, plain-English recovery). First match wins.
@@ -48,7 +51,11 @@ SIGNATURES: tuple[tuple[str, str, str], ...] = (
      "The push worked but Pages did not show the edition in 5 minutes. Check the GitHub Actions run."),
     ("Complete briefing validation failed", "gate_failure", ""),
     ("Traceback (most recent call last)", "code_error", ""),
+    ("TerminatingError(", "script_error", ""),  # a PowerShell step stopped the run (2026-10-28: git checkout)
 )
+
+# Causes the doctor cures by running the edition again (the pipeline's own preflight clears stale files).
+RERUN_CAUSES = {"ollama_down", "dirty_tree"}
 
 SYSTEM = """You are the maintenance engineer for a Python news-publishing pipeline that runs locally.
 A daily edition failed to publish. You get the tail of the failing run's log, git state, and the
@@ -140,6 +147,14 @@ def traceback_files(log_text: str, repo: Path) -> list[Path]:
 def context_files(cause: str, log_text: str, repo: Path) -> list[Path]:
     """Traceback files, plus the repair rules for a gate failure (placed last so they are shown first)."""
     files = traceback_files(log_text, repo)
+    if cause == "script_error":
+        for raw in re.findall(r"-File\s+(\S+\.ps1)", log_text):
+            try:
+                relative = Path(raw).resolve().relative_to(repo.resolve())
+            except (ValueError, OSError):
+                continue
+            if (repo / relative).exists() and relative not in files:
+                files.append(relative)
     gates = Path("validation_gates.py")
     if cause == "gate_failure" and (repo / gates).exists() and gates not in files:
         files.append(gates)
@@ -232,7 +247,7 @@ def incident_key(cause: str, log_text: str) -> str:
     return f"{cause}: {line.strip()[:120]} [{','.join(gates)}]"
 
 
-AUTO_MAX_ADDED, AUTO_MAX_REMOVED = 80, 15
+AUTO_MAX_ADDED, AUTO_MAX_REMOVED = 150, 30
 _WEAKENING = re.compile(r"\braise\b|\bassert\b|\bMIN\w*|\bMAX\w*|threshold|\bGATE\w*", re.I)
 _SUPPRESSING = re.compile(r"\bskip\w*\b|noqa|except\s+Exception\s*:\s*(?:pass|continue)|\bxfail\b", re.I)
 
@@ -275,6 +290,25 @@ def apply_branch(repo: Path, branch: str) -> str:
     except subprocess.TimeoutExpired:
         return "The rerun timed out; check the log."
     return "Rerun finished." if result.returncode == 0 else "The merge or rerun reported an error; check the log."
+
+
+def claim_rerun(repo: Path, day: str) -> bool:
+    """One automatic rerun per day, so a failure that persists cannot loop."""
+    marker = repo / ".runtime" / f"doctor-rerun-{day}.marker"
+    if marker.exists():
+        return False
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text(datetime.now(EASTERN).isoformat(), encoding="utf-8")
+    return True
+
+
+def rerun_edition(repo: Path) -> str:
+    script = repo / "scripts" / "run_local_pipeline.ps1"
+    try:
+        result = run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script)], repo, timeout=3600)
+    except subprocess.TimeoutExpired:
+        return "The rerun timed out; check the log."
+    return "The rerun finished." if result.returncode == 0 else "The rerun failed again; the next log will be diagnosed."
 
 
 def incident_count(repo: Path, key: str) -> int:
@@ -347,7 +381,9 @@ def main() -> int:
         return 0
     if recovery:
         message += f" {recovery}"
-    elif log_text and cause in ("gate_failure", "code_error", "unknown"):
+        if cause in RERUN_CAUSES and not args.dry_run and claim_rerun(repo, day):
+            message += f" Rerunning the edition now. {rerun_edition(repo)}"
+    elif log_text and cause in ("gate_failure", "code_error", "script_error", "unknown"):
         from ai_providers import provider_from_env
 
         try:
@@ -361,13 +397,12 @@ def main() -> int:
             message += f" {note}"
             if branch_made:
                 ok, why = auto_merge_ok(repo, branch_made)
-                if ok and incident_count(repo, incident_key(cause, log_text)) == 0:
+                if ok:  # a repeat is merged too; the failing-then-passing test and the guard still apply
                     applied = apply_branch(repo, branch_made)
                     message += (f" Applied automatically (all gates passed) and the edition was rerun. {applied} "
                                 f"Undo: git revert the merge of {branch_made}.")
                 else:
-                    reason = why if not ok else "this failure has happened before"
-                    message += (f" Needs your OK ({reason}): scripts\\approve_doctor.ps1 -Branch {branch_made}")
+                    message += (f" Needs your OK ({why}): scripts\\approve_doctor.ps1 -Branch {branch_made}")
     repeats = 0
     if not args.dry_run:
         repeats = record_incident(repo, day, incident_key(cause, log_text), branch_made)
