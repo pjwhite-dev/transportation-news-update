@@ -595,11 +595,10 @@ async function loadState() {
   if (!S.front && le.sections) {
     renderFront(le.sections, "Last Published Front Page", `${le.date} · ${le.stories} stories`);
     if (!S.mode) {
-      const n = le.qa_notes || {}, q = le.qa_summary || {};
-      S.candidates = n.candidates_after_article_check ? null : S.candidates;
+      // Between runs: the last edition's own numbers, final (nothing is "counting").
+      const n = le.qa_notes || {};
       S.kept = n.candidates_after_article_check || 0; S.published = le.stories;
-      S.gathered = le.candidates || null; renderFunnel();
-      Object.entries(q).forEach(([k, v]) => {});
+      S.final = { factcheck: true, editors: true, press: true }; renderFunnel();
     }
   }
   const sv = st.services || {}, g = st.gpu || {};
