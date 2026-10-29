@@ -123,11 +123,13 @@ def classify(log_text: str) -> tuple[str, str]:
 
 
 def latest_log(repo: Path, day: str) -> str:
+    """The tail of the newest log that says something; an attempt that wrote nothing hides the real cause."""
     logs = sorted((repo / ".runtime" / "logs").glob(f"edition-{day}-*.log"))
-    if not logs:
-        return ""
-    lines = logs[-1].read_text(encoding="utf-8", errors="replace").splitlines()
-    return redact("\n".join(lines[-LOG_TAIL_LINES:]))
+    for log in reversed(logs):
+        lines = log.read_text(encoding="utf-8", errors="replace").splitlines()
+        if any(line.strip() for line in lines):
+            return redact("\n".join(lines[-LOG_TAIL_LINES:]))
+    return ""
 
 
 def traceback_files(log_text: str, repo: Path) -> list[Path]:

@@ -42,7 +42,8 @@ Rules, in order of importance:
 3. Verbs must match what actually happened: "issued", "finalized", "approved" only for completed actions; use "proposed", "announced plans to", "tested", "demonstrated", "said" for the rest. Never describe a proposal or plan as a finished action.
 4. Write 3 short paragraphs (4 at most), 160 to 260 words in total. The stories are listed in priority order: federal policy actions first, then company and industry news, then foreign and military news. Lead with the most consequential development among the earliest stories marked LEAD: yes, and state the consequence its story states. Never lead with a story marked LEAD: no (it led a recent edition). Cover one rulemaking or one event once, however many stories mention it.
 5. Active voice. Name an agency in full on first reference. Use numerals. No lists of headlines. No process language (never mention a feed, records, stories, sections or how this was assembled).
-6. Never use: {", ".join(BANNED_PHRASES[:8])}.
+6. Write like a seasoned wire editor briefing a busy executive. Each paragraph has one theme (for example federal action, then deployments and industry, then security abroad), and its first sentence carries that theme's most important fact. Every sentence names who acted, what they did, and the specific number, place or date that makes it concrete. Vary sentence openings; never start two sentences in a row with the same word. Prefer plain verbs (approved, launched, ordered, crashed, raised) to abstractions, and say "the agency" or the company's name rather than "it" when the subject could be unclear. Name whose embassy, ministry or government acted.
+7. Never use: {", ".join(BANNED_PHRASES[:8])}.
 Output only the summary text. Cite with ids in square brackets, [S3] or [S3][S5]. No URLs and no other brackets."""
 
 VERIFIER_SYSTEM = """You are a fact checker. You are given a FACT SHEET and a numbered list of sentences from a news summary. For EACH sentence decide:

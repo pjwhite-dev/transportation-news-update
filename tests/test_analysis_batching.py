@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from datetime import datetime
 from unittest.mock import patch
@@ -30,21 +31,25 @@ class BatchingTests(unittest.TestCase):
         def fake(messages, api_key, model, schema_name, schema, max_tokens, provider):
             calls.append(max_tokens)
             index = len(calls) - 1
+            ids = [r["id"] for r in json.loads(messages[-1]["content"].split("records:\n", 1)[1])]
+            # Every record is judged (the prompt requires it); one per batch is relevant.
             return (
                 {"what_to_watch": ["Shared item", f"Item {index}"],
-                 "clusters": [cluster("c1", ["Zipline expands drone delivery to Dallas", "NHTSA grants Zoox exemption for robotaxis", "Army tests interceptor drones at Fort Bliss"][index], f"a{index}")]},
+                 "clusters": [cluster("c1", ["Zipline expands drone delivery to Dallas", "NHTSA grants Zoox exemption for robotaxis", "Army tests interceptor drones at Fort Bliss"][index], ids[0])]
+                 + [cluster(f"x{i}", "", i, relevant=False, importance=1) for i in ids[1:]]},
                 {"input_tokens": 10, "output_tokens": 5, "total_tokens": 15, "_retries": 1},
                 0.0,
             )
 
-        with patch.object(news_engine, "request_structured_output", fake):
+        with patch.object(news_engine, "request_structured_output", fake), patch.object(news_engine, "THIN_SELECTION_FLOOR", 0):
             merged, usage, cost = news_engine.analyze_articles(
                 articles, "", "m", self.START, self.END, None
             )
         self.assertEqual(len(calls), 3)  # 80 candidates / batches of 35
         self.assertTrue(all(tokens == news_engine.ANALYSIS_BATCH_OUTPUT_TOKENS for tokens in calls))
-        self.assertEqual(len(merged["clusters"]), 3)
-        self.assertEqual(len({c["cluster_id"] for c in merged["clusters"]}), 3)
+        relevant = [c for c in merged["clusters"] if c["relevant"]]
+        self.assertEqual(len(relevant), 3)
+        self.assertEqual(len({c["cluster_id"] for c in relevant}), 3)
         self.assertEqual(merged["what_to_watch"], ["Shared item", "Item 0", "Item 1", "Item 2"])
         self.assertEqual(usage["total_tokens"], 45)
         self.assertEqual(usage["_retries"], 3)

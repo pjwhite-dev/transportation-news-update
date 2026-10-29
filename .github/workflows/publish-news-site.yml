@@ -56,7 +56,7 @@ jobs:
         run: >-
           python -m unittest tests.test_validation_gates
           tests.test_regulatory_tracker tests.test_ai_providers tests.test_url_resolver
-          tests.test_alerts tests.test_site_design tests.test_non_article_filter tests.test_summary_chain tests.test_market_watch tests.test_self_heal tests.test_doctor tests.test_doctor_auto tests.test_editorial_quality tests.test_edition_preflight
+          tests.test_alerts tests.test_site_design tests.test_non_article_filter tests.test_summary_chain tests.test_market_watch tests.test_self_heal tests.test_doctor tests.test_doctor_auto tests.test_editorial_quality tests.test_edition_preflight tests.test_story_selection tests.test_round2_1029
 
       - name: Re-validate the edition (hard gates)
         # The reasons are echoed as annotations so a failure e-mail/Checks page says what failed, not just "exit code 1".

@@ -89,6 +89,14 @@ def scope_fits(item: dict[str, Any], section: str) -> bool:
     return bool(scope["require"] and scope["require"].search(text))
 
 
+def angle_in_headline(item: dict[str, Any], section: str) -> bool:
+    """The headline itself names the portfolio topic or the section's subject (the topic is not incidental)."""
+    title = str(item.get("title", ""))
+    angle = compiled(load_config()["portfolio_angle"])
+    scope = section_scopes().get(section) or {}
+    return bool((angle and angle.search(title)) or (scope.get("require") and scope["require"].search(title)))
+
+
 def off_topic_reason(item: dict[str, Any]) -> str:
     """'' when the item has a portfolio angle and is not celebrity/crime filler."""
     config = load_config()

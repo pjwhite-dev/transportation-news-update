@@ -33,11 +33,11 @@ from publication import briefing_date, briefing_payload
 from summary_chain import check_verifier, verifier_from_env
 from tracker.core import refresh as refresh_tracker
 from url_resolver import resolve_articles
-from article_extract import enrich_candidates
+from article_extract import enrich_candidates, make_official_fetch, make_official_search
 from grounding import make_entailment_check, make_writer
 from qa_report import QAReport
-from quality_pass import QualityContext
-from story_groups import build_store, write_store
+from quality_pass import QualityContext, make_topic_check
+from story_groups import build_store, write_store, make_same_event_check
 from editorial_checks import scope_fits, style_text, strip_exclamations
 from validation_gates import (
     check_url_status,
@@ -226,6 +226,9 @@ def build_briefing(
     quality = QualityContext(
         report=qa, today=day, store=build_store(root / "data" / "archive", day),
         write=make_writer(selected), entail=make_entailment_check(verifier),
+        same_event=make_same_event_check(verifier), on_topic=make_topic_check(verifier),
+        fetch_official=make_official_fetch(),
+        search_official=make_official_search(os.environ.get("SEARXNG_BASE_URL", "http://localhost:8080")),
     )
     briefing = generate_briefing_from_records(
         raw_feed,

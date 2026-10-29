@@ -17,9 +17,15 @@ from typing import Any, Callable
 
 from editorial_config import compiled, load_config
 
-WRITER_SYSTEM = """You summarize ONE news article for senior transportation-policy readers.
+WRITER_SYSTEM = """You summarize ONE news article for senior transportation-policy readers, in the voice of a
+wire-service editor: plain, specific, confident, and easy to read once.
 Use ONLY the ARTICLE text provided. Do not use anything you know from elsewhere or from other outlets.
 Write one or two sentences (at most 55 words) that begin from the article's own lead.
+Open with who did what: a named actor and a strong past-tense verb ("The FAA approved...", "Waymo began...").
+Then give the most useful specifics the article states: how many, how much, where, when, what comes next.
+If the article states why it matters (a deadline, a first, a consequence), include that. Do not repeat the
+headline word for word. Prefer short, concrete words to jargon; spell out an acronym the first time unless
+it is universally known (FAA, NASA, U.S.).
 Copy numbers, money amounts, dates, names, titles and places exactly as the article gives them.
 Use obligation words (requires, must, mandates) only if the article does. If the article says a thing is
 optional, "if equipped", allowed or permitted, say exactly that. Do not add titles or descriptors

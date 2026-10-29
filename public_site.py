@@ -418,17 +418,22 @@ def story_html(item: dict[str, Any]) -> str:
     date_label = html.escape(str(item.get("date_label", "")))
     summary_markup = f'<p class="story-summary">{summary}</p>{eo_note(summary_text)}' if summary else ""
     related = []
+    official = []
     seen_urls = {item.get("url", "")}
     for related_item in item.get("also_covered", []):
         url = related_item.get("url", "")
         if not url or url in seen_urls:
             continue
         seen_urls.add(url)
-        related.append(
+        (official if related_item.get("official") else related).append(
             f'<a href="{_safe_url(url)}">'
             f'{html.escape(canonical_source(str(related_item.get("source", "Related coverage"))))}</a>'
         )
     related_markup = (
+        '<p class="related"><strong>Official source:</strong> ' + " · ".join(official[:2]) + "</p>"
+        if official
+        else ""
+    ) + (
         '<p class="related"><strong>Additional coverage:</strong> '
         + " · ".join(related[:4])
         + "</p>"
@@ -699,15 +704,23 @@ def _outlook_story(item: dict[str, Any]) -> str:
         if use else ""
     )
     related_links = []
+    official_links = []
     seen_urls = {str(item.get("url", ""))}
     for related in item.get("also_covered", []):
         related_url = str(related.get("url", ""))
         if not related_url or related_url in seen_urls:
             continue
         seen_urls.add(related_url)
-        related_links.append(
+        (official_links if related.get("official") else related_links).append(
             f'<a href="{_safe_url(related_url)}" style="color:#60758A;text-decoration:underline">'
             f'{html.escape(canonical_source(str(related.get("source", "Related coverage"))))}</a>'
+        )
+    if official_links:
+        detail_rows += (
+            '<tr><td style="padding:7px 0 0;font-family:Arial,Helvetica,sans-serif;'
+            'font-size:11px;line-height:16px;color:#737F89"><strong>Official source:</strong> '
+            + ' &nbsp;&bull;&nbsp; '.join(official_links[:2])
+            + '</td></tr>'
         )
     if related_links:
         detail_rows += (
@@ -882,11 +895,12 @@ def plain_text_email(payload: dict[str, Any], day: date) -> str:
             lines.extend([str(item.get("title", "")), str(item.get("url", ""))])
             if item.get("summary"):
                 lines.append(str(item["summary"]))
-            if item.get("also_covered"):
-                lines.append("Additional coverage: " + " · ".join(
-                    f"{related.get('source', '')} ({related.get('url', '')})"
-                    for related in item["also_covered"]
-                ))
+            for label, wanted in (("Official source", True), ("Additional coverage", False)):
+                links = [r for r in item.get("also_covered") or [] if bool(r.get("official")) is wanted]
+                if links:
+                    lines.append(f"{label}: " + " · ".join(
+                        f"{related.get('source', '')} ({related.get('url', '')})" for related in links
+                    ))
             lines.append("")
     lines.extend(["Regulatory Tracker", ""])
     for item in payload.get("regulatory_tracker", []):

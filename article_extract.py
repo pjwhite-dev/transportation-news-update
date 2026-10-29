@@ -436,6 +436,80 @@ def url_rejection(url: str) -> str:
     return ""
 
 
+_HREF = re.compile(r"""href=["'](https?://[^"'#\s<>]+)""", re.I)
+_GOV_BOILERPLATE = re.compile(
+    r"/(?:about(?:-us)?(?:[/?.]|$)|(?:privacy|accessibility|foia|disclaimer|contact|subscribe|careers|jobs|sitemap|search|plugins?|"
+    r"vulnerability|no-?fear|site-?policies)(?:[/?._-]|$))", re.I)  # not /about-fra/...: FRA's releases live there
+
+
+def is_official_host(url: str) -> bool:
+    host = urlparse(url).netloc.casefold().split(":")[0]
+    return host.endswith((".gov", ".mil"))
+
+
+def official_links(page_html: str, limit: int = 8) -> list[str]:
+    """U.S. government pages an article links to (the release, order or rule it reports), in page order."""
+    found: list[str] = []
+    for match in _HREF.finditer(page_html or ""):
+        url = htmllib.unescape(match.group(1)).rstrip(").,;")
+        host = urlparse(url).netloc.casefold().removeprefix("www.")
+        if (not is_official_host(url) or host == "usa.gov" or _GOV_BOILERPLATE.search(urlparse(url).path)
+                or url_rejection(url) or url in found):
+            continue
+        found.append(url)
+        if len(found) >= limit:
+            break
+    return found
+
+
+def make_official_fetch(session: requests.Session | None = None) -> Callable[[str], dict[str, str] | None]:
+    """fetch(url) -> {"title", "text"} for a live (HTTP 200) U.S. government article page, else None."""
+    http = session or requests.Session()
+    timeout = float(load_config()["freshness"]["fetch_timeout_seconds"])
+    seen: dict[str, dict[str, str] | None] = {}
+
+    def fetch(url: str) -> dict[str, str] | None:
+        if url not in seen:
+            seen[url] = None
+            if is_official_host(url) and not url_rejection(url):
+                status, body, final_url = fetch_page(url, http, timeout)
+                facts = extract_page(body, final_url or url) if status == 200 and body else None
+                if facts and facts.word_count >= 60 and facts.headline:
+                    seen[url] = {"title": facts.headline, "text": facts.body_text[:3000]}
+        return seen[url]
+
+    return fetch
+
+
+_GOV_INDEX = re.compile(r"/(?:news|newsroom|press-releases?|releases|briefing-room|media|blogs?|presidential-actions)/?$", re.I)
+
+
+def make_official_search(base_url: str, session: requests.Session | None = None) -> Callable[[str, str], list[dict[str, str]]]:
+    """search(headline, site) -> past-week government article results [{"url", "title", "text"}] from SearXNG."""
+    http = session or requests.Session()
+
+    def search(headline: str, site: str) -> list[dict[str, str]]:
+        words = re.sub(r"[^\w$.%-]+", " ", headline).split()[:14]
+        response = http.get(
+            base_url.rstrip("/") + "/search",
+            params={"q": " ".join(words) + f" site:{site}", "format": "json", "language": "en-US", "time_range": "week"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        found = []
+        for result in response.json().get("results", []):
+            url = str(result.get("url", ""))
+            path = urlparse(url).path
+            if (not is_official_host(url) or url_rejection(url) or _GOV_BOILERPLATE.search(path) or _GOV_INDEX.search(path)
+                    or len([p for p in path.split("/") if p]) < 2 or url.casefold().endswith(".pdf")):
+                continue
+            found.append({"url": url, "title": " ".join(str(result.get("title", "")).split()),
+                          "text": " ".join(str(result.get("content", "")).split())})
+        return found
+
+    return search
+
+
 def resolve_listing_to_article(page_html: str, base_url: str, title: str) -> str:
     """For a hub/author/section page: the link whose anchor text best matches the wanted headline."""
     wanted = {w for w in re.findall(r"[a-z0-9]{4,}", title.casefold())}
@@ -604,6 +678,7 @@ def evaluate_candidate(
         "page_words": facts.word_count,
         "page_site_name": facts.site_name,
         "page_original_publisher": facts.original_publisher,
+        "page_official_links": official_links(body),
     }
     return Verdict(True, "ok", enriched)
 

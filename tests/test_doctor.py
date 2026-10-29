@@ -119,6 +119,15 @@ class EvidenceTests(unittest.TestCase):
         (logs / "edition-2026-10-27-043002.log").write_text("token sk-ABCDEFGHIJKLMNOPQRSTUV leaked\n", encoding="utf-8")
         self.assertNotIn("sk-ABCDEFGHIJKLMNOPQRSTUV", doctor.latest_log(root, "2026-10-27"))
 
+    def test_an_empty_newer_log_does_not_hide_the_failing_one(self) -> None:
+        root = Path(tempfile.mkdtemp())
+        logs = root / ".runtime" / "logs"
+        logs.mkdir(parents=True)
+        (logs / "edition-2026-10-28-043002.log").write_text("Traceback ...\nValidationError: gate\n", encoding="utf-8")
+        (logs / "edition-2026-10-28-044502.log").write_text("\n  \n", encoding="utf-8")
+        self.assertIn("ValidationError", doctor.latest_log(root, "2026-10-28"))
+        self.assertEqual(doctor.latest_log(root, "2026-10-29"), "")
+
     def test_live_edition_reads_the_marker(self) -> None:
         class Page:
             text = '<meta name="edition-id" content="2026-10-27">'

@@ -1,8 +1,11 @@
 """Same-event grouping inside an edition and against the last seven days of editions.
 
 Identifiers (Federal Register document number, RIN, docket, House report, URL) decide first; headline
-similarity decides only when no identifier is shared. Nothing here calls a model. The "embedding" kept in
-the store is a lexical signature (title tokens and numbers), because no embedding model is installed.
+similarity decides only when no identifier is shared. Inside one edition, two stories in the same section
+that name the same place, company or figure but are worded differently ("Spain mourns after latest train
+tragedy kills 68" / "Dozens dead in Spain after high-speed train slams into another") are put to the local
+verifier as a yes/no question, a bounded number of times. The "embedding" kept in the store is a lexical
+signature (title tokens and numbers), because no embedding model is installed.
 """
 
 from __future__ import annotations
@@ -11,7 +14,7 @@ import json
 import re
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from coverage_history import (
     canonical_url,
@@ -83,6 +86,60 @@ def _strong(ids: set[str]) -> set[str]:
     return {i for i in ids if not i.startswith("url:")}
 
 
+MAX_JUDGED_PAIRS = 40
+_NAME = re.compile(r"\b[A-Z][A-Za-z-]{3,}\b")
+_NOT_NAMES = {
+    "the", "this", "that", "these", "with", "from", "after", "over", "into", "about", "what", "when", "where",
+    "here", "today", "news", "first", "second", "third", "new", "latest", "update", "more", "than", "says",
+    "said", "will", "could", "would", "their", "they", "report", "reports", "week", "year", "monday", "tuesday",
+    "wednesday", "thursday", "friday", "saturday", "sunday", "january", "february", "march", "april", "june",
+    "july", "august", "september", "october", "november", "december", "drone", "drones", "robot", "robots",
+    "robotics", "rail", "train", "trains", "federal", "government", "company", "military", "army", "president",
+}
+SAME_EVENT_SYSTEM = """You decide whether two news reports describe the SAME concrete event: the same crash,
+attack, announcement, rule, contract, launch, deployment, vote or decision. Different events that involve the
+same company, country or technology are NOT the same event (two different Waymo city launches, two different
+drone strikes on different days, a crash and a separate analysis of rail safety). A follow-up report on the
+same event (a rising death toll, reactions, mourning) IS the same event. Respond with JSON only."""
+SAME_EVENT_SCHEMA = {
+    "type": "object",
+    "properties": {"same_event": {"type": "boolean"}, "reason": {"type": "string"}},
+    "required": ["same_event", "reason"],
+    "additionalProperties": False,
+}
+
+
+def key_terms(story: dict[str, Any]) -> set[str]:
+    """Names (places, companies, agencies) and figures in a story's headline and the start of its summary."""
+    text = f"{story.get('title', '')}. {str(story.get('summary', ''))[:300]}"
+    names = {m.group(0).casefold() for m in _NAME.finditer(text)} - _NOT_NAMES
+    return names | unit_numbers(story)
+
+
+def worth_judging(first: dict[str, Any], second: dict[str, Any]) -> int:
+    """How many names or figures two stories in the same section share (0: not worth asking)."""
+    if first.get("section") != second.get("section"):
+        return 0
+    return len(key_terms(first) & key_terms(second))
+
+
+def make_same_event_check(verifier: Any) -> Callable[[dict[str, Any], dict[str, Any]], tuple[bool, str]]:
+    """Wrap a local provider as same_event(first, second) -> (same, reason)."""
+
+    def describe(story: dict[str, Any]) -> str:
+        return f"Headline: {story.get('title', '')}\nSource: {story.get('source', '')}\nSummary: {str(story.get('summary', ''))[:600]}"
+
+    def judge(first: dict[str, Any], second: dict[str, Any]) -> tuple[bool, str]:
+        result = verifier.generate_structured(
+            [{"role": "system", "content": SAME_EVENT_SYSTEM},
+             {"role": "user", "content": f"REPORT A\n{describe(first)}\n\nREPORT B\n{describe(second)}"}],
+            schema_name="same_event", schema=SAME_EVENT_SCHEMA, max_output_tokens=800,
+        )
+        return bool(result.value.get("same_event")), str(result.value.get("reason", ""))[:120]
+
+    return judge
+
+
 def same_event(first: dict[str, Any], second: dict[str, Any]) -> tuple[bool, str]:
     a, b = identifiers(first), identifiers(second)
     shared = a & b
@@ -104,6 +161,9 @@ def source_tier(story: dict[str, Any]) -> int:
     return 3
 
 
+MAX_ALSO_COVERED = 6
+
+
 def _also(story: dict[str, Any]) -> list[dict[str, str]]:
     return [dict(e) if isinstance(e, dict) else {"source": "Related coverage", "url": str(e)} for e in story.get("also_covered") or []]
 
@@ -113,6 +173,7 @@ def merge_group(members: list[dict[str, Any]]) -> dict[str, Any]:
     ordered = sorted(members, key=lambda s: (source_tier(s), -int(s.get("importance", 0) or 0)))
     lead = dict(ordered[0])
     seen = {canonical_url(str(lead.get("url", "")))}
+    outlets = {str(lead.get("source", "")).casefold()}
     extras: list[dict[str, str]] = []
     for member in ordered:
         candidates = _also(member) if member is not ordered[0] else _also(lead)
@@ -120,17 +181,27 @@ def merge_group(members: list[dict[str, Any]]) -> dict[str, Any]:
             candidates = [{"source": str(member.get("source", "Related coverage")), "url": str(member.get("url", ""))}, *candidates]
         for extra in candidates:
             key = canonical_url(str(extra.get("url", "")))
-            if key and key not in seen:
+            outlet = str(extra.get("source", "")).casefold()
+            if key and key not in seen and (outlet == "related coverage" or outlet not in outlets):
                 seen.add(key)
+                outlets.add(outlet)
                 extras.append(extra)
-    lead["also_covered"] = extras
+    # One link per outlet, at most MAX_ALSO_COVERED (the Spain crash collected 14, one outlet twice); official first.
+    lead["also_covered"] = sorted(extras, key=lambda e: not e.get("official"))[:MAX_ALSO_COVERED]
     lead["importance"] = max(int(m.get("importance", 0) or 0) for m in members)
     lead["group_size"] = len(members)
     return lead
 
 
-def group_within_edition(stories: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    """Union stories that report the same event; returns (one item per group, merge log)."""
+def group_within_edition(
+    stories: list[dict[str, Any]],
+    judge: Callable[[dict[str, Any], dict[str, Any]], tuple[bool, str]] | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Union stories that report the same event; returns (one item per group, merge log).
+
+    Identifiers and near-identical headlines decide first. Then, with a `judge`, same-section pairs that share
+    a name or figure are asked about, most shared terms first, at most MAX_JUDGED_PAIRS times.
+    """
     parent = list(range(len(stories)))
 
     def find(i: int) -> int:
@@ -146,6 +217,25 @@ def group_within_edition(stories: list[dict[str, Any]]) -> tuple[list[dict[str, 
             if same and find(i) != find(j):
                 parent[find(j)] = find(i)
                 reasons[j] = why
+    if judge is not None:
+        pairs = sorted(
+            ((worth_judging(stories[i], stories[j]), i, j) for i in range(len(stories)) for j in range(i + 1, len(stories))),
+            key=lambda p: (-p[0], p[1], p[2]),
+        )
+        asked = 0
+        for shared, i, j in pairs:
+            if not shared or asked >= MAX_JUDGED_PAIRS:
+                break
+            if find(i) == find(j):
+                continue
+            asked += 1
+            try:
+                same, why = judge(stories[i], stories[j])
+            except Exception:  # a verifier hiccup leaves the stories apart, as before
+                continue
+            if same:
+                parent[find(j)] = find(i)
+                reasons[j] = f"verifier: {why}"
     buckets: dict[int, list[int]] = {}
     for index in range(len(stories)):
         buckets.setdefault(find(index), []).append(index)
@@ -248,8 +338,24 @@ def previous_match(story: dict[str, Any], store: list[dict[str, Any]]) -> dict[s
     return None
 
 
+# "68 dead", "killing at least 30", "kills 68": a casualty count. 2026-10-29: the Spain crash rose from 30 to 68
+# dead overnight; the merged report linked yesterday's El País story and was dropped as a repeat.
+_TOLL = re.compile(
+    r"\b(\d[\d,]*)\s+(?:people\s+|passengers\s+)?(?:dead|killed|deaths|injured|wounded)\b"
+    r"|\b(?:kill(?:s|ed|ing)|death toll (?:of|rises to|reaches))\s+(?:at least\s+)?(\d[\d,]*)\b", re.I)
+
+
+def casualty_counts(story: dict[str, Any]) -> set[str]:
+    text = f"{story.get('title', '')} {story.get('summary', '')}"
+    return {(m.group(1) or m.group(2)).replace(",", "") for m in _TOLL.finditer(text)}
+
+
 def new_facts_since(story: dict[str, Any], entry: dict[str, Any]) -> str:
     """A reason the story is a genuine update of an earlier group, or '' when it only repeats it."""
+    before = casualty_counts({"title": entry["title"], "summary": entry.get("summary", "")})
+    toll = sorted(casualty_counts(story) - before)
+    if before and toll:
+        return "new casualty count: " + ", ".join(toll[:2])
     old = set(entry.get("numbers", []))
     now = unit_numbers(story)
     fresh = sorted(now - old)

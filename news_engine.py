@@ -1721,6 +1721,18 @@ def ensure_minimum_section_coverage(
     return ensured
 
 
+def section_guide() -> str:
+    """One line per section from the scope definitions in config/editorial.yaml."""
+    from editorial_config import load_config
+
+    scopes = load_config().get("sections", {})
+    return "\n".join(
+        f"  - {name}: {scopes[name]['definition']}"
+        for name in TOPIC_SECTIONS
+        if scopes.get(name, {}).get("definition")
+    )
+
+
 def prompt_messages(
     articles: list[dict[str, Any]],
     window_start: datetime,
@@ -1954,11 +1966,29 @@ The Executive Summary will be written in a separate final pass from that compile
         developer,
         flags=re.DOTALL,
     )
-    developer += """
+    developer += f"""
 
 CURRENT EDITORIAL FORMAT (OVERRIDES LEGACY SECTION LABELS ABOVE)
-- Use the section names in the JSON schema. Include important Robotics news,
+- Use the section names in the JSON schema. What each section covers:
+{section_guide()}
+- Include important Robotics news,
   including humanoid, warehouse, logistics, industrial and general robotics.
+
+ACCOUNT FOR EVERY RECORD
+- Every record id in this batch must appear in exactly one cluster's article_ids.
+- A record that is out of scope, stale or not news still gets its own cluster with
+  relevant=false, importance 1, empty canonical_title and summary, and a short exclude_reason.
+  Keep those clusters brief; spend your words on the relevant stories.
+- Be generous with relevance inside the scope: a credible report of a new development in
+  any section above is relevant, even when it is a smaller story (importance 3-5).
+  A daily edition normally carries 20 to 35 stories.
+- Analysis, interviews and opinion pieces are welcome when they are mainly about
+  advanced transportation (drones, counter-UAS, eVTOL, automated vehicles, robotics,
+  rail, supersonics, uncrewed systems or federal transportation policy). Exclude them
+  only when the transportation link is incidental.
+- War, crime and security stories are relevant only when drones, counter-UAS, uncrewed
+  systems or transportation infrastructure are central to the story, not a passing mention."""
+    developer += """
 - Check eIPP and surface transportation reauthorization on every run, but include
   a story only for a genuinely new implementation or legislative development.
 - Treat executive orders as factual policy cross-references, never political credit.
@@ -2001,6 +2031,25 @@ ANALYSIS_BATCH_OUTPUT_TOKENS = 12000
 DAILY_STORY_LIMIT = 45
 SECTION_STORY_LIMIT = 12
 MINIMUM_IMPORTANCE = 3
+# 2026-10-29: the same raw feed gave 17, 28 and 40 selected stories on three runs; the 17 failed the
+# 15-story gate after the quality pass. Below this many, the set-aside records get one second look.
+THIN_SELECTION_FLOOR = 25
+THIN_SELECTION_MIN_CANDIDATES = 50
+
+
+def accounted_ids(clusters: Any) -> set[str]:
+    """Record ids a set of clusters has judged (relevant or not)."""
+    ids: set[str] = set()
+    for cluster in clusters:
+        ids.update(str(i) for i in cluster.get("article_ids", []) or [])
+        if cluster.get("primary_article_id"):
+            ids.add(str(cluster["primary_article_id"]))
+    return ids
+
+
+def kept_clusters(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Relevant clusters important enough to survive the daily cut."""
+    return [c for c in clusters if c.get("relevant") and int(c.get("importance", 0) or 0) >= MINIMUM_IMPORTANCE]
 
 
 def analyze_articles(
@@ -2025,9 +2074,13 @@ def analyze_articles(
     what_to_watch: list[str] = []
     usages: list[dict[str, Any]] = []
     costs: list[float | None] = []
-    for index, batch in enumerate(batches):
+
+    def ask(label: str, records: list[dict[str, Any]], note: str = "") -> list[dict[str, Any]]:
+        messages = prompt_messages(records, window_start, window_end)
+        if note:
+            messages[-1]["content"] = note + "\n\n" + messages[-1]["content"]
         result, usage, cost = request_structured_output(
-            prompt_messages(batch, window_start, window_end),
+            messages,
             api_key,
             model,
             "transportation_news_analysis",
@@ -2035,15 +2088,46 @@ def analyze_articles(
             ANALYSIS_BATCH_OUTPUT_TOKENS,
             provider,
         )
+        found = []
         for cluster in result.get("clusters", []):
             cluster = dict(cluster)
-            cluster["cluster_id"] = f"b{index}-{cluster.get('cluster_id', '')}"
-            clusters.append(cluster)
+            cluster["cluster_id"] = f"{label}-{cluster.get('cluster_id', '')}"
+            found.append(cluster)
         for item in result.get("what_to_watch", []):
             if item and item.casefold() not in {w.casefold() for w in what_to_watch}:
                 what_to_watch.append(item)
         usages.append(usage)
         costs.append(cost)
+        return found
+
+    for index, batch in enumerate(batches):
+        found = ask(f"b{index}", batch)
+        # A model that stops early or skips records leaves them unjudged; ask once more for those.
+        missing = [a for a in batch if a["id"] not in accounted_ids(found)]
+        if len(missing) >= max(3, len(batch) // 10):
+            print(f"Story selection: batch {index} left {len(missing)} of {len(batch)} records unjudged; asking again for them.")
+            found += ask(f"b{index}r", missing)
+        clusters.extend(found)
+
+    # A thin pick from a full candidate pool is a weak model run, not a slow news day: one second look.
+    kept = len(kept_clusters(merge_duplicate_clusters([dict(c) for c in clusters])))
+    if len(articles) >= THIN_SELECTION_MIN_CANDIDATES and kept < THIN_SELECTION_FLOOR:
+        relevant_ids = accounted_ids(c for c in clusters if c.get("relevant"))
+        set_aside = [a for a in articles if a["id"] not in relevant_ids and not a.get("previously_covered", False)]
+        print(f"Story selection: only {kept} stories from {len(articles)} candidates; second look at {len(set_aside)} set-aside records.")
+        note = (
+            f"A first pass kept only {kept} stories from {len(articles)} candidate records, fewer than a normal "
+            "edition. These are the records it set aside. Judge each one again on its merits under the rules: "
+            "include every credible new development that fits a section, and exclude only what is out of scope, "
+            "stale or not news."
+        )
+        second: list[dict[str, Any]] = []
+        for start in range(0, len(set_aside), ANALYSIS_BATCH_SIZE):
+            second += ask(f"s{start // ANALYSIS_BATCH_SIZE}", set_aside[start : start + ANALYSIS_BATCH_SIZE], note)
+        promoted = accounted_ids(c for c in second if c.get("relevant"))
+        clusters = [c for c in clusters if c.get("relevant") or not (accounted_ids([c]) & promoted)]
+        clusters += [c for c in second if c.get("relevant")]
+        print(f"Story selection: second look added {len(kept_clusters(merge_duplicate_clusters([dict(c) for c in clusters]))) - kept} stories.")
     usage = combine_usage(*usages)
     usage["_retries"] = sum(int(u.get("_retries", 0) or 0) for u in usages)
     cost = None if any(c is None for c in costs) else sum(costs)  # type: ignore[arg-type]
@@ -2395,6 +2479,7 @@ def cluster_to_story(
         "origin": primary.get("origin", ""),
         "page_text": primary.get("page_text", ""),
         "page_original_publisher": primary.get("page_original_publisher", ""),
+        "page_official_links": primary.get("page_official_links", []),
         "date_source": primary.get("date_source", ""),
         "contains_supplemental": any(
             lookup[article_id].get("required_include", False)
@@ -2693,8 +2778,14 @@ def generate_briefing_from_records(
     ]
     arranged = arrange_sections(stories)
     if quality is not None:
+        from article_extract import is_official_host
         from quality_pass import quality_pass
 
+        # Government records in today's pool can be the official source of a story reported elsewhere.
+        quality.official_records = [
+            item for item in combined
+            if item.get("origin") == "Federal Register API" or is_official_host(str(item.get("url", "")))
+        ]
         arranged = quality_pass(arranged, quality)
 
     included_counts = {
