@@ -34,6 +34,20 @@ try { Start-Transcript -Path (Join-Path $logDir ("edition-" + (Get-Date -Format 
 
 Push-Location $repoRoot
 $supplementalPath = $null
+# The local newsroom dashboard (newsroom_dashboard.py). Best effort: it can never fail the run.
+function Send-Live {
+    try { & $python newsroom_live.py @args 2>$null | Out-Null } catch { }
+    $global:LASTEXITCODE = 0
+}
+$liveMode = if ($DryRun) { "rehearsal" } else { "edition" }
+$liveLabel = "Edition " + (Get-Date -Format "yyyy-MM-dd")
+if ($env:NEWSROOM_ATTEMPT) { $liveLabel += " (retry $($env:NEWSROOM_ATTEMPT))" }
+Send-Live run-start $liveMode $liveLabel
+$env:NEWSROOM_RUN_ACTIVE = "1"
+if (-not $DryRun -and -not $env:NEWSROOM_ATTEMPT) {
+    # The 04:30 run opens the dashboard in the browser (owner's request, 2026-10-29).
+    try { Start-Process "http://127.0.0.1:8765/" } catch { }
+}
 try {
     if (-not $DryRun) {
         # The tracker ledger is regenerated from the Federal Register on every run (and by the
@@ -49,10 +63,12 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "git pull --ff-only failed." }
     }
 
+    Send-Live event wire desk "Waking the writer and verifier models"
     & $python automated_briefing.py --health-check
     if ($LASTEXITCODE -ne 0) { throw "Ollama health check failed." }
 
     if (-not $DryRun) {
+        Send-Live event wire desk "Gathering the news: Google News, the Federal Register, agency feeds and web search"
         & $python daily_update.py
         if ($LASTEXITCODE -ne 0) { throw "Public-source collection failed." }
     }
@@ -70,12 +86,14 @@ try {
 
     & $python @arguments
     if ($LASTEXITCODE -ne 0) { throw "Briefing generation or validation failed." }
-    if ($DryRun) { return }
+    if ($DryRun) { Send-Live run-end ok "Rehearsal finished"; return }
 
+    Send-Live event press desk "Final publication gate on the saved edition"
     & $python automated_briefing.py --validate-only data/latest_briefing.json --require-today
     if ($LASTEXITCODE -ne 0) { throw "Publication gate failed." }
     # Market watch is optional: market_watch.py never fails the run, and the site hides a stale box.
     & $python market_watch.py
+    Send-Live event press desk "Printing the website"
     & $python public_site.py --output _site
     if ($LASTEXITCODE -ne 0) { throw "Static site build failed." }
 
@@ -84,7 +102,7 @@ try {
     if (Test-Path data/market.json) { git add -- data/market.json }
     if ($LASTEXITCODE -ne 0) { throw "git add failed." }
     git diff --cached --quiet
-    if ($LASTEXITCODE -eq 0) { Write-Output "No publication changes."; return }
+    if ($LASTEXITCODE -eq 0) { Write-Output "No publication changes."; Send-Live run-end ok "No publication changes"; return }
     if ($LASTEXITCODE -ne 1) { throw "Unable to inspect staged publication changes." }
 
     $editionDate = Get-Date
@@ -93,12 +111,14 @@ try {
         "MMMM d, yyyy",
         [Globalization.CultureInfo]::GetCultureInfo("en-US")
     )
+    Send-Live event delivery desk "Sending the edition to GitHub"
     git commit -m "Publish local Ollama news edition $edition"
     if ($LASTEXITCODE -ne 0) { throw "git commit failed." }
     git push origin HEAD:main
     if ($LASTEXITCODE -ne 0) { throw "git push failed; the local commit is preserved for recovery." }
 
     $commitSha = (git rev-parse HEAD).Trim()
+    Send-Live event delivery desk "Waiting for news.peterjwhite.org to show today's edition"
     $deploymentStatus = "pending"
     for ($attempt = 1; $attempt -le 10; $attempt++) {
         Start-Sleep -Seconds 30
@@ -121,6 +141,7 @@ try {
     }
     & $python alerts.py ping edition-verified
     & $python alerts.py quiet "Edition $edition published and verified live."
+    Send-Live run-end ok "Edition $edition published and verified live"
     [ordered]@{
         git_commit_sha = $commitSha
         deployment_status = $deploymentStatus
@@ -135,6 +156,7 @@ catch {
     $failure = "Edition run FAILED: $($_.Exception.Message)"
     if ($attempt -ge 1) { $failure = "Retry $attempt of 4 failed: $($_.Exception.Message)" }
     if ($attempt -eq 4) { $failure += " (last automatic retry; the ensure task has stopped for today.)" }
+    Send-Live run-end failed $failure
     if ($attempt -ge 1 -and $attempt -le 3) { & $python alerts.py quiet $failure } else { & $python alerts.py critical $failure }
     & $python alerts.py ping edition-verified --fail
     throw

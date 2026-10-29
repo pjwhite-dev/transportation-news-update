@@ -37,3 +37,11 @@ if ($running -notmatch "Ubuntu") {
     Note "WSL not running; starting newsroom-wsl."
     Start-ScheduledTask -TaskName "newsroom-wsl" -ErrorAction SilentlyContinue
 }
+
+# The local newsroom dashboard (http://127.0.0.1:8765). It is only a view, so it never alerts.
+$dashboardUp = $false
+try { $dashboardUp = (Invoke-WebRequest "http://127.0.0.1:8765/api/state" -UseBasicParsing -TimeoutSec 10).StatusCode -eq 200 } catch { }
+if (-not $dashboardUp) {
+    Note "Dashboard not answering; starting newsroom-dashboard."
+    Start-ScheduledTask -TaskName "newsroom-dashboard" -ErrorAction SilentlyContinue
+}

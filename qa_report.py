@@ -11,6 +11,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import newsroom_live
+
 
 class QAReport:
     def __init__(self, edition: str) -> None:
@@ -20,10 +22,12 @@ class QAReport:
 
     def add(self, stage: str, title: str, reason: str, url: str = "", **extra: Any) -> None:
         self.events.append({"stage": stage, "title": title[:160], "url": url, "reason": reason, **extra})
+        newsroom_live.qa_event(self.events[-1])
 
     def extend(self, items: list[dict[str, str]]) -> None:
         for item in items:
             self.events.append({k: v for k, v in item.items()})
+            newsroom_live.qa_event(self.events[-1])
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "QAReport":

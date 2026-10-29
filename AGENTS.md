@@ -40,3 +40,7 @@ file is obsolete. Its useful editorial rules are in `docs/editorial-rules-legacy
 - Append a dated entry to `docs/progress.md` at the end of every work session
   (what changed, tests run, what is next).
 - Until the move to `C:\newsroom`, stay inside this repository folder.
+- Keep the local dashboard current (owner's request, 2026-10-29): when a pipeline step is added,
+  renamed or removed, emit its events through `newsroom_live.py` and update the desks in
+  `dashboard/index.html` in the same change. The dashboard is a read-only view and every event is
+  best effort; it must never be able to slow or fail an edition.

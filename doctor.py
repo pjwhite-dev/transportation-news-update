@@ -27,6 +27,7 @@ from zoneinfo import ZoneInfo
 import requests
 
 from alerts import redact, send_telegram
+import newsroom_live
 
 EASTERN = ZoneInfo("America/New_York")
 SITE = "https://news.peterjwhite.org/"
@@ -433,6 +434,10 @@ def main() -> int:
     log_text = latest_log(repo, day)
     cause, recovery = classify(log_text)
     message = f"Doctor: no edition for {day}. Cause: {cause}."
+    if cause != "running":
+        newsroom_live.run_start("doctor", f"The doctor examines the {day} edition")
+        newsroom_live.emit("doctor", desk="doctor", step="exam", text=f"No edition for {day}. Diagnosis from the run log: {cause}.",
+                           cause=cause, log_tail=redact(log_text[-1500:]))
     branch_made: str | None = None
     if cause == "running":
         return 0
@@ -450,18 +455,25 @@ def main() -> int:
         except Exception as exc:  # the model itself may be down; the log classification still stands
             verdict = {"kind": "unknown", "cause": f"model unavailable ({type(exc).__name__})", "next_step": "Read the run log.", "edits": []}
         message += f" {verdict['cause']} Next: {verdict['next_step']}"
+        newsroom_live.emit("doctor", desk="doctor", step="diagnosis", text=redact(str(verdict["cause"]))[:600],
+                           next_step=redact(str(verdict["next_step"]))[:400], fix_kind=verdict["kind"],
+                           files=[str(e.get("path", "")) for e in verdict.get("edits") or []][:6])
         if verdict["kind"] == "code_fix" and verdict["edits"] and not args.dry_run:
             python = str(repo / ".venv" / "Scripts" / "python.exe") if (repo / ".venv").exists() else sys.executable
             branch_made, note = prepare_branch(repo, day, verdict["edits"], str(verdict.get("regression_test", "")), python)
             message += f" {note}"
+            newsroom_live.emit("doctor", desk="doctor", step="fix", text=redact(note)[:600], branch=branch_made or "")
             if branch_made:
                 ok, why = auto_merge_ok(repo, branch_made)
                 if ok:  # a repeat is merged too; the failing-then-passing test and the guard still apply
                     applied = apply_branch(repo, branch_made)
                     message += (f" Applied automatically (all gates passed) and the edition was rerun. {applied} "
                                 f"Undo: git revert the merge of {branch_made}.")
+                    newsroom_live.emit("doctor", desk="doctor", step="merged", branch=branch_made,
+                                       text=f"Fix merged into the newsroom and the edition rerun. {redact(applied)[:300]}")
                 else:
                     message += (f" Needs your OK ({why}): scripts\\approve_doctor.ps1 -Branch {branch_made}")
+                    newsroom_live.emit("doctor", desk="doctor", step="held", text=f"Fix held for your OK: {why}", branch=branch_made)
     repeats = 0
     if not args.dry_run:
         repeats = record_incident(repo, day, incident_key(cause, log_text), branch_made)
@@ -469,6 +481,9 @@ def main() -> int:
         message = f"REPEAT FAILURE (seen {repeats + 1} times). " + message + " A repeat needs a deterministic rule, not another patch."
     message = redact(message)[:900]
     print(message)
+    if cause != "running":
+        newsroom_live.emit("doctor", desk="doctor", step="report", text=message, repeats=repeats)
+        newsroom_live.run_end("ok" if branch_made or recovery else "failed", message)
     if not args.dry_run:
         send_telegram(message, critical=bool(repeats))
     return 0

@@ -26,6 +26,7 @@ import requests
 
 from calendar_rules import freshness_hours
 from editorial_config import compiled, load_config
+import newsroom_live
 
 EASTERN = ZoneInfo("America/New_York")
 USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://news.peterjwhite.org)"
@@ -713,11 +714,17 @@ def enrich_candidates(
     def work(record: dict[str, Any]) -> Verdict:
         url = str(record.get("url", ""))
         official_api = record.get("origin") == "Federal Register API"
+        newsroom_live.emit("fetch", desk="factcheck", host=urlparse(url).netloc.removeprefix("www."), title=str(record.get("title", ""))[:160])
+        page = None
         try:
             page = None if official_api else get(url) if url.startswith(("http://", "https://")) else None
-            return evaluate_candidate(record, page, now=now, translate=translate, follow=get)
+            verdict = evaluate_candidate(record, page, now=now, translate=translate, follow=get)
         except Exception as exc:  # one odd page must not stop the run
-            return Verdict(False, f"could not be evaluated ({type(exc).__name__})")
+            verdict = Verdict(False, f"could not be evaluated ({type(exc).__name__})")
+        newsroom_live.emit("checked", desk="factcheck", host=urlparse(url).netloc.removeprefix("www."),
+                           title=str((verdict.record or record).get("title", "") if verdict.keep else record.get("title", ""))[:160],
+                           status=page[0] if page else None, keep=verdict.keep, reason=str(verdict.reason)[:200])
+        return verdict
 
     with ThreadPoolExecutor(max_workers=int(config["max_workers"])) as pool:
         verdicts = list(pool.map(work, articles))

@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Newsroom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0b0d12; --ink2: #12151d; --ink3: #1a1e29; --rule: #2a3040; --rule2: #3a4256;
+  --paper: #f2e9d8; --paper-dim: #b9b2a3; --muted: #7d8597;
+  --amber: #ffb347; --amber-glow: rgba(255,179,71,.35);
+  --green: #3ddc97; --red: #ff5a4e; --blue: #6cb6ff; --violet: #b69cff; --teal: #4fd1c5;
+  --serif: "Playfair Display", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace; --sans: Inter, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--sans); }
+body { min-height: 100vh; background:
+  radial-gradient(1200px 600px at 15% -10%, rgba(255,179,71,.07), transparent 60%),
+  radial-gradient(900px 500px at 100% 0%, rgba(108,182,255,.06), transparent 60%), var(--ink); }
+a { color: inherit; }
+.wrap { max-width: 1680px; margin: 0 auto; padding: 18px 22px 40px; }
+
+/* Masthead */
+.mast { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 16px; border-bottom: 3px double var(--rule2); padding-bottom: 10px; }
+.mast .left, .mast .right { font: 500 12px/1.5 var(--mono); color: var(--paper-dim); letter-spacing: .04em; }
+.mast .right { text-align: right; }
+.title { font: 900 54px/1 var(--serif); letter-spacing: .02em; text-align: center; margin: 0; text-shadow: 0 0 30px rgba(242,233,216,.08); }
+.title small { display: block; font: italic 700 14px/1.6 var(--serif); color: var(--paper-dim); letter-spacing: .08em; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 3px; font: 700 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; border: 1px solid currentColor; }
+.badge .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+.badge.live { color: var(--red); } .badge.live .dot { animation: pulse 1.2s infinite; }
+.badge.rehearsal { color: var(--blue); } .badge.doctor { color: var(--violet); } .badge.idle { color: var(--muted); }
+.badge.done { color: var(--green); } .badge.failed { color: var(--red); }
+@keyframes pulse { 50% { opacity: .25; } }
+.controls { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+.btn { background: var(--ink3); color: var(--paper-dim); border: 1px solid var(--rule2); padding: 5px 10px; border-radius: 3px; font: 600 11px var(--mono); cursor: pointer; letter-spacing: .06em; }
+.btn:hover { color: var(--paper); border-color: var(--paper-dim); }
+
+/* Ticker */
+.ticker { margin: 10px 0 16px; border: 1px solid var(--rule); background: var(--ink2); height: 34px; overflow: hidden; position: relative; display: flex; align-items: center; }
+.ticker .label { flex: none; background: var(--amber); color: #1b1203; font: 800 11px var(--mono); letter-spacing: .14em; padding: 0 12px; height: 100%; display: flex; align-items: center; }
+.ticker .track { white-space: nowrap; display: inline-block; padding-left: 100%; animation: scroll 90s linear infinite; font: 500 13px var(--mono); color: var(--paper-dim); }
+.ticker .track span { margin-right: 46px; } .ticker .track b { color: var(--amber); font-weight: 600; margin-right: 8px; }
+@keyframes scroll { to { transform: translateX(-100%); } }
+
+/* Banner */
+.banner { display: none; margin-bottom: 14px; padding: 14px 18px; border-left: 5px solid; background: var(--ink2); font: 600 15px/1.5 var(--sans); }
+.banner.show { display: block; animation: slidein .4s ease; }
+.banner.ok { border-color: var(--green); } .banner.bad { border-color: var(--red); background: linear-gradient(90deg, rgba(255,90,78,.15), var(--ink2)); }
+.banner .big { font: 900 22px var(--serif); letter-spacing: .04em; margin-right: 12px; }
+@keyframes slidein { from { opacity: 0; transform: translateY(-6px); } }
+
+/* Floor: the desks */
+.floor { position: relative; display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; margin-bottom: 16px; }
+.conveyor { position: absolute; left: 4%; right: 4%; top: 52px; height: 2px; background: repeating-linear-gradient(90deg, var(--rule2) 0 10px, transparent 10px 18px); z-index: 0; }
+.desk { position: relative; z-index: 1; background: var(--ink2); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 12px 10px; min-height: 150px; transition: border-color .4s, box-shadow .4s, transform .4s; }
+.desk.active { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber), 0 0 28px var(--amber-glow); transform: translateY(-3px); }
+.desk.done { border-color: rgba(61,220,151,.55); }
+.desk.failed { border-color: var(--red); box-shadow: 0 0 24px rgba(255,90,78,.35); }
+.desk .top { display: flex; align-items: center; justify-content: space-between; }
+.desk .num { font: 600 10px var(--mono); color: var(--muted); letter-spacing: .1em; }
+.lamp { width: 11px; height: 11px; border-radius: 50%; background: #333a48; box-shadow: inset 0 0 3px #000; }
+.desk.active .lamp { background: var(--amber); box-shadow: 0 0 12px var(--amber); animation: pulse 1s infinite; }
+.desk.done .lamp { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.desk.failed .lamp { background: var(--red); box-shadow: 0 0 12px var(--red); }
+.desk h3 { margin: 8px 0 2px; font: 700 16px/1.15 var(--serif); }
+.desk .role { font: 400 11px/1.35 var(--sans); color: var(--muted); min-height: 30px; }
+.desk .stat { font: 700 26px/1 var(--mono); margin-top: 10px; color: var(--paper); }
+.desk .stat small { font: 500 11px var(--mono); color: var(--paper-dim); margin-left: 4px; }
+.desk .sub { font: 500 11px/1.4 var(--mono); color: var(--paper-dim); margin-top: 4px; min-height: 16px; }
+.desk .icon { font-size: 18px; opacity: .9; }
+.paper-fly { position: absolute; top: 46px; width: 14px; height: 10px; background: var(--paper); border-radius: 1px; z-index: 2; box-shadow: 0 0 8px rgba(242,233,216,.6); pointer-events: none; }
+
+/* Funnel */
+.funnel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-bottom: 16px; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.fstep { padding: 14px 16px; background: var(--ink2); position: relative; border-right: 1px solid var(--rule); }
+.fstep:last-child { border-right: 0; background: linear-gradient(180deg, rgba(61,220,151,.08), var(--ink2)); }
+.fstep .k { font: 600 10px var(--mono); letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.fstep .v { font: 900 40px/1.1 var(--serif); margin-top: 4px; }
+.fstep .d { font: 500 11px var(--mono); color: var(--red); min-height: 14px; }
+.fstep .bar { height: 4px; background: var(--rule); margin-top: 8px; border-radius: 2px; overflow: hidden; }
+.fstep .bar i { display: block; height: 100%; background: var(--amber); width: 0; transition: width .8s ease; }
+.fstep:last-child .bar i { background: var(--green); }
+
+/* Panels */
+.grid3 { display: grid; grid-template-columns: 1.05fr 1.35fr 1fr; gap: 14px; margin-bottom: 14px; }
+.grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-bottom: 14px; }
+.panel { background: var(--ink2); border: 1px solid var(--rule); border-radius: 6px; display: flex; flex-direction: column; min-height: 0; }
+.panel > header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+.panel > header h2 { margin: 0; font: 700 17px var(--serif); }
+.panel > header .meta { font: 500 11px var(--mono); color: var(--muted); }
+.scroll { overflow-y: auto; max-height: 470px; padding: 6px 0; }
+.grid3 .panel > .scroll { flex: 1; max-height: 700px; }
+.scroll::-webkit-scrollbar { width: 8px; } .scroll::-webkit-scrollbar-thumb { background: var(--rule2); border-radius: 4px; }
+
+/* Wire log */
+.wl { display: grid; grid-template-columns: 54px 1fr auto; gap: 8px; padding: 4px 14px; font: 400 12px/1.45 var(--mono); border-bottom: 1px dashed rgba(58,66,86,.45); animation: fadein .35s ease; }
+.wl .t { color: var(--muted); } .wl .h { color: var(--paper); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wl .h em { color: var(--paper-dim); font-style: normal; }
+.wl .r { font-weight: 600; } .wl .r.ok { color: var(--green); } .wl .r.no { color: var(--red); } .wl .r.info { color: var(--blue); }
+.wl .why { grid-column: 2 / 4; color: var(--muted); font-size: 11px; margin-top: -2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes fadein { from { opacity: 0; transform: translateX(-4px); } }
+
+/* Notepad */
+.notepad { position: relative; flex: 1; background:
+  repeating-linear-gradient(180deg, transparent 0 25px, rgba(108,182,255,.10) 25px 26px), #141821; padding: 14px 18px 12px 46px; height: 470px; overflow: hidden; display: flex; flex-direction: column; }
+.np-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; } .np-body::-webkit-scrollbar { display: none; }
+.notepad::before { content: ""; position: absolute; left: 32px; top: 0; bottom: 0; width: 1px; background: rgba(255,90,78,.35); }
+.np-head { font: 600 11px var(--mono); color: var(--amber); letter-spacing: .1em; text-transform: uppercase; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.np-head .who { color: #1b1203; background: var(--amber); padding: 2px 7px; border-radius: 2px; }
+.np-head .who.verifier { background: var(--violet); }
+.np-subject { font: italic 700 17px/1.3 var(--serif); color: var(--paper); margin: 8px 0 10px; }
+.np-text { font: 400 13.5px/26px var(--mono); color: #dfe6f3; white-space: pre-wrap; word-break: break-word; }
+.np-text .cur { display: inline-block; width: 8px; height: 15px; background: var(--amber); vertical-align: -2px; animation: pulse .8s infinite; }
+.np-idle { color: var(--muted); font: italic 500 15px var(--serif); margin-top: 40px; }
+.np-history { border-top: 1px solid var(--rule); padding: 6px 0; max-height: 170px; overflow-y: auto; }
+.np-hist { display: grid; grid-template-columns: 54px 120px 1fr; gap: 8px; padding: 3px 14px; font: 400 11.5px/1.4 var(--mono); color: var(--paper-dim); cursor: pointer; }
+.np-hist:hover { background: var(--ink3); } .np-hist .p { color: var(--amber); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.np-hist .s { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Stamps */
+.card { position: relative; margin: 8px 12px; padding: 10px 12px 10px; background: var(--paper); color: #1d1a14; border-radius: 2px; box-shadow: 0 3px 0 rgba(0,0,0,.35); animation: drop .35s cubic-bezier(.2,1.4,.4,1); }
+.card .ct { font: 700 13px/1.3 var(--serif); padding-right: 92px; }
+.card .cr { font: 400 11px/1.4 var(--sans); color: #5b5446; margin-top: 4px; padding-right: 10px; }
+.stamp { position: absolute; right: 8px; top: 8px; transform: rotate(-9deg); font: 900 11px var(--mono); letter-spacing: .1em; padding: 3px 6px; border: 2.5px solid; border-radius: 3px; opacity: .88; mix-blend-mode: multiply; animation: thunk .3s ease-out; }
+.st-green { color: #0f8a55; } .st-red { color: #c62f24; } .st-blue { color: #1f6fbf; } .st-violet { color: #6a46c9; } .st-amber { color: #b0650a; } .st-gray { color: #6b6b6b; }
+@keyframes drop { from { opacity: 0; transform: translateY(-14px) rotate(-1deg); } }
+@keyframes thunk { 0% { transform: rotate(-9deg) scale(2.2); opacity: 0; } 70% { transform: rotate(-9deg) scale(.92); opacity: .95; } }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px 0; }
+.chip { font: 600 10px var(--mono); padding: 3px 7px; border-radius: 10px; background: var(--ink3); border: 1px solid var(--rule2); color: var(--paper-dim); cursor: pointer; letter-spacing: .05em; }
+.chip.on { background: var(--paper); color: var(--ink); }
+
+/* Front page */
+.front { padding: 12px 18px 16px; columns: 2; column-gap: 28px; column-rule: 1px solid var(--rule); }
+.front section { break-inside: avoid; margin-bottom: 14px; }
+.front h4 { margin: 0 0 6px; font: 700 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+.front a { display: block; font: 700 14px/1.3 var(--serif); text-decoration: none; margin: 6px 0; }
+.front a:hover { color: var(--amber); }
+.front a span { display: block; font: 400 11px var(--mono); color: var(--muted); margin-top: 2px; }
+
+/* Doctor */
+.steps { padding: 10px 14px 14px; }
+.step { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 6px 0; position: relative; }
+.step::before { content: ""; position: absolute; left: 11px; top: 26px; bottom: -6px; width: 2px; background: var(--rule2); }
+.step:last-child::before { display: none; }
+.step .b { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--violet); display: grid; place-items: center; font: 700 11px var(--mono); color: var(--violet); background: var(--ink); }
+.step .k { font: 700 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--violet); }
+.step .x { font: 400 12.5px/1.45 var(--sans); color: var(--paper); margin-top: 2px; }
+.step pre { white-space: pre-wrap; font: 400 11px/1.4 var(--mono); color: var(--paper-dim); background: var(--ink); border: 1px solid var(--rule); padding: 8px; margin: 6px 0 0; max-height: 140px; overflow: auto; }
+.empty { color: var(--muted); font: italic 500 14px var(--serif); padding: 14px; }
+
+/* Status + timeline */
+.status { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 14px; }
+.svc { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mono); }
+.svc .lamp.on { background: var(--green); box-shadow: 0 0 8px var(--green); } .svc .lamp.off { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.gauge { grid-column: 1 / 3; }
+.gauge .lbl { display: flex; justify-content: space-between; font: 500 11px var(--mono); color: var(--paper-dim); }
+.gauge .g { height: 8px; background: var(--rule); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.gauge .g i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--amber), var(--red)); transition: width 1s; }
+.sched { grid-column: 1 / 3; border-top: 1px solid var(--rule); padding-top: 8px; }
+.sched div { display: grid; grid-template-columns: 96px 1fr; font: 400 12px/1.7 var(--mono); color: var(--paper-dim); }
+.sched b { color: var(--amber); font-weight: 600; }
+.countdown { grid-column: 1 / 3; text-align: center; border: 1px solid var(--rule2); border-radius: 6px; padding: 10px; background: var(--ink); }
+.countdown .k { font: 600 10px var(--mono); letter-spacing: .16em; color: var(--muted); }
+.countdown .v { font: 700 34px/1.1 var(--mono); color: var(--amber); }
+.tl { padding: 6px 14px 12px; }
+.tl .it { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dashed rgba(58,66,86,.5); }
+.tl .w { font: 600 11px var(--mono); color: var(--muted); }
+.tl .h { font: 700 13px var(--serif); } .tl .h .by { font: 600 9px var(--mono); padding: 1px 5px; border-radius: 2px; margin-left: 6px; letter-spacing: .08em; vertical-align: 2px; }
+.tl .h .by.c { background: rgba(255,179,71,.18); color: var(--amber); } .tl .h .by.d { background: rgba(182,156,255,.18); color: var(--violet); }
+.tl .t { font: 400 11.5px/1.45 var(--sans); color: var(--paper-dim); margin-top: 2px; }
+footer.foot { color: var(--muted); font: 400 11px var(--mono); text-align: center; margin-top: 18px; }
+
+@media (max-width: 1250px) { .floor { grid-template-columns: repeat(4, 1fr); } .conveyor { display: none; } .grid3, .grid2 { grid-template-columns: 1fr; } .funnel { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .wrap { padding: 12px 16px 30px; } .floor { grid-template-columns: 1fr 1fr; } .title { font-size: 34px; } .mast { grid-template-columns: 1fr; } .mast .right { text-align: left; } .front { columns: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mast">
+    <div class="left"><div id="clock">—</div><div id="runlabel">No run in progress</div><div id="elapsed"></div></div>
+    <h1 class="title">The Newsroom<small>Advanced Transportation Update · night desk</small></h1>
+    <div class="right">
+      <span id="badge" class="badge idle"><span class="dot"></span><span id="badgetext">Presses quiet</span></span>
+      <div class="controls"><button class="btn" id="sound">🔇 SOUND OFF</button><a class="btn" href="https://news.peterjwhite.org" target="_blank" rel="noopener">LIVE SITE ↗</a></div>
+    </div>
+  </div>
+
+  <div class="ticker"><div class="label">ON THE WIRE</div><div class="track" id="ticker"><span>Waiting for the first wire of the night…</span></div></div>
+  <div class="banner" id="banner"></div>
+
+  <div class="floor" id="floor"><div class="conveyor"></div></div>
+
+  <div class="funnel" id="funnel"></div>
+
+  <div class="grid3">
+    <div class="panel">
+      <header><h2>Wire Room &amp; Fact-Check</h2><span class="meta" id="wiremeta">sites checked: 0</span></header>
+      <div class="scroll" id="wirelog"></div>
+    </div>
+    <div class="panel">
+      <header><h2>The Notepad</h2><span class="meta" id="npmeta">the models' work, as it is written</span></header>
+      <div class="notepad" id="notepad"><div class="np-idle">The notepad is blank. When the writer or the verifier picks up a story, its words appear here as they are written.</div></div>
+      <div class="np-history" id="nphistory"></div>
+    </div>
+    <div class="panel">
+      <header><h2>Editors' Desk Stamps</h2><span class="meta" id="stampmeta">0 decisions</span></header>
+      <div class="filters" id="filters"></div>
+      <div class="scroll" id="stamps"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <header><h2 id="fronttitle">Tonight's Front Page</h2><span class="meta" id="frontmeta"></span></header>
+      <div class="front" id="front"><div class="empty">The front page is set when the edition passes the press.</div></div>
+    </div>
+    <div class="panel">
+      <header><h2>The Doctor</h2><span class="meta">self-healing: diagnose → fix → test → merge → rerun</span></header>
+      <div class="steps" id="doctor"><div class="empty">No patients tonight. When a run fails, the doctor's examination, diagnosis and fix appear here step by step.</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <header><h2>Newsroom Improvements</h2><span class="meta">changes to the process, newest first</span></header>
+      <div class="tl scroll" id="timeline"></div>
+    </div>
+    <div class="panel">
+      <header><h2>Plant &amp; Schedule</h2><span class="meta" id="statusmeta"></span></header>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+  <footer class="foot">Local only · http://127.0.0.1:8765 · read-only view of the newsroom; it never changes a run</footer>
+</div>
+
+<script>
+"use strict";
+const DESKS = [
+  { id: "wire", name: "Wire Room", icon: "📡", role: "Gathering the news from searches and feeds" },
+  { id: "factcheck", name: "Fact-Check", icon: "🔎", role: "Is it a real, dated, readable article?" },
+  { id: "editors", name: "Editors' Meeting", icon: "🗂️", role: "The editor model picks the stories" },
+  { id: "rewrite", name: "Rewrite Desk", icon: "✍️", role: "Summaries written and checked against each article" },
+  { id: "standards", name: "Standards", icon: "⚖️", role: "Scope, repeats, same-story merges" },
+  { id: "layout", name: "Layout", icon: "📐", role: "Sections, the 25-story cap, Executive Summary" },
+  { id: "press", name: "Press Room", icon: "🖨️", role: "Every link and gate checked" },
+  { id: "delivery", name: "Delivery", icon: "🚚", role: "Published and verified live" },
+];
+const STAMP_COLORS = { "APPROVED": "green", "VERIFIED": "green", "OFFICIAL SOURCE": "green", "SPIKED": "red", "OFF-TOPIC": "red", "REPEAT": "gray",
+  "CUT FOR SPACE": "amber", "MERGED": "blue", "MOVED": "blue", "REWRITTEN": "violet", "FALLBACK": "amber", "SET ASIDE": "gray",
+  "NOT THE LEAD": "gray", "DEAD LINK": "red", "REFUSED": "red", "UPDATE": "blue" };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const hhmm = (t) => { try { return new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); } catch { return ""; } };
+
+let S;
+function fresh() {
+  return { mode: null, label: "", started: null, ended: null, status: null, active: null, desk: {}, stamps: [], stampFilter: "ALL",
+    wire: [], ticker: [], ink: null, history: [], doctor: [], checked: 0, kept: 0, spiked: 0, picks: 0, picked: null,
+    gathered: null, candidates: null, written: 0, published: null, front: null, final: {} };
+}
+S = fresh();
+let replaying = false;
+
+/* ---------- sound (off by default) ---------- */
+let soundOn = false, actx = null, lastTick = 0;
+try { soundOn = localStorage.getItem("newsroom-sound") === "on"; } catch {}
+function tone(freq, dur, type = "square", vol = 0.03) {
+  if (!soundOn || replaying) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = vol;
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
+  } catch {}
+}
+const sfx = {
+  tick() { const n = performance.now(); if (n - lastTick > 70) { lastTick = n; tone(1800 + Math.random() * 400, 0.025, "square", 0.012); } },
+  stamp() { tone(110, 0.12, "triangle", 0.09); },
+  bell() { tone(1318, 0.9, "sine", 0.05); setTimeout(() => tone(1760, 0.8, "sine", 0.04), 140); },
+  alarm() { tone(220, 0.35, "sawtooth", 0.05); setTimeout(() => tone(185, 0.45, "sawtooth", 0.05), 380); },
+};
+function paintSound() { $("sound").textContent = soundOn ? "🔊 SOUND ON" : "🔇 SOUND OFF"; }
+$("sound").onclick = () => { soundOn = !soundOn; try { localStorage.setItem("newsroom-sound", soundOn ? "on" : "off"); } catch {} paintSound(); sfx.tick(); };
+paintSound();
+
+/* ---------- desks ---------- */
+function buildFloor() {
+  const floor = $("floor");
+  floor.querySelectorAll(".desk").forEach((d) => d.remove());
+  DESKS.forEach((d, i) => {
+    const el = document.createElement("div");
+    el.className = "desk"; el.id = "desk-" + d.id;
+    el.innerHTML = `<div class="top"><span class="num">DESK ${i + 1}</span><span class="lamp"></span></div>
+      <h3><span class="icon">${d.icon}</span> ${d.name}</h3><div class="role">${d.role}</div>
+      <div class="stat" id="stat-${d.id}">—</div><div class="sub" id="sub-${d.id}"></div>`;
+    floor.appendChild(el);
+  });
+}
+function setStat(id, main, small = "", sub) {
+  const s = $("stat-" + id); if (!s) return;
+  s.innerHTML = `${esc(main)}${small ? `<small>${esc(small)}</small>` : ""}`;
+  if (sub !== undefined) $("sub-" + id).textContent = sub;
+}
+function activate(id) {
+  if (!DESKS.some((d) => d.id === id)) return;
+  const order = DESKS.map((d) => d.id), idx = order.indexOf(id);
+  if (S.active && order.indexOf(S.active) > idx) return; // never go backwards (late events from a slower step)
+  order.forEach((d, i) => {
+    const el = $("desk-" + d); if (!el) return;
+    el.classList.toggle("active", i === idx);
+    if (i < idx) el.classList.add("done");
+  });
+  if (S.active !== id && !replaying) flyPaper(S.active, id);
+  S.active = id;
+}
+function flyPaper(from, to) {
+  const f = $("desk-" + from), t = $("desk-" + to), floor = $("floor");
+  if (!f || !t) return;
+  const fr = floor.getBoundingClientRect(), a = f.getBoundingClientRect(), b = t.getBoundingClientRect();
+  const p = document.createElement("div"); p.className = "paper-fly";
+  p.style.left = (a.left - fr.left + a.width / 2) + "px"; floor.appendChild(p);
+  p.animate([{ left: p.style.left, opacity: 1 }, { left: (b.left - fr.left + b.width / 2) + "px", opacity: 0.2 }], { duration: 900, easing: "ease-in-out" })
+    .onfinish = () => p.remove();
+}
+
+/* ---------- funnel ---------- */
+function renderFunnel() {
+  const steps = [
+    ["Found on the wire", S.gathered], ["Candidates", S.candidates], ["Real articles", S.kept || null],
+    ["Picked by the editor", S.picked], ["Published", S.published],
+  ];
+  const top = Math.max(...steps.map((s) => s[1] || 0), 1);
+  $("funnel").innerHTML = steps.map(([k, v], i) => {
+    const prev = i ? steps[i - 1][1] : null;
+    const final = [true, true, S.final.factcheck, S.final.editors, S.final.press][i];
+    const drop = !final ? (v != null ? "counting…" : "") : v != null && prev != null && prev > v ? `−${prev - v} cut` : "";
+    return `<div class="fstep"><div class="k">${k}</div><div class="v">${v == null ? "—" : v}</div><div class="d">${drop}</div>
+      <div class="bar"><i style="width:${v ? Math.max(3, (100 * v) / top) : 0}%"></i></div></div>`;
+  }).join("");
+}
+
+/* ---------- wire log + ticker ---------- */
+const wireRow = (w) => `<div class="wl"><span class="t">${hhmm(w.t)}</span><span class="h">${w.head}</span><span class="r ${w.cls}">${esc(w.res)}</span>${w.why ? `<span class="why">${esc(w.why)}</span>` : ""}</div>`;
+function wireLine(t, head, res, cls, why) {
+  const w = { t, head, res, cls, why };
+  S.wire.unshift(w); S.wire.length = Math.min(S.wire.length, 250);
+  if (replaying) return;
+  const box = $("wirelog"); box.querySelector(".empty")?.remove();
+  box.insertAdjacentHTML("afterbegin", wireRow(w));  // only the new row animates in
+  while (box.children.length > 160) box.lastElementChild.remove();
+  wireMeta();
+}
+function wireMeta() { $("wiremeta").textContent = `sites checked: ${S.checked} · kept ${S.kept} · spiked ${S.spiked}`; }
+function renderWire() {
+  $("wirelog").innerHTML = S.wire.slice(0, 160).map(wireRow).join("") || `<div class="empty">Quiet on the wire.</div>`;
+  $("wirelog").querySelectorAll(".wl").forEach((r) => r.style.animation = "none");
+  wireMeta();
+}
+function addTicker(items) {
+  S.ticker.push(...items); S.ticker = S.ticker.slice(-60);
+  if (!replaying) renderTicker();
+}
+// The ticker takes new headlines only between passes, so the scroll never jumps back to the start.
+let tickerStale = false;
+function renderTicker(force) {
+  if (!S.ticker.length) return;
+  const track = $("ticker");
+  if (!force && track.dataset.live) { tickerStale = true; return; }
+  track.dataset.live = "1"; tickerStale = false;
+  track.innerHTML = S.ticker.slice(-40).map((x) => `<span><b>${esc(x.source || "WIRE")}</b>${esc(x.title)}</span>`).join("");
+}
+$("ticker").addEventListener("animationiteration", () => { if (tickerStale) renderTicker(true); });
+
+/* ---------- notepad ---------- */
+function inkStart(e) {
+  if (S.ink) inkEnd({ id: S.ink.id, ok: true });
+  S.ink = { id: e.id, label: e.label, model: e.model, subject: e.subject, text: "", t: e.t, purpose: e.purpose };
+  activate(e.desk);
+  if (!replaying) renderInk();
+}
+function inkWrite(e) {
+  if (!S.ink || S.ink.id !== e.id) return;
+  S.ink.text += e.text; if (S.ink.text.length > 6000) S.ink.text = "…" + S.ink.text.slice(-5000);
+  if (!replaying) { renderInk(); sfx.tick(); }
+}
+function inkEnd(e) {
+  if (!S.ink || S.ink.id !== e.id) return;
+  S.history.unshift({ ...S.ink, ok: e.ok !== false });
+  S.history.length = Math.min(S.history.length, 120);
+  if (S.ink.purpose === "story_summary") { S.written++; setStat("rewrite", S.written, " written"); }
+  if (!replaying) { renderHistory(); renderInk(S.history[0]); }
+}
+// Fields the editor still fills in but nobody reads (the retired "Administration wins" feature, ids).
+const QUIET_KEYS = /^(win_|eo_|is_administration_win|innovative_uas_use|confidence|primary_article_id|cluster_id|article_ids)/;
+function prettyInk(text) {
+  // Structured answers arrive as JSON; show them as plain notes while they are typed.
+  const lines = text.replace(/[{}\[\]]/g, "").replace(/"([a-z_]+)":\s*/g, (m, k) => `\n@@${k}@@`).split("\n");
+  return lines.map((line) => {
+    const m = line.match(/^@@([a-z_]+)@@(.*)$/);
+    if (!m) return /^[\s",.:…]*$/.test(line) || /^[a-z_]*":/.test(line.trim()) ? null : line.trim();
+    const key = m[1], value = m[2].trim().replace(/,$/, "");
+    if (QUIET_KEYS.test(key) || /^(false|""|null|)$/.test(value)) return null;
+    const label = key === "canonical_title" ? "STORY" : key.replace(/_/g, " ").toUpperCase();
+    return `${label}: ${value.replace(/^"|"$/g, "")}`;
+  }).filter((l) => l).join("\n");
+}
+function renderInk(item) {
+  const ink = item || S.ink;
+  if (!ink) return;
+  const verifier = /gemma/i.test(ink.model || "");
+  $("notepad").innerHTML = `<div class="np-head"><span class="who ${verifier ? "verifier" : ""}">${verifier ? "VERIFIER" : "WRITER"} · ${esc(ink.model)}</span><span>${esc(ink.label)}</span><span style="color:var(--muted)">${hhmm(ink.t)}</span></div>
+    <div class="np-subject">${esc(ink.subject || "")}</div><div class="np-body"><div class="np-text">${esc(prettyInk(ink.text))}${item ? "" : '<span class="cur"></span>'}</div></div>`;
+  const body = $("notepad").querySelector(".np-body"); body.scrollTop = body.scrollHeight;
+}
+function renderHistory() {
+  $("nphistory").innerHTML = S.history.slice(0, 60).map((h, i) =>
+    `<div class="np-hist" data-i="${i}"><span>${hhmm(h.t)}</span><span class="p">${esc(h.label)}</span><span class="s">${h.ok ? "" : "⚠ "}${esc(h.subject || h.text.slice(0, 80))}</span></div>`).join("");
+  $("npmeta").textContent = `${S.history.length} notes so far`;
+}
+$("nphistory").onclick = (ev) => { const r = ev.target.closest(".np-hist"); if (r) renderInk(S.history[+r.dataset.i]); };
+
+/* ---------- stamps ---------- */
+const stampCard = (s) => `<div class="card"><div class="ct">${esc(s.title || "(edition)")}</div>
+      <div class="cr">${esc(s.reason)}</div><span class="stamp st-${STAMP_COLORS[s.stamp] || "gray"}">${esc(s.stamp)}</span></div>`;
+let stampChips = 0;
+function addStamp(stamp, title, reason, desk, t) {
+  const s = { stamp, title, reason, desk, t };
+  S.stamps.unshift(s); S.stamps.length = Math.min(S.stamps.length, 600);
+  if (replaying) return;
+  if (S.stampFilter === "ALL" || S.stampFilter === stamp) {
+    const box = $("stamps"); box.querySelector(".empty")?.remove();
+    box.insertAdjacentHTML("afterbegin", stampCard(s));
+    while (box.children.length > 80) box.lastElementChild.remove();
+  }
+  clearTimeout(stampChips); stampChips = setTimeout(renderChips, 400);
+  sfx.stamp();
+}
+function renderChips() {
+  const counts = {}; S.stamps.forEach((s) => counts[s.stamp] = (counts[s.stamp] || 0) + 1);
+  const kinds = ["ALL", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+  $("filters").innerHTML = kinds.map((k) => `<span class="chip ${S.stampFilter === k ? "on" : ""}" data-k="${k}">${k}${k === "ALL" ? "" : " " + counts[k]}</span>`).join("");
+  $("stampmeta").textContent = `${S.stamps.length} decisions`;
+}
+function renderStamps() {
+  renderChips();
+  const list = S.stamps.filter((s) => S.stampFilter === "ALL" || s.stamp === S.stampFilter).slice(0, 80);
+  $("stamps").innerHTML = list.map(stampCard).join("") || `<div class="empty">No decisions yet.</div>`;
+  $("stamps").querySelectorAll(".card, .stamp").forEach((c) => c.style.animation = "none");
+}
+$("filters").onclick = (ev) => { const c = ev.target.closest(".chip"); if (c) { S.stampFilter = c.dataset.k; renderStamps(); } };
+
+/* ---------- front page ---------- */
+function renderFront(sections, title, meta) {
+  $("fronttitle").textContent = title; $("frontmeta").textContent = meta || "";
+  const names = Object.keys(sections || {});
+  $("front").innerHTML = names.length ? names.map((n) => `<section><h4>${esc(n)}</h4>${sections[n].map((s) =>
+    `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}<span>${esc(s.source)}</span></a>`).join("")}</section>`).join("")
+    : `<div class="empty">The front page is set when the edition passes the press.</div>`;
+}
+
+/* ---------- doctor ---------- */
+const DOC_STEPS = { exam: "Examination", diagnosis: "Diagnosis", fix: "Fix prepared & tested", merged: "Merged & rerun", held: "Held for your OK", report: "Report" };
+function renderDoctor() {
+  if (!S.doctor.length) return;
+  $("doctor").innerHTML = S.doctor.map((d, i) => `<div class="step"><div class="b">${i + 1}</div><div>
+    <div class="k">${esc(DOC_STEPS[d.step] || d.step)} <span style="color:var(--muted);font-weight:400">${hhmm(d.t)}</span></div>
+    <div class="x">${esc(d.text)}</div>${d.next_step ? `<div class="x" style="color:var(--paper-dim)">Next: ${esc(d.next_step)}</div>` : ""}
+    ${d.files && d.files.length ? `<div class="x" style="color:var(--paper-dim)">Files: ${esc(d.files.join(", "))}</div>` : ""}
+    ${d.log_tail ? `<pre>${esc(d.log_tail)}</pre>` : ""}</div></div>`).join("");
+}
+
+/* ---------- banner + badge ---------- */
+function banner(kind, big, text) {
+  const b = $("banner"); b.className = "banner show " + kind; b.innerHTML = `<span class="big">${esc(big)}</span>${esc(text)}`;
+}
+function badge() {
+  const b = $("badge"), map = { edition: ["live", "Live edition"], rehearsal: ["rehearsal", "Rehearsal"], doctor: ["doctor", "Doctor on call"] };
+  let [cls, txt] = S.mode ? map[S.mode] || ["live", S.mode] : ["idle", "Presses quiet"];
+  if (S.ended) { [cls, txt] = S.status === "ok" ? ["done", S.mode === "rehearsal" ? "Rehearsal done" : "Run complete"] : ["failed", "Run failed"]; }
+  b.className = "badge " + cls; $("badgetext").textContent = txt;
+  $("runlabel").textContent = S.label || "No run in progress";
+}
+
+/* ---------- event handling ---------- */
+function handle(e) {
+  switch (e.kind) {
+    case "run-start":
+      S = fresh(); S.mode = e.mode; S.label = e.label; S.started = e.t;
+      buildFloor(); $("banner").className = "banner";
+      $("doctor").innerHTML = `<div class="empty">No patients tonight. When a run fails, the doctor's examination, diagnosis and fix appear here step by step.</div>`;
+      $("notepad").innerHTML = `<div class="np-idle">The notepad is blank. When the writer or the verifier picks up a story, its words appear here as they are written.</div>`;
+      $("nphistory").innerHTML = ""; if (!replaying) { renderAll(); sfx.bell(); }
+      if (e.mode === "doctor") activate("press");
+      break;
+    case "run-end":
+      S.ended = e.t; S.status = e.status;
+      if (e.status === "ok") { DESKS.forEach((d) => { const el = $("desk-" + d.id); if (el && S.active && DESKS.findIndex((x) => x.id === d.id) <= DESKS.findIndex((x) => x.id === S.active)) { el.classList.remove("active"); el.classList.add("done"); } });
+        banner("ok", S.mode === "rehearsal" ? "REHEARSAL COMPLETE" : "PUBLISHED", " " + (e.reason || "")); if (!replaying) sfx.bell(); }
+      else { const el = $("desk-" + (S.active || "press")); if (el) { el.classList.remove("active"); el.classList.add("failed"); }
+        banner("bad", "STOP THE PRESSES", " " + (e.reason || "The run failed.") + "  The doctor and the retry task take it from here."); if (!replaying) sfx.alarm(); }
+      break;
+    case "desk":
+      activate(e.desk);
+      if (e.text) wireLine(e.t, `<b style="color:var(--amber)">${esc(DESKS.find((d) => d.id === e.desk)?.name || e.desk)}</b> <em>${esc(e.text)}</em>`, "", "info");
+      if (e.desk === "editors" && e.count) setStat("editors", "0", ` of ${e.count}`, `${e.batches || ""} batches`);
+      if (e.desk === "standards" && e.count) setStat("standards", e.count, " in");
+      if (e.desk === "wire" && e.count) { S.gathered = S.gathered || e.count; setStat("wire", e.count, " items"); }
+      break;
+    case "feed":
+      activate("wire");
+      S.gathered = (S.feedTotal = (S.feedTotal || 0) + (e.found || 0));
+      setStat("wire", S.feedTotal, " found", `${(S.feeds = (S.feeds || 0) + 1)} searches`);
+      wireLine(e.t, `${esc(e.source)} · <em>${esc(e.query)}</em>`, e.error ? "error" : `+${e.found}`, e.error ? "no" : "ok", e.error);
+      if (e.sample) addTicker(e.sample);
+      break;
+    case "tally":
+      if (e.desk === "wire") {
+        if (e.unique != null) { S.gathered = e.gathered; setStat("wire", e.unique, " unique", `${e.gathered} found · ${e.errors || 0} feed errors`); }
+        if (e.candidates != null) { S.candidates = e.candidates; setStat("wire", e.candidates, " candidates", `${e.resolved}/${e.wrappers} links resolved` + (e.unresolved ? ` · ${e.unresolved} lost` : "")); }
+        if (e.unresolved > 50) addStamp("SPIKED", `${e.unresolved} Google News links could not be resolved`, "Those stories never reach the fact-check desk. A large number means Google is refusing link resolution.", "wire", e.t);
+      }
+      if (e.desk === "factcheck") { S.final.factcheck = true; S.kept = e.kept; S.spiked = e.spiked; setStat("factcheck", e.kept, " real", `${e.spiked} spiked`); }
+      if (e.desk === "editors") { S.final.editors = true; S.picked = e.picked; setStat("editors", e.picked, ` of ${e.candidates}`, "stories picked"); }
+      if (e.desk === "standards") setStat("standards", e.leaving, ` of ${e.entering}`, `${e.entering - e.leaving} removed`);
+      if (!replaying) renderFunnel();
+      break;
+    case "fetch": activate("factcheck"); break;
+    case "checked":
+      S.checked++; if (e.keep) S.kept++; else S.spiked++;
+      setStat("factcheck", S.kept, " real", `${S.spiked} spiked · ${S.checked} read`);
+      wireLine(e.t, `${esc(e.host)} · <em>${esc(e.title)}</em>`, e.keep ? "KEPT" : `SPIKED${e.status ? " " + e.status : ""}`, e.keep ? "ok" : "no", e.keep ? "" : e.reason);
+      if (e.keep) addTicker([{ source: e.host, title: e.title }]);
+      if (!replaying && S.checked % 5 === 0) renderFunnel();
+      break;
+    case "pick":
+      activate("editors"); S.picks++;
+      if (e.relevant && !S.final.editors) { S.picked = (S.picked || 0) + 1; setStat("editors", S.picked, " picked", `${S.picks} judged so far`); if (!replaying && S.picks % 3 === 0) renderFunnel(); }
+      if (e.relevant) addStamp("APPROVED", e.title, `importance ${e.importance}/10 · ${e.section || ""}${e.reason ? " · " + e.reason : ""}`, "editors", e.t);
+      else addStamp("SET ASIDE", e.title, e.reason || "not chosen", "editors", e.t);
+      break;
+    case "stamp":
+      activate(e.desk);
+      addStamp(e.stamp, e.title, e.reason, e.desk, e.t);
+      break;
+    case "ink-start": inkStart(e); break;
+    case "ink": inkWrite(e); break;
+    case "ink-end": inkEnd(e); break;
+    case "gates":
+      activate("press"); S.final.press = true; setStat("press", "PASS", "", `${e.stories} stories cleared every gate`);
+      if (e.stories) { S.published = e.stories; renderFunnel(); }
+      break;
+    case "report":
+      S.published = e.final_story_count ?? S.published;
+      setStat("press", e.validation_status === "passed" ? "PASS" : (e.validation_status || "—"), "", `built in ${Math.round((e.total_build_seconds || 0) / 60)} min · ${e.model_retries || 0} retries`);
+      setStat("layout", e.final_story_count, " stories");
+      if (!replaying) renderFunnel();
+      break;
+    case "front-page":
+      activate("layout"); S.front = e.sections;
+      renderFront(e.sections, S.mode === "rehearsal" ? "Rehearsal Front Page" : "Tonight's Front Page", hhmm(e.t));
+      break;
+    case "failure":
+      banner("bad", "TROUBLE AT THE " + (DESKS.find((d) => d.id === (S.active || "press"))?.name || "PRESS").toUpperCase(), " " + e.text);
+      if (!replaying) sfx.alarm();
+      break;
+    case "doctor":
+      S.doctor.push(e); activate("press"); if (!replaying) renderDoctor();
+      break;
+  }
+  if (["desk", "ink-start"].includes(e.kind) && e.desk === "delivery") setStat("delivery", "…", "", e.text || "");
+  if (e.kind === "run-end" && e.status === "ok" && S.mode === "edition") setStat("delivery", "LIVE", "", "news.peterjwhite.org");
+  if (e.kind === "run-end" && S.mode === "rehearsal") setStat("delivery", "—", "", "not published in a rehearsal");
+}
+function renderAll() { badge(); renderWire(); renderTicker(); renderStamps(); renderHistory(); renderDoctor(); renderFunnel(); if (S.ink) renderInk(); }
+
+/* ---------- connection ---------- */
+function connect() {
+  const es = new EventSource("/events");
+  es.addEventListener("replay-start", () => { replaying = true; S = fresh(); buildFloor(); });
+  es.addEventListener("replay-end", () => { replaying = false; renderAll(); if (S.front) renderFront(S.front, "Tonight's Front Page"); else loadState(); });
+  es.onmessage = (m) => { try { handle(JSON.parse(m.data)); if (!replaying) badge(); } catch (err) { console.warn(err); } };
+  es.onerror = () => { es.close(); setTimeout(connect, 3000); };
+}
+
+/* ---------- state: last edition, plant, schedule, improvements ---------- */
+let nextEdition = null;
+async function loadState() {
+  let st; try { st = await (await fetch("/api/state")).json(); } catch { return; }
+  nextEdition = new Date(st.next_edition);
+  const le = st.last_edition || {};
+  if (!S.front && le.sections) {
+    renderFront(le.sections, "Last Published Front Page", `${le.date} · ${le.stories} stories`);
+    if (!S.mode) {
+      const n = le.qa_notes || {}, q = le.qa_summary || {};
+      S.candidates = n.candidates_after_article_check ? null : S.candidates;
+      S.kept = n.candidates_after_article_check || 0; S.published = le.stories;
+      S.gathered = le.candidates || null; renderFunnel();
+      Object.entries(q).forEach(([k, v]) => {});
+    }
+  }
+  const sv = st.services || {}, g = st.gpu || {};
+  $("status").innerHTML = `
+    <div class="countdown"><div class="k">NEXT EDITION</div><div class="v" id="cd">—</div><div class="k" style="margin-top:4px">${nextEdition.toLocaleString([], { weekday: "long", hour: "2-digit", minute: "2-digit" })} ET</div></div>
+    <div class="svc"><span class="lamp ${sv.ollama ? "on" : "off"}"></span>Ollama (models)</div>
+    <div class="svc"><span class="lamp ${sv.searxng ? "on" : "off"}"></span>SearXNG (web search)</div>
+    <div class="svc" style="grid-column:1/3"><span class="lamp ${st.models && st.models.length ? "on" : ""}"></span>Loaded: ${esc((st.models || []).join(", ") || "none (models load on demand)")}</div>
+    <div class="svc" style="grid-column:1/3;color:var(--paper-dim)">Writer ${esc(st.writer)} · Verifier ${esc(st.verifier)}</div>
+    ${g.name ? `<div class="gauge"><div class="lbl"><span>${esc(g.name)} · ${g.temp}°C</span><span>${g.util}% busy</span></div><div class="g"><i style="width:${g.util}%"></i></div>
+      <div class="lbl" style="margin-top:6px"><span>Memory</span><span>${(g.mem_used / 1024).toFixed(1)} / ${(g.mem_total / 1024).toFixed(1)} GB</span></div><div class="g"><i style="width:${(100 * g.mem_used) / g.mem_total}%"></i></div></div>` : ""}
+    <div class="sched">${st.schedule.map((s) => `<div><b>${esc(s.at)}</b><span>${esc(s.what)} · ${esc(s.days)}</span></div>`).join("")}</div>`;
+  $("statusmeta").textContent = "refreshed " + hhmm(st.now);
+  $("timeline").innerHTML = (st.improvements || []).map((it) => `<div class="it"><div class="w">${esc(it.when)}</div><div>
+      <div class="h">${esc(it.title)}<span class="by ${it.by === "Doctor" ? "d" : "c"}">${esc(it.by.toUpperCase())}</span></div><div class="t">${esc(it.text)}</div></div></div>`).join("")
+    || `<div class="empty">No changes logged yet.</div>`;
+}
+function tick() {
+  const now = new Date();
+  $("clock").textContent = now.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  if (S.started) {
+    const end = S.ended ? new Date(S.ended) : now, s = Math.max(0, Math.round((end - new Date(S.started)) / 1000));
+    $("elapsed").textContent = `${S.ended ? "ran" : "running"} ${Math.floor(s / 3600)}h ${String(Math.floor(s / 60) % 60).padStart(2, "0")}m ${String(s % 60).padStart(2, "0")}s`;
+  }
+  const cd = $("cd");
+  if (cd && nextEdition) { const s = Math.max(0, Math.round((nextEdition - now) / 1000));
+    cd.textContent = `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
+}
+buildFloor(); renderFunnel(); badge(); loadState(); connect();
+setInterval(tick, 1000); setInterval(loadState, 30000); tick();
+</script>
+</body>
+</html>

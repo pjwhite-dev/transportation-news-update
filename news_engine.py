@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 import feedparser
 import requests
 
+import newsroom_live
 from ai_providers import AIProvider, DEFAULT_OPENAI_MODEL, OpenAIProvider
 from coverage_history import annotate_previous_coverage
 from regulatory_tracker import build_regulatory_tracker
@@ -1047,15 +1048,18 @@ def collect_articles(
                 window_end,
                 max_items=25,
             )
+            newsroom_live.wire_feed("Google News", query, found, error, section=section)
             items.extend(found)
             if error:
                 errors.append(error)
 
     federal_items, federal_errors = fetch_federal_register(window_start, window_end)
+    newsroom_live.wire_feed("Federal Register", "transportation rules and notices", federal_items, "; ".join(federal_errors))
     items.extend(federal_items)
     errors.extend(federal_errors)
 
     official_items, official_errors = fetch_official_feeds(window_start, window_end)
+    newsroom_live.wire_feed("Agency feeds", "DOT, FAA, NHTSA and other official feeds", official_items, "; ".join(official_errors))
     errors.extend(official_errors)
     searxng_items, searxng_errors = fetch_searxng(
         os.environ.get("SEARXNG_BASE_URL", "http://localhost:8080"),
@@ -1063,6 +1067,7 @@ def collect_articles(
         window_end,
     )
     errors.extend(searxng_errors)
+    newsroom_live.wire_feed("Web search", "SearXNG section queries", searxng_items, "; ".join(searxng_errors[:3]))
     external_items, metadata_errors = enrich_article_metadata(
         official_items + searxng_items
     )
@@ -1073,7 +1078,9 @@ def collect_articles(
         item for item in items
         if automated_record_is_portfolio_relevant(item)
     ]
-    return deduplicate_articles(filtered), errors
+    unique = deduplicate_articles(filtered)
+    newsroom_live.emit("tally", desk="wire", gathered=len(items), relevant=len(filtered), unique=len(unique), errors=len(errors))
+    return unique, errors
 
 
 
@@ -2098,8 +2105,18 @@ def analyze_articles(
                 what_to_watch.append(item)
         usages.append(usage)
         costs.append(cost)
+        titles = {r["id"]: r.get("title", "") for r in records}
+        for cluster in found:
+            ids = cluster.get("article_ids") or []
+            newsroom_live.emit("pick", desk="editors", batch=label, relevant=bool(cluster.get("relevant")),
+                               importance=cluster.get("importance"), section=cluster.get("section", ""),
+                               title=str(cluster.get("canonical_title") or titles.get(ids[0] if ids else "", ""))[:200],
+                               reason=str(cluster.get("exclude_reason") or cluster.get("summary") or "")[:240],
+                               articles=len(ids))
         return found
 
+    newsroom_live.desk("editors", f"The editor reads {len(articles)} candidates in {len(batches)} batches and picks the stories",
+                       count=len(articles), batches=len(batches))
     for index, batch in enumerate(batches):
         found = ask(f"b{index}", batch)
         # A model that stops early or skips records leaves them unjudged; ask once more for those.
@@ -2133,6 +2150,7 @@ def analyze_articles(
     cost = None if any(c is None for c in costs) else sum(costs)  # type: ignore[arg-type]
     required_ids = {a["id"] for a in articles if a.get("required_include", False)}
     selected = select_top_clusters(merge_duplicate_clusters(clusters), required_ids)
+    newsroom_live.emit("tally", desk="editors", candidates=len(articles), picked=sum(1 for c in selected if c.get("relevant")))
     merged = {"what_to_watch": what_to_watch, "clusters": selected}
     return merged, usage, cost
 
@@ -2786,7 +2804,11 @@ def generate_briefing_from_records(
             item for item in combined
             if item.get("origin") == "Federal Register API" or is_official_host(str(item.get("url", "")))
         ]
+        entering = newsroom_live.story_count(arranged)  # stories by section
+        newsroom_live.desk("standards", f"Standards desk: scope, repeats, same-story merges, grounded summaries for {entering} stories",
+                           count=entering)
         arranged = quality_pass(arranged, quality)
+        newsroom_live.emit("tally", desk="standards", entering=entering, leaving=newsroom_live.story_count(arranged))
 
     included_counts = {
         section: len(items)

@@ -10,6 +10,8 @@ from typing import Any, Protocol
 import requests
 from jsonschema import ValidationError, validate
 
+import newsroom_live
+
 DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
 DEFAULT_OLLAMA_MODEL = "qwen3.8:27b-q4_K_M"
 DEFAULT_OPENAI_MODEL = "gpt-5.4-mini"
@@ -126,7 +128,7 @@ class OllamaProvider:
             for item in messages
         ]
 
-    def _stream_chat(self, payload: dict[str, Any]) -> tuple[str, dict[str, int]]:
+    def _stream_chat(self, payload: dict[str, Any], purpose: str = "") -> tuple[str, dict[str, int]]:
         """Stream /api/chat and fail when no data arrives for the stall timeout.
 
         The read timeout of a streaming request is the longest allowed gap between
@@ -147,17 +149,26 @@ class OllamaProvider:
         parts: list[str] = []
         usage = {"input_tokens": 0, "output_tokens": 0}
         finished = False
-        for line in response.iter_lines():
-            if not line:
-                continue
-            chunk = json.loads(line)
-            if chunk.get("error"):
-                raise requests.HTTPError(_clean_error(str(chunk["error"])))
-            parts.append(str((chunk.get("message") or {}).get("content", "")))
-            if chunk.get("done"):
-                finished = True
-                usage["input_tokens"] = int(chunk.get("prompt_eval_count", 0) or 0)
-                usage["output_tokens"] = int(chunk.get("eval_count", 0) or 0)
+        # The local dashboard types the output out as it arrives (best effort; it never raises).
+        ink = newsroom_live.Ink(self.model, purpose, newsroom_live.subject_from(payload.get("messages") or []))
+        try:
+            for line in response.iter_lines():
+                if not line:
+                    continue
+                chunk = json.loads(line)
+                if chunk.get("error"):
+                    raise requests.HTTPError(_clean_error(str(chunk["error"])))
+                piece = str((chunk.get("message") or {}).get("content", ""))
+                parts.append(piece)
+                ink.write(piece)
+                if chunk.get("done"):
+                    finished = True
+                    usage["input_tokens"] = int(chunk.get("prompt_eval_count", 0) or 0)
+                    usage["output_tokens"] = int(chunk.get("eval_count", 0) or 0)
+        except Exception as exc:
+            ink.close(False, str(exc))
+            raise
+        ink.close(finished, "" if finished else "stream ended early")
         if not finished:
             raise requests.ConnectionError("Ollama stream ended before completion.")
         usage["total_tokens"] = usage["input_tokens"] + usage["output_tokens"]
@@ -184,7 +195,7 @@ class OllamaProvider:
                 },
             }
             try:
-                text, usage = self._stream_chat(payload)
+                text, usage = self._stream_chat(payload, "prose")
                 if not text:
                     raise ValueError("Ollama returned no text.")
                 return TextGeneration(text, usage, 0.0, attempt)
@@ -223,7 +234,7 @@ class OllamaProvider:
                 },
             }
             try:
-                content, usage = self._stream_chat(payload)
+                content, usage = self._stream_chat(payload, schema_name)
                 if not content:
                     raise ValueError("Ollama returned no structured content.")
                 value = _validate_payload(json.loads(content), schema)

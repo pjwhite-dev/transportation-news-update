@@ -32,6 +32,7 @@ from news_engine import (
 from publication import briefing_date, briefing_payload
 from summary_chain import check_verifier, verifier_from_env
 from tracker.core import refresh as refresh_tracker
+import newsroom_live
 from url_resolver import resolve_articles
 from article_extract import enrich_candidates, make_official_fetch, make_official_search
 from grounding import make_entailment_check, make_writer
@@ -194,6 +195,8 @@ def build_briefing(
 
     # Google News wrappers are not publisher links. Resolve them, and drop any
     # candidate that cannot be resolved rather than ever publishing a wrapper.
+    newsroom_live.desk("wire", f"{len(raw_feed.get('articles', []))} wire items in; resolving Google News links to publisher pages",
+                       count=len(raw_feed.get("articles", [])))
     link_stats = resolve_articles(
         raw_feed.get("articles", []), root / ".runtime" / "url_cache.json"
     )
@@ -204,6 +207,10 @@ def build_briefing(
     # the model spends tokens on them (the same filter runs again before the gates).
     raw_feed["articles"], dropped = drop_non_articles(raw_feed["articles"])
     link_stats["non_article_dropped"] = len(dropped)
+    newsroom_live.emit("tally", desk="wire", wrappers=link_stats.get("wrappers", 0), resolved=link_stats.get("resolved", 0),
+                       unresolved=link_stats.get("unresolved", 0), non_articles=len(dropped), candidates=len(raw_feed["articles"]))
+    newsroom_live.desk("factcheck", f"Reading {len(raw_feed['articles'])} candidate pages: date, headline, is it a real article?",
+                       count=len(raw_feed["articles"]))
 
     # Read each candidate's own page: real publication date, clean headline, article-ness, body text.
     qa = QAReport((as_of or end.date()).isoformat())
@@ -215,6 +222,7 @@ def build_briefing(
     )
     qa.extend(rejected)
     qa.note("candidates_after_article_check", len(raw_feed["articles"]))
+    newsroom_live.emit("tally", desk="factcheck", kept=len(raw_feed["articles"]), spiked=len(rejected))
 
     supplemental_records = extract_supplemental_items(
         supplemental_text,
@@ -450,6 +458,23 @@ def main() -> None:
 
     root = args.root.resolve()
     started = time.monotonic()
+    # Under run_local_pipeline.ps1 the run is already open on the dashboard; a direct run (a replay) opens its own.
+    own_run = not newsroom_live.in_run()
+    if own_run:
+        newsroom_live.run_start("rehearsal" if (args.dry_run or args.raw_file) else "edition",
+                                f"Replay of {args.as_of or 'today'}" if args.raw_file else "Edition build")
+    try:
+        _build_and_save(args, root, started, provider, supplemental_text)
+    except BaseException as error:
+        newsroom_live.emit("failure", desk="press", text=str(error)[:600], kind_of=type(error).__name__)
+        if own_run:
+            newsroom_live.run_end("failed", str(error))
+        raise
+    if own_run:
+        newsroom_live.run_end("ok", "Rehearsal finished" if (args.dry_run or args.raw_file) else "Edition built and saved")
+
+
+def _build_and_save(args: argparse.Namespace, root: Path, started: float, provider: AIProvider, supplemental_text: str) -> None:
     # Refresh the official-source ledger first; a source outage is recorded and the
     # tracker gate reports any verification that is stale or missing.
     tracker_refresh = refresh_tracker()
@@ -488,6 +513,7 @@ def main() -> None:
     # Deterministic cleanup first (dead links, headline-echo summaries); every removal is
     # recorded in the edition, then the hard gates verify what remains.
     qa_snapshot = json.loads(json.dumps(briefing.get("qa_report") or {}))
+    newsroom_live.desk("press", "Checking every link and running the publication gates")
     try:
         briefing["pruned_items"] = (
             [] if args.skip_link_check else prune_unusable_stories(briefing, link_status)
@@ -508,6 +534,7 @@ def main() -> None:
             failed_dir.mkdir(parents=True, exist_ok=True)
             QAReport.from_dict(qa_snapshot).write(failed_dir)
         raise
+    newsroom_live.emit("gates", desk="press", status="passed", stories=sum(len(v) for v in briefing["sections"].values()))
     if args.supplemental_file and int(briefing.get("supplemental_count", 0) or 0) == 0:
         raise ValueError(
             "The supplied email yielded no supplemental article links; "
@@ -563,6 +590,10 @@ def main() -> None:
         "saved": not args.dry_run,
     }
     print(json.dumps(report, indent=2))
+    newsroom_live.emit("report", desk="press", **{k: v for k, v in report.items() if not isinstance(v, (list, dict))})
+    newsroom_live.emit("front-page", desk="layout", sections={
+        name: [{"title": s.get("title", ""), "source": s.get("source", ""), "url": s.get("url", "")} for s in items]
+        for name, items in briefing["sections"].items() if items})
     if latest_path and archive_path:
         print(
             f"Saved {latest_path.relative_to(root)} and "
