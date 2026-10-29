@@ -14,18 +14,27 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Callable
 
-from editorial_checks import enforce_section_scope, source_label, style_text
+from editorial_checks import enforce_section_scope, scope_fits, source_label, style_text
 from grounding import GroundingRecord, ground_summary
 from qa_report import QAReport
 from story_groups import drop_repeats, group_within_edition, previous_match, new_facts_since
 
 POLICY_SECTIONS = {"Federal Policy & Implementation", "Federal Register", "Surface Transportation Reauthorization"}
 FOREIGN_MILITARY_SECTIONS = {"Military UAS", "International Security"}
+FEDERAL_POLICY = "Federal Policy & Implementation"
 LEAD_LOOKBACK_EDITIONS = 2
 POLICY_ACTION = re.compile(
     r"\b(proposed rule|proposes?|proposal|final rule|interim final|rulemaking|notice of|executive order|advisory circular|"
     r"guidance|regulations?|legislation|bill|act|approves?|approved|approval|grants?|funding|awards?|waiver|exemption|"
     r"standards?|directive|mandate|certif\w+|authoriz\w+|order)\b", re.I)
+# A headline about a U.S. federal action, whoever reported it. 2026-10-29: the Trump robotics proclamation
+# (unite.ai) and the FCC drone vote (a blog) ranked as ordinary industry news and Federal Policy was empty.
+FEDERAL_ACTION = re.compile(
+    r"\b(?:president|trump|white house|commerce (?:department|secretary)|department of (?:commerce|transportation)|"
+    r"fcc|faa|nhtsa|fmcsa|fra|fta|phmsa|u\.?s\.? dot|congress|senate|house (?:passes|votes|committee))\b[^.:]{0,60}?"
+    r"\b(?:proclamation|executive order|direct(?:s|ed)?|signs?|signed|votes?|voted|proposes?|proposed|finaliz\w+|adopts?|"
+    r"issues?|issued|approves?|approved|authoriz\w+|passes|passed|bans?|requires?|(?:is )?(?:about|set|poised|moving) to|"
+    r"plans? to|will (?:vote|allow|require|authoriz\w+))\b", re.I)
 
 
 @dataclass
@@ -53,6 +62,11 @@ def _regroup(stories: list[dict[str, Any]], template: dict[str, list[dict[str, A
     return sections
 
 
+def is_federal_action(story: dict[str, Any]) -> bool:
+    """A U.S. federal action named in the headline (foreign and military sections excluded)."""
+    return story.get("section") not in FOREIGN_MILITARY_SECTIONS and bool(FEDERAL_ACTION.search(str(story.get("title", ""))))
+
+
 def priority_tier(story: dict[str, Any]) -> int:
     """1 federal policy actions, 2 company and industry news, 3 foreign and military news."""
     from story_groups import source_tier
@@ -62,6 +76,8 @@ def priority_tier(story: dict[str, Any]) -> int:
         return 1
     # A government source alone is not a policy action: a NASA flight-test photo story is not one.
     if source_tier(story) == 1 and POLICY_ACTION.search(text):
+        return 1
+    if is_federal_action(story):
         return 1
     if story.get("section") in FOREIGN_MILITARY_SECTIONS:
         return 3
@@ -123,6 +139,11 @@ def quality_pass(sections: dict[str, list[dict[str, Any]]], ctx: QualityContext)
     last_editions = sorted({e["edition"] for e in ctx.store if e["edition"] < ctx.today.isoformat()}, reverse=True)[:LEAD_LOOKBACK_EDITIONS]
     recent_leads = [e for e in ctx.store if e.get("led") and e["edition"] in last_editions]
     for story in stories:
+        if (is_federal_action(story) and story.get("section") not in POLICY_SECTIONS and FEDERAL_POLICY in template
+                and scope_fits(story, FEDERAL_POLICY)):
+            report.add("scope", str(story.get("title", "")), f"moved from {story.get('section')} to {FEDERAL_POLICY}: federal action in the headline",
+                       str(story.get("url", "")))
+            story["section"] = FEDERAL_POLICY
         story["priority_tier"] = priority_tier(story)
         match = previous_match(story, recent_leads) if recent_leads else None
         story["lead_ok"] = match is None or bool(new_facts_since(story, match))

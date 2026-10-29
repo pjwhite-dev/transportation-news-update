@@ -378,6 +378,9 @@ NON_ARTICLE_TITLE = tuple(
         r",\s*ranked$",
         r"^tracking every\b",
         r"[-|]\s*(?:reddit|youtube|facebook|linkedin|x \(formerly twitter\))\s*$",
+        # 2026-10-29: "Urban rail industry news round-up" and "Counter-Drone Systems Explained: How They Work and Cost".
+        r"\b(?:news|industry|weekly|daily|monthly|week(?:'s)?)\s+round-?ups?\b|\bround-?up\s*(?:[-|:–—]|$)",
+        r"\bexplained\b\s*(?:[:|–—-]|$)|^what (?:is|are)\b[^?]*\?",
     )
 )
 

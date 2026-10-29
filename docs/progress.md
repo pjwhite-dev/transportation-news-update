@@ -90,3 +90,12 @@ Fix (branch fix/preflight): the cleanup moved into `edition_preflight.py`, which
 - 21:28 retry refused to start: today's committed raw archive was left modified; the preflight now discards it.
 - Denied hosts are pruned from a resumed draft too.
 - GitHub's CI test list (198 tests) passes locally; full suite unchanged at 43 baseline failures.
+
+## 2026-10-29: audit of the Oct 29 edition, quick fixes 1-5
+The 04:30 run published on the first attempt (live 05:20, CI green). Audit findings and fixes (each with a regression test from the real headline):
+1. "Renfe awards Siemens 30 trains" had no portfolio angle: `trains?` and `rolling stock` added.
+2. Celebrity filter: "Waymo expands driverless ride service" matched the celebrity-ride pattern; "non-state actor" matched "actor". Both narrowed; the Pedrosa Cybercab ride is still dropped.
+3. Seeking Alpha contributor blogs (`/instablog`) and Substack denied; "news round-up" and "X Explained:" / "What is ...?" headlines are not news.
+4. A U.S. federal action in the headline (proclamation, directs, votes, approves, "about to" ...) is priority tier 1 and moves to Federal Policy when it fits that scope.
+5. A summary sentence that opens with a bare "Embassy"/"Ministry"/"Cabinet"/"Parliament" is sent back to the writer (dropped if it persists).
+Full suite: the same 43 failures as main. CI list passes. Replay: see docs/replay-diff-2026-10-29.md.

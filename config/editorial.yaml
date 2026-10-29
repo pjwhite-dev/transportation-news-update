@@ -15,6 +15,9 @@ deny_hosts:
   - basenor.com
   - finance.biggo.com
   - pluang.com
+  # 2026-10-29: contributor blogs and newsletters are not reporting (Seeking Alpha "instablog", Substack).
+  - seekingalpha.com/instablog
+  - substack.com
   - greenstocknews.com
   - stocktitan.net
   - marketbeat.com
@@ -177,22 +180,24 @@ sections:
     require_any: ['reauthoriz', 'surface transportation (?:bill|act|program|legislation)', 'highway bill', 'infrastructure investment and jobs act', '\biija\b']
   Federal Policy & Implementation:
     definition: Federal policy, legislation or agency action on drones, advanced aviation, automated vehicles, rail or space transport.
-    require_any: ['\bfaa\b', '\bdot\b', 'nhtsa', 'fmcsa', '\btsa\b', '\bfra\b', '\bfta\b', '\bdhs\b', 'white house', 'congress', 'senate', 'house of representatives', 'executive order', 'federal', 'secretary duffy', 'department of transportation']
+    require_any: ['\bfaa\b', '\bdot\b', 'nhtsa', 'fmcsa', '\btsa\b', '\bfra\b', '\bfta\b', '\bdhs\b', 'white house', 'congress', 'senate', 'house of representatives', 'executive order', 'federal', 'secretary duffy', 'department of transportation', '\bfcc\b', 'phmsa', 'proclamation', 'commerce (?:department|secretary)', 'department of commerce']
   Other Advanced Transportation:
     definition: Space transport, hyperloop and other advanced transport with a technology angle not covered above.
     require_any: ['space (?:launch|transport|travel)', 'spaceport', 'launch (?:license|site|vehicle)', 'hyperloop', 'reentry', 'starship', 'commercial space']
 
 # Applies to every section: no general war, crime or celebrity coverage without a portfolio angle.
-portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'c-?uas', 'evtol', '\ba250\b', '\bbeta technologies\b', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev', 'crisi', 'short ?line', 'trainsets?', 'locomotives?', 'amtrak', 'brightline', 'commuter rail', 'transit']
+portfolio_angle: ['drones?\b', '\buas\b', '\buav\b', 'uncrewed', 'unmanned', 'counter-?uas', 'c-?uas', 'evtol', '\ba250\b', '\bbeta technologies\b', 'air taxi', 'advanced air mobility', 'powered.lift', 'vertiport', 'autonomous', 'self-driving', 'driverless', 'robotaxi', 'cybercab', 'automated driving', '\bads\b', 'fmvss', '\brail\b', 'railway', 'railroad', 'high-speed', 'supersonic', 'hypersonic', 'space (?:launch|transport)', 'spaceport', 'hyperloop', 'robot', 'autopilot', 'airspace', 'maglev', 'crisi', 'short ?line', 'trainsets?', '\btrains?\b', 'rolling stock', 'locomotives?', 'amtrak', 'brightline', 'commuter rail', 'transit']
+# 2026-10-29: "Renfe awards Siemens 30 trains" had no angle (no "trains"); "Lessons from Africa's Drone Wars"
+# was dropped for "non-state actor"; "Waymo expands driverless ride service" matched the celebrity-ride pattern.
 off_topic_patterns:
   - '\bcelebrit'
-  - '\bactor\b'
+  - '(?<!state )(?<!threat )(?<!malign )(?<!armed )(?<!bad )(?<!hostile )(?<!security )(?<!foreign )(?<!rogue )\bactor\b'
   - '\bactress\b'
   - '\bsinger\b'
   - '\brapper\b'
   - '\binfluencer\b'
   - 'kardashian'
   - 'red carpet'
-  - '\b(?:rides?|rode|riding|takes? a ride|joins?)\b[^.]{0,50}\b(?:cybercab|robotaxi|waymo|driverless|self-driving)\b'
+  - '\b(?:rides?(?![- ]?(?:services?|hail\w*|shar\w*|programs?|area))|rode|riding|takes? a ride|joins?)\b[^.]{0,50}\b(?:cybercab|robotaxi|waymo|driverless|self-driving)\b'
 # A human-interest item is kept only when its headline carries a policy or safety hook.
 off_topic_unless: ['\bfaa\b', '\bnhtsa\b', '\bfmcsa\b', '\bdot\b', 'rule\b', 'rulemaking', 'regulat', '\blaw\b', '\bbill\b', 'congress', 'senate', 'permit', 'approv', 'recall', 'crash', 'investigat', 'lawsuit', 'safety']

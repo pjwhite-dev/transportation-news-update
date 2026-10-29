@@ -132,6 +132,17 @@ class ChainTests(unittest.TestCase):
         self.assertNotIn("finalized", result.text)
         self.assertEqual(result.verification["rounds"][0]["status_errors"], 1)
 
+    def test_a_sentence_opening_with_a_bare_embassy_or_ministry_is_sent_back(self) -> None:
+        """2026-10-29: "Embassy in Riyadh warned of potential attacks ..." did not say whose embassy."""
+        bare = GOOD.replace("Regulators in France set", "Embassy in Riyadh warned that regulators in France set")
+        writer = FakeWriter([bare, GOOD])
+        result = chain.run_chain(writer, FakeVerifier(), sections())
+        self.assertIn("without saying whose", writer.calls[1][-1]["content"])
+        self.assertNotIn("Embassy in Riyadh", result.text)
+        for ok in ("The U.S. Embassy in Riyadh warned travelers about attacks.", "South Korea's Ministry of Science revised a standard."):
+            self.assertIsNone(chain.BARE_INSTITUTION.match(ok), ok)
+        self.assertIsNotNone(chain.BARE_INSTITUTION.match("The Ministry of Science and ICT and ETRI revised the standard."))
+
     def test_fragments_are_flagged_rewritten_or_dropped(self) -> None:
         fragment = GOOD.replace("over the next several years [S5][S6].", "over the next several years [S5][S6]. Army to intercept drones [S3].")
         verifier = FakeVerifier(lambda s: "fragment" if s.startswith("Army to intercept") else None)

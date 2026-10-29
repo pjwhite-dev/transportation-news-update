@@ -582,7 +582,8 @@ class QualityPassTests(unittest.TestCase):
         self.assertEqual(len(result["UAS / Drones"]), 1)
         self.assertEqual(len(result["UAS / Drones"][0]["also_covered"]), 1)
         self.assertTrue(result["UAS / Drones"][0]["lead_ok"])
-        self.assertEqual(result["UAS / Drones"][0]["priority_tier"], 2)
+        # An FAA approval in the headline is a federal action whoever reports it (2026-10-29 audit).
+        self.assertEqual(result["UAS / Drones"][0]["priority_tier"], 1)
 
     def test_executive_summary_fact_sheet_puts_federal_policy_first_and_marks_blocked_leads(self):
         import summary_chain
@@ -670,6 +671,60 @@ class ScopeAnglesFromReplayTests(unittest.TestCase):
                 "url": "https://www.ch-aviation.com/news/173167-uss-beta-receives-faa-approval-for-a250-market-surveys"}
         self.assertEqual(checks.off_topic_reason(item), "")
         self.assertTrue(checks.scope_fits(item, "AAM / eVTOL / Advanced Aviation"))
+
+
+class AuditOct29Tests(unittest.TestCase):
+    """Audit of the 2026-10-29 edition: on-topic stories dropped, weak sources kept, federal actions ranked as industry news."""
+
+    def test_a_train_order_has_a_rail_angle(self) -> None:
+        item = {"title": "Renfe awards Siemens 30 trains seating 520, up from 404–405 on Series 103", "summary": "",
+                "url": "https://www.railway.supply/renfe-awards-siemens-30-trains-seating-520-up-from-404-405-on-series-103/"}
+        self.assertEqual(checks.off_topic_reason(item), "")
+        self.assertTrue(checks.scope_fits(item, "Advanced Rail / High-Speed Rail"))
+
+    def test_a_driverless_service_expansion_is_not_a_celebrity_ride(self) -> None:
+        item = {"title": "Waymo expands driverless ride service into South Bay",
+                "summary": "Waymo is expanding its driverless ride service into the South Bay.",
+                "url": "https://www.nbclosangeles.com/news/local/waymo-expands-service-into-south-bay/3962731/"}
+        self.assertEqual(checks.off_topic_reason(item), "")
+        for celebrity in ("Dani Pedrosa rides Tesla's driverless Cybercab in Austin", "Hollywood actor takes a ride in a Waymo robotaxi"):
+            self.assertIn("celebrity", checks.off_topic_reason({"title": celebrity, "summary": "", "url": "https://example.com/a-b-c"}))
+
+    def test_a_non_state_actor_is_not_a_film_actor(self) -> None:
+        item = {"title": "Lessons from Africa's Drone Wars",
+                "summary": "Armed drones have spread to more than a dozen African conflicts, and almost any non-state actor can now field one.",
+                "url": "https://africacenter.org/publication/asb49-lessons-africa-drone-wars/"}
+        self.assertEqual(checks.off_topic_reason(item), "")
+
+    def test_contributor_blogs_and_newsletters_are_denied(self) -> None:
+        for url in ("https://seekingalpha.com/instablog/39580-michael-a-gayed-cfa/6355186-the-fcc-is-about-to-put-drones-on-cell-networks",
+                    "https://tuzarapost.substack.com/p/the-us-militarys-1-billion-drone"):
+            self.assertIn("denied host", ax.url_rejection(url))
+        self.assertEqual(ax.url_rejection("https://seekingalpha.com/news/4512345-fcc-votes-on-drone-spectrum"), "")
+
+    def test_round_ups_and_explainers_are_not_news(self) -> None:
+        from validation_gates import is_non_article_title
+        for title in ("Urban rail industry news round-up", "Counter-Drone Systems Explained: How They Work and Cost",
+                      "What Is BVLOS? FAA Part 108 Rules Explained", "Weekly roundup: drones"):
+            self.assertTrue(is_non_article_title(title), title)
+        for title in ("FAA explained its decision to Congress on Tuesday", "Transmashholding completes hydrogen train ahead of Sakhalin trials",
+                      "What is next for Joby after the FAA approval"):
+            self.assertFalse(is_non_article_title(title), title)
+
+    def test_a_federal_action_headline_is_a_policy_story_whoever_reports_it(self) -> None:
+        from quality_pass import is_federal_action, priority_tier
+        trump = {"title": "Trump Directs Robotics Import Talks After Commerce Security Finding", "section": "Robotics",
+                 "summary": "President Trump issued a proclamation after a Commerce Department finding.", "url": "https://www.unite.ai/trump-directs"}
+        fcc = {"title": "The FCC Is About to Put Drones on Cell Networks", "section": "UAS / Drones", "summary": "", "url": "https://example.com/fcc-drones"}
+        for story in (trump, fcc):
+            self.assertTrue(is_federal_action(story), story["title"])
+            self.assertEqual(priority_tier(story), 1)
+        self.assertTrue(checks.scope_fits(trump, "Federal Policy & Implementation"))
+        for title, section in (("Audi Testing Humanoid Robots for Logistics", "Robotics"),
+                               ("US warns of Iran-backed Houthi attacks, travel disruptions in Saudi Arabia", "International Security"),
+                               ("Trump Directs Strikes on Drone Sites", "Military UAS")):
+            story = {"title": title, "section": section, "summary": "", "url": "https://example.com/x-y"}
+            self.assertFalse(is_federal_action(story), title)
 
 
 class SourceNameCleanupTests(unittest.TestCase):

@@ -163,6 +163,11 @@ def _paragraphs(raw: str) -> list[str]:
     return [" ".join(block.split()) for block in re.split(r"\n\s*\n", raw.strip()) if block.strip()]
 
 
+# 2026-10-29: "Embassy in Riyadh warned ..." and "The Ministry of Science and ICT and ETRI revised ..." did not say
+# whose embassy or ministry. A sentence that opens with one is sent back to the writer like an unsupported one.
+BARE_INSTITUTION = re.compile(r"^(?:the\s+)?(?:embassy|ministry|(?:foreign|defen[cs]e|interior) ministry|cabinet|parliament)\b", re.I)
+
+
 def audit_sentences(paragraphs: list[str], sheet: list[dict[str, str]]) -> list[dict[str, Any]]:
     """Code-side checks per sentence: must cite at least one known story."""
     known = {story["id"] for story in sheet}
@@ -198,6 +203,9 @@ def verify(verifier: AIProvider, sheet: list[dict[str, str]], rows: list[dict[st
         if len(row["plain"].split()) < 6 and row["verdict"] == "supported":
             row["verdict"] = "fragment"
             row["note"] = "too short to be a complete sentence"
+        if BARE_INSTITUTION.match(row["plain"]):
+            row["verdict"] = "unclear_subject"
+            row["note"] = "names an embassy, ministry, cabinet or parliament without saying whose (write 'The U.S. Embassy', 'South Korea's Ministry ...')"
         if not row["cited"]:
             row["verdict"] = "unsupported"
             row["note"] = (row["note"] + " | no valid citation").strip(" |")
