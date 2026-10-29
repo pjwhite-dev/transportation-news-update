@@ -64,7 +64,7 @@ class MasterBriefingTests(TestCase):
             "regulatory_tracker": [],
         }
         subject = public_site.email_subject(payload, date(2026, 9, 21))
-        self.assertEqual(subject, "Advanced Transportation Daily — 9/21/26 — Weekend + Monday — Robots start cargo operations")
+        self.assertEqual(subject, "Advanced Transportation Update — 9/21/26 — Weekend + Monday — Robots start cargo operations")
         plain = public_site.plain_text_email(payload, date(2026, 9, 21))
         self.assertIn("https://example.com/robot", plain)
         self.assertTrue(plain.rstrip().endswith("This summary is AI generated."))
@@ -79,7 +79,7 @@ class MasterBriefingTests(TestCase):
                 for section in news_engine.SECTION_ORDER
             }
         }
-        payload["sections"]["Military UAS"] = [
+        payload["sections"]["International Security"] = [
             {
                 "title": "Russia receives a drone defense system",
                 "summary": "systems.",
@@ -87,7 +87,7 @@ class MasterBriefingTests(TestCase):
             }
         ]
         normalized = automated_briefing.normalize_reader_features(payload)
-        story = normalized["sections"]["Military UAS"][0]
+        story = normalized["sections"]["International Security"][0]
         self.assertEqual(story["summary"], "")
 
     def test_tracker_contains_all_four_required_rules(self) -> None:

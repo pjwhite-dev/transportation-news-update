@@ -33,7 +33,7 @@ class AutomatedBriefingTests(unittest.TestCase):
         briefing = {
             "executive_summary": "Transportation agencies advanced several initiatives.",
             "sections": {
-                "UAS and Drones": [
+                "UAS / Drones": [
                     {
                         "title": "Drones begin delivering blood to rural clinics",
                         "summary": "The service carries urgent medical supplies.",
@@ -49,19 +49,23 @@ class AutomatedBriefingTests(unittest.TestCase):
 
         self.assertEqual(normalized["edition_kind"], "editorial")
         self.assertTrue(
-            normalized["sections"]["UAS and Drones"][0]["innovative_uas_use"]
+            normalized["sections"]["UAS / Drones"][0]["innovative_uas_use"]
         )
-        self.assertIn("Trump Administration Wins", normalized["sections"])
+        self.assertEqual(
+            list(normalized["sections"]), list(automated_briefing.SECTION_ORDER)
+        )
 
-    def test_normalization_moves_ukraine_conflict_to_military(self) -> None:
+    def test_normalization_moves_ukraine_conflict_to_international_security(self) -> None:
+        # A war story with no drone angle is dropped earlier by the scope check in
+        # quality_pass; this one turns on drones, so it moves out of civil UAS.
         briefing = {
             "executive_summary": "The briefing covers current transportation developments.",
             "sections": {
-                "UAS and Drones": [
+                "UAS / Drones": [
                     {
-                        "title": "Russia again draws near a frontline Ukrainian city",
+                        "title": "Ukraine strikes a Russian airfield with long-range drones",
                         "summary": (
-                            "Russian forces approached Izium in eastern Ukraine. "
+                            "Ukrainian drones hit aircraft at a base near Izium. "
                             "This belongs in Military rather than UAS."
                         ),
                         "url": "https://www.nytimes.com/example",
@@ -75,17 +79,17 @@ class AutomatedBriefingTests(unittest.TestCase):
 
         normalized = automated_briefing.normalize_reader_features(briefing)
 
-        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
+        self.assertEqual(normalized["sections"]["UAS / Drones"], [])
         self.assertEqual(
-            normalized["sections"]["Military"][0]["summary"],
-            "Russian forces approached Izium in eastern Ukraine.",
+            normalized["sections"]["International Security"][0]["summary"],
+            "Ukrainian drones hit aircraft at a base near Izium.",
         )
 
     def test_normalization_does_not_move_ambiguous_federal_action_to_uas(self) -> None:
         briefing = {
             "executive_summary": "The briefing covers current transportation developments.",
             "sections": {
-                "Federal Actions": [
+                "Federal Policy & Implementation": [
                     {
                         "title": "PHMSA issues a pipeline safety notice",
                         "summary": "The agency announced a new compliance action.",
@@ -98,8 +102,10 @@ class AutomatedBriefingTests(unittest.TestCase):
 
         normalized = automated_briefing.normalize_reader_features(briefing)
 
-        self.assertEqual(len(normalized["sections"]["Federal Actions"]), 1)
-        self.assertEqual(normalized["sections"]["UAS and Drones"], [])
+        self.assertEqual(
+            len(normalized["sections"]["Federal Policy & Implementation"]), 1
+        )
+        self.assertEqual(normalized["sections"]["UAS / Drones"], [])
 
     def test_build_uses_history_and_supplemental_records(self) -> None:
         generated = {
