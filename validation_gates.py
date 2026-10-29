@@ -487,6 +487,12 @@ def prune_unusable_stories(
                 removed.append({"section": section, "title": str(story.get("title", ""))[:120],
                                 "url": url, "reason": "not a news article (listing, social, quote, topic, home or roundup page)"})
                 continue
+            # A host denied after the draft was written (the doctor denies hosts GitHub cannot reach, then
+            # reruns from today's saved draft) must not be republished.
+            rejection = denied_host_rejection(url)
+            if story.get("required_include") is not True and rejection:
+                removed.append({"section": section, "title": str(story.get("title", ""))[:120], "url": url, "reason": rejection})
+                continue
             if url.startswith(("http://", "https://")) and not is_aggregator_url(url):
                 status = cache[url]
                 if status is None or status in (404, 410) or status >= 500:
@@ -512,6 +518,14 @@ def prune_unusable_stories(
             kept.append(story)
         sections[section] = kept
     return removed
+
+
+def denied_host_rejection(url: str) -> str:
+    """The deny_hosts reason from config/editorial.yaml for this URL, or ''."""
+    from article_extract import url_rejection  # imported here: article_extract is the heavier module
+
+    reason = url_rejection(url) if url.startswith(("http://", "https://")) else ""
+    return reason if reason.startswith("denied host") else ""
 
 
 _EVIDENCE_LABEL = re.compile(r"^(?P<section>.+?)\[(?P<index>\d+)\](?P<field>\.[a-z_]+)?")

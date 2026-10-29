@@ -313,6 +313,14 @@ class PruneTests(unittest.TestCase):
         report = gates.run_gates(briefing, now=NOW, fetch_status=lambda url: 402 if url == urls[1] else 200)
         self.assertNotIn("links", failed_checks(report))
 
+    def test_a_story_on_a_denied_host_is_removed_even_from_a_saved_draft(self) -> None:
+        """2026-10-28: the doctor denies hosts GitHub cannot reach and reruns from today's draft."""
+        briefing = good_briefing()
+        briefing["sections"]["UAS / Drones"][0]["url"] = "https://finance.biggo.com/news/d680"
+        removed = gates.prune_unusable_stories(briefing, lambda url: 200)
+        self.assertEqual([(r["url"], r["reason"]) for r in removed],
+                         [("https://finance.biggo.com/news/d680", "denied host (finance.biggo.com)")])
+        self.assertEqual(gates.denied_host_rejection("https://www.faa.gov/newsroom/part108"), "")
 
     def test_a_dead_also_covered_link_is_dropped_and_the_story_stays(self) -> None:
         briefing = good_briefing()

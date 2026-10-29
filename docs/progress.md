@@ -83,3 +83,10 @@ Not verified: the unattended 04:30 run with the new checks; the next 04:15 GitHu
 ## 2026-10-28 (07:45 ET): the 04:30 run and all four retries failed in two seconds
 Cause: my own change to `scripts/run_local_pipeline.ps1` (quality overhaul) added `tracker/discovered.yaml` to a single `git checkout -- a b c ...` that discards regenerated files. That file is not tracked yet, git aborted the whole command ("pathspec did not match"), PowerShell turned it into a terminating error, and the run stopped before generating anything. The scripts were never run end to end before merging; only the Python was tested.
 Fix (branch fix/preflight): the cleanup moved into `edition_preflight.py`, which checks each path with `git ls-files` and is unit-tested against a real temporary repository (`tests/test_edition_preflight.py`, including a lint that rejects multi-path `git checkout` in the script). The doctor can now edit `scripts/*.ps1|py`, `config/*.yaml` and `tracker/rulemakings.yaml`, classifies PowerShell `TerminatingError` failures and reads the failing script, merges repeat fixes too (size limit 150 added / 30 removed lines), reruns the edition once a day for Ollama and dirty-tree failures, and is started by the ensure task after the second failed attempt instead of waiting for 08:15. See decisions.md.
+
+## 2026-10-28 (evening): three more blockers closed
+- CI emails: GitHub's re-check could not reach finance.biggo.com; BigGo and Pluang denied; the doctor now denies such hosts and rebuilds once. Owner chose to keep the CI link check strict.
+- 08:30 rebuild refused: summary cited a story removed as a duplicate; orphan summary sentences are now dropped (gate unchanged).
+- 21:28 retry refused to start: today's committed raw archive was left modified; the preflight now discards it.
+- Denied hosts are pruned from a resumed draft too.
+- GitHub's CI test list (198 tests) passes locally; full suite unchanged at 43 baseline failures.

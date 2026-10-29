@@ -55,6 +55,18 @@ class PreflightTests(unittest.TestCase):
         ok, message = pre.preflight(self.repo, "2026-10-28")
         self.assertTrue(ok, message)
 
+    def test_todays_tracked_raw_archive_is_discarded_but_older_ones_still_stop_the_run(self) -> None:
+        """2026-10-28 evening: a failed run left today's committed raw archive modified; the retry refused."""
+        archive = self.repo / "data/raw_archive/2026-10-27.json"
+        archive.write_text('{"changed": true}\n', encoding="utf-8")
+        ok, message = pre.preflight(self.repo, "2026-10-27")
+        self.assertTrue(ok, message)
+        self.assertEqual(archive.read_text(encoding="utf-8"), "{}\n")
+        archive.write_text('{"changed": true}\n', encoding="utf-8")
+        ok, message = pre.preflight(self.repo, "2026-10-28")
+        self.assertFalse(ok)
+        self.assertIn("2026-10-27.json", message)
+
     def test_any_other_dirty_file_still_stops_the_run(self) -> None:
         (self.repo / "automated_briefing.py").write_text("print('edited')\n", encoding="utf-8")
         ok, message = pre.preflight(self.repo, "2026-10-28")
