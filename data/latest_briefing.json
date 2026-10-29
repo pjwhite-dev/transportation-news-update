@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-28T08:02:41.239255-04:00",
-  "window_start": "2026-10-27T07:21:16.012594-04:00",
-  "window_end": "2026-10-28T07:21:16.012594-04:00",
+  "generated_at": "2026-10-28T09:10:42.977842-04:00",
+  "window_start": "2026-10-27T08:30:14.667835-04:00",
+  "window_end": "2026-10-28T08:30:14.667835-04:00",
   "model": "qwen3.8:27b-q4_K_M",
   "ai_provider": "ollama",
   "summary_chain": 2,
@@ -18,31 +18,45 @@
       "rounds": [
         {
           "attempt": 0,
-          "sentences": 11,
-          "flagged": 0,
+          "sentences": 12,
+          "flagged": 2,
           "status_errors": 0,
-          "fragments": 0
+          "fragments": 1
+        },
+        {
+          "attempt": 1,
+          "sentences": 12,
+          "flagged": 2,
+          "status_errors": 0,
+          "fragments": 1
+        },
+        {
+          "attempt": 2,
+          "sentences": 12,
+          "flagged": 2,
+          "status_errors": 0,
+          "fragments": 1
         }
       ],
-      "sentences_dropped": 0,
+      "sentences_dropped": 2,
       "unsupported_remaining": 0,
       "status_errors_remaining": 0,
-      "seconds": 67.3
+      "seconds": 234.5
     },
     "fallback_text_used": false
   },
-  "model_retries": 0,
+  "model_retries": 2,
   "usage": {
-    "input_tokens": 53336,
-    "output_tokens": 33744,
-    "total_tokens": 87080
+    "input_tokens": 65392,
+    "output_tokens": 40358,
+    "total_tokens": 105750
   },
   "estimated_cost": 0.0,
-  "executive_summary": "The National Highway Traffic Safety Administration proposed standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, stating these lamps should be optional rather than mandatory [1](https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars/). The Federal Aviation Administration sent its final Part 108 rule to the White House Office of Information and Regulatory Affairs for review, which may allow drone operators to fly routinely beyond the operator’s line of sight without seeking individual approval for each operation [2](https://www.knobbe.com/blog/clearing-the-way-for-routine-drone-flights-why-the-faas-part-108-rule-raises-the-stakes-for-patent-strategy/).\n\nTesla announced its robotaxi service is “coming soon” to San Antonio, Jacksonville, Las Vegas, and Phoenix, while expanding its operating territory in six existing cities across Texas and Florida [3](https://www.expressnews.com/business/article/tesla-robotaxi-service-san-antonio-22495640.php). In Europe, Latvia and Slovakia endorsed Tesla’s Assisted Driving software, with Latvia becoming the tenth European nation to sanction the technology [4](https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature/). Nuro Co-CEO Jiajun Zhu shared memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, distinguishing Level 4 driverless systems from Level 2 driver assistance [5](https://eletric-vehicles.com/nuro/nuro-co-ceo-renews-case-for-lidar-as-lucid-uber-robotaxi-nears/).\n\nIn Spain, a high-speed train slammed into the rear of another stopped train, derailing two cars and killing at least 30 people [6](https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php). The Royal Commission for Riyadh City awarded Siemens Mobility a contract for 27 four-car driverless trainsets and 52 cars for metro lines 1 and 2 [7](https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28/). The Asian Development Bank approved a US$302.38 million loan to modernize the Baku Metro [7](https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28/).\n\nANYbotics began customer deliveries of ANYmal X, a four-legged inspection robot designed for explosive environments, to customers including Equinor and DSM-Firmenich [8](https://theaiinsider.tech/2026/10/28/anybotics-begins-deliveries-of-quaduped-inspection-robots-for-explosive-industrial-environments/). XPeng Group revealed that the solid-state battery for its IRON robot has completed small-batch production, with large-scale production targeted by the end of 2026 [9](https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3). LG Electronics will begin full-scale operation of a robot data factory in Seoul and expand mass-production preparations for actuators [10](https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/?outputType=amp).",
+  "executive_summary": "The National Highway Traffic Safety Administration proposed standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, stating these lamps should be optional rather than mandatory [1](https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars/). The proposal targets Federal Motor Vehicle Safety Standard No. 108 and includes new equipment requirements for beam-switching, hazard lights, and turn signals [1](https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars/). Separately, the Federal Aviation Administration sent its final Part 108 rule to the White House Office of Information and Regulatory Affairs for review on July 10, 2026 [2](https://www.knobbe.com/blog/clearing-the-way-for-routine-drone-flights-why-the-faas-part-108-rule-raises-the-stakes-for-patent-strategy/). Once in effect, the rule may allow drone operators to fly routinely beyond the operator’s line of sight without seeking individual FAA approval for each operation [2](https://www.knobbe.com/blog/clearing-the-way-for-routine-drone-flights-why-the-faas-part-108-rule-raises-the-stakes-for-patent-strategy/).\n\nIn the autonomous vehicle sector, Turo customers in the U.S. began identifying and renting Tesla vehicles equipped with Full Self-Driving (Supervised) on October 28, with drivers required to remain attentive and ready to intervene [3](https://www.autorentalnews.com/news/turo-and-tesla-take-the-next-step-toward-autonomous-car-rentals). Tesla Inc. announced its robotaxi service is “coming soon” to San Antonio, Jacksonville, Las Vegas, and Phoenix, while expanding its operating territory in six existing markets, including a more than 900% expansion in Houston to 254 square miles [4](https://www.expressnews.com/business/article/tesla-robotaxi-service-san-antonio-22495640.php). Archer Aviation unveiled plans for three air taxi networks serving Austin, Dallas–Fort Worth, and Houston to increase connectivity between major airports, business districts, and coastal destinations [5](https://futuretransport-news.com/archer-reveals-plans-for-texan-air-taxi-networks/).\n\nIn Spain, a high-speed train collided with the rear of another stopped train near Urda, derailing two cars and killing at least 30 people [7](https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833). The Army tested four robotic vehicles developed under the Defense Advanced Research Projects Agency's RACER program at Fort Knox, Kentucky, aiming to give unmanned ground vehicles the ability to navigate difficult terrain without human drivers [8](https://www.yahoo.com/news/us/articles/army-tests-autonomous-robots-hunt-145608351.html).",
   "what_to_watch": [
-    "The investigation into the Toledo high-speed rail collision, including the cause of the rear-end impact and the suspension of the Madrid-Andalusia line.",
-    "NHTSA's finalization of the rulemaking for standardized cyan-colored lights to identify autonomous vehicles in traffic.",
-    "The rollout of Tesla's Assisted Driving (TAD) software in Latvia and Slovakia, including early operational feedback and regulatory adjustments."
+    "Investigations into the cause of the high-speed train collision in Toledo, Spain, and the status of the Madrid-Andalusia rail line.",
+    "The rollout of Turo and Tesla's supervised self-driving rental program in the U.S. and its impact on the car rental industry.",
+    "The expansion of Archer Aviation's air taxi networks in the Texas Triangle, including Austin, Dallas-Fort Worth, and Houston."
   ],
   "regulatory_tracker": [
     {
@@ -78,7 +92,7 @@
       "source_url": "https://www.federalregister.gov/documents/2025/08/07/2025-14992/normalizing-unmanned-aircraft-systems-beyond-visual-line-of-sight-operations",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL82",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "tsa-bvlos-security",
@@ -102,7 +116,7 @@
       "source_url": "https://www.federalregister.gov/documents/2025/08/07/2025-14992/normalizing-unmanned-aircraft-systems-beyond-visual-line-of-sight-operations",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=1652-AA80&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "section-2209-uafr",
@@ -126,7 +140,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/05/06/2026-08943/designation-restrict-the-operation-of-unmanned-aircraft-in-close-proximity-to-a-fixed-site-facility",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AL33",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "supersonic-overland-flight",
@@ -150,7 +164,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/07/02/2026-13440/enabling-supersonic-overland-flight",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2120-AM15",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fmvss-108-lighting-ads",
@@ -185,7 +199,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/10/26/2026-21794/federal-motor-vehicle-safety-standards-modernization-of-fmvss-no-108-to-accommodate-ads-equipped",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM70&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fmvss-103-104-visibility-ads",
@@ -209,7 +223,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/03/16/2026-05023/federal-motor-vehicle-safety-standards-modernization-of-fmvss-no-103-and-fmvss-no-104-to-accommodate",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM71&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fmvss-102-transmission-ads",
@@ -233,7 +247,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/03/16/2026-05024/federal-motor-vehicle-safety-standards-modernization-of-fmvss-no-102-to-accommodate-ads-equipped",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM72&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fmvss-135-braking-ads",
@@ -257,7 +271,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/06/26/2026-12981/federal-motor-vehicle-safety-standards-modernization-of-fmvss-no-135-to-accommodate-ads-equipped",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AN00&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "part-555-temporary-exemptions",
@@ -281,7 +295,7 @@
       "source_url": "https://www.federalregister.gov/documents/2026/07/31/2026-15482/temporary-exemption-from-motor-vehicle-safety-and-bumper-standards",
       "final_rule_document": "2026-15482",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2127-AM57&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fmcsa-ads-cmv",
@@ -305,7 +319,7 @@
       "source_url": "https://www.federalregister.gov/documents/2023/02/01/2023-02073/safe-integration-of-automated-driving-systems-ads-equipped-commercial-motor-vehicles-cmvs",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=2126-AC17&pubId=202510",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     },
     {
       "id": "fcc-space-modernization",
@@ -345,14 +359,14 @@
       "source_url": "https://www.federalregister.gov/documents/2026/10/26/2026-21818/space-modernization-for-the-21st-century",
       "final_rule_document": "",
       "agenda_projection": "Estimate only (Unified Agenda): https://www.fcc.gov/ecfs/search/docket-detail/25-306",
-      "verified_at": "2026-10-28T07:31:36.676232-04:00"
+      "verified_at": "2026-10-28T08:39:32.238476-04:00"
     }
   ],
   "sections": {
     "Federal Policy & Implementation": [],
     "UAS / Drones": [
       {
-        "id": "b1-c8",
+        "id": "b2-c7",
         "title": "Clearing the Way for Routine Drone Flights: Why the FAA’s Part 108 Rule Raises the Stakes for Patent Strategy | Knobbe Martens",
         "summary": "On July 10, 2026, the FAA sent its final Part 108 rule to the White House Office of Information and Regulatory Affairs for review. Once in effect, the rule may allow drone operators to fly routinely beyond the operator’s line of sight without seeking individual FAA approval for each operation.",
         "innovative_uas_use": "",
@@ -361,7 +375,7 @@
         "published": "2026-10-27T17:56:45-04:00",
         "date_label": "Oct. 27, 2026",
         "section": "UAS / Drones",
-        "importance": 4,
+        "importance": 3,
         "confidence": "high",
         "is_administration_win": false,
         "eo_number": "",
@@ -385,11 +399,66 @@
       }
     ],
     "Counter-UAS / Airspace Security": [],
-    "AAM / eVTOL / Advanced Aviation": [],
+    "AAM / eVTOL / Advanced Aviation": [
+      {
+        "id": "b0-cluster_3",
+        "title": "Archer Reveals Plans for Texan Air Taxi Networks",
+        "summary": "Archer Aviation has unveiled plans for a set of three air taxi networks serving Austin, Dallas–Fort Worth and Houston with the goal of increasing connectivity between major airports, business districts, and coastal destinations across the region.",
+        "innovative_uas_use": "",
+        "source": "Future Transport-News",
+        "url": "https://futuretransport-news.com/archer-reveals-plans-for-texan-air-taxi-networks/",
+        "published": "2026-10-28T06:43:19-04:00",
+        "date_label": "Oct. 28, 2026",
+        "section": "AAM / eVTOL / Advanced Aviation",
+        "importance": 4,
+        "confidence": "high",
+        "is_administration_win": false,
+        "eo_number": "",
+        "eo_name": "",
+        "eo_section": "",
+        "eo_section_summary": "",
+        "win_explanation": "",
+        "also_covered": [],
+        "origin": "Google News RSS",
+        "page_original_publisher": "aviationindustry-news.com",
+        "date_source": "json-ld datePublished",
+        "contains_supplemental": false,
+        "summary_method": "model",
+        "priority_tier": 2,
+        "lead_ok": true
+      }
+    ],
     "UTM / Airspace Integration": [],
     "Autonomous Vehicles": [
       {
-        "id": "b0-c2",
+        "id": "b0-cluster_2",
+        "title": "Turo and Tesla Take the Next Step Toward Autonomous Car Rentals",
+        "summary": "Beginning October 28, Turo customers in the U.S. will be able to identify and rent Tesla vehicles equipped with Full Self-Driving (Supervised), or FSD, through the carsharing marketplace. Drivers must remain attentive and ready to intervene, as the vehicles aren't autonomous.",
+        "innovative_uas_use": "",
+        "source": "Auto Rental News",
+        "url": "https://www.autorentalnews.com/news/turo-and-tesla-take-the-next-step-toward-autonomous-car-rentals",
+        "published": "2026-10-28T08:00:04.676000-04:00",
+        "date_label": "Oct. 28, 2026",
+        "section": "Autonomous Vehicles",
+        "importance": 4,
+        "confidence": "high",
+        "is_administration_win": false,
+        "eo_number": "",
+        "eo_name": "",
+        "eo_section": "",
+        "eo_section_summary": "",
+        "win_explanation": "",
+        "also_covered": [],
+        "origin": "Google News RSS",
+        "page_original_publisher": "autorentalnews.com",
+        "date_source": "json-ld datePublished",
+        "contains_supplemental": false,
+        "summary_method": "model",
+        "priority_tier": 2,
+        "lead_ok": true
+      },
+      {
+        "id": "b1-av_cyan_marker",
         "title": "Why the government wants self-driving cars to glow cyan",
         "summary": "A Waymo fully-autonomous Ojai robotaxi arrives to pick up passengers Thursday, Sept. 17, 2026. Waymo launched its fully-autonomous robotaxi service in Las Vegas on Sept. 14.",
         "innovative_uas_use": "",
@@ -406,12 +475,7 @@
         "eo_section": "",
         "eo_section_summary": "",
         "win_explanation": "",
-        "also_covered": [
-          {
-            "source": "SlashGear",
-            "url": "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal/"
-          }
-        ],
+        "also_covered": [],
         "origin": "Google News RSS",
         "page_original_publisher": "lasvegassun.com",
         "date_source": "meta article:published_time",
@@ -421,13 +485,13 @@
         "lead_ok": true
       },
       {
-        "id": "b0-c3",
-        "title": "Tesla’s Self-Driving Launch in Slovakia: Premature Move or Progress?",
-        "summary": "Latvia and Slovakia have recently joined the ranks of European nations endorsing Tesla’s Assisted Driving (TAD) software, with Latvia becoming the tenth European nation to sanction the technology this Monday. In Slovakia, resident Igor Marcek, 35, who purchased his Tesla two years prior, finds himself increasingly exhilarated by the prospects of TAD—formerly known as FSD.",
+        "id": "b0-cluster_4",
+        "title": "VW receives Level 3 test approval in China, Xpeng begins Level 4 demos",
+        "summary": "Volkswagen Group China has been granted permission to test highly automated Level 3 driving on public roads in Hefei, aiming to achieve technical maturity by 2027. Meanwhile, Xpeng has received approval for demonstration drives with Level 4 robotaxis in Guangzhou, allowing the company to test ride services across the entire city.",
         "innovative_uas_use": "",
-        "source": "RS Web Solutions",
-        "url": "https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature/",
-        "published": "2026-10-28T06:00:00-04:00",
+        "source": "Electrive",
+        "url": "https://www.electrive.com/2026/10/28/vw-receives-level-3-test-approval-in-china-xpeng-begins-level-4-demos/",
+        "published": "2026-10-28T08:01:40-04:00",
         "date_label": "Oct. 28, 2026",
         "section": "Autonomous Vehicles",
         "importance": 3,
@@ -440,7 +504,7 @@
         "win_explanation": "",
         "also_covered": [],
         "origin": "Google News RSS",
-        "page_original_publisher": "rswebsols.com",
+        "page_original_publisher": "electrive.com",
         "date_source": "json-ld datePublished",
         "contains_supplemental": false,
         "summary_method": "model",
@@ -448,9 +512,36 @@
         "lead_ok": true
       },
       {
-        "id": "b1-c1",
+        "id": "b0-cluster_5",
+        "title": "The NHTSA Wants Custom Lights To Identify Driverless Cars",
+        "summary": "Autonomous vehicles are becoming increasingly common, and on paper, they're pretty remarkable. Self-driving cars know how to stay in their lane, brake, and more, but the technology isn't perfected yet.",
+        "innovative_uas_use": "",
+        "source": "SlashGear",
+        "url": "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal/",
+        "published": "2026-10-28T07:15:00-04:00",
+        "date_label": "Oct. 28, 2026",
+        "section": "Autonomous Vehicles",
+        "importance": 3,
+        "confidence": "high",
+        "is_administration_win": false,
+        "eo_number": "",
+        "eo_name": "",
+        "eo_section": "",
+        "eo_section_summary": "",
+        "win_explanation": "",
+        "also_covered": [],
+        "origin": "Google News RSS",
+        "page_original_publisher": "slashgear.com",
+        "date_source": "json-ld datePublished",
+        "contains_supplemental": false,
+        "summary_method": "extractive-fallback",
+        "priority_tier": 2,
+        "lead_ok": true
+      },
+      {
+        "id": "b1-av_nuro_lucid_uber",
         "title": "Nuro Co-CEO Renews Case for LiDAR as Lucid-Uber Robotaxi Nears",
-        "summary": "Nuro Co-CEO Jiajun Zhu shared four memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, and that Level 4 driverless systems are distinct products from Level 2 driver assistance.",
+        "summary": "Nuro Co-CEO Jiajun Zhu shared four memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, and that Level 4 driverless systems are distinct products from Level 2 assistance. The company aims to start commercial service in the Bay Area and Houston this year using Lucid Gravity SUVs fitted with the Nuro Driver.",
         "innovative_uas_use": "",
         "source": "Electric Vehicles",
         "url": "https://eletric-vehicles.com/nuro/nuro-co-ceo-renews-case-for-lidar-as-lucid-uber-robotaxi-nears/",
@@ -475,67 +566,13 @@
         "lead_ok": true
       },
       {
-        "id": "b1-c2",
-        "title": "Korean taxis in LA — Waymo Robotaxis and Rising Gas Costs Crush Profits",
-        "summary": "Do-il Yoon, CEO of Hana Taxi, stated on October 27 that many Korean taxi operators have seen revenues drop by about 30% since the introduction of unmanned taxis. According to the American Automobile Association (AAA), gas prices in the Los Angeles area rose 31% from a year ago.",
+        "id": "b1-av_weride_insurance",
+        "title": "WeRide Unveils Global Insurance Partnership Program to Scale Autonomous Vehicles Worldwide",
+        "summary": "WeRide announced the launch of its global insurance partnership program with Allianz Insurance Singapore Pte. Ltd. and Ping An Property & Casualty Insurance Company of China, Ltd. as inaugural partners to support autonomous driving expansion in China, Southeast Asia, the Middle East, and Europe.",
         "innovative_uas_use": "",
-        "source": "The Korea Daily",
-        "url": "https://en.koreadaily.com/korean-taxis-in-la-waymo-robotaxis-rising-gas-costs/",
-        "published": "2026-10-28T01:41:33-04:00",
-        "date_label": "Oct. 28, 2026",
-        "section": "Autonomous Vehicles",
-        "importance": 3,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "eo_section_summary": "",
-        "win_explanation": "",
-        "also_covered": [],
-        "origin": "Google News RSS",
-        "page_original_publisher": "en.koreadaily.com",
-        "date_source": "json-ld datePublished",
-        "contains_supplemental": false,
-        "summary_method": "regenerated",
-        "priority_tier": 2,
-        "lead_ok": true
-      },
-      {
-        "id": "b1-c6",
-        "title": "Urban rail industry news round-up",
-        "summary": "The Royal Commission for Riyadh City awarded Siemens Mobility a contract for 27 four-car driverless trainsets and 52 cars for metro lines 1 and 2, while the Asian Development Bank approved a US$302·38m loan to modernize the Baku Metro.",
-        "innovative_uas_use": "",
-        "source": "Railway Gazette International",
-        "url": "https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28/",
-        "published": "2026-10-28T00:00:01-04:00",
-        "date_label": "Oct. 28, 2026",
-        "section": "Autonomous Vehicles",
-        "importance": 3,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "eo_section_summary": "",
-        "win_explanation": "",
-        "also_covered": [],
-        "origin": "SearXNG",
-        "page_original_publisher": "railwaygazette.com",
-        "date_source": "json-ld datePublished",
-        "contains_supplemental": false,
-        "summary_method": "model",
-        "priority_tier": 2,
-        "lead_ok": true
-      },
-      {
-        "id": "b1-c4",
-        "title": "WeRide launches global insurance program with Allianz and Ping An to support autonomous vehicle expansion.",
-        "summary": "Grupo Aeroportuario del Pacífico (GAP) announced a dividend payment of 20.80 pesos per share, approved at its April 2026 shareholders' meeting. The dividend will be paid on November 6, 2026, to shareholders presenting coupon No. 42 of their share certificate.",
-        "innovative_uas_use": "",
-        "source": "Pluang",
-        "url": "https://pluang.com/en/news-feed/weride-luncurkan-program-mitra-asuransi-global-untuk-perluas-kendaraan-otonom",
-        "published": "2026-10-27T19:27:00-04:00",
+        "source": "FinancialContent",
+        "url": "https://www.financialcontent.com/article/gnwcq-2026-10-28-weride-unveils-global-insurance-partnership-program-to-scale-autonomous-vehicles-worldwide",
+        "published": "2026-10-27T23:27:54-04:00",
         "date_label": "Oct. 27, 2026",
         "section": "Autonomous Vehicles",
         "importance": 3,
@@ -546,19 +583,24 @@
         "eo_section": "",
         "eo_section_summary": "",
         "win_explanation": "",
-        "also_covered": [],
+        "also_covered": [
+          {
+            "source": "Menafn",
+            "url": "https://menafn.com/1111876230/Weride-Unveils-Global-Insurance-Partnership-Program-To-Scale-Autonomous-Vehicles-Worldwide"
+          }
+        ],
         "origin": "Google News RSS",
-        "page_original_publisher": "GlobeNewsWire",
+        "page_original_publisher": "",
         "date_source": "json-ld datePublished",
         "contains_supplemental": false,
-        "summary_method": "regenerated",
+        "summary_method": "model",
         "priority_tier": 2,
         "lead_ok": true
       },
       {
-        "id": "b2-cluster_1",
+        "id": "b2-c19",
         "title": "Tesla Robotaxi service ‘coming soon’ to San Antonio, other cities",
-        "summary": "Tesla Inc. announced its robotaxi service is “coming soon” to San Antonio, Jacksonville, Fla., Las Vegas, and Phoenix, while expanding its operating territory in six existing cities across Texas and Florida.",
+        "summary": "Tesla Inc. announced its robotaxi service is “coming soon” to San Antonio, Jacksonville, Fla., Las Vegas, and Phoenix, while expanding its operating territory in six existing markets, including a more than 900% expansion in Houston to 254 square miles.",
         "innovative_uas_use": "",
         "source": "San Antonio Express-News",
         "url": "https://www.expressnews.com/business/article/tesla-robotaxi-service-san-antonio-22495640.php",
@@ -585,7 +627,7 @@
       {
         "id": "b3-cluster_1",
         "title": "America's About To Get New Color Marker Lights For Self-Driving Cars To Warn Other Drivers",
-        "summary": "The NHTSA proposes standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, with the agency stating these lamps should be optional as opposed to mandatory. These proposed updates target Federal Motor Vehicle Safety Standard No. 108 and include new equipment requirements for beam-switching, hazard lights, and turn signals.",
+        "summary": "The NHTSA has proposed standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, with the agency stating these lamps should be optional as opposed to mandatory. These proposed updates target Federal Motor Vehicle Safety Standard No. 108 and include new equipment requirements for beam-switching, hazard lights, and turn signals.",
         "innovative_uas_use": "",
         "source": "CarBuzz",
         "url": "https://carbuzz.com/nhtsa-cyan-marker-lights-for-self-driving-cars/",
@@ -612,7 +654,7 @@
     ],
     "Robotics": [
       {
-        "id": "b0-c5",
+        "id": "b0-cluster_7",
         "title": "ANYbotics Begins Deliveries of Quaduped Inspection Robots for Explosive Industrial Environments",
         "summary": "ANYbotics has begun customer deliveries of ANYmal X, a four-legged inspection robot designed to operate in explosive environments at oil, gas and chemical facilities. The Zurich-based robotics company announced the system is shipping to customers including Equinor and DSM-Firmenich.",
         "innovative_uas_use": "",
@@ -639,13 +681,13 @@
         "lead_ok": true
       },
       {
-        "id": "b0-c6",
-        "title": "XPeng's IRON Robot Solid-State Battery Rolls Off in Small-Batch Production, Scale Manufacturing Targeted by Year-End",
-        "summary": "Gu Jie, vice president of XPeng Group, revealed on October 28 that the solid-state battery for the IRON robot has completed small-batch production, with large-scale production targeted by the end of 2026 and deliveries beginning in 2027.",
+        "id": "b1-robotics_amazon",
+        "title": "Inside Amazon's robot warehouse: How automation is changing jobs",
+        "summary": "Amazon's Tracy, California warehouse employs more than 3,000 workers, up from roughly 1,000 when it opened in 2023, with robots like Hercules and Proteus handling inventory movement while humans manage maintenance and troubleshooting.",
         "innovative_uas_use": "",
-        "source": "BigGo Finance",
-        "url": "https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3",
-        "published": "2026-10-28T04:25:58-04:00",
+        "source": "Business Insider",
+        "url": "https://www.businessinsider.com/amazon-robot-warehouse-where-jobs-changing-ai-robotics-workers-2026-9",
+        "published": "2026-10-28T05:00:01.237000-04:00",
         "date_label": "Oct. 28, 2026",
         "section": "Robotics",
         "importance": 3,
@@ -658,7 +700,7 @@
         "win_explanation": "",
         "also_covered": [],
         "origin": "Google News RSS",
-        "page_original_publisher": "finance.biggo.com",
+        "page_original_publisher": "businessinsider.com",
         "date_source": "json-ld datePublished",
         "contains_supplemental": false,
         "summary_method": "model",
@@ -666,12 +708,39 @@
         "lead_ok": true
       },
       {
-        "id": "b0-c7",
+        "id": "b1-robotics_humanoid",
+        "title": "Humanoid Robots Enter Factories and Warehouses",
+        "summary": "Humanoid robots are moving from controlled demonstrations into factories, warehouses and distribution centers, where their commercial value will depend on safety, uptime and consistent task performance.",
+        "innovative_uas_use": "",
+        "source": "Global Trade Magazine",
+        "url": "https://www.globaltrademag.com/humanoid-robots-enter-factories-and-warehouses/",
+        "published": "2026-10-28T04:40:14-04:00",
+        "date_label": "Oct. 28, 2026",
+        "section": "Robotics",
+        "importance": 3,
+        "confidence": "high",
+        "is_administration_win": false,
+        "eo_number": "",
+        "eo_name": "",
+        "eo_section": "",
+        "eo_section_summary": "",
+        "win_explanation": "",
+        "also_covered": [],
+        "origin": "Google News RSS",
+        "page_original_publisher": "globaltrademag.com",
+        "date_source": "json-ld datePublished",
+        "contains_supplemental": false,
+        "summary_method": "model",
+        "priority_tier": 2,
+        "lead_ok": true
+      },
+      {
+        "id": "b1-robotics_lg",
         "title": "LG Electronics launches Korea robot data factory, expands actuator push",
         "summary": "LG Electronics will begin full-scale operation of the robot data factory it built this fourth quarter in Umyeon-dong, Seocho-gu, Seoul. It will also expand mass-production preparations for actuators, a core robot component, and ramp up order-taking activities for global clients.",
         "innovative_uas_use": "",
         "source": "Chosunbiz",
-        "url": "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/?outputType=amp",
+        "url": "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/",
         "published": "2026-10-28T03:25:05.485000-04:00",
         "date_label": "Oct. 28, 2026",
         "section": "Robotics",
@@ -693,36 +762,9 @@
         "lead_ok": true
       },
       {
-        "id": "b1-c14",
-        "title": "Shanghai Names Physical AI Equipment a Priority as Smart Factory Demand Drives Scaled Robot Deployment",
-        "summary": "Shanghai's Municipal Commission of Economy and Informatization issued the \"Shanghai Action Plan for Accelerating the Development of a New Generation of Smart Manufacturing,\" designating the \"development and promotion of Physical AI equipment\" as a key task. The plan supports innovative breakthroughs in humanoid robots, collaborative robots, and high-precision overload robots, using smart factory construction demand to drive large-scale application.",
-        "innovative_uas_use": "",
-        "source": "BigGo Finance",
-        "url": "https://finance.biggo.com/news/d680d238-e3cc-4150-87ee-f8882b60ee0c",
-        "published": "2026-10-27T20:25:15-04:00",
-        "date_label": "Oct. 27, 2026",
-        "section": "Robotics",
-        "importance": 3,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "eo_section_summary": "",
-        "win_explanation": "",
-        "also_covered": [],
-        "origin": "Google News RSS",
-        "page_original_publisher": "finance.biggo.com",
-        "date_source": "json-ld datePublished",
-        "contains_supplemental": false,
-        "summary_method": "model",
-        "priority_tier": 2,
-        "lead_ok": true
-      },
-      {
-        "id": "b2-cluster_3",
+        "id": "b2-c22",
         "title": "Tesla begins humanoid production in California",
-        "summary": "Elon Musk said in an earnings call that customer shipments could be ready by next year as Tesla makes progress on its Optimus robotics line in Fremont. Tesla plans to leverage its Terafab facility in Texas to supply enough AI5 chips for Optimus, which will be integrated with the robot in April.",
+        "summary": "Elon Musk said in an earnings call that customer shipments could be ready by next year as Tesla makes progress on its Optimus robotics line in Fremont. Tesla plans to build an Optimus Academy, ranging between 10,000 and 20,000 robots, to practice tasks and improve decision making.",
         "innovative_uas_use": "",
         "source": "Manufacturing Dive",
         "url": "https://www.manufacturingdive.com/news/tesla-begins-optimus-humanoid-production-california-shipments-2027/872864/",
@@ -745,50 +787,18 @@
         "summary_method": "model",
         "priority_tier": 2,
         "lead_ok": true
-      },
-      {
-        "id": "b3-cluster_6",
-        "title": "GXO Extends Digit Humanoid Robot to North Carolina and Tennessee After 100,000-Tote Milestone",
-        "summary": "Agility Robotics announced Monday that GXO Logistics has signed a commercial agreement to deploy Digit humanoid robots at two additional U.S. facilities — one in Statesville, North Carolina, and one in Lebanon, Tennessee — with operations scheduled to begin in early 2027.",
-        "innovative_uas_use": "",
-        "source": "Tech Times",
-        "url": "https://www.techtimes.com/articles/329537/20261027/gxo-extends-digit-humanoid-robot-north-carolina-tennessee-after-100000-tote-milestone.htm",
-        "published": "2026-10-27T07:22:02-04:00",
-        "date_label": "Oct. 27, 2026",
-        "section": "Robotics",
-        "importance": 3,
-        "confidence": "high",
-        "is_administration_win": false,
-        "eo_number": "",
-        "eo_name": "",
-        "eo_section": "",
-        "eo_section_summary": "",
-        "win_explanation": "",
-        "also_covered": [
-          {
-            "source": "TradingView",
-            "url": "https://www.tradingview.com/news/stocktwits:1241804fd094b:0-agility-robotics-highlights-commercial-momentum-and-growing-enterprise-demand-for-digit-humanoid-robot/"
-          }
-        ],
-        "origin": "Google News RSS",
-        "page_original_publisher": "techtimes.com",
-        "date_source": "json-ld datePublished",
-        "contains_supplemental": false,
-        "summary_method": "model",
-        "priority_tier": 2,
-        "lead_ok": true
       }
     ],
     "Civil Supersonics / High-Speed Aviation": [],
     "Advanced Rail / High-Speed Rail": [
       {
-        "id": "b0-c1",
-        "title": "At least 30 dead in crash between two trains in central Spain, media say",
-        "summary": "A high-speed train slammed into the rear of another train that had stopped, derailing two cars and killing at least 30 people on Wednesday in central Spain, according to local media.",
+        "id": "b0-cluster_1",
+        "title": "At Least 30 Dead As Two High-Speed Rail Trains Collide in Spain",
+        "summary": "A high-speed train slammed into the rear of another train that had stopped, derailing two cars and killing at least 30 people near Urda, in the province of Toledo, in the Spanish autonomous community of Castilla-La Mancha.",
         "innovative_uas_use": "",
-        "source": "Plainview Herald",
-        "url": "https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php",
-        "published": "2026-10-28T07:03:38-04:00",
+        "source": "Newsweek",
+        "url": "https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833",
+        "published": "2026-10-28T05:41:02-04:00",
         "date_label": "Oct. 28, 2026",
         "section": "Advanced Rail / High-Speed Rail",
         "importance": 5,
@@ -801,24 +811,32 @@
         "win_explanation": "",
         "also_covered": [
           {
-            "source": "Newsweek",
-            "url": "https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833"
-          },
-          {
-            "source": "The Straits Times",
-            "url": "https://www.straitstimes.com/world/europe/two-high-speed-trains-rear-end-in-spain-rail-operator-says"
-          },
-          {
-            "source": "Fakti",
-            "url": "https://fakti.bg/en/world/1094742-at-least-46-killed-in-train-collision-in-spain-video"
-          },
-          {
             "source": "Big News Network.com",
             "url": "https://www.bignewsnetwork.com/news/279401138/at-least-10-killed-in-high-speed-train-collision-in-southern-spain"
+          },
+          {
+            "source": "UNILAD Tech",
+            "url": "https://www.uniladtech.com/vehicles/spain-train-crash-how-trains-kept-apart-investigation-347370-20261028"
+          },
+          {
+            "source": "Today",
+            "url": "https://www.today.com/video/deadly-high-speed-train-crash-in-spain-leaves-at-least-30-dead-272390213641"
+          },
+          {
+            "source": "Head Topics",
+            "url": "https://ng.headtopics.com/news/high-speed-train-collision-south-of-madrid-kills-at-least-89287570"
+          },
+          {
+            "source": "EL PAÍS English",
+            "url": "https://english.elpais.com/spain/2026-10-28/at-least-10-people-killed-in-high-speed-rail-crash-in-spain.html"
+          },
+          {
+            "source": "NBC Boston",
+            "url": "https://www.nbcboston.com/news/national-international/spain-trains-collide-dead/4038863/"
           }
         ],
         "origin": "Google News RSS",
-        "page_original_publisher": "myplainview.com",
+        "page_original_publisher": "newsweek.com",
         "date_source": "json-ld datePublished",
         "contains_supplemental": false,
         "summary_method": "model",
@@ -831,7 +849,7 @@
     "Other Advanced Transportation": [],
     "Military UAS": [
       {
-        "id": "b3-cluster_2",
+        "id": "b3-cluster_9",
         "title": "Army tests autonomous robots that hunt enemy targets",
         "summary": "Four robotic vehicles were sent hunting for enemy targets during a military demonstration at Fort Knox, Kentucky, recently, but only one initially moved. The four experimental vehicles were developed under the Defense Advanced Research Projects Agency's RACER program, which aims to give unmanned ground vehicles the ability to navigate difficult terrain without human drivers.",
         "innovative_uas_use": "",
@@ -860,9 +878,9 @@
     ],
     "International Security": [
       {
-        "id": "b0-c4",
+        "id": "b1-international_oman",
         "title": "ZAWYA: Oman advances drone innovation programme across six key sectors — TradingView News",
-        "summary": "Oman's Ministry of Transport, Communications and Information Technology (MTCIT) and Civil Aviation Authority (CAA) have concluded the Expression of Interest (EOI) submission period for the Oman AAM Strategic Demonstrator Programme, which targets six priority sectors including air taxi services and healthcare. Shortlisted applicants are expected to be notified by November 15, ahead of live demonstrations planned for December 6–10 and a main showcase scheduled for December 8–9.",
+        "summary": "Oman's Ministry of Transport, Communications and Information Technology (MTCIT) and Civil Aviation Authority (CAA) have concluded the Expression of Interest submission deadline for the Oman AAM Strategic Demonstrator Programme, which targets six priority sectors including air taxi services and healthcare. Shortlisted applicants are expected to be notified by November 15, ahead of live demonstrations planned for December 6–10 and a main showcase scheduled for December 8–9.",
         "innovative_uas_use": "",
         "source": "Tradingview",
         "url": "https://www.tradingview.com/news/reuters.com,2026-10-28:newsml_Zaw3TtQCK:0-zawya-oman-advances-drone-innovation-programme-across-six-key-sectors/",
@@ -903,26 +921,19 @@
     "Article metadata war.gov: 403 Client Error: Forbidden for url: https://www.war.gov/News/News-Stories/Article/Article/4634683/transcom-commander-draws-connection-between-hope-lethality/",
     "Article metadata war.gov: 403 Client Error: Forbidden for url: https://www.war.gov/News/News-Stories/Article/Article/4632503/hegseth-swears-in-air-force-general-after-vaccine-mandated-early-retirement/",
     "Article metadata war.gov: 403 Client Error: Forbidden for url: https://www.war.gov/News/News-Stories/Article/Article/4634460/army-battery-sharpens-skills-during-nighttime-reload-training/",
-    "Article metadata reuters.com: 401 Client Error: HTTP Forbidden for url: https://www.reuters.com/",
     "Article metadata globenewswire.com: 403 Client Error: Forbidden for url: https://www.globenewswire.com/news-release/2026/10/27/3389410/0/en/u-s-drone-market-trends-investment-opportunities-report-2026-2036-defense-demand-bvlos-adoption-and-u-s-manufacturing-drive-9-8-cagr-and-a-us-44-19-billion-opportunity.html",
     "Article metadata mdpi.com: 403 Client Error: Forbidden for url: https://www.mdpi.com/2504-446x/10/5/377",
-    "Article metadata skybrary.aero: 403 Client Error: Forbidden for url: https://skybrary.aero/articles/accident-and-serious-incident-reports-uas",
+    "Article metadata marketchameleon.com: HTTPSConnectionPool(host='marketchameleon.com', port=443): Read timed out. (read timeout=20)",
     "Article metadata drones.gov.au: HTTPSConnectionPool(host='www.drones.gov.au', port=443): Read timed out. (read timeout=20)",
-    "Article metadata wastemanagement.einnews.com: 403 Client Error: Forbidden for url: https://wastemanagement.einnews.com/",
-    "Article metadata defenseadvancement.com: 403 Client Error: Forbidden for url: https://www.defenseadvancement.com/news/parazero-unveils-autonomous-c-uas-platform-using-ground-guided-interceptors-kinetic-nets/",
     "Article metadata unmannedsystemstechnology.com: 403 Client Error: Forbidden for url: https://www.unmannedsystemstechnology.com/expo/integrated-counter-drone-solutions/",
-    "Article metadata migflug.com: 403 Client Error: Forbidden for url: https://migflug.com/afterburner/how-counter-drone-system-works-detect-track-defeat-c-uas/",
-    "Article metadata dronefirms.com: 429 Client Error: Too Many Requests for url: https://www.dronefirms.com/article/parazero-tillonair-autonomous-counter-uas-reusable-interceptors",
-    "Article metadata omniflights.com: 429 Client Error: Too Many Requests for url: https://omniflights.com/whats-coming",
+    "Article metadata defenseadvancement.com: 403 Client Error: Forbidden for url: https://www.defenseadvancement.com/news/parazero-unveils-autonomous-c-uas-platform-using-ground-guided-interceptors-kinetic-nets/",
     "Article metadata quantum-systems.com: 404 Client Error: Not Found for url: https://quantum-systems.com/us/strila",
-    "Article metadata securityindustry.org: 403 Client Error: Forbidden for url: https://www.securityindustry.org/2026/05/08/securing-the-big-stage-key-takeaways-from-sias-2026-vertical-insights-stadium-security-symposium/",
-    "Article metadata skybrary.aero: 403 Client Error: Forbidden for url: https://skybrary.aero/articles/accident-and-serious-incident-reports-uas",
     "Article metadata globenewswire.com: 403 Client Error: Forbidden for url: https://www.globenewswire.com/news-release/2026/10/27/3389286/0/en/north-america-anti-drone-market-to-reach-usd-5-22-billion-by-2030-growing-at-23-8-cagr-says-marketsandmarkets.html",
-    "Article metadata dronepilothq.com: HTTPSConnectionPool(host='dronepilothq.com', port=443): Read timed out. (read timeout=20)"
+    "Article metadata congress.gov: 403 Client Error: Forbidden for url: https://www.congress.gov/committee-report/119th-congress/house-report/698/1"
   ],
-  "candidate_count": 130,
-  "raw_automated_candidate_count": 131,
-  "automated_candidate_count": 131,
+  "candidate_count": 127,
+  "raw_automated_candidate_count": 127,
+  "automated_candidate_count": 127,
   "automated_filtered_out_count": 0,
   "previous_coverage_candidate_count": 2,
   "supplemental_count": 0,
@@ -934,28 +945,28 @@
     "eVTOL Integration Pilot Program and AAM": 45,
     "Autonomous Vehicles": 45,
     "International": 45,
-    "Federal Actions": 35,
-    "Other Advanced Transportation": 38,
-    "Robotics": 43,
-    "Trump Administration priorities": 21,
-    "UTM / Airspace Integration": 12,
-    "UxS / Maritime / Ground Robotics": 3,
+    "Federal Actions": 34,
+    "Robotics": 32,
+    "Other Advanced Transportation": 35,
+    "UxS / Maritime / Ground Robotics": 2,
+    "UTM / Airspace Integration": 14,
+    "Trump Administration priorities": 20,
     "Surface Transportation Reauthorization": 4,
-    "Federal Register": 2
+    "Federal Register": 1
   },
   "candidate_origin_counts": {
-    "SearXNG": 247,
-    "Google News RSS": 165,
+    "SearXNG": 244,
+    "Google News RSS": 152,
     "Official source RSS": 10,
     "Federal Register API": 6
   },
-  "searxng_candidate_count": 247,
+  "searxng_candidate_count": 244,
   "official_source_candidate_count": 16,
   "included_counts": {
     "Federal Policy & Implementation": 0,
     "UAS / Drones": 1,
     "Counter-UAS / Airspace Security": 0,
-    "AAM / eVTOL / Advanced Aviation": 0,
+    "AAM / eVTOL / Advanced Aviation": 1,
     "UTM / Airspace Integration": 0,
     "Autonomous Vehicles": 8,
     "Robotics": 6,
@@ -971,24 +982,37 @@
   "recognized_administration_win_ids": [],
   "coverage_floor_sections": [],
   "link_resolution": {
-    "wrappers": 165,
-    "resolved": 165,
+    "wrappers": 152,
+    "resolved": 152,
     "unresolved": 0,
     "non_article_dropped": 115
   },
   "quality_summary": {
     "non-article-url": 115,
-    "article-check": 182,
+    "article-check": 170,
     "scope": 7,
-    "summary-fallback": 3,
-    "summary-regenerated": 3
+    "summary-fallback": 6,
+    "summary-regenerated": 1
   },
   "edition_kind": "editorial",
   "publication_mode": "automated-ai",
-  "pruned_items": [],
+  "pruned_items": [
+    {
+      "section": "Robotics",
+      "title": "UP Cabinet Approves Robotics And AI Park In Greater Noida, To Generate Over 1 Lakh Jobs",
+      "url": "https://knnindia.co.in/news/newsdetails/state/up-cabinet-approves-robotics-and-ai-park-in-greater-noida-to-generate-over-1-lakh-jobs",
+      "reason": "dead link (HTTP None)"
+    },
+    {
+      "section": "Executive Summary",
+      "title": "International developments include the Uttar Pradesh Cabinet approving the establishment of a 69.52-acre robotics and AI",
+      "url": "https://knnindia.co.in/news/newsdetails/state/up-cabinet-approves-robotics-and-ai-park-in-greater-noida-to-generate-over-1-lakh-jobs",
+      "reason": "repaired: summary sentence cited a removed story; dropped"
+    }
+  ],
   "validation_report": {
     "passed": true,
-    "checked_at": "2026-10-28T08:02:50.934892-04:00",
+    "checked_at": "2026-10-28T21:39:22.484545-04:00",
     "checks": [
       {
         "check": "freshness",

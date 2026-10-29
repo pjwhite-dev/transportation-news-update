@@ -3466,12 +3466,57 @@
   },
   {
    "edition": "2026-10-28",
+   "title": "Archer Reveals Plans for Texan Air Taxi Networks",
+   "section": "AAM / eVTOL / Advanced Aviation",
+   "url": "https://futuretransport-news.com/archer-reveals-plans-for-texan-air-taxi-networks/",
+   "urls": [
+    "https://futuretransport-news.com/archer-reveals-plans-for-texan-air-taxi-networks"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "air",
+    "archer",
+    "networks",
+    "plans",
+    "reveals",
+    "taxi",
+    "texan"
+   ],
+   "numbers": [],
+   "summary": "Archer Aviation has unveiled plans for a set of three air taxi networks serving Austin, Dallas\u2013Fort Worth and Houston with the goal of increasing connectivity between major airports, business districts, and coastal destinations across the region.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Turo and Tesla Take the Next Step Toward Autonomous Car Rentals",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.autorentalnews.com/news/turo-and-tesla-take-the-next-step-toward-autonomous-car-rentals",
+   "urls": [
+    "https://www.autorentalnews.com/news/turo-and-tesla-take-the-next-step-toward-autonomous-car-rentals"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "autonomous",
+    "car",
+    "next",
+    "rentals",
+    "step",
+    "take",
+    "tesla",
+    "toward",
+    "turo"
+   ],
+   "numbers": [],
+   "summary": "Beginning October 28, Turo customers in the U.S. will be able to identify and rent Tesla vehicles equipped with Full Self-Driving (Supervised), or FSD, through the carsharing marketplace. Drivers must remain attentive and ready to intervene, as the vehicles aren't autonomous.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
    "title": "Why the government wants self-driving cars to glow cyan",
    "section": "Autonomous Vehicles",
    "url": "https://lasvegassun.com/news/2026/oct/28/why-the-government-wants-self-driving-cars-to-glow/",
    "urls": [
-    "https://lasvegassun.com/news/2026/oct/28/why-the-government-wants-self-driving-cars-to-glow",
-    "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal"
+    "https://lasvegassun.com/news/2026/oct/28/why-the-government-wants-self-driving-cars-to-glow"
    ],
    "identifiers": [],
    "tokens": [
@@ -3490,25 +3535,47 @@
   },
   {
    "edition": "2026-10-28",
-   "title": "Tesla\u2019s Self-Driving Launch in Slovakia: Premature Move or Progress?",
+   "title": "VW receives Level 3 test approval in China, Xpeng begins Level 4 demos",
    "section": "Autonomous Vehicles",
-   "url": "https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature/",
+   "url": "https://www.electrive.com/2026/10/28/vw-receives-level-3-test-approval-in-china-xpeng-begins-level-4-demos/",
    "urls": [
-    "https://www.rswebsols.com/news/is-teslas-launch-of-self-driving-technology-in-slovakia-premature"
+    "https://www.electrive.com/2026/10/28/vw-receives-level-3-test-approval-in-china-xpeng-begins-level-4-demos"
    ],
    "identifiers": [],
    "tokens": [
-    "driving",
-    "launch",
-    "move",
-    "premature",
-    "progress",
-    "self",
-    "slovakia",
-    "tesla"
+    "approval",
+    "begins",
+    "china",
+    "demos",
+    "level",
+    "receives",
+    "test",
+    "xpeng"
    ],
    "numbers": [],
-   "summary": "Latvia and Slovakia have recently joined the ranks of European nations endorsing Tesla\u2019s Assisted Driving (TAD) software, with Latvia becoming the tenth European nation to sanction the technology this Monday. In Slovakia, resident Igor Marcek, 35, who purchased his Tesla two years prior, finds himself increasingly exhilarated by the prospects of TAD\u2014formerly known as FSD.",
+   "summary": "Volkswagen Group China has been granted permission to test highly automated Level 3 driving on public roads in Hefei, aiming to achieve technical maturity by 2027. Meanwhile, Xpeng has received approval for demonstration drives with Level 4 robotaxis in Guangzhou, allowing the company to test ride services across the entire city.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "The NHTSA Wants Custom Lights To Identify Driverless Cars",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal/",
+   "urls": [
+    "https://www.slashgear.com/2299236/nhtsa-driverless-car-cyan-marker-light-proposal"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "cars",
+    "custom",
+    "driverless",
+    "identify",
+    "lights",
+    "nhtsa",
+    "wants"
+   ],
+   "numbers": [],
+   "summary": "Autonomous vehicles are becoming increasingly common, and on paper, they're pretty remarkable. Self-driving cars know how to stay in their lane, brake, and more, but the technology isn't perfected yet.",
    "led": false
   },
   {
@@ -3532,78 +3599,33 @@
     "uber"
    ],
    "numbers": [],
-   "summary": "Nuro Co-CEO Jiajun Zhu shared four memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, and that Level 4 driverless systems are distinct products from Level 2 driver assistance.",
+   "summary": "Nuro Co-CEO Jiajun Zhu shared four memos arguing that LiDAR and radar raise the safety ceiling over camera-only systems, and that Level 4 driverless systems are distinct products from Level 2 assistance. The company aims to start commercial service in the Bay Area and Houston this year using Lucid Gravity SUVs fitted with the Nuro Driver.",
    "led": false
   },
   {
    "edition": "2026-10-28",
-   "title": "Korean taxis in LA \u2014 Waymo Robotaxis and Rising Gas Costs Crush Profits",
+   "title": "WeRide Unveils Global Insurance Partnership Program to Scale Autonomous Vehicles Worldwide",
    "section": "Autonomous Vehicles",
-   "url": "https://en.koreadaily.com/korean-taxis-in-la-waymo-robotaxis-rising-gas-costs/",
+   "url": "https://www.financialcontent.com/article/gnwcq-2026-10-28-weride-unveils-global-insurance-partnership-program-to-scale-autonomous-vehicles-worldwide",
    "urls": [
-    "https://en.koreadaily.com/korean-taxis-in-la-waymo-robotaxis-rising-gas-costs"
+    "https://menafn.com/1111876230/Weride-Unveils-Global-Insurance-Partnership-Program-To-Scale-Autonomous-Vehicles-Worldwide",
+    "https://www.financialcontent.com/article/gnwcq-2026-10-28-weride-unveils-global-insurance-partnership-program-to-scale-autonomous-vehicles-worldwide"
    ],
    "identifiers": [],
    "tokens": [
-    "costs",
-    "crush",
-    "gas",
-    "korean",
-    "profits",
-    "rising",
-    "robotaxis",
-    "taxis",
-    "waymo"
-   ],
-   "numbers": [],
-   "summary": "Do-il Yoon, CEO of Hana Taxi, stated on October 27 that many Korean taxi operators have seen revenues drop by about 30% since the introduction of unmanned taxis. According to the American Automobile Association (AAA), gas prices in the Los Angeles area rose 31% from a year ago.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-28",
-   "title": "Urban rail industry news round-up",
-   "section": "Autonomous Vehicles",
-   "url": "https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28/",
-   "urls": [
-    "https://www.railwaygazette.com/urban/2026/10/28/urban-rail-industry-news-round-up-28"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "industry",
-    "rail",
-    "round",
-    "urban"
-   ],
-   "numbers": [
-    "$302"
-   ],
-   "summary": "The Royal Commission for Riyadh City awarded Siemens Mobility a contract for 27 four-car driverless trainsets and 52 cars for metro lines 1 and 2, while the Asian Development Bank approved a US$302\u00b738m loan to modernize the Baku Metro.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-28",
-   "title": "WeRide launches global insurance program with Allianz and Ping An to support autonomous vehicle expansion.",
-   "section": "Autonomous Vehicles",
-   "url": "https://pluang.com/en/news-feed/weride-luncurkan-program-mitra-asuransi-global-untuk-perluas-kendaraan-otonom",
-   "urls": [
-    "https://pluang.com/en/news-feed/weride-luncurkan-program-mitra-asuransi-global-untuk-perluas-kendaraan-otonom"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "allianz",
     "autonomous",
-    "expansion",
     "global",
     "insurance",
-    "launches",
-    "ping",
+    "partnership",
     "program",
-    "support",
-    "vehicle",
-    "weride"
+    "scale",
+    "unveils",
+    "vehicles",
+    "weride",
+    "worldwide"
    ],
    "numbers": [],
-   "summary": "Grupo Aeroportuario del Pac\u00edfico (GAP) announced a dividend payment of 20.80 pesos per share, approved at its April 2026 shareholders' meeting. The dividend will be paid on November 6, 2026, to shareholders presenting coupon No. 42 of their share certificate.",
+   "summary": "WeRide announced the launch of its global insurance partnership program with Allianz Insurance Singapore Pte. Ltd. and Ping An Property & Casualty Insurance Company of China, Ltd. as inaugural partners to support autonomous driving expansion in China, Southeast Asia, the Middle East, and Europe.",
    "led": false
   },
   {
@@ -3627,7 +3649,7 @@
     "tesla"
    ],
    "numbers": [],
-   "summary": "Tesla Inc. announced its robotaxi service is \u201ccoming soon\u201d to San Antonio, Jacksonville, Fla., Las Vegas, and Phoenix, while expanding its operating territory in six existing cities across Texas and Florida.",
+   "summary": "Tesla Inc. announced its robotaxi service is \u201ccoming soon\u201d to San Antonio, Jacksonville, Fla., Las Vegas, and Phoenix, while expanding its operating territory in six existing markets, including a more than 900% expansion in Houston to 254 square miles.",
    "led": false
   },
   {
@@ -3653,7 +3675,7 @@
     "warn"
    ],
    "numbers": [],
-   "summary": "The NHTSA proposes standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, with the agency stating these lamps should be optional as opposed to mandatory. These proposed updates target Federal Motor Vehicle Safety Standard No. 108 and include new equipment requirements for beam-switching, hazard lights, and turn signals.",
+   "summary": "The NHTSA has proposed standardized, cyan-colored marker lights for self-driving cars to signal autonomous driving capabilities, with the agency stating these lamps should be optional as opposed to mandatory. These proposed updates target Federal Motor Vehicle Safety Standard No. 108 and include new equipment requirements for beam-switching, hazard lights, and turn signals.",
    "led": true
   },
   {
@@ -3682,42 +3704,54 @@
   },
   {
    "edition": "2026-10-28",
-   "title": "XPeng's IRON Robot Solid-State Battery Rolls Off in Small-Batch Production, Scale Manufacturing Targeted by Year-End",
+   "title": "Inside Amazon's robot warehouse: How automation is changing jobs",
    "section": "Robotics",
-   "url": "https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3",
+   "url": "https://www.businessinsider.com/amazon-robot-warehouse-where-jobs-changing-ai-robotics-workers-2026-9",
    "urls": [
-    "https://finance.biggo.com/news/1e8b6cea-51f2-4aaf-b6d0-fe02c09b3df3"
+    "https://www.businessinsider.com/amazon-robot-warehouse-where-jobs-changing-ai-robotics-workers-2026-9"
    ],
    "identifiers": [],
    "tokens": [
-    "batch",
-    "battery",
-    "end",
-    "iron",
-    "manufacturing",
-    "off",
-    "production",
+    "amazon",
+    "automation",
+    "changing",
+    "how",
+    "inside",
+    "jobs",
     "robot",
-    "rolls",
-    "scale",
-    "small",
-    "solid",
-    "state",
-    "targeted",
-    "xpeng",
-    "year"
+    "warehouse"
    ],
    "numbers": [],
-   "summary": "Gu Jie, vice president of XPeng Group, revealed on October 28 that the solid-state battery for the IRON robot has completed small-batch production, with large-scale production targeted by the end of 2026 and deliveries beginning in 2027.",
+   "summary": "Amazon's Tracy, California warehouse employs more than 3,000 workers, up from roughly 1,000 when it opened in 2023, with robots like Hercules and Proteus handling inventory movement while humans manage maintenance and troubleshooting.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-28",
+   "title": "Humanoid Robots Enter Factories and Warehouses",
+   "section": "Robotics",
+   "url": "https://www.globaltrademag.com/humanoid-robots-enter-factories-and-warehouses/",
+   "urls": [
+    "https://www.globaltrademag.com/humanoid-robots-enter-factories-and-warehouses"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "enter",
+    "factories",
+    "humanoid",
+    "robots",
+    "warehouses"
+   ],
+   "numbers": [],
+   "summary": "Humanoid robots are moving from controlled demonstrations into factories, warehouses and distribution centers, where their commercial value will depend on safety, uptime and consistent task performance.",
    "led": false
   },
   {
    "edition": "2026-10-28",
    "title": "LG Electronics launches Korea robot data factory, expands actuator push",
    "section": "Robotics",
-   "url": "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/?outputType=amp",
+   "url": "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M/",
    "urls": [
-    "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M?outputType=amp"
+    "https://biz.chosun.com/en/en-it/2026/10/28/F5GAJVWELRBJPPXXROHUL3ML6M"
    ],
    "identifiers": [],
    "tokens": [
@@ -3737,33 +3771,6 @@
   },
   {
    "edition": "2026-10-28",
-   "title": "Shanghai Names Physical AI Equipment a Priority as Smart Factory Demand Drives Scaled Robot Deployment",
-   "section": "Robotics",
-   "url": "https://finance.biggo.com/news/d680d238-e3cc-4150-87ee-f8882b60ee0c",
-   "urls": [
-    "https://finance.biggo.com/news/d680d238-e3cc-4150-87ee-f8882b60ee0c"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "demand",
-    "deployment",
-    "drives",
-    "equipment",
-    "factory",
-    "names",
-    "physical",
-    "priority",
-    "robot",
-    "scaled",
-    "shanghai",
-    "smart"
-   ],
-   "numbers": [],
-   "summary": "Shanghai's Municipal Commission of Economy and Informatization issued the \"Shanghai Action Plan for Accelerating the Development of a New Generation of Smart Manufacturing,\" designating the \"development and promotion of Physical AI equipment\" as a key task. The plan supports innovative breakthroughs in humanoid robots, collaborative robots, and high-precision overload robots, using smart factory construction demand to drive large-scale application.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-28",
    "title": "Tesla begins humanoid production in California",
    "section": "Robotics",
    "url": "https://www.manufacturingdive.com/news/tesla-begins-optimus-humanoid-production-california-shipments-2027/872864/",
@@ -3779,64 +3786,37 @@
     "tesla"
    ],
    "numbers": [],
-   "summary": "Elon Musk said in an earnings call that customer shipments could be ready by next year as Tesla makes progress on its Optimus robotics line in Fremont. Tesla plans to leverage its Terafab facility in Texas to supply enough AI5 chips for Optimus, which will be integrated with the robot in April.",
+   "summary": "Elon Musk said in an earnings call that customer shipments could be ready by next year as Tesla makes progress on its Optimus robotics line in Fremont. Tesla plans to build an Optimus Academy, ranging between 10,000 and 20,000 robots, to practice tasks and improve decision making.",
    "led": false
   },
   {
    "edition": "2026-10-28",
-   "title": "GXO Extends Digit Humanoid Robot to North Carolina and Tennessee After 100,000-Tote Milestone",
-   "section": "Robotics",
-   "url": "https://www.techtimes.com/articles/329537/20261027/gxo-extends-digit-humanoid-robot-north-carolina-tennessee-after-100000-tote-milestone.htm",
-   "urls": [
-    "https://www.techtimes.com/articles/329537/20261027/gxo-extends-digit-humanoid-robot-north-carolina-tennessee-after-100000-tote-milestone.htm",
-    "https://www.tradingview.com/news/stocktwits:1241804fd094b:0-agility-robotics-highlights-commercial-momentum-and-growing-enterprise-demand-for-digit-humanoid-robot"
-   ],
-   "identifiers": [],
-   "tokens": [
-    "000",
-    "100",
-    "carolina",
-    "digit",
-    "extends",
-    "gxo",
-    "humanoid",
-    "milestone",
-    "north",
-    "robot",
-    "tennessee",
-    "tote"
-   ],
-   "numbers": [],
-   "summary": "Agility Robotics announced Monday that GXO Logistics has signed a commercial agreement to deploy Digit humanoid robots at two additional U.S. facilities \u2014 one in Statesville, North Carolina, and one in Lebanon, Tennessee \u2014 with operations scheduled to begin in early 2027.",
-   "led": false
-  },
-  {
-   "edition": "2026-10-28",
-   "title": "At least 30 dead in crash between two trains in central Spain, media say",
+   "title": "At Least 30 Dead As Two High-Speed Rail Trains Collide in Spain",
    "section": "Advanced Rail / High-Speed Rail",
-   "url": "https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php",
+   "url": "https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833",
    "urls": [
-    "https://fakti.bg/en/world/1094742-at-least-46-killed-in-train-collision-in-spain-video",
+    "https://english.elpais.com/spain/2026-10-28/at-least-10-people-killed-in-high-speed-rail-crash-in-spain.html",
+    "https://ng.headtopics.com/news/high-speed-train-collision-south-of-madrid-kills-at-least-89287570",
     "https://www.bignewsnetwork.com/news/279401138/at-least-10-killed-in-high-speed-train-collision-in-southern-spain",
-    "https://www.myplainview.com/news/world/article/spanish-authorities-say-2-trains-have-been-22497897.php",
+    "https://www.nbcboston.com/news/national-international/spain-trains-collide-dead/4038863",
     "https://www.newsweek.com/spain-high-speed-rail-accident-toledo-12627833",
-    "https://www.straitstimes.com/world/europe/two-high-speed-trains-rear-end-in-spain-rail-operator-says"
+    "https://www.today.com/video/deadly-high-speed-train-crash-in-spain-leaves-at-least-30-dead-272390213641",
+    "https://www.uniladtech.com/vehicles/spain-train-crash-how-trains-kept-apart-investigation-347370-20261028"
    ],
    "identifiers": [],
    "tokens": [
-    "between",
-    "central",
-    "crash",
+    "collide",
     "dead",
+    "high",
     "least",
-    "media",
-    "say",
+    "rail",
     "spain",
+    "speed",
     "trains",
     "two"
    ],
    "numbers": [],
-   "summary": "A high-speed train slammed into the rear of another train that had stopped, derailing two cars and killing at least 30 people on Wednesday in central Spain, according to local media.",
+   "summary": "A high-speed train slammed into the rear of another train that had stopped, derailing two cars and killing at least 30 people near Urda, in the province of Toledo, in the Spanish autonomous community of Castilla-La Mancha.",
    "led": false
   },
   {
@@ -3885,7 +3865,7 @@
     "zawya"
    ],
    "numbers": [],
-   "summary": "Oman's Ministry of Transport, Communications and Information Technology (MTCIT) and Civil Aviation Authority (CAA) have concluded the Expression of Interest (EOI) submission period for the Oman AAM Strategic Demonstrator Programme, which targets six priority sectors including air taxi services and healthcare. Shortlisted applicants are expected to be notified by November 15, ahead of live demonstrations planned for December 6\u201310 and a main showcase scheduled for December 8\u20139.",
+   "summary": "Oman's Ministry of Transport, Communications and Information Technology (MTCIT) and Civil Aviation Authority (CAA) have concluded the Expression of Interest submission deadline for the Oman AAM Strategic Demonstrator Programme, which targets six priority sectors including air taxi services and healthcare. Shortlisted applicants are expected to be notified by November 15, ahead of live demonstrations planned for December 6\u201310 and a main showcase scheduled for December 8\u20139.",
    "led": false
   }
  ]
