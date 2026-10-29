@@ -272,6 +272,25 @@ class SummaryGateTests(unittest.TestCase):
         self.assertIn("summary", bad(lambda b: b.update(summary_chain=1)))
         self.assertIn("summary", bad(lambda b: b.update(executive_summary="\n\n".join(b["executive_summary"].split("\n\n")[:1]))))
 
+    def test_sentences_citing_a_removed_story_are_dropped_and_the_gate_still_decides(self) -> None:
+        """2026-10-28: the link check removed a story the summary cited, and the edition was refused."""
+        briefing = chain_briefing()
+        orphan = " A park will be built [KNN](https://knnindia.example/removed-story)."
+        paragraphs = briefing["executive_summary"].split("\n\n")
+        paragraphs[0] += orphan
+        briefing["executive_summary"] = "\n\n".join(paragraphs)
+        self.assertIn("summary", failed_checks(gates.run_gates(briefing, now=NOW, require_summary_chain=True)))
+        records = gates.drop_orphan_summary_sentences(briefing)
+        self.assertEqual([r["url"] for r in records], ["https://knnindia.example/removed-story"])
+        self.assertNotIn("knnindia", briefing["executive_summary"])
+        self.assertEqual(briefing["executive_summary"], chain_briefing()["executive_summary"])
+        self.assertNotIn("summary", failed_checks(gates.run_gates(briefing, now=NOW, require_summary_chain=True)))
+        # A summary reduced below the gate's minimum is still refused.
+        thin = chain_briefing()
+        thin["executive_summary"] = "\n\n".join(p + orphan for p in [orphan.strip(), orphan.strip()])
+        gates.drop_orphan_summary_sentences(thin)
+        self.assertIn("summary", failed_checks(gates.run_gates(thin, now=NOW, require_summary_chain=True)))
+
 
 class PruneTests(unittest.TestCase):
     def test_dead_links_are_removed_and_echo_summaries_blanked_with_a_record(self) -> None:

@@ -593,6 +593,37 @@ def repair_story_failures(
         if story is not None:
             record(story, key[0], drop[key])
             del sections[key[0]][key[1] - 1]
+    removed.extend(drop_orphan_summary_sentences(briefing))
+    return removed
+
+
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[\"'(\[A-Z0-9])")
+
+
+def drop_orphan_summary_sentences(briefing: dict[str, Any]) -> list[dict[str, str]]:
+    """Remove Executive Summary sentences whose only sources are stories no longer in the edition.
+
+    2026-10-28: the link check removed a story the summary cited, and the edition was refused. A
+    sentence about a removed story goes with it; the summary gate then re-checks length, paragraphs
+    and link count on what remains, so a summary left too thin still fails.
+    """
+    text = str(briefing.get("executive_summary", ""))
+    story_urls = {str(story.get("url", "")) for _, _, story in iter_stories(briefing)}
+    removed: list[dict[str, str]] = []
+    paragraphs = []
+    for paragraph in text.split("\n\n"):
+        kept = []
+        for sentence in _SENTENCE_BREAK.split(paragraph.strip()):
+            urls = [url for _, url in _SUMMARY_LINK.findall(sentence)]
+            if urls and not any(url in story_urls for url in urls):
+                removed.append({"section": "Executive Summary", "title": sentence[:120], "url": urls[0],
+                                "reason": "repaired: summary sentence cited a removed story; dropped"})
+            else:
+                kept.append(sentence)
+        if " ".join(kept).strip():
+            paragraphs.append(" ".join(kept).strip())
+    if removed:
+        briefing["executive_summary"] = "\n\n".join(paragraphs)
     return removed
 
 
