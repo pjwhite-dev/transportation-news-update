@@ -36,10 +36,14 @@ def git(repo: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
-def discard_regenerated(repo: Path) -> list[str]:
-    """Restore each regenerated file that git tracks and has changed; paths git does not know are skipped."""
+def discard_regenerated(repo: Path, today: str) -> list[str]:
+    """Restore each regenerated file that git tracks and has changed; paths git does not know are skipped.
+
+    Today's raw archive is rewritten by every run; once the 04:15 GitHub collection has committed it, a failed
+    local run leaves it modified (2026-10-28 evening: the retry refused to start because of it).
+    """
     discarded: list[str] = []
-    for path in REGENERATED:
+    for path in (*REGENERATED, f"data/raw_archive/{today}.json"):
         if git(repo, "ls-files", "--error-unmatch", "--", path).returncode != 0:
             continue
         if git(repo, "status", "--porcelain", "--", path).stdout.strip():
@@ -62,7 +66,7 @@ def dirty_files(repo: Path, today: str) -> list[str]:
 
 def preflight(repo: Path, today: str | None = None) -> tuple[bool, str]:
     today = today or datetime.now(EASTERN).date().isoformat()
-    discarded = discard_regenerated(repo)
+    discarded = discard_regenerated(repo, today)
     blocked = dirty_files(repo, today)
     if blocked:
         return False, "Refusing production run because the repository is not clean: " + "; ".join(blocked)
