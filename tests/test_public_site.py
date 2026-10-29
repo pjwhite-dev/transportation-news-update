@@ -10,7 +10,6 @@ from public_site import (
     SITE_CSS,
     build_public_site,
     edition_page,
-    headline_index_html,
     outlook_email_html,
     prepare_automated_edition,
     story_html,
@@ -53,38 +52,13 @@ class PublicSiteTests(unittest.TestCase):
 
         self.assertIn('- "news_engine.py"', workflow)
 
-    def test_headlines_at_a_glance_includes_every_story_and_links_into_edition(self) -> None:
-        sections = {
-            "Top Developments": [
-                article(f"Development {number}", f"https://example.com/top-{number}")
-                for number in range(1, 10)
-            ],
-            "UAS and Drones": [
-                article(f"Drone story {number}", f"https://example.com/uas-{number}")
-                for number in range(1, 10)
-            ],
-        }
-
-        rendered = headline_index_html(sections)
-        outlook = outlook_email_html(
-            {"executive_summary": "Summary.", "sections": sections},
-            date(2026, 9, 14),
-        )
-
-        self.assertIn("Top Developments", rendered)
-        self.assertIn("UAS and Drones", rendered)
-        self.assertEqual(rendered.count('href="#story-'), 18)
-        self.assertNotIn('href="https://example.com/', rendered)
-        self.assertEqual(outlook.count("Development 9"), 2)
-        self.assertEqual(outlook.count("Drone story 9"), 2)
-
     def test_edition_uses_unified_masthead_and_section_navigation(self) -> None:
         payload = {
             "window_end": "2026-09-11T04:15:00-04:00",
             "executive_summary": "A concise executive summary.",
             "edition_kind": "editorial",
             "sections": {
-                "UAS and Drones": [
+                "UAS / Drones": [
                     article("FAA advances drone integration", "https://example.com/drone")
                 ]
             },
@@ -94,12 +68,13 @@ class PublicSiteTests(unittest.TestCase):
 
         rendered = edition_page(payload, date(2026, 9, 11), archived=False)
 
-        self.assertIn('<span>Advanced Transportation</span><small>News Update</small>', rendered)
-        self.assertIn('<h1>Friday, September 11, 2026</h1>', rendered)
-        self.assertIn('class="section-nav no-copy"', rendered)
+        self.assertIn('Advanced Transportation <i>Update</i>', rendered)
+        self.assertIn("Daily briefing &middot; Friday, September 11, 2026", rendered)
+        self.assertIn('class="sections-bar no-copy"', rendered)
+        self.assertIn('class="toc no-copy"', rendered)
         self.assertIn('href="#uas-drones"', rendered)
-        self.assertIn('href="#wins"', rendered)
-        self.assertIn("No qualifying Administration implementation developments", rendered)
+        # The Administration Wins section was retired.
+        self.assertNotIn('href="#wins"', rendered)
         self.assertIn('id="summary"', rendered)
         self.assertIn("position:sticky", SITE_CSS)
 
@@ -122,7 +97,7 @@ class PublicSiteTests(unittest.TestCase):
         payload = {
             "executive_summary": "A concise executive summary.",
             "sections": {
-                "UAS and Drones": [
+                "UAS / Drones": [
                     article(
                         "FAA advances drone integration",
                         "https://example.com/drone",
@@ -136,8 +111,8 @@ class PublicSiteTests(unittest.TestCase):
         rendered = outlook_email_html(payload, date(2026, 9, 11))
 
         self.assertIn('role="presentation"', rendered)
-        self.assertIn('style="color:#173C5E;text-decoration:underline"', rendered)
-        self.assertIn("Advanced Transportation News Update", rendered)
+        self.assertIn('style="color:#58738A;text-decoration:underline"', rendered)
+        self.assertIn("Advanced Transportation Update", rendered)
         self.assertNotIn('class="', rendered)
 
     def test_story_renderer_removes_internal_editorial_commentary(self) -> None:
@@ -175,13 +150,13 @@ class PublicSiteTests(unittest.TestCase):
             news_engine.automated_record_is_publication_worthy(generic_fmvss)
         )
 
-    def test_iranian_underwater_drone_capture_is_military(self) -> None:
+    def test_iranian_underwater_drone_capture_is_international_security(self) -> None:
         item = article(
             "Iran captures an underwater drone near a naval vessel",
             "https://example.com/underwater-drone",
         )
 
-        self.assertEqual(news_engine.infer_section(item), "Military")
+        self.assertEqual(news_engine.infer_section(item), "International Security")
 
     def test_same_event_is_consolidated_across_sections(self) -> None:
         first = article(
@@ -201,10 +176,10 @@ class PublicSiteTests(unittest.TestCase):
             [],
         )
 
-        self.assertEqual(edition["sections"]["Autonomous Vehicles"], [])
-        self.assertEqual(len(edition["sections"]["International"]), 1)
+        # The International section was retired; the same event stays in its topic.
+        self.assertEqual(len(edition["sections"]["Autonomous Vehicles"]), 1)
         self.assertEqual(
-            edition["sections"]["International"][0]["also_covered"][0]["url"],
+            edition["sections"]["Autonomous Vehicles"][0]["also_covered"][0]["url"],
             second["url"],
         )
 
@@ -215,7 +190,7 @@ class PublicSiteTests(unittest.TestCase):
         )
         item["source"] = "Yahoo News Canada"
 
-        self.assertEqual(news_engine.infer_section(item), "UAS and Drones")
+        self.assertEqual(news_engine.infer_section(item), "UAS / Drones")
 
     def test_generic_fmcsa_exemption_is_not_publication_worthy(self) -> None:
         item = article(
@@ -285,7 +260,7 @@ class PublicSiteTests(unittest.TestCase):
             cname = (output / "CNAME").read_text()
 
         self.assertEqual(result["edition_count"], 2)
-        self.assertIn("Advanced Transportation News Update", latest_html)
+        self.assertIn("Advanced Transportation Update", latest_html)
         self.assertIn("Copy for email", latest_html)
         self.assertIn("data-outlook-email-b64", latest_html)
         self.assertIn("A prior editorial summary.", latest_html)

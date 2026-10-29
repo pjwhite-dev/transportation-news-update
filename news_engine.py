@@ -528,7 +528,10 @@ INTERNATIONAL_MARKER_PATTERN = re.compile(
     r"japan|japanese|korea|korean|mexico|mexican|netherlands|norway|norwegian|"
     r"poland|polish|saudi arabia|singapore|spain|spanish|sweden|swedish|"
     r"switzerland|taiwan|taiwanese|united arab emirates|uae|united kingdom|"
-    r"uk|vietnam|vietnamese|london|madrid|paris|berlin|tokyo|dubai|kolkata)\b",
+    r"uk|vietnam|vietnamese|london|madrid|paris|berlin|tokyo|dubai|kolkata|"
+    # Conflict coverage: without these, foreign war stories fell to Military UAS.
+    r"ukraine|ukrainians?|russia|russians?|kyiv|moscow|crimea|belarus|"
+    r"iran|iranians?|israel|israelis?|gaza|yemen|houthis?)\b",
     re.IGNORECASE,
 )
 

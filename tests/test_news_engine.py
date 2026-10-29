@@ -29,7 +29,7 @@ def cluster(**overrides: object) -> dict:
         "cluster_id": "cluster-1",
         "article_ids": ["article-1"],
         "primary_article_id": "article-1",
-        "section": "Federal Actions",
+        "section": "Federal Policy & Implementation",
         "relevant": True,
         "importance": 8,
         "canonical_title": "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
@@ -86,13 +86,13 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         analysis = {
             "executive_summary": "The Army expanded autonomous aviation capability.",
             "what_to_watch": [],
-            "clusters": [cluster(section="UAS and Drones")],
+            "clusters": [cluster(section="UAS / Drones")],
         }
 
         validated = news_engine.validate_analysis(analysis, [article])
 
-        self.assertIn("Military", news_engine.TOPIC_SECTIONS)
-        self.assertEqual(validated["clusters"][0]["section"], "Military")
+        self.assertIn("Military UAS", news_engine.TOPIC_SECTIONS)
+        self.assertEqual(validated["clusters"][0]["section"], "Military UAS")
 
     def test_defense_counter_uas_technology_is_forced_into_cuas_section(self) -> None:
         article = record(
@@ -109,17 +109,17 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         validated = news_engine.validate_analysis(
             {
                 "what_to_watch": [],
-                "clusters": [cluster(section="Military")],
+                "clusters": [cluster(section="Military UAS")],
             },
             [article],
         )
 
         self.assertEqual(
             validated["clusters"][0]["section"],
-            "UAS Security and C-UAS",
+            "Counter-UAS / Airspace Security",
         )
 
-    def test_counter_uas_use_in_ukraine_remains_military(self) -> None:
+    def test_counter_uas_use_in_ukraine_is_international_security(self) -> None:
         article = record(
             title="Ukraine deploys counter-UAS systems against Russian attacks",
             summary=(
@@ -130,7 +130,7 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             required_include=True,
         )
 
-        self.assertEqual(news_engine.infer_section(article), "Military")
+        self.assertEqual(news_engine.infer_section(article), "International Security")
 
     def test_pentagon_drone_defense_test_is_cuas_without_acronym(self) -> None:
         article = record(
@@ -142,7 +142,7 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
         self.assertEqual(
             news_engine.infer_section(article),
-            "UAS Security and C-UAS",
+            "Counter-UAS / Airspace Security",
         )
 
     def test_innovative_civil_uas_use_gets_short_deterministic_label(self) -> None:
@@ -154,7 +154,7 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             origin="Google News RSS",
         )
 
-        self.assertEqual(news_engine.infer_section(article), "UAS and Drones")
+        self.assertEqual(news_engine.infer_section(article), "UAS / Drones")
         self.assertEqual(
             news_engine.infer_innovative_uas_use(article),
             "Delivering critical medical supplies",
@@ -229,7 +229,7 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
                 "what_to_watch": [],
                 "clusters": [
                     cluster(
-                        section="UAS and Drones",
+                        section="UAS / Drones",
                         innovative_uas_use="Detecting unsafe airport drones",
                     )
                 ],
@@ -239,11 +239,13 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
 
         self.assertEqual(
             validated["clusters"][0]["section"],
-            "UAS Security and C-UAS",
+            "Counter-UAS / Airspace Security",
         )
         self.assertEqual(validated["clusters"][0]["innovative_uas_use"], "")
 
     def test_ukraine_conflict_story_is_forced_out_of_uas(self) -> None:
+        # Regression: Ukraine, Russia and Iran were not international markers, so
+        # foreign war reporting was filed as Military UAS in the Oct 20-29 editions.
         article = record(
             title="Ukraine deploys long-range drones in overnight strikes",
             summary="Ukrainian forces used unmanned aircraft against military targets.",
@@ -254,12 +256,12 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         validated = news_engine.validate_analysis(
             {
                 "what_to_watch": [],
-                "clusters": [cluster(section="UAS and Drones")],
+                "clusters": [cluster(section="UAS / Drones")],
             },
             [article],
         )
 
-        self.assertEqual(validated["clusters"][0]["section"], "Military")
+        self.assertEqual(validated["clusters"][0]["section"], "International Security")
 
     def test_russian_ship_attack_is_forced_out_of_uas(self) -> None:
         article = record(
@@ -272,12 +274,12 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         validated = news_engine.validate_analysis(
             {
                 "what_to_watch": [],
-                "clusters": [cluster(section="UAS and Drones")],
+                "clusters": [cluster(section="UAS / Drones")],
             },
             [article],
         )
 
-        self.assertEqual(validated["clusters"][0]["section"], "Military")
+        self.assertEqual(validated["clusters"][0]["section"], "International Security")
 
     def test_civilian_ukraine_rail_story_is_international_not_military(self) -> None:
         article = record(
@@ -288,12 +290,14 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             search_section="Other Advanced Transportation",
         )
 
+        self.assertTrue(news_engine.record_is_international(article))
+        self.assertFalse(news_engine.record_is_military(article))
         self.assertEqual(
             news_engine.infer_section(article),
-            "International",
+            "Advanced Rail / High-Speed Rail",
         )
 
-    def test_foreign_robotaxi_story_is_international(self) -> None:
+    def test_foreign_robotaxi_story_is_international_and_stays_in_av(self) -> None:
         article = record(
             title="Madrid approves a new commercial robotaxi service",
             summary="Spanish regulators cleared the driverless deployment.",
@@ -302,7 +306,8 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             search_section="Autonomous Vehicles",
         )
 
-        self.assertEqual(news_engine.infer_section(article), "International")
+        self.assertTrue(news_engine.record_is_international(article))
+        self.assertEqual(news_engine.infer_section(article), "Autonomous Vehicles")
 
     def test_latin_america_is_not_mistaken_for_the_united_states(self) -> None:
         article = record(
@@ -313,7 +318,11 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             search_section="Other Advanced Transportation",
         )
 
-        self.assertEqual(news_engine.infer_section(article), "International")
+        self.assertTrue(news_engine.record_is_international(article))
+        self.assertEqual(
+            news_engine.infer_section(article),
+            "Advanced Rail / High-Speed Rail",
+        )
 
     def test_us_robotaxi_story_remains_autonomous_vehicles(self) -> None:
         article = record(
@@ -364,22 +373,21 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
             if item["relevant"]
         }
 
-        self.assertTrue(
-            {
-                "Autonomous Vehicles",
-                "Other Advanced Transportation",
-                "International",
-            }
-            <= relevant_sections
+        self.assertEqual(
+            relevant_sections,
+            {"Autonomous Vehicles", "Advanced Rail / High-Speed Rail"},
         )
         self.assertEqual(
             set(validated["coverage_floor_sections"]),
-            {
-                "Autonomous Vehicles",
-                "Other Advanced Transportation",
-                "International",
-            },
+            {"Autonomous Vehicles", "Advanced Rail / High-Speed Rail"},
         )
+        restored = {
+            article_id
+            for item in validated["clusters"]
+            for article_id in item["article_ids"]
+        }
+        # The floor restores U.S. sector coverage; foreign stories are not floor picks.
+        self.assertNotIn("international-1", restored)
 
     def test_market_and_stock_noise_does_not_fill_empty_sections(self) -> None:
         articles = [
@@ -426,377 +434,35 @@ class RelevanceAndCategorizationTests(unittest.TestCase):
         self.assertEqual(validated["coverage_floor_sections"], [])
         self.assertEqual(validated["clusters"], [])
 
-    def test_win_toggle_moves_story_into_and_out_of_win_section(self) -> None:
-        story = {
-            "id": "military-1",
-            "section": "Military",
-            "importance": 5,
-            "published": "2026-07-15T03:00:00-04:00",
-            "is_administration_win": True,
-        }
-
-        checked = news_engine.arrange_sections([story])
-        self.assertEqual(checked["Trump Administration Wins"], [story])
-        self.assertEqual(checked["Military"], [])
-
-        story["is_administration_win"] = False
-        unchecked = news_engine.arrange_sections([story])
-        self.assertEqual(unchecked["Trump Administration Wins"], [])
-        self.assertEqual(unchecked["Military"], [story])
-
-
-class AdministrationWinTests(unittest.TestCase):
-    def test_prompt_requires_reader_facing_plain_english_win_explanation(self) -> None:
-        instructions = news_engine.clean_spaces(
-            news_engine.prompt_messages(
-                [record()],
-                datetime.fromisoformat("2026-07-14T04:15:00-04:00"),
-                datetime.fromisoformat("2026-07-15T04:15:00-04:00"),
-            )[0]["content"].casefold()
-        )
-
-        for prohibited_phrase in (
-            "during the window",
-            "the record shows",
-            "clear federal procurement action",
-            "direct nexus",
-        ):
-            with self.subTest(prohibited_phrase=prohibited_phrase):
-                self.assertIn(prohibited_phrase, instructions)
-        self.assertIn("published verbatim", instructions)
-        self.assertIn("real-world action and result", instructions)
-        self.assertIn("first or inaugural operational flight", instructions)
-        self.assertIn("eo 14307, section 6", instructions)
-        self.assertIn("fifa world cup counter-uas", instructions)
-        self.assertIn("eo 14305, section 9", instructions)
-        self.assertIn("use neutral, factual language", instructions)
-        self.assertIn("documented or clearly stated effect", instructions)
-        self.assertIn("current executive-branch department", instructions)
-        self.assertIn("headline omits president trump", instructions)
-
-    def test_all_four_gates_allow_win_without_forcing_eo_citation(self) -> None:
-        candidate = cluster(
+class AdministrationWinRetirementTests(unittest.TestCase):
+    def test_model_win_flags_and_eo_citation_are_cleared(self) -> None:
+        # Administration Wins were retired: executive orders are policy context only,
+        # so a model that still sets every legacy win gate gets no win and no citation.
+        article = record(title="FAA expands domestic UAS commercialization")
+        raw_cluster = cluster(
             is_administration_win=True,
             win_event_within_window=True,
             win_direct_administration_nexus=True,
             win_concrete_american_benefit=True,
             win_foreign_company_expansion_only=False,
-            eo_number="",
+            eo_number="EO 14307",
+            eo_section="Sec. 3",
+            win_explanation="FAA expanded a domestic UAS commercialization program.",
         )
-
-        self.assertTrue(news_engine.administration_win_is_eligible(candidate))
         validated = news_engine.validate_analysis(
-            {
-                "executive_summary": "",
-                "what_to_watch": [],
-                "clusters": [candidate],
-            },
-            [record()],
+            {"what_to_watch": [], "clusters": [raw_cluster]},
+            [article],
         )
-        self.assertTrue(validated["clusters"][0]["is_administration_win"])
-        self.assertEqual(validated["clusters"][0]["eo_number"], "")
+        checked = validated["clusters"][0]
+        story = news_engine.cluster_to_story(checked, {article["id"]: article})
 
-    def test_each_failed_gate_rejects_win(self) -> None:
-        eligible = cluster(
-            is_administration_win=True,
-            win_event_within_window=True,
-            win_direct_administration_nexus=True,
-            win_concrete_american_benefit=True,
-            win_foreign_company_expansion_only=False,
-        )
-        failing_values = {
-            "win_event_within_window": False,
-            "win_direct_administration_nexus": False,
-            "win_concrete_american_benefit": False,
-            "win_foreign_company_expansion_only": True,
-        }
-        for field, value in failing_values.items():
+        self.assertFalse(checked["is_administration_win"])
+        self.assertEqual(validated["recognized_administration_win_ids"], [])
+        for field in ("eo_number", "eo_section", "win_explanation"):
             with self.subTest(field=field):
-                candidate = dict(eligible)
-                candidate[field] = value
-                self.assertFalse(
-                    news_engine.administration_win_is_eligible(candidate)
-                )
-
-    def test_eipp_first_flight_is_forced_to_drone_dominance_win(self) -> None:
-        article = record(
-            id="eipp-first-flight",
-            title="FAA eIPP reaches major milestone with first flight demonstration",
-            summary=(
-                "BETA completed the first operational flight under the U.S. "
-                "Department of Transportation and FAA integration program."
-            ),
-            source="Vertical Aviation International",
-            origin="Supplemental daily email",
-            required_include=True,
-            editor_vetted=True,
-        )
-
-        validated = news_engine.validate_analysis(
-            {"what_to_watch": [], "clusters": []},
-            [article],
-        )
-        win = validated["clusters"][0]
-
-        self.assertTrue(win["is_administration_win"])
-        self.assertEqual(win["section"], "eVTOL Integration Pilot Program and AAM")
-        self.assertEqual(win["eo_number"], "EO 14307")
-        self.assertEqual(win["eo_section"], "Section 6")
-        self.assertGreaterEqual(win["importance"], 9)
-        self.assertIn("Trump Administration", win["win_explanation"])
-        self.assertIn("U.S. aviation", win["win_explanation"])
-        self.assertNotIn("huge", win["win_explanation"].casefold())
-
-    def test_fifa_counter_drone_retention_is_forced_to_airspace_win(self) -> None:
-        article = record(
-            id="fifa-counter-drone",
-            search_section="UAS Security and C-UAS",
-            title="King County Sheriff keeps counter-drone tech after World Cup",
-            summary=(
-                "The federally backed equipment will protect concerts, parades, "
-                "and other future mass gatherings."
-            ),
-            source="FOX 13 Seattle",
-            origin="Google News RSS",
-        )
-        ai_cluster = cluster(
-            article_ids=[article["id"]],
-            primary_article_id=article["id"],
-            section="UAS Security and C-UAS",
-            canonical_title=article["title"],
-            is_administration_win=False,
-        )
-
-        validated = news_engine.validate_analysis(
-            {"what_to_watch": [], "clusters": [ai_cluster]},
-            [article],
-        )
-        win = validated["clusters"][0]
-
-        self.assertTrue(win["is_administration_win"])
-        self.assertEqual(win["section"], "UAS Security and C-UAS")
-        self.assertEqual(win["eo_number"], "EO 14305")
-        self.assertEqual(win["eo_section"], "Section 9")
-        self.assertIn("Trump Administration", win["win_explanation"])
-        self.assertIn("local law enforcement", win["win_explanation"])
-        self.assertIn("future mass gatherings", win["win_explanation"])
-        self.assertNotIn("huge", win["win_explanation"].casefold())
-
-    def test_current_federal_implementation_actions_are_forced_to_wins(self) -> None:
-        cases = [
-            (
-                record(
-                    id="faa-mosaic-standards",
-                    search_section="Federal Actions",
-                    title=(
-                        "Accepted Consensus Standards for Light-Sport Category "
-                        "Aircraft: Airplane, Glider, Powered Lift, and Gyroplane"
-                    ),
-                    summary=(
-                        "The FAA accepts ASTM standards as a means of compliance "
-                        "for special airworthiness certificates."
-                    ),
-                    source=(
-                        "Transportation Department, Federal Aviation Administration"
-                    ),
-                    origin="Federal Register API",
-                ),
-                "eVTOL Integration Pilot Program and AAM",
-            ),
-            (
-                record(
-                    id="nhtsa-robotaxi-rulebook",
-                    search_section="Trump Administration priorities",
-                    title=(
-                        "NHTSA sets 2028 deadline for new robotaxi safety rulebook"
-                    ),
-                    summary="",
-                    source="Automotive World",
-                    origin="Google News RSS",
-                ),
-                "Autonomous Vehicles",
-            ),
-            (
-                record(
-                    id="nhtsa-fmvss-modernization",
-                    search_section="Autonomous Vehicles",
-                    title="NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
-                    summary=(
-                        "The agency updated a federal motor vehicle safety "
-                        "standard for automated-driving vehicles."
-                    ),
-                    source="NHTSA",
-                    origin="Federal Register API",
-                ),
-                "Autonomous Vehicles",
-            ),
-            (
-                record(
-                    id="darpa-autonomous-f16",
-                    search_section="Military",
-                    title=(
-                        "DARPA and US Air Force fly frontline F-16 modified "
-                        "for autonomous flight"
-                    ),
-                    summary="",
-                    source="FlightGlobal",
-                    origin="Google News RSS",
-                ),
-                "Military",
-            ),
-        ]
-
-        for article, expected_section in cases:
-            with self.subTest(article=article["id"]):
-                validated = news_engine.validate_analysis(
-                    {"what_to_watch": [], "clusters": []},
-                    [article],
-                )
-                win = validated["clusters"][0]
-
-                self.assertTrue(win["is_administration_win"])
-                self.assertEqual(win["section"], expected_section)
-                self.assertEqual(win["eo_number"], "")
-                self.assertIn("Trump Administration", win["win_explanation"])
-                self.assertNotIn("huge win", win["win_explanation"].casefold())
-
-    @patch("news_engine.generate_final_executive_summary")
-    @patch("news_engine.analyze_articles")
-    def test_zero_ai_win_flags_cannot_erase_recognized_federal_wins(
-        self,
-        analyze_articles,
-        generate_final_executive_summary,
-    ) -> None:
-        articles = [
-            record(
-                id="faa-mosaic-standards",
-                title="FAA Signs Off on MOSAIC ASTM Standards",
-                summary="",
-                source="AvBrief.com",
-                url="https://example.com/faa-mosaic-coverage",
-                origin="Google News RSS",
-            ),
-            record(
-                id="faa-mosaic-federal-register",
-                search_section="Federal Actions",
-                title=(
-                    "Accepted Consensus Standards for Light-Sport Category "
-                    "Aircraft: Airplane, Glider, Powered Lift, and Gyroplane"
-                ),
-                summary=(
-                    "The FAA accepts ASTM standards as a means of compliance "
-                    "for special airworthiness certificates."
-                ),
-                source=(
-                    "Transportation Department, Federal Aviation Administration"
-                ),
-                url="https://www.federalregister.gov/d/2026-14298",
-                origin="Federal Register API",
-            ),
-            record(
-                id="nhtsa-robotaxi-rulebook",
-                search_section="Trump Administration priorities",
-                title="NHTSA sets 2028 deadline for new robotaxi safety rulebook",
-                summary="",
-                source="Automotive World",
-                origin="Google News RSS",
-            ),
-            record(
-                id="darpa-autonomous-f16",
-                search_section="Military",
-                title=(
-                    "DARPA and US Air Force fly frontline F-16 modified "
-                    "for autonomous flight"
-                ),
-                summary="",
-                source="FlightGlobal",
-                origin="Google News RSS",
-            ),
-        ]
-        analyze_articles.return_value = (
-            {"what_to_watch": [], "clusters": []},
-            {},
-            0.0,
-        )
-        generate_final_executive_summary.return_value = (
-            "Final summary.",
-            {},
-            0.0,
-        )
-        raw_feed = {
-            "window_start": "2026-07-16T08:44:00-04:00",
-            "window_end": "2026-07-17T08:44:00-04:00",
-            "articles": articles,
-            "source_errors": [],
-            "candidate_counts": {},
-        }
-
-        briefing = news_engine.generate_briefing_from_records(
-            raw_feed,
-            [],
-            api_key="test-key-not-used",
-        )
-
-        wins = briefing["sections"]["Trump Administration Wins"]
-        self.assertEqual(len(wins), 3)
-        self.assertEqual(len(briefing["recognized_administration_win_ids"]), 4)
-        self.assertTrue(all(item["is_administration_win"] for item in wins))
-        standards_win = next(
-            item
-            for item in wins
-            if item["title"].startswith("Accepted Consensus Standards")
-        )
-        self.assertEqual(
-            standards_win["also_covered"],
-            [
-                {
-                    "source": "AvBrief.com",
-                    "url": "https://example.com/faa-mosaic-coverage",
-                }
-            ],
-        )
-
-    def test_unrelated_fifa_story_is_not_forced_to_win(self) -> None:
-        article = record(
-            id="fifa-var",
-            title="FIFA makes surprise VAR change before World Cup final",
-            summary="The governing body changed its video-review procedure.",
-            source="Sports News",
-            origin="Supplemental daily email",
-            required_include=True,
-        )
-
-        validated = news_engine.validate_analysis(
-            {"what_to_watch": [], "clusters": []},
-            [article],
-        )
-
-        self.assertFalse(validated["clusters"][0]["is_administration_win"])
-        self.assertEqual(
-            validated["recognized_administration_win_ids"],
-            [],
-        )
-
-    def test_generic_eipp_explainer_is_not_forced_to_win(self) -> None:
-        article = record(
-            id="eipp-explainer",
-            title="The eIPP: What You Need to Know",
-            summary="The FAA explains how the integration pilot program works.",
-            source="FAA",
-            origin="Supplemental daily email",
-            required_include=True,
-        )
-
-        validated = news_engine.validate_analysis(
-            {"what_to_watch": [], "clusters": []},
-            [article],
-        )
-
-        self.assertFalse(validated["clusters"][0]["is_administration_win"])
-        self.assertEqual(
-            validated["recognized_administration_win_ids"],
-            [],
-        )
+                self.assertEqual(checked[field], "")
+        self.assertEqual(story["eo_section_summary"], "")
+        self.assertNotIn("Trump Administration Wins", news_engine.SECTION_ORDER)
 
 
 class SupplementalGuardrailTests(unittest.TestCase):
@@ -841,7 +507,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         self.assertIn("minimum sector coverage", instructions)
         self.assertIn("strongest new autonomous vehicles", instructions)
         self.assertIn("international story", instructions)
-        self.assertIn("standalone briefing for a senior executive", summary_instructions)
+        self.assertIn("polished paragraph for a senior executive", summary_instructions)
         self.assertIn("final step", summary_instructions)
         self.assertIn("do not discuss whether any item is or is not", summary_instructions)
 
@@ -914,7 +580,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         )
         raw_cluster = cluster(
             canonical_title="MSN",
-            section="UAS and Drones",
+            section="UAS / Drones",
         )
         validated = news_engine.validate_analysis(
             {
@@ -947,7 +613,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         )
         raw_cluster = cluster(
             canonical_title="Drone rules create new opportunities",
-            section="UAS and Drones",
+            section="UAS / Drones",
         )
         validated = news_engine.validate_analysis(
             {
@@ -1017,13 +683,13 @@ class SupplementalGuardrailTests(unittest.TestCase):
             "summary": "Ukrainian forces used unmanned aircraft against military targets.",
             "source": "Example News",
             "date_label": "Jul. 15, 2026",
-            "section": "Military",
+            "section": "International Security",
             "is_administration_win": True,
             "win_explanation": "Internal Win explanation.",
             "required_include": True,
         }
         sections = {section: [] for section in news_engine.SECTION_ORDER}
-        sections["Trump Administration Wins"] = [story]
+        sections["International Security"] = [story]
 
         prompt = news_engine.executive_summary_messages(
             sections,
@@ -1034,19 +700,18 @@ class SupplementalGuardrailTests(unittest.TestCase):
         )[1]["content"]
 
         self.assertIn(story["title"], prompt)
-        self.assertIn('"topic": "Military"', prompt)
+        self.assertIn('"topic": "International Security"', prompt)
         for internal_field in (
             "is_administration_win",
             "win_explanation",
             "required_include",
-            "Trump Administration Wins",
         ):
             with self.subTest(internal_field=internal_field):
                 self.assertNotIn(internal_field, prompt)
 
     def test_executive_summary_removes_win_eligibility_commentary(self) -> None:
         sections = {section: [] for section in news_engine.SECTION_ORDER}
-        sections["Military"] = [
+        sections["Military UAS"] = [
             {"title": "The Army expanded its autonomous aircraft program"}
         ]
         summary = news_engine.sanitize_compiled_executive_summary(
@@ -1065,7 +730,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         raw_cluster = cluster(
             canonical_title="Ignored AI title",
             summary="FAA authorizes routine BVLOS operations.",
-            section="UAS and Drones",
+            section="UAS / Drones",
         )
         validated = news_engine.validate_analysis(
             {
@@ -1082,37 +747,6 @@ class SupplementalGuardrailTests(unittest.TestCase):
         )
 
         self.assertEqual(story["summary"], "")
-
-    def test_eo_section_is_normalized_and_gets_plain_english_summary(self) -> None:
-        article = record(title="FAA expands domestic UAS commercialization")
-        raw_cluster = cluster(
-            is_administration_win=True,
-            win_event_within_window=True,
-            win_direct_administration_nexus=True,
-            win_concrete_american_benefit=True,
-            win_foreign_company_expansion_only=False,
-            eo_number="EO 14307",
-            eo_section="Sec. 3",
-            win_explanation="FAA expanded a domestic UAS commercialization program.",
-        )
-        validated = news_engine.validate_analysis(
-            {
-                "executive_summary": "FAA expanded domestic UAS capability.",
-                "what_to_watch": [],
-                "clusters": [raw_cluster],
-            },
-            [article],
-        )
-        story = news_engine.cluster_to_story(
-            validated["clusters"][0],
-            {article["id"]: article},
-        )
-
-        self.assertEqual(story["eo_section"], "Section 3")
-        self.assertEqual(
-            story["eo_section_summary"],
-            "advancing domestic commercialization of UAS technologies at scale",
-        )
 
     def test_executive_summary_fails_instead_of_using_template_text_if_all_copy_is_internal(
         self,
@@ -1201,7 +835,7 @@ class SupplementalGuardrailTests(unittest.TestCase):
         def summarize(sections, what_to_watch, tracker, *args, **kwargs):
             call_order.append("summary")
             self.assertEqual(
-                sections["Trump Administration Wins"][0]["title"],
+                sections["Autonomous Vehicles"][0]["title"],
                 "NHTSA modernizes FMVSS 108 for ADS-equipped vehicles",
             )
             self.assertEqual(what_to_watch, ["Watch the next agency action."])
