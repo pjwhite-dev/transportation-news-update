@@ -15,7 +15,7 @@ import re
 import subprocess
 import time
 import webbrowser
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
@@ -135,6 +135,24 @@ def incidents(limit: int = 8) -> list[dict[str, Any]]:
         return []
 
 
+def live_site() -> dict[str, Any]:
+    """The live site's heartbeat (live_service.py): its level, what is on the page, and how fresh that is."""
+    try:
+        beat = json.loads((ROOT / ".runtime" / "live_site" / "heartbeat.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"running": False}
+    try:
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(beat["at"])).total_seconds()
+    except (KeyError, ValueError):
+        age = None
+    counts = beat.get("counts", {})
+    return {
+        "running": age is not None and age < 300, "age": age, "level": beat.get("level", ""), "reason": beat.get("reason", ""),
+        "on_page": sum(counts.get(k, 0) for k in ("first_pass", "verified", "headline")), "queued": counts.get("queued", 0),
+        "preview": "http://127.0.0.1:8766/",
+    }
+
+
 def state() -> dict[str, Any]:
     now = datetime.now(EASTERN)
     nxt = next_edition(now)
@@ -146,6 +164,7 @@ def state() -> dict[str, Any]:
         "models": loaded_models(), "gpu": gpu(),
         "writer": "qwen3.8:27b-q4_K_M", "verifier": "gemma4:31b",
         "last_edition": last_edition(), "improvements": improvements(), "incidents": incidents(),
+        "live_site": live_site(),
     }
 
 

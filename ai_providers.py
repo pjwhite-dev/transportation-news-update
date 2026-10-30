@@ -104,7 +104,9 @@ class OllamaProvider:
         num_predict: int | None = None,
         max_attempts: int = 3,
         session: requests.Session | None = None,
+        keep_alive: str | None = None,
     ) -> None:
+        self.keep_alive = keep_alive  # e.g. "24h" keeps the live site's writer resident; None leaves Ollama's default
         self.base_url = base_url.rstrip("/")
         self.stall_timeout_seconds = stall_timeout_seconds
         self.think = think
@@ -137,7 +139,7 @@ class OllamaProvider:
         """
         response = self.session.post(
             f"{self.base_url}/api/chat",
-            json={**payload, "stream": True},
+            json={**payload, "stream": True, **({"keep_alive": self.keep_alive} if self.keep_alive else {})},
             timeout=(10, self.stall_timeout_seconds),
             stream=True,
         )

@@ -1,0 +1,91 @@
+# Live site settings (live_service.py). Times in minutes unless named otherwise.
+
+site:
+  # Owner has not picked a new name yet (2026-10-30); the current site name stays until they do.
+  name: "Advanced Transportation Update"
+  live_label: "Live"
+  path: "live"            # served at news.peterjwhite.org/live/ until the owner approves the cutover
+  poll_seconds: 15        # how often a reader's page checks feed.json
+  river_hours: 72         # stories older than this leave the page (they stay in the store)
+  ticker_items: 24
+
+# Topic desks shown to readers. Each of the edition's sections belongs to exactly one desk.
+desks:
+  - key: policy
+    name: "Policy & Regulation"
+    sections: ["Federal Policy & Implementation", "Federal Register", "Surface Transportation Reauthorization"]
+  - key: drones
+    name: "Drones & Airspace"
+    sections: ["UAS / Drones", "UTM / Airspace Integration"]
+  - key: sec
+    name: "Counter-UAS & Security"
+    sections: ["Counter-UAS / Airspace Security", "Military UAS", "International Security"]
+  - key: air
+    name: "Advanced Air"
+    sections: ["AAM / eVTOL / Advanced Aviation", "Civil Supersonics / High-Speed Aviation"]
+  - key: av
+    name: "Autonomous Vehicles"
+    sections: ["Autonomous Vehicles"]
+  - key: rail
+    name: "Rail"
+    sections: ["Advanced Rail / High-Speed Rail"]
+  - key: robot
+    name: "Robotics & Uncrewed"
+    sections: ["Robotics", "UxS / Maritime / Ground Robotics", "Other Advanced Transportation"]
+
+wire:
+  window_hours: 36          # ignore feed entries older than this on first sight
+  google_min_gap_seconds: 30  # Google News: at most one query every 30 s (71 queries, each about every 36 min)
+  google_max_gap_seconds: 300
+  federal_register_every: 15
+  searxng_every: 0          # off: in the first real sweep 31 of its 86 results passed the reading step, nearly all
+                            # market-research, LinkedIn and stock-chatter pages (2026-10-30). The edition keeps it.
+  official_every: 5
+  trade_every: 10
+  rest_after_failures: 3
+  deny_hosts: [linkedin.com, stocktwits.com, mordorintelligence.com, facebook.com, x.com, twitter.com, youtube.com, reddit.com]
+  rest_minutes: [5, 15, 60]
+  official_feeds_from: web_discovery.OFFICIAL_FEEDS
+  trade_feeds:
+    DroneLife: "https://dronelife.com/feed/"
+    DroneDJ: "https://dronedj.com/feed/"
+    sUAS News: "https://www.suasnews.com/feed/"
+    DroneXL: "https://dronexl.co/feed.xml"
+    Unmanned Airspace: "https://www.unmannedairspace.info/feed/"
+    The Robot Report: "https://www.therobotreport.com/feed/"
+    eVTOL Insights: "https://evtolinsights.com/feed/"
+    FLYING Magazine: "https://www.flyingmag.com/feed/"
+    Railway Gazette International: "https://www.railwaygazette.com/feed/"
+    FreightWaves: "https://www.freightwaves.com/news/feed"
+    Transport Topics: "https://www.ttnews.com/rss.xml"
+    Breaking Defense: "https://breakingdefense.com/feed/"
+    Defense News: "https://www.defensenews.com/feed/"
+    The War Zone: "https://www.thedrive.com/feed"
+
+desk:
+  parallel_stories: 1       # model calls at once; matches OLLAMA_NUM_PARALLEL=1 (one slot already writes about
+                            # 1,000 first passes an hour; more slots multiply the edition's 32k context memory)
+  budgets_seconds:          # per story per step; two attempts, then the story is dropped
+    read: 30
+    first_pass: 45
+    verify: 240
+    score: 120
+  verify_every: 10          # slow lane wakes this often, or sooner when 6 stories are waiting
+  verify_batch: 6
+  first_pass_wait: 20       # a story waiting this long for the writer goes up as a headline instead
+  similar_title_overlap: 0.8
+  writer_model: "qwen3.8:27b-q4_K_M"
+  fallback_model: "qwen3.6:27b"
+  verifier_model: "gemma4:31b"
+
+publish:
+  every_seconds: 15         # feed.json is rewritten at most this often, only when something changed
+  output: ".runtime/live_site/out"
+
+doctor:
+  heartbeat_seconds: 30
+  silent_after_seconds: 300  # longer than the slowest step (a 4-minute check)
+  lite_queue_minutes: 30    # verify queue older than this: LITE (first pass keeps flowing, lead holds)
+  writer_restarts: 2
+  model_stall_seconds: 30
+  frozen_alert_minutes: 15

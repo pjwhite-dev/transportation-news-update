@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced Transportation Update · Live</title>
+<meta name="description" content="Drones, counter-UAS, advanced air mobility, autonomous vehicles, rail and robotics news, updated around the clock. AI summaries, each linked to its source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="live.css">
+</head>
+<body>
+<div class="cover">
+  <header class="topbar wrap">
+    <a class="brand" href="./"><span id="site-name">Advanced Transportation Update</span> <i id="site-label">Live</i></a>
+    <div class="status" aria-live="polite">
+      <span class="dot" id="dot" aria-hidden="true"></span>
+      <span id="status-text">Connecting…</span>
+    </div>
+    <div class="views" role="group" aria-label="View">
+      <button type="button" data-view="river" aria-pressed="true">River</button>
+      <button type="button" data-view="desks" aria-pressed="false">Desks</button>
+    </div>
+  </header>
+  <p class="sweep wrap" id="sweep" aria-hidden="true"></p>
+  <section class="lead wrap" id="lead" aria-label="Lead story"></section>
+</div>
+
+<div class="ticker" aria-label="Latest from the wire">
+  <span class="ticker-label">Wire</span>
+  <div class="ticker-window"><div class="ticker-track" id="ticker"></div></div>
+</div>
+
+<div class="banner wrap" id="banner" hidden></div>
+
+<button type="button" class="new-pill" id="new-pill" hidden>▲ <span id="new-count">1 new story</span></button>
+
+<main class="wrap" id="main">
+  <section id="river-view" class="river-view">
+    <nav class="chips" id="chips" aria-label="Filter by desk"></nav>
+    <div class="river-grid">
+      <div class="river" id="river" aria-live="off"></div>
+      <aside class="side">
+        <section class="pulse">
+          <h2>Last 24 hours</h2>
+          <ul id="pulse"></ul>
+        </section>
+        <section class="docket">
+          <h2>Rulemaking docket</h2>
+          <ul id="docket"></ul>
+          <p class="note">From this morning's edition tracker.</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+  <section id="desks-view" class="desks-view" hidden></section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p><b>How this page works.</b> A local newsroom checks agency, trade and search feeds around the clock. Each story is read in full and summarized by AI. <span class="badge first-pass">First pass</span> means code has checked every name, number and date against the article. <span class="badge verified">✓ Verified</span> means a second AI model, from a different family, has also confirmed every sentence. If a summary fails a check, only the headline and link are shown. Always read the source.</p>
+    <p><span id="foot-name">Advanced Transportation Update</span> · news.peterjwhite.org · <a href="../">Morning edition</a></p>
+  </div>
+</footer>
+<script src="live.js" defer></script>
+</body>
+</html>
