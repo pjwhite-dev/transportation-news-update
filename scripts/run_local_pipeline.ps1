@@ -118,14 +118,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "git push failed; the local commit is preserved for recovery." }
 
     $commitSha = (git rev-parse HEAD).Trim()
-    Send-Live event delivery desk "Waiting for news.peterjwhite.org to show today's edition"
+    Send-Live event delivery desk "Waiting for advancedtransportation.live to show today's edition"
     $deploymentStatus = "pending"
     for ($attempt = 1; $attempt -le 10; $attempt++) {
         Start-Sleep -Seconds 30
         try {
             # Exact marker only: free text such as "October 26, 2026" also appears on the previous
             # edition (docket dates), which once reported a false "verified".
-            $response = Invoke-WebRequest -Uri ("https://news.peterjwhite.org/edition/?cb=" + [guid]::NewGuid().ToString("N")) -TimeoutSec 20 -UseBasicParsing
+            $response = Invoke-WebRequest -Uri ("https://advancedtransportation.live/edition/?cb=" + [guid]::NewGuid().ToString("N")) -TimeoutSec 20 -UseBasicParsing
             $hasEditionMarker = $response.Content -match ('<meta name="edition-id" content="' + [regex]::Escape($edition) + '">')
             if ($response.StatusCode -eq 200 -and $hasEditionMarker) {
                 $deploymentStatus = "verified"
@@ -145,7 +145,7 @@ try {
     [ordered]@{
         git_commit_sha = $commitSha
         deployment_status = $deploymentStatus
-        live_url = "https://news.peterjwhite.org/edition/"
+        live_url = "https://advancedtransportation.live/edition/"
     } | ConvertTo-Json
 }
 catch {

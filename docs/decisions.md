@@ -138,3 +138,4 @@ Owner asked for: FAA, DOT and White House by Google search with `site:`; ticker 
 - **Market additions are live-only** (`market.extra` in config/live.yaml) so the morning edition's market section
   does not change.
 - **Live page at the root, edition at /edition/** (owner: "make the live page at news.peterjwhite.org"). The edition keeps its archive and search; the live page footer links "Morning edition" and "Archive". The email newsletter is untouched; any link in it to the bare domain now opens the live page, one click from the edition.
+- **Site domain is advancedtransportation.live** (owner's choice of "move everything"). Repository Pages domain switched by API with the stored token; HTTPS enforced once GitHub issued the certificate. news.peterjwhite.org is left to the owner to forward; nothing in code depends on it.

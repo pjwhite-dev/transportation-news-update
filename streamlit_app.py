@@ -2011,7 +2011,7 @@ with preview_tab:
                 "github_repository", DEFAULT_REPOSITORY
             )
             if st.button(
-                "Publish this edition to news.peterjwhite.org",
+                "Publish this edition to advancedtransportation.live",
                 type="primary",
                 use_container_width=True,
                 disabled=not bool(publish_token),

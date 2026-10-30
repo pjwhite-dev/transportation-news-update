@@ -40,7 +40,7 @@ FR_FIELDS = (
 OIRA_URL = "https://www.reginfo.gov/public/do/XMLViewFileAction?f=EO_RULES_UNDER_REVIEW.xml"
 OIRA_PATH = TRACKER_DIR / "oira.json"
 DISCOVERED_PATH = TRACKER_DIR / "discovered.yaml"
-USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://news.peterjwhite.org)"
+USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://advancedtransportation.live)"
 # Daily Federal Register search: any agency, rules and proposed rules on these subjects.
 DISCOVERY_TERMS = (
     "unmanned aircraft", "UAS", "drone", "counter-UAS", "automated driving systems", "supersonic",

@@ -32,7 +32,7 @@ from market_watch import load_snapshot as load_market_snapshot
 from regulatory_tracker import build_regulatory_tracker
 
 
-SITE_URL = "https://news.peterjwhite.org"
+SITE_URL = "https://advancedtransportation.live"
 SITE_TITLE = "Advanced Transportation Update"
 
 SOURCE_CANONICAL_NAMES = {
@@ -1078,7 +1078,7 @@ def page_shell(
     {hero}
   </div>
   {body}
-  <footer class="footer no-copy"><div class="wrap"><span>This summary is AI generated.</span><span>{html.escape(SITE_TITLE)} &middot; news.peterjwhite.org</span></div></footer>
+  <footer class="footer no-copy"><div class="wrap"><span>This summary is AI generated.</span><span>{html.escape(SITE_TITLE)} &middot; advancedtransportation.live</span></div></footer>
   <script src="{prefix}assets/site.js" defer></script>
 </body>
 </html>
@@ -1211,8 +1211,8 @@ SITE_JS = (ASSET_DIR / "site.js").read_text(encoding="utf-8")
 
 MOVED_TO_ROOT = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Advanced Transportation Update</title>
-<link rel="canonical" href="https://news.peterjwhite.org/"><meta http-equiv="refresh" content="0; url=../">
-</head><body><p><a href="../">The live page has moved to news.peterjwhite.org.</a></p></body></html>
+<link rel="canonical" href="https://advancedtransportation.live/"><meta http-equiv="refresh" content="0; url=../">
+</head><body><p><a href="../">The live page has moved to advancedtransportation.live.</a></p></body></html>
 """
 
 
@@ -1285,7 +1285,7 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     (output / "live" / "index.html").write_text(MOVED_TO_ROOT, encoding="utf-8")
     if not (output / "index.html").exists():
         raise RuntimeError("site_assets/live/index.html is missing; the site would have no home page.")
-    (output / "CNAME").write_text("news.peterjwhite.org\n", encoding="utf-8")
+    (output / "CNAME").write_text("advancedtransportation.live\n", encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")
     return {"edition_count": len(editions), "latest_day": latest_day.toordinal(), "search_rows": len(index_rows)}
 

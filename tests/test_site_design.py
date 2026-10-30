@@ -86,7 +86,7 @@ class SiteDesignTests(unittest.TestCase):
         self.assertIn('id="feed"', root)  # the live page
         self.assertNotIn("edition-id", root)
         self.assertTrue((self.out / "live.js").exists())
-        self.assertIn('<link rel="canonical" href="https://news.peterjwhite.org/edition/">', self.index)
+        self.assertIn('<link rel="canonical" href="https://advancedtransportation.live/edition/">', self.index)
         self.assertIn('href="../edition/"', self.index)  # "Latest"
         self.assertIn('href="../assets/site.css"', self.index)
         self.assertIn('url=../', (self.out / "live" / "index.html").read_text(encoding="utf-8"))

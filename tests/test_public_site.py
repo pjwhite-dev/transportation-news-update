@@ -272,7 +272,7 @@ class PublicSiteTests(unittest.TestCase):
         self.assertIn("A prior editorial summary.", old_html)
         self.assertIn("City begins autonomous shuttle operations", raw_html)
         self.assertNotIn("draws industry comments", raw_html)
-        self.assertEqual(cname, "news.peterjwhite.org\n")
+        self.assertEqual(cname, "advancedtransportation.live\n")
 
 
 if __name__ == "__main__":

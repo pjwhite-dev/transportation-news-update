@@ -21,7 +21,7 @@ from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
-LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (news.peterjwhite.org/login/)
+LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (advancedtransportation.live/login/)
 BRIEFING = ROOT / "data" / "latest_briefing.json"
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}

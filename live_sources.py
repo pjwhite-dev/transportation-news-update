@@ -29,7 +29,7 @@ from live_store import Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "config" / "live.yaml"
-HEADERS = {"User-Agent": "AdvancedTransportationNewsBot/1.0 (+https://news.peterjwhite.org)"}
+HEADERS = {"User-Agent": "AdvancedTransportationNewsBot/1.0 (+https://advancedtransportation.live)"}
 
 
 def load_config(path: Path = CONFIG_PATH) -> dict[str, Any]:

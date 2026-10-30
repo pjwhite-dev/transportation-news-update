@@ -1,6 +1,6 @@
 """Deliver feed.json to the public site: commit it to the live-feed branch and push (never force).
 
-The page at news.peterjwhite.org (the site root, GitHub Pages) reads the file from raw.githubusercontent.com, so
+The page at advancedtransportation.live (the site root, GitHub Pages) reads the file from raw.githubusercontent.com, so
 the reader page and the feed are both served by GitHub and no new service is exposed. A push goes out when
 the stories changed (at most every `min_seconds`) and at least every `heartbeat_seconds`, so the page can
 tell readers when updates have stopped. The branch has its own worktree beside this one.

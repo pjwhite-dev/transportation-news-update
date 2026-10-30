@@ -29,7 +29,7 @@ from editorial_config import compiled, load_config
 import newsroom_live
 
 EASTERN = ZoneInfo("America/New_York")
-USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://news.peterjwhite.org)"
+USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://advancedtransportation.live)"
 MAX_FUTURE = timedelta(days=2)
 BODY_CHARS = 8000
 

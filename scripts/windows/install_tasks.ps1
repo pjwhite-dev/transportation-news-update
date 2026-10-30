@@ -71,7 +71,7 @@ New-NewsroomTask "newsroom-hermes-gateway" $hidden "$hiddenArgs -Command `"& '$H
 New-NewsroomTask "newsroom-wsl" $hidden "$hiddenArgs -Command `"wsl.exe -d $Distro -- sleep infinity`"" $atLogon -LongRunning
 # The local newsroom dashboard (read-only view of the runs): http://127.0.0.1:8765
 New-NewsroomTask "newsroom-dashboard" $pythonw "newsroom_dashboard.py" $atLogon -LongRunning
-# The live site (news.peterjwhite.org, the site root): wire, editing lanes, feed push. It pauses its model work while the
+# The live site (advancedtransportation.live, the site root): wire, editing lanes, feed push. It pauses its model work while the
 # edition holds .runtime\edition.lock, so the two never compete for the GPU.
 New-NewsroomTask "newsroom-live" $pythonw "live_service.py run" $atLogon -LongRunning
 

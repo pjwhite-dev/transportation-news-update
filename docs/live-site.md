@@ -47,12 +47,12 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
 
 ## Public site and the owner's override
 
-- **Page**: https://news.peterjwhite.org/ (GitHub Pages; `public_site.py` copies `site_assets/live/` to the root; the morning edition is at /edition/ and /live/ redirects to the root).
+- **Page**: https://advancedtransportation.live/ (GitHub Pages; `public_site.py` copies `site_assets/live/` to the root; the morning edition is at /edition/ and /live/ redirects to the root).
 - **Feed**: `live_push.py` commits `feed.json` to the `live-feed` branch (worktree `C:/newsroom/.wt/live-feed`)
   and pushes, never forced: when the stories change (at most every 3 min) and every 10 min regardless. The page
   reads it from raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused"
   after 25 min without a new copy. `.runtime/live_site/push.json` records the last push for the dashboard.
-- **Headline override**: https://news.peterjwhite.org/login/ (not linked from the page, `noindex`). Pick a story
+- **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). Pick a story
   and 1-48 hours; the page opens a pre-filled GitHub issue ("Headline override: ..."; body `story:` and `hours:`;
   `hours: 0` ends it). `live_override.py` reads open issues every minute with the stored `github_token` and applies
   only those opened by `pjwhite-dev` and less than 6 hours old, then answers and closes them. While an override

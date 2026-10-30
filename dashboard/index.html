@@ -184,7 +184,7 @@ footer.foot { color: var(--muted); font: 400 11px var(--mono); text-align: cente
     <h1 class="title">The Newsroom<small>Advanced Transportation Update · night desk</small></h1>
     <div class="right">
       <span id="badge" class="badge idle"><span class="dot"></span><span id="badgetext">Presses quiet</span></span>
-      <div class="controls"><button class="btn" id="sound">🔇 SOUND OFF</button><a class="btn" href="https://news.peterjwhite.org" target="_blank" rel="noopener">LIVE SITE ↗</a></div>
+      <div class="controls"><button class="btn" id="sound">🔇 SOUND OFF</button><a class="btn" href="https://advancedtransportation.live" target="_blank" rel="noopener">LIVE SITE ↗</a></div>
     </div>
   </div>
 
@@ -572,7 +572,7 @@ function handle(e) {
       break;
   }
   if (["desk", "ink-start"].includes(e.kind) && e.desk === "delivery") setStat("delivery", "…", "", e.text || "");
-  if (e.kind === "run-end" && e.status === "ok" && S.mode === "edition") setStat("delivery", "LIVE", "", "news.peterjwhite.org");
+  if (e.kind === "run-end" && e.status === "ok" && S.mode === "edition") setStat("delivery", "LIVE", "", "advancedtransportation.live");
   if (e.kind === "run-end" && S.mode === "rehearsal") setStat("delivery", "—", "", "not published in a rehearsal");
 }
 function renderAll() { badge(); renderWire(); renderTicker(); renderStamps(); renderHistory(); renderDoctor(); renderFunnel(); if (S.ink) renderInk(); }
