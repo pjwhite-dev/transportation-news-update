@@ -7,8 +7,7 @@ site" canvas artifact (the mockup's "lead bar" panel was never on the real page)
 
 ## Running it
 
-Task `newsroom-live` (at logon, from C:
-ewsroom, registered by `scripts/windows/install_tasks.ps1`) runs `live_service.py run`
+Task `newsroom-live` (at logon, from `C:\newsroom`, registered by `scripts/windows/install_tasks.ps1`) runs `live_service.py run`
 with no time limit. `scripts/ensure_services.ps1` (every 5 min) restarts it when `.runtime/live_site/heartbeat.json`
 is missing or older than 10 minutes, unless the task started in the last 10 minutes.
 
