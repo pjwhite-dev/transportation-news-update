@@ -298,11 +298,12 @@ def extract_page(html: str, url: str = "") -> PageFacts:
                 facts.published, facts.date_source = parsed, "labelled 'Published' in page title"
                 break
     if not facts.published:
-        early = next((h for h in [*(str(n.get("headline", "")) for n in ld_nodes), parser.meta.get("og:title", ""),
-                                  parser.h1[0] if parser.h1 else ""] if " ".join(h.split())), "")
-        parsed = byline_date(parser.text, early)
-        if parsed:
-            facts.published, facts.date_source = parsed, "byline beside the headline"
+        # Every candidate headline in turn: US government pages open with a hidden "USA Banner" <h1>.
+        for early in [*(str(n.get("headline", "")) for n in ld_nodes), parser.meta.get("og:title", ""), *parser.h1]:
+            parsed = byline_date(parser.text, early) if " ".join(early.split()) else None
+            if parsed:
+                facts.published, facts.date_source = parsed, "byline beside the headline"
+                break
     if not facts.published:
         stamped = [(v, hint, inside) for v, hint, inside in parser.times if parse_date(v)]
         pick = next((v for v, hint, _ in stamped if hint), None) or next((v for v, _, inside in stamped if inside), None)

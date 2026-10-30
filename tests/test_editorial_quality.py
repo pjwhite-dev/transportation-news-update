@@ -74,6 +74,15 @@ class StaleStoryTests(unittest.TestCase):
                 "<aside><time datetime='2026-10-27T01:00:00+00:00'>x</time><time datetime='2026-10-25T01:00:00+00:00'>y</time></aside></body></html>")
         self.assertEqual(ax.extract_page(html, "https://example.com/a").published.date(), date(2026, 10, 6))
 
+    def test_a_government_banner_heading_does_not_hide_the_byline_date(self):
+        # faa.gov: a hidden "USA Banner" <h1> comes first; the release's date is a plain line under its headline.
+        html = ("<html><body><h1>USA Banner</h1><p>An official website of the United States government</p>"
+                "<h1>Secretary Marks Major Milestone in eVTOL Pilot Program</h1><div>Friday, October 30, 2026</div>"
+                + "<p>" + "Florida completed its first demonstration flights. " * 40 + "</p></body></html>")
+        facts = ax.extract_page(html, "https://www.faa.gov/newsroom/secretary-marks-major-milestone")
+        self.assertEqual(facts.published.date(), date(2026, 10, 30))
+        self.assertEqual(facts.date_source, "byline beside the headline")
+
     def test_window_is_48_hours_and_72_over_weekends_and_holidays(self):
         self.assertEqual(cal.freshness_hours(datetime(2026, 10, 27, 9, tzinfo=ET)), 48)   # Tuesday
         self.assertEqual(cal.freshness_hours(datetime(2026, 10, 26, 9, tzinfo=ET)), 72)   # Monday
