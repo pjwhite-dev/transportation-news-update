@@ -181,6 +181,39 @@
     return item;
   }
 
+  // "From official sources": cards that step along every few seconds, paused while the reader is using them.
+  function ago(iso) {
+    var mins = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+    if (mins < 60) return mins + " min ago";
+    var hrs = Math.round(mins / 60);
+    return hrs < 24 ? hrs + " h ago" : Math.round(hrs / 24) + " d ago";
+  }
+  function renderPosts(feed) {
+    var posts = feed.posts || [], box = $("official"), track = $("official-track");
+    box.hidden = posts.length < 3;
+    var key = posts.map(function (p) { return p.url; }).join("|");
+    if (key === state.postsKey) return;
+    state.postsKey = key;
+    track.textContent = "";
+    posts.forEach(function (p) {
+      var card = el("article", "official-card");
+      var head = el("div", "who");
+      head.appendChild(el("b", null, p.org));
+      head.appendChild(el("span", null, p.kind + " \u00b7 " + ago(p.published)));
+      card.appendChild(head);
+      card.appendChild(link(p.url, p.title, "official-title"));
+      track.appendChild(card);
+    });
+  }
+  function stepPosts(dir) {
+    var track = $("official-track"), card = track.firstElementChild;
+    if (!card) return;
+    var step = card.getBoundingClientRect().width + 12;
+    var end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    if (dir > 0 && end) track.scrollTo({ left: 0, behavior: quiet ? "auto" : "smooth" });
+    else track.scrollBy({ left: dir * step, behavior: quiet ? "auto" : "smooth" });
+  }
+
   function renderMarket(feed) {
     var m = feed.market, box = $("market");
     box.hidden = !(m && m.quotes && m.quotes.length);
@@ -313,6 +346,7 @@
     renderLead(feed);
     renderTicker(feed);
     renderMarket(feed);
+    renderPosts(feed);
     renderFilters(feed);
     renderFeed(feed, fresh);
     renderStatus();
@@ -343,6 +377,11 @@
   document.addEventListener("visibilitychange", function () { if (!document.hidden) poll(); });
   setInterval(renderStatus, 5000);
   setInterval(stepSweep, SWEEP_MS);
+  $("official-prev").addEventListener("click", function () { stepPosts(-1); });
+  $("official-next").addEventListener("click", function () { stepPosts(1); });
+  ["mouseenter", "focusin", "touchstart"].forEach(function (ev) { $("official").addEventListener(ev, function () { state.postsHeld = true; }, { passive: true }); });
+  ["mouseleave", "focusout"].forEach(function (ev) { $("official").addEventListener(ev, function () { state.postsHeld = false; }); });
+  if (!quiet) setInterval(function () { if (!state.postsHeld && !document.hidden) stepPosts(1); }, 7000);
 
   (store("live-hidden") || "").split(",").forEach(function (k) { if (k) state.hidden[k] = true; });
   poll();

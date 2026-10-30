@@ -22,6 +22,7 @@ import feedparser
 import requests
 import yaml
 
+import live_posts
 import news_engine
 import newsroom_live
 import web_discovery
@@ -46,6 +47,8 @@ class Source:
     section: str = ""
     official: bool = False
     site: str = ""  # Google sources only: limit the search to this agency site
+    posts: bool = False  # feeds only the "From official sources" strip (live_posts), never the story queue
+    topical: bool = True  # strip items must be on the site's topics (off for agencies that only post on them)
 
 
 def build_sources(config: dict[str, Any]) -> list[Source]:
@@ -65,6 +68,14 @@ def build_sources(config: dict[str, Any]) -> list[Source]:
     sources.append(Source("Federal Register", "federal_register", timedelta(minutes=wire["federal_register_every"]), official=True))
     if wire.get("searxng_every"):
         sources.append(Source("Web search", "searxng", timedelta(minutes=wire["searxng_every"])))
+    posts = config.get("posts") or {}
+    for spec in posts.get("sources", []):
+        kind = str(spec["kind"])
+        sources.append(Source(
+            f"Official: {spec['name']}", kind, timedelta(minutes=float(posts.get("every_minutes", 60))),
+            url=str(spec.get("url", "")), site=str(spec.get("site", "")), query=str(spec.get("handle", "")),
+            official=True, posts=True, topical=bool(spec.get("topical", True)),
+        ))
     queries = [(section, q) for section, qs in news_engine.NEWS_QUERIES.items() for q in qs]
     google_cycle = timedelta(seconds=max(1, len(queries)) * wire["google_min_gap_seconds"])
     sources += [Source(f"Google News: {q}", "google", google_cycle, query=q, section=s) for s, q in queries]
@@ -148,6 +159,7 @@ class Wire:
             "google": self._google,
             "federal_register": lambda s, since: _ok(news_engine.fetch_federal_register(since, self.clock())),
             "searxng": lambda s, since: _ok(web_discovery.fetch_searxng(os.environ.get("SEARXNG_BASE_URL", "http://localhost:8080"), since, self.clock())),
+            "bluesky": lambda s, since: live_posts.fetch_bluesky(s.query, s.name.split(": ", 1)[-1], since, self.session),
         }
         self.google_gap = float(config["wire"]["google_min_gap_seconds"])
         self._last_google = 0.0
@@ -189,7 +201,8 @@ class Wire:
         """Poll one source; returns the number of new stories queued. Never raises."""
         now = self.clock()
         state = self.store.source(source.name) or {}
-        since = now - timedelta(hours=float(self.config["wire"]["window_hours"]))
+        keep_days = float((self.config.get("posts") or {}).get("keep_days", 7))
+        since = now - (timedelta(days=keep_days) if source.posts else timedelta(hours=float(self.config["wire"]["window_hours"])))
         try:
             items = self.fetchers[source.kind](source, since)
         except Exception as exc:  # noqa: BLE001 - one source failing must never stop the wire
@@ -201,6 +214,12 @@ class Wire:
                 polls=int(state.get("polls", 0)) + 1,
             )
             newsroom_live.emit("live-source-fail", desk="wire", source=source.name, failures=failures, rest_minutes=rest.total_seconds() / 60, error=str(exc)[:200])
+            return 0
+        if source.official:
+            self._to_strip(source, items, now, keep_days)
+        if source.posts:
+            self.store.update_source(source.name, failures=0, rest_until="", last_error="", last_poll=iso(now),
+                                     next_due=iso(now + source.every), polls=int(state.get("polls", 0)) + 1)
             return 0
         new = 0
         for item in items:
@@ -218,6 +237,18 @@ class Wire:
         )
         newsroom_live.emit("live-sweep", desk="wire", source=source.name, items=len(items), new=new)
         return new
+
+    def _to_strip(self, source: Source, items: list[dict[str, Any]], now: datetime, keep_days: float) -> None:
+        """Official sources also feed the "From official sources" strip (title, link and time only)."""
+        org = source.name.split(": ", 1)[-1]
+        if source.kind == "bluesky":
+            strip = items
+        else:
+            label = "Press release" if source.kind == "rss" else "On its website"
+            strip = live_posts.from_wire_items(org, [i for i in items if not self.denied(str(i.get("url", "")))], label)
+        if source.topical:
+            strip = live_posts.relevant(strip)
+        live_posts.record(self.store, strip, now, keep_days)
 
     def google_turn(self) -> bool:
         """At most one Google News query per gap (the gap doubles while Google is throttling us)."""

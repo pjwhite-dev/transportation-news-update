@@ -80,6 +80,40 @@ desk:
   fallback_model: "qwen3.6:27b-q4_K_M"   # the installed tag (live_service checks every model at start)
   verifier_model: "gemma4:31b"
 
+posts:                      # the "From official sources" strip above the feed (live_posts.py)
+  every_minutes: 60         # each source below; Google searches share the wire's one-per-30-s limit
+  keep_days: 7
+  # The wire's own official sources (NASA, DoD, FAA, DOT, White House) feed the strip too. Bluesky only for
+  # handles that are the organization's own domain. topical: false = every item counts (agencies, pure plays).
+  sources:
+    - {name: NHTSA, kind: google, site: nhtsa.gov, topical: false}
+    - {name: NTSB, kind: google, site: ntsb.gov, topical: false}
+    - {name: Federal Railroad Administration, kind: google, site: railroads.dot.gov, topical: false}
+    - {name: TSA, kind: google, site: tsa.gov}
+    - {name: Amtrak, kind: rss, url: "https://media.amtrak.com/feed/", topical: false}
+    - {name: Boeing, kind: rss, url: "https://boeing.mediaroom.com/news-releases-statements?pagetemplate=rss"}
+    - {name: Lockheed Martin, kind: rss, url: "https://news.lockheedmartin.com/news-releases?pagetemplate=rss"}
+    - {name: Waymo, kind: rss, url: "https://waymo.com/blog/rss.xml", topical: false}
+    - {name: Airlines for America, kind: rss, url: "https://www.airlines.org/feed/"}
+    - {name: Delta, kind: rss, url: "https://news.delta.com/rss.xml"}
+    - {name: United, kind: rss, url: "https://united.mediaroom.com/news-releases?pagetemplate=rss"}
+    - {name: Archer, kind: google, site: archer.com, topical: false}
+    - {name: Zipline, kind: google, site: zipline.com, topical: false}
+    - {name: Wing, kind: google, site: wing.com, topical: false}
+    - {name: Skydio, kind: google, site: skydio.com, topical: false}
+    - {name: Aurora, kind: google, site: aurora.tech, topical: false}
+    - {name: BETA Technologies, kind: google, site: beta.team, topical: false}
+    - {name: Wisk, kind: google, site: wisk.aero, topical: false}
+    - {name: Kodiak, kind: google, site: kodiak.ai, topical: false}
+    - {name: Union Pacific, kind: google, site: up.com, topical: false}
+    - {name: BNSF, kind: google, site: bnsf.com, topical: false}
+    - {name: CSX, kind: google, site: csx.com, topical: false}
+    - {name: Airbus, kind: google, site: airbus.com}
+    - {name: Tesla, kind: google, site: tesla.com}
+    - {name: MTA, kind: bluesky, handle: mta.info, topical: false}
+    - {name: Transportation Research Board, kind: bluesky, handle: trb.org, topical: false}
+    - {name: Amtrak Cascades, kind: bluesky, handle: amtrakcascades.wsdot.wa.gov, topical: false}
+
 market:
   every_minutes: 5          # Finnhub watchlist (market_watch.WATCHLIST) while NYSE is open; once after each close
   extra:                    # live page only, after the edition's list (the free plan allows 60 calls a minute)

@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import live_lead
+import live_posts
 from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
@@ -102,6 +103,7 @@ def build_feed(
         "desks": desks,
         "stories": public,
         "market": market,
+        "posts": live_posts.public_posts(store, now),
         "wire": (wire or [])[:40],
     }
 

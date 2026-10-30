@@ -15,6 +15,7 @@ import live_doctor
 import live_feed
 import live_lead
 import live_market
+import live_posts
 import news_engine
 import requests
 
@@ -301,6 +302,67 @@ class PublicPageTests(unittest.TestCase):
         self.assertEqual(symbols[: len(market_watch.WATCHLIST)], [s for s, _, _ in market_watch.WATCHLIST])
         self.assertIn("TSLA", symbols)
         self.assertEqual(len(symbols), len(set(symbols)))
+
+
+class OfficialStripTests(unittest.TestCase):
+    def setUp(self):
+        self.store = Store(":memory:")
+
+    def item(self, org, title, hours=1, url=None):
+        return live_posts.post_item(org, title, url or f"https://example.com/{org}/{hours}/{len(title)}", iso(NOW - timedelta(hours=hours)), "Press release")
+
+    def test_site_search_clutter_is_left_out(self):
+        for title in ("Autonomy Engineer Intern, 2027 - Skydio", "Contact us - BNSF Railway", "tfrweb - Federal Aviation Administration (.gov)",
+                      "Full Self-Driving (Supervised) Referral Program - Tesla", "CSX Customer Advisory: Toledo, Ohio, Incident"):
+            self.assertFalse(live_posts.keep(title), title)
+        self.assertTrue(live_posts.keep("Zipline Now Making Quieter Deliveries with Acoustics Breakthrough"))
+
+    def test_record_keeps_a_week_newest_first_and_never_twice(self):
+        old = self.item("FAA", "FAA issues a final rule on drone operations", hours=24 * 8)
+        a, b = self.item("FAA", "FAA approves new air taxi test corridor", 3), self.item("NTSB", "NTSB opens an investigation into a rail collision", 1)
+        self.assertEqual(live_posts.record(self.store, [old, a], NOW), 2)
+        self.assertEqual(live_posts.record(self.store, [a, b], NOW), 1)
+        self.assertEqual([i["org"] for i in live_posts.public_posts(self.store, NOW)], ["NTSB", "FAA"])
+
+    def test_no_organization_fills_the_strip(self):
+        live_posts.record(self.store, [self.item("Boeing", f"Boeing announces delivery number {n} of its freighter", n) for n in range(1, 6)]
+                          + [self.item("Amtrak", "Amtrak opens the new Portal North Bridge track", 7)], NOW)
+        orgs = [i["org"] for i in live_posts.public_posts(self.store, NOW)]
+        self.assertEqual(orgs.count("Boeing"), 2)
+        self.assertIn("Amtrak", orgs)
+
+    def test_bluesky_keeps_the_accounts_own_posts_only(self):
+        handle = "mta.info"
+        feed = {"feed": [
+            {"post": {"uri": "at://did:plc:x/app.bsky.feed.post/abc", "author": {"handle": handle},
+                      "record": {"createdAt": "2026-10-30T13:00:00Z", "text": "Service on the 7 line resumes after signal repairs tonight"}}},
+            {"reason": {"$type": "repost"}, "post": {"uri": "at://other/app.bsky.feed.post/r1", "author": {"handle": "someone.bsky.social"},
+                      "record": {"createdAt": "2026-10-30T13:00:00Z", "text": "A repost of another account's long post here"}}},
+            {"post": {"uri": "at://did:plc:x/app.bsky.feed.post/old", "author": {"handle": handle},
+                      "record": {"createdAt": "2026-10-01T13:00:00Z", "text": "An old post from earlier this month about service"}}},
+        ]}
+        session = SimpleNamespace(get=lambda *a, **k: FakeResponse(feed))
+        items = live_posts.fetch_bluesky(handle, "MTA", NOW - timedelta(days=7), session)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["url"], "https://bsky.app/profile/mta.info/post/abc")
+        self.assertEqual(items[0]["kind"], "Bluesky post")
+
+    def test_strip_sources_never_queue_stories_and_official_ones_feed_the_strip(self):
+        found = {"title": "FAA approves BVLOS waiver for drone delivery in Texas", "url": "https://www.faa.gov/news/1",
+                 "published": iso(NOW - timedelta(hours=2)), "source": "FAA"}
+        sources = [Source("Official: NTSB", "google", timedelta(minutes=60), site="ntsb.gov", official=True, posts=True, topical=False),
+                   Source("Agency: Federal Aviation Administration", "google", timedelta(minutes=10), site="faa.gov", official=True)]
+        wire = Wire(self.store, CONFIG, sources=sources, fetchers={"google": lambda s, since: [dict(found, url=found["url"] + s.site)]}, clock=lambda: NOW)
+        self.assertEqual(wire.poll(sources[0]), 0)
+        self.assertEqual(self.store.counts().get("queued", 0), 0)
+        wire.poll(sources[1])
+        self.assertEqual(self.store.counts().get("queued", 0), 1)  # the wire's own official source still queues its story
+        self.assertEqual({i["org"] for i in live_posts.public_posts(self.store, NOW)}, {"NTSB", "Federal Aviation Administration"})
+
+    def test_every_strip_source_is_domain_verified_on_bluesky(self):
+        for spec in CONFIG["posts"]["sources"]:
+            if spec["kind"] == "bluesky":
+                self.assertNotIn(".bsky.social", spec["handle"])
 
 
 class FeedPushTests(unittest.TestCase):
