@@ -82,6 +82,7 @@ class StaleStoryTests(unittest.TestCase):
         facts = ax.extract_page(html, "https://www.faa.gov/newsroom/secretary-marks-major-milestone")
         self.assertEqual(facts.published.date(), date(2026, 10, 30))
         self.assertEqual(facts.date_source, "byline beside the headline")
+        self.assertEqual(facts.h1_count, 1)  # the banner is not a second headline ("not an article")
 
     def test_window_is_48_hours_and_72_over_weekends_and_holidays(self):
         self.assertEqual(cal.freshness_hours(datetime(2026, 10, 27, 9, tzinfo=ET)), 48)   # Tuesday

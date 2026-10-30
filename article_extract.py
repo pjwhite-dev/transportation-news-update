@@ -183,7 +183,7 @@ class _PageParser(HTMLParser):
             text = " ".join("".join(self._buffer).split())
             if tag == "title":
                 self.title = text
-            elif tag == "h1" and text:
+            elif tag == "h1" and text and text.casefold() != "usa banner":  # the hidden .gov site banner
                 self.h1.append(text)
             elif tag == "p" and text:
                 self.paragraphs.append((text, self._in_article > 0))
@@ -298,7 +298,7 @@ def extract_page(html: str, url: str = "") -> PageFacts:
                 facts.published, facts.date_source = parsed, "labelled 'Published' in page title"
                 break
     if not facts.published:
-        # Every candidate headline in turn: US government pages open with a hidden "USA Banner" <h1>.
+        # Every candidate headline in turn: the first one found may be a site banner, not the article's.
         for early in [*(str(n.get("headline", "")) for n in ld_nodes), parser.meta.get("og:title", ""), *parser.h1]:
             parsed = byline_date(parser.text, early) if " ".join(early.split()) else None
             if parsed:
