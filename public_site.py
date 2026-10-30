@@ -1281,6 +1281,15 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
             for asset in source.iterdir():
                 if asset.is_file():
                     shutil.copyfile(asset, target / asset.name)
+    # Browsers may keep live.css and live.js for 10 minutes (GitHub Pages); a version stamp makes a new page
+    # never run with an old script (the old one crashed on a removed element and the page showed nothing).
+    page = output / "index.html"
+    if page.exists():
+        text = page.read_text(encoding="utf-8")
+        for name in ("live.css", "live.js"):
+            stamp = hashlib.sha256((output / name).read_bytes()).hexdigest()[:10]
+            text = text.replace(f'"{name}"', f'"{name}?v={stamp}"')
+        page.write_text(text, encoding="utf-8")
     (output / "live").mkdir(exist_ok=True)
     (output / "live" / "index.html").write_text(MOVED_TO_ROOT, encoding="utf-8")
     if not (output / "index.html").exists():
