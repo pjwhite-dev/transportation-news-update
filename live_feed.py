@@ -22,7 +22,6 @@ from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
 LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (advancedtransportation.live/login/)
-BRIEFING = ROOT / "data" / "latest_briefing.json"
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
 
@@ -49,25 +48,6 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
     if corrections:
         out["correction"] = corrections[-1]
     return out
-
-
-def docket(path: Path = BRIEFING) -> list[dict[str, Any]]:
-    """The edition's rulemaking tracker, as the morning's run left it (read only)."""
-    try:
-        items = json.loads(path.read_text(encoding="utf-8")).get("regulatory_tracker") or []
-    except (OSError, ValueError):
-        return []
-    rows = []
-    for item in items[:12]:
-        nxt = item.get("next_date") or {}
-        rows.append({
-            "agency": item.get("agency", ""),
-            "action": item.get("action", ""),
-            "status": item.get("status", ""),
-            "next": nxt.get("label", "") if isinstance(nxt, dict) else "",
-            "url": item.get("source_url", ""),
-        })
-    return rows
 
 
 def build_feed(
@@ -118,7 +98,6 @@ def build_feed(
         "ticker": [{"id": s["id"], "source": s["source"], "title": s["title"], "url": s["url"]} for s in ticker],
         "desks": desks,
         "stories": public,
-        "docket": docket(),
         "market": market,
         "wire": (wire or [])[:40],
     }

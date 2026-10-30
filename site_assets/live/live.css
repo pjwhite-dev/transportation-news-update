@@ -68,14 +68,6 @@ button{font:inherit}
 .developing a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
 .developing .meta{font-size:.75rem;color:var(--dim);margin-top:4px}
 .lead-empty{color:var(--dim);font-size:1rem;padding-block:20px;max-width:36em}
-.lead-side .docket h2{margin:0 0 10px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-.lead-side .docket ul{list-style:none;margin:0;padding:0}
-.lead-side .docket li{padding:8px 0;border-top:1px solid rgba(159,176,200,.22);font-size:.82rem;line-height:1.35}
-.lead-side .docket li a{color:var(--ice);font-weight:600;text-decoration:none}
-.lead-side .docket li a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
-.lead-side .docket .st{display:block;margin-top:2px;color:var(--dim);font-size:.78rem}
-.lead-side .docket summary{cursor:pointer;color:var(--amber);font-size:.8rem;font-weight:700;padding:8px 0;min-height:32px}
-.lead-side .note{color:var(--dim);font-weight:400;letter-spacing:0;text-transform:none;margin-left:4px}
 
 /* ---- tickers: the wire, then markets, stuck together at the top ---- */
 .tickers{position:sticky;top:0;z-index:30}

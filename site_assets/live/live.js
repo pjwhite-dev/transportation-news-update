@@ -1,4 +1,4 @@
-/* Live page: poll feed.json, render the tickers, lead, docket and one feed; never move the page under a reader. */
+/* Live page: poll feed.json, render the tickers, lead and one feed; never move the page under a reader. */
 (function () {
   "use strict";
   var TZ = "America/New_York";
@@ -209,25 +209,6 @@
     }
   }
 
-  function docketItem(r) {
-    var li = el("li");
-    li.appendChild(link(r.url, r.agency + ": " + r.action));
-    li.appendChild(el("span", "st", r.next || r.status));
-    return li;
-  }
-
-  function renderDocket(feed) {
-    var rows = feed.docket || [], first = 2;
-    $("docket-box").hidden = !rows.length;
-    var top = $("docket"), rest = $("docket-rest");
-    top.textContent = "";
-    rest.textContent = "";
-    rows.slice(0, first).forEach(function (r) { top.appendChild(docketItem(r)); });
-    rows.slice(first).forEach(function (r) { rest.appendChild(docketItem(r)); });
-    $("docket-more").hidden = rows.length <= first;
-    $("docket-more-label").textContent = (rows.length - first) + " more on the docket";
-  }
-
   function renderFeed(feed, fresh) {
     var box = $("feed");
     box.textContent = "";
@@ -318,7 +299,6 @@
     renderTicker(feed);
     renderMarket(feed);
     renderFilters(feed);
-    renderDocket(feed);
     renderFeed(feed, fresh);
     renderStatus();
   }
