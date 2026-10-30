@@ -783,7 +783,6 @@ class FeedTests(unittest.TestCase):
         feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
         self.assertEqual(feed["developing"], ["big"])
         self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "minor"})  # both stay in the feed
-        self.assertTrue(feed["site"]["tagline"])
 
     def test_write_site_copies_the_page_and_writes_the_feed(self):
         with tempfile.TemporaryDirectory() as tmp:

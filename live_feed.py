@@ -95,7 +95,7 @@ def build_feed(
         "version": FEED_VERSION,
         "generated": iso(now),
         "level": level,
-        "site": {"name": site["name"], "label": site["live_label"], "tagline": site.get("tagline", ""), "poll_seconds": int(site["poll_seconds"])},
+        "site": {"name": site["name"], "label": site["live_label"], "poll_seconds": int(site["poll_seconds"])},
         "lead": lead,
         "developing": [public_story(s)["id"] for s in developing],
         "ticker": [{"id": s["id"], "source": s["source"], "title": s["title"], "url": s["url"]} for s in ticker],

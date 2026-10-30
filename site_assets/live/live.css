@@ -35,7 +35,6 @@ button{font:inherit}
 @keyframes sweep-turn{to{transform:rotate(360deg)}}
 @keyframes blip{0%,8%{opacity:.25}10%{opacity:1}55%{opacity:.5}100%{opacity:.25}}
 @keyframes ping{0%,9%{opacity:0;transform:scale(.6)}10%{opacity:.9;transform:scale(.6)}40%,100%{opacity:0;transform:scale(1.9)}}
-.tagline{margin:6px 0 0;font-size:.84rem;color:var(--dim);max-width:46em}
 .brand i{color:var(--amber);font-style:italic;font-weight:400}
 .status{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--dim)}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--live);flex:none}
