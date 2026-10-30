@@ -48,9 +48,10 @@ if (-not $dashboardUp) {
 
 # The live site (live_service.py). Its heartbeat file is refreshed only while every worker is healthy, so a
 # missing or stale file means the process is down or hung: restart its task. A task started in the last
-# 10 minutes is still loading its models and is left alone.
+# 10 minutes is still loading its models and is left alone, and a disabled task (the owner paused the site) is
+# never started.
 $liveTask = Get-ScheduledTask -TaskName "newsroom-live" -ErrorAction SilentlyContinue
-if ($liveTask) {
+if ($liveTask -and $liveTask.State -ne "Disabled") {
     $beat = Join-Path $runtime "live_site\heartbeat.json"
     $stale = (-not (Test-Path $beat)) -or (((Get-Date) - (Get-Item $beat).LastWriteTime).TotalMinutes -gt 10)
     $justStarted = ((Get-Date) - (Get-ScheduledTaskInfo -TaskName "newsroom-live").LastRunTime).TotalMinutes -lt 10
