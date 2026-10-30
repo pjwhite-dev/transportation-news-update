@@ -26,7 +26,8 @@ API = "https://api.github.com"
 TITLE = "Headline override"
 DONE_KEY = "override_issues_done"  # issue numbers already handled, in case closing one fails
 
-_STORY = re.compile(r"^\s*story:\s*([A-Za-z0-9_-]{4,64})\s*$", re.M)
+# A story id is the wire's hex id or, for a story stored without one, its address key (live_store.url_key).
+_STORY = re.compile(r"^\s*story:\s*(\S{4,300})\s*$", re.M)
 _HOURS = re.compile(r"^\s*hours:\s*(\d{1,2})\s*$", re.M)
 
 

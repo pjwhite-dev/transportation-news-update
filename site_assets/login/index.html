@@ -6,7 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
 <meta name="override-repo" content="pjwhite-dev/transportation-news-update">
-<title>Headline override · Advanced Transportation Live</title>
+<meta name="override-owner" content="pjwhite-dev">
+<title>Owner sign-in · Advanced Transportation Live</title>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,11 +19,21 @@
 body{margin:0;font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.5}
 .wrap{width:min(860px,100% - 32px);margin-inline:auto}
 header{background:var(--night);color:var(--ice);padding:22px 0 20px}
+header .wrap{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px 16px}
 header a{color:var(--ice);text-decoration:none;font:500 1.35rem/1.2 var(--serif);display:inline-flex;align-items:center;gap:10px}
 header a i{color:var(--amber);font-weight:400}
 header p{margin:6px 0 0;color:var(--dim);font-size:.9rem}
+.who{color:var(--dim);font-size:.85rem;display:flex;gap:10px;align-items:center}
+.who button{min-height:32px;padding:4px 12px;font-size:.8rem;background:transparent;border-color:var(--dim);color:var(--ice)}
 h1{font:600 1.5rem/1.2 var(--serif);margin:28px 0 6px}
 .lede{color:var(--soft);margin:0 0 20px}
+.signin{max-width:520px}
+.signin label{margin-bottom:12px}
+.signin input[type=password]{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;min-height:42px;width:100%}
+.check{flex-direction:row !important;align-items:center;gap:8px !important;font-weight:400 !important;color:var(--soft)}
+details{margin-top:22px;color:var(--soft);font-size:.9rem}
+details summary{cursor:pointer;font-weight:600;color:var(--steel)}
+details ol{padding-left:20px}
 .now{background:var(--wash);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:22px}
 .now b{display:block;font:600 1.05rem/1.3 var(--serif);margin-top:2px}
 .now small{color:var(--soft)}
@@ -42,18 +53,45 @@ button.quiet{background:#fff;color:var(--steel)}
 button:disabled{opacity:.5;cursor:default}
 .hint{font-size:.82rem;color:var(--soft);flex:1 1 260px}
 .err{color:#B3261E;font-size:.85rem}
+.ok{color:var(--green);font-size:.85rem}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <a href="../"><svg width="30" height="30" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="18" fill="none" stroke="#F2B33D" stroke-width="2.4"/><path d="M21 21 L8 12.5 A16 16 0 0 1 21 3 Z" fill="#F2B33D" opacity=".3"/><line x1="21" y1="21" x2="21" y2="3" stroke="#F2B33D" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="9" r="3.4" fill="#2FD27A"/></svg>Advanced Transportation <i>Live</i></a>
-    <p>Owner tools</p>
+    <div>
+      <a href="../"><svg width="30" height="30" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="18" fill="none" stroke="#F2B33D" stroke-width="2.4"/><path d="M21 21 L8 12.5 A16 16 0 0 1 21 3 Z" fill="#F2B33D" opacity=".3"/><line x1="21" y1="21" x2="21" y2="3" stroke="#F2B33D" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="9" r="3.4" fill="#2FD27A"/></svg>Advanced Transportation <i>Live</i></a>
+      <p>Owner tools</p>
+    </div>
+    <div class="who" id="who" hidden><span id="whoName"></span><button type="button" id="signout">Sign out</button></div>
   </div>
 </header>
-<main class="wrap">
+
+<main class="wrap signin" id="signin">
+  <h1>Owner sign-in</h1>
+  <p class="lede">Sign in with a GitHub token for the site owner's account. GitHub confirms whose token it is; nothing else on this page opens without it.</p>
+  <form id="signinForm">
+    <label>GitHub token
+      <input type="password" id="token" autocomplete="off" spellcheck="false" required>
+    </label>
+    <label class="check"><input type="checkbox" id="remember"> Keep me signed in on this device</label>
+    <button type="submit" id="signinBtn">Sign in</button>
+    <p class="err" id="signinErr" role="alert"></p>
+  </form>
+  <details>
+    <summary>Making the token (once)</summary>
+    <ol>
+      <li>On GitHub, open Settings, Developer settings, Personal access tokens, <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained tokens</a>, Generate new token.</li>
+      <li>Repository access: Only select repositories, then transportation-news-update.</li>
+      <li>Permissions: Issues, Read and write. Nothing else.</li>
+      <li>Generate it, copy it, and paste it above. The token stays in this browser; it is sent only to GitHub.</li>
+    </ol>
+  </details>
+</main>
+
+<main class="wrap" id="tools" hidden>
   <h1>Choose the headline</h1>
-  <p class="lede">Pick a story and how long it should lead. You confirm on GitHub, signed in as the site's owner; requests from anyone else are ignored. The page changes about a minute after you submit, and readers see it within about five more.</p>
+  <p class="lede">Pick a story and how long it should lead. The page changes about a minute after you send it, and readers see it within about five more.</p>
   <div class="now" id="now">Loading the current page…</div>
   <div class="controls">
     <label>Lead for
@@ -65,9 +103,9 @@ button:disabled{opacity:.5;cursor:default}
   </div>
   <ul id="list"></ul>
   <div class="bar">
-    <button type="button" id="go" disabled>Continue on GitHub</button>
+    <button type="button" id="go" disabled>Make it the headline</button>
     <button type="button" class="quiet" id="end" hidden>End the override now</button>
-    <span class="hint" id="hint">Choose a story first.</span>
+    <span class="hint" id="hint" role="status">Choose a story first.</span>
   </div>
 </main>
 <script>
@@ -76,10 +114,48 @@ button:disabled{opacity:.5;cursor:default}
   var meta = function (n) { var m = document.querySelector('meta[name="' + n + '"]'); return m ? m.content : ""; };
   var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var FEED = local ? "../feed.json" : meta("live-feed");
-  var REPO = meta("override-repo");
+  var REPO = meta("override-repo"), OWNER = meta("override-owner");
+  var API = "https://api.github.com";
+  var KEY = "atl-owner-token";
   var fmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "2-digit" });
   var $ = function (id) { return document.getElementById(id); };
-  var stories = [], chosen = null, lead = null;
+  var token = "", stories = [], chosen = null, lead = null;
+
+  function store(kind) { try { return window[kind]; } catch (e) { return null; } }
+  function saved() { var s = store("sessionStorage"), l = store("localStorage"); try { return (s && s.getItem(KEY)) || (l && l.getItem(KEY)) || ""; } catch (e) { return ""; } }
+  function save(value, remember) { try { var t = store(remember ? "localStorage" : "sessionStorage"); if (t) t.setItem(KEY, value); } catch (e) {} }
+  function forget() { ["sessionStorage", "localStorage"].forEach(function (k) { try { var t = store(k); if (t) t.removeItem(KEY); } catch (e) {} }); }
+
+  function github(path, options) {
+    options = options || {};
+    var headers = { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token };
+    if (options.body) headers["Content-Type"] = "application/json";
+    return fetch(API + path, { method: options.method || "GET", headers: headers, body: options.body, cache: "no-store" });
+  }
+
+  // GitHub says whose token this is; only the owner's account, with access to the site's repository, gets in.
+  function signIn(value, remember) {
+    token = value.trim();
+    $("signinBtn").disabled = true;
+    $("signinErr").textContent = "";
+    return github("/user")
+      .then(function (r) { if (r.status === 401) throw new Error("GitHub did not accept that token."); if (!r.ok) throw new Error("GitHub could not be reached (" + r.status + ")."); return r.json(); })
+      .then(function (user) {
+        if (String(user.login).toLowerCase() !== OWNER.toLowerCase()) throw new Error("That token belongs to " + user.login + ", not the site's owner.");
+        return github("/repos/" + REPO).then(function (r) { if (!r.ok) throw new Error("That token cannot see the site's repository. Give it access to transportation-news-update."); return user; });
+      })
+      .then(function (user) {
+        if (remember !== null) save(token, remember);
+        $("whoName").textContent = "Signed in as " + user.login;
+        $("who").hidden = false; $("signin").hidden = true; $("tools").hidden = false;
+        loadFeed();
+      })
+      .catch(function (e) { token = ""; forget(); $("signinErr").textContent = e.message || "Sign-in failed."; })
+      .then(function () { $("signinBtn").disabled = false; });
+  }
+
+  $("signinForm").addEventListener("submit", function (e) { e.preventDefault(); signIn($("token").value, $("remember").checked); $("token").value = ""; });
+  $("signout").addEventListener("click", function () { forget(); location.reload(); });
 
   for (var h = 1; h <= 48; h++) {
     var o = document.createElement("option");
@@ -90,11 +166,22 @@ button:disabled{opacity:.5;cursor:default}
 
   function when(iso) { return iso ? fmt.format(new Date(iso)).replace("AM", "a.m.").replace("PM", "p.m.") : ""; }
   function text(tag, cls, s) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = s; return e; }
+  function hint(s, cls) { $("hint").textContent = s; $("hint").className = "hint" + (cls ? " " + cls : ""); }
 
-  function issueUrl(id, hours, title) {
+  // The request is the same GitHub issue the live service already reads ("story:" and "hours:" lines).
+  function request(id, hours, title) {
     var head = hours === 0 ? "Headline override: end now" : "Headline override: " + title.slice(0, 80);
     var body = "story: " + id + "\nhours: " + hours + "\n\n" + (hours === 0 ? "End the owner's headline override now." : "Lead for " + hours + " h: " + title);
-    return "https://github.com/" + REPO + "/issues/new?title=" + encodeURIComponent(head) + "&body=" + encodeURIComponent(body);
+    $("go").disabled = true; $("end").disabled = true;
+    hint("Sending…");
+    return github("/repos/" + REPO + "/issues", { method: "POST", body: JSON.stringify({ title: head, body: body }) })
+      .then(function (r) { if (!r.ok) throw new Error(r.status === 403 ? "The token needs the Issues: Read and write permission." : "GitHub refused the request (" + r.status + ")."); })
+      .then(function () {
+        hint(hours === 0 ? "Sent. The override ends in about a minute." : "Sent. It leads in about a minute; readers see it within about five more.", "ok");
+        setTimeout(loadFeed, 90000);
+      })
+      .catch(function (e) { hint(e.message, "err"); })
+      .then(function () { $("go").disabled = !chosen; $("end").disabled = false; });
   }
 
   function renderNow() {
@@ -112,7 +199,7 @@ button:disabled{opacity:.5;cursor:default}
     stories.filter(function (s) { return !q || (s.title + " " + s.source).toLowerCase().indexOf(q) >= 0; }).slice(0, 80).forEach(function (s) {
       var li = document.createElement("li"), lab = document.createElement("label"), r = document.createElement("input");
       r.type = "radio"; r.name = "story"; r.value = s.id; r.checked = chosen === s.id;
-      r.addEventListener("change", function () { chosen = s.id; $("go").disabled = false; $("hint").textContent = "Opens GitHub in a new tab with the request filled in. Press Create there to send it."; });
+      r.addEventListener("change", function () { chosen = s.id; $("go").disabled = false; hint("Ready to send."); });
       var span = document.createElement("span");
       span.appendChild(text("span", "t", s.title));
       span.appendChild(text("span", "m", s.source + " · " + when(s.published) + (s.check === "checked" ? " · summary double-checked" : s.check === "quick" ? " · quick summary" : " · headline only")));
@@ -120,18 +207,23 @@ button:disabled{opacity:.5;cursor:default}
     });
   }
 
+  function loadFeed() {
+    fetch(FEED, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (feed) { stories = feed.stories || []; lead = feed.lead; renderNow(); renderList(); })
+      .catch(function () { $("now").textContent = ""; $("now").appendChild(text("span", "err", "Could not load the live page's stories. Try again in a minute.")); });
+  }
+
   $("find").addEventListener("input", renderList);
   $("go").addEventListener("click", function () {
     var s = stories.filter(function (x) { return x.id === chosen; })[0];
-    if (!s) { $("hint").textContent = "Choose a story first."; return; }
-    window.open(issueUrl(s.id, Number($("hours").value), s.title), "_blank", "noopener");
+    if (!s) { hint("Choose a story first."); return; }
+    request(s.id, Number($("hours").value), s.title);
   });
-  $("end").addEventListener("click", function () { if (lead) window.open(issueUrl(lead.id, 0, lead.title), "_blank", "noopener"); });
+  $("end").addEventListener("click", function () { if (lead) request(lead.id, 0, lead.title); });
 
-  fetch(FEED, { cache: "no-store" })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (feed) { stories = feed.stories || []; lead = feed.lead; renderNow(); renderList(); })
-    .catch(function () { $("now").textContent = ""; $("now").appendChild(text("span", "err", "Could not load the live page's stories. Try again in a minute.")); });
+  var held = saved();
+  if (held) signIn(held, null);
 })();
 </script>
 </body>

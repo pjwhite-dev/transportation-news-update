@@ -52,9 +52,12 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
   and pushes, never forced: when the stories change (at most every 3 min) and every 10 min regardless. The page
   reads it from raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused"
   after 25 min without a new copy. `.runtime/live_site/push.json` records the last push for the dashboard.
-- **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). Pick a story
-  and 1-48 hours; the page opens a pre-filled GitHub issue ("Headline override: ..."; body `story:` and `hours:`;
-  `hours: 0` ends it). `live_override.py` reads open issues every minute with the stored `github_token` and applies
+- **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). It opens
+  on a sign-in form: the owner pastes a fine-grained GitHub token (this repository only, Issues read and write); the
+  page asks GitHub's API whose token it is and shows the story list only for `pjwhite-dev` with access to the
+  repository. The token stays in that browser (session, or kept on the device if ticked) and goes only to
+  api.github.com. Pick a story and 1-48 hours; the page files the GitHub issue itself ("Headline override: ...";
+  body `story:` and `hours:`; `hours: 0` ends it). `live_override.py` reads open issues every minute with the stored `github_token` and applies
   only those opened by `pjwhite-dev` and less than 6 hours old, then answers and closes them. While an override
   holds, no story replaces the lead; when it ends, the best checked story of the last day scoring 50+ leads, or
   none does.

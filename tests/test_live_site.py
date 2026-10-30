@@ -279,6 +279,9 @@ class OverrideRequestTests(unittest.TestCase):
     def test_parse_request(self):
         self.assertEqual(parse_request("story: abc123\nhours: 0"), ("abc123", 0))
         self.assertIsNone(parse_request("story: abc123"))
+        # A story stored without a wire id is keyed by its address.
+        self.assertEqual(parse_request("story: faa.gov/newsroom/a-release\nhours: 12"), ("faa.gov/newsroom/a-release", 12))
+        self.assertIsNone(parse_request("story: two words\nhours: 12"))
 
 
 class PublicPageTests(unittest.TestCase):
@@ -294,6 +297,18 @@ class PublicPageTests(unittest.TestCase):
         self.assertIn(feed, live)
         self.assertIn('name="robots" content="noindex', login)
         self.assertNotIn("verif", login.lower())
+
+    def test_the_login_page_opens_on_sign_in_and_shows_the_tools_only_to_the_owner(self):
+        login = Path("site_assets/login/index.html").read_text(encoding="utf-8")
+        config = load_config()
+        self.assertIn(f'name="override-owner" content="{config["override"]["owner"]}"', login)
+        self.assertIn(f'name="override-repo" content="{config["override"]["repo"]}"', login)
+        self.assertRegex(login, r'<main class="wrap signin" id="signin">')
+        self.assertRegex(login, r'<main class="wrap" id="tools" hidden>')  # the selector starts hidden
+        self.assertIn('github("/user")', login)
+        script = login[login.index("<script>"):]
+        # The story list is fetched only after GitHub names the owner, never as the page opens.
+        self.assertLess(script.index("user.login).toLowerCase() !== OWNER"), script.index("loadFeed();"))
 
     def test_the_live_page_adds_companies_without_changing_the_edition_list(self):
         import live_service
