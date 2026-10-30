@@ -13,8 +13,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any
 
-FLOOR = 50.0
+FLOOR = 50.0  # also the least a story must score to lead at all: a quiet day shows no lead rather than a feature
 MARGIN = 8.0
+DEVELOPING_FLOOR = 40  # the Developing list beside the lead is for notable stories too; minor ones stay in the feed
 TAU_HOURS = 8.0
 MIN_DWELL = timedelta(minutes=45)
 BIG_STORY = 90
@@ -98,7 +99,9 @@ def decide(
     if isinstance(published, datetime) and now - published > MAX_LEAD_AGE:
         return Decision(False, "older than 12 hours")
     score = int(candidate.get("score") or 0)
-    if lead is None:
+    if score < FLOOR:
+        return Decision(False, f"{score} is below the {FLOOR:.0f} any lead needs")
+    if lead is None or not lead.get("story_id"):  # no lead yet, or the last one was cleared
         return Decision(True, "no current lead")
     if lead.get("story_id") and lead.get("story_id") == candidate.get("story_id"):
         return Decision(False, "already the lead")
@@ -116,12 +119,13 @@ def decide(
 
 
 def stale_takeover(lead: dict[str, Any] | None, pool: list[dict[str, Any]], now: datetime) -> dict[str, Any] | None:
-    """After 30 hours the best verified story of the last day takes over (None when there is none)."""
-    if lead is None or now - lead["set_at"] < STALE_LEAD:
+    """After 30 hours the best verified story of the last day that scores at least FLOOR takes over (None when
+    there is none; the desk then clears the lead)."""
+    if lead is None or not lead.get("story_id") or now - lead["set_at"] < STALE_LEAD:
         return None
     fresh = [
         s for s in pool
-        if s.get("verified") and s.get("story_id") != lead.get("story_id")
+        if s.get("verified") and s.get("story_id") != lead.get("story_id") and int(s.get("score") or 0) >= FLOOR
         and isinstance(s.get("published"), datetime) and now - s["published"] <= BEST_OF_WINDOW
     ]
     return max(fresh, key=lambda s: (int(s.get("score") or 0), s["published"]), default=None)

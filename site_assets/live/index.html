@@ -13,7 +13,10 @@
 <body>
 <header class="cover">
   <div class="topbar wrap">
-    <a class="brand" href="./"><span id="site-name">Advanced Transportation Update</span> <i id="site-label">Live</i></a>
+    <div class="masthead">
+      <a class="brand" href="./"><span id="site-name">Advanced Transportation Update</span> <i id="site-label">Live</i></a>
+      <p class="tagline" id="tagline">Updates itself around the clock. New stories appear within minutes, each summarized by AI and linked to its source.</p>
+    </div>
     <div class="status" aria-live="polite">
       <span class="dot" id="dot" aria-hidden="true"></span>
       <span id="status-text">Connecting…</span>
@@ -21,22 +24,35 @@
   </div>
 </header>
 
-<div class="ticker" aria-label="Latest from the wire">
-  <span class="ticker-label">Wire</span>
-  <div class="ticker-window"><div class="ticker-track" id="ticker"></div></div>
+<div class="tickers">
+  <div class="ticker" aria-label="Latest from the wire">
+    <span class="ticker-label">Wire</span>
+    <div class="ticker-window"><div class="ticker-track" id="ticker"></div></div>
+  </div>
+  <div class="ticker market-ticker" id="market" aria-label="Market watch" hidden>
+    <span class="ticker-label">Markets</span>
+    <div class="ticker-window"><div class="ticker-track" id="quotes"></div></div>
+  </div>
 </div>
 
 <div class="cover">
   <p class="sweep wrap" aria-hidden="true"><span id="sweep"></span></p>
-  <section class="lead wrap" id="lead" aria-label="Lead story"></section>
+  <section class="lead wrap" aria-label="Lead story">
+    <div id="lead"></div>
+    <aside class="lead-side">
+      <div class="developing" id="developing"></div>
+      <section class="docket" id="docket-box" hidden>
+        <h2>Rulemaking docket</h2>
+        <ul id="docket"></ul>
+        <details id="docket-more" hidden>
+          <summary id="docket-more-label">More</summary>
+          <ul id="docket-rest"></ul>
+        </details>
+        <p class="note">From this morning's edition tracker.</p>
+      </section>
+    </aside>
+  </section>
 </div>
-
-<section class="market" id="market" aria-label="Market watch" hidden>
-  <div class="wrap market-row">
-    <h2>Markets <span id="market-label"></span></h2>
-    <ul id="quotes"></ul>
-  </div>
-</section>
 
 <div class="banner wrap" id="banner" hidden></div>
 
@@ -47,11 +63,6 @@
     <h2>Every story, newest first</h2>
     <div class="filters" id="filters" role="group" aria-label="Show or hide categories"></div>
   </div>
-  <details class="docket" id="docket-box" hidden>
-    <summary>Rulemaking docket <span id="docket-count"></span></summary>
-    <ul id="docket"></ul>
-    <p class="note">From this morning's edition tracker.</p>
-  </details>
   <div class="feed" id="feed" aria-live="off"></div>
 </main>
 

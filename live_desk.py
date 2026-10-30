@@ -451,6 +451,9 @@ class Desk:
         ]
         best = live_lead.stale_takeover(lead, pool, now)
         if best is None:
+            if lead and lead["story_id"] and now - lead["set_at"] >= live_lead.STALE_LEAD:
+                self.store.set_lead("", now, 0, None, "the lead stood 30 hours and no story of the last day scores enough to lead")
+                return True
             return False
         self.store.set_lead(best["story_id"], now, int(best["score"] or 0), None, "the lead stood 30 hours; best verified story of the last day")
         return True

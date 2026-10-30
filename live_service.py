@@ -14,6 +14,7 @@ import argparse
 import functools
 import http.server
 import os
+import re
 import sys
 import threading
 from datetime import datetime, timezone
@@ -87,10 +88,12 @@ def single_instance(path: Path):
 
 
 def wire_name(name: str) -> str:
-    """'Trade: DroneDJ' -> 'DroneDJ'; a Google query keeps its engine: 'Google News: “eVTOL”'."""
+    """'Trade: DroneDJ' -> 'DroneDJ'; a Google query shows its first phrase: 'Google News: unmanned aircraft system'."""
     kind, _, rest = name.partition(": ")
     if kind == "Google News":
-        return f"Google News: “{rest.strip(chr(34))}”"
+        phrase = re.search(r'"([^"]+)"', rest)
+        words = phrase.group(1) if phrase else re.sub(r"\b(?:OR|AND)\b|[()]", " ", rest)
+        return f"Google News: {' '.join(words.split())[:48]}"
     return rest or name
 
 

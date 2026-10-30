@@ -16,6 +16,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+import live_lead
 from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
@@ -90,6 +91,7 @@ def build_feed(
     day = now - timedelta(hours=24)
     developing = sorted(
         (s for s in stories if s["status"] == VERIFIED and (not lead or s["id"] != lead["id"])
+         and (s["score"] or 0) >= live_lead.DEVELOPING_FLOOR
          and (parse_iso(s["published"]) or now) >= now - timedelta(hours=12)),
         key=lambda s: (s["score"] or 0, s["published"]), reverse=True,
     )[:4]
@@ -104,7 +106,7 @@ def build_feed(
         "version": FEED_VERSION,
         "generated": iso(now),
         "level": level,
-        "site": {"name": site["name"], "label": site["live_label"], "poll_seconds": int(site["poll_seconds"])},
+        "site": {"name": site["name"], "label": site["live_label"], "tagline": site.get("tagline", ""), "poll_seconds": int(site["poll_seconds"])},
         "lead": lead,
         "developing": [public_story(s)["id"] for s in developing],
         "ticker": [{"id": s["id"], "source": s["source"], "title": s["title"], "url": s["url"]} for s in ticker],

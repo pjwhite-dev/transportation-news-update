@@ -4,6 +4,7 @@ site:
   # Owner has not picked a new name yet (2026-10-30); the current site name stays until they do.
   name: "Advanced Transportation Update"
   live_label: "Live"
+  tagline: "Updates itself around the clock. New stories appear within minutes, each summarized by AI and linked to its source."
   path: "live"            # served at news.peterjwhite.org/live/ until the owner approves the cutover
   poll_seconds: 15        # how often a reader's page checks feed.json
   river_hours: 72         # stories older than this leave the page (they stay in the store)

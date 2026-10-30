@@ -69,7 +69,7 @@ def writer(summary: str = GOOD_SUMMARY, relevant: bool = True) -> FakeModel:
         "qwen-fake",
         live_triage={"relevant": relevant, "reason": "eVTOL certification"},
         story_summary={"summary": summary},
-        live_score={"impact": 3, "action": "test", "reason": "first passenger test flights"},
+        live_score={"impact": 4, "action": "first_commercial_operation", "reason": "first passenger test flights"},
     )
 
 
@@ -111,13 +111,21 @@ class LeadRuleTests(unittest.TestCase):
     def test_only_fresh_verified_stories_lead(self):
         self.assertFalse(live_lead.decide(None, self.candidate(99, verified=False), NOW).swap)
         self.assertFalse(live_lead.decide(None, self.candidate(99, published=NOW - timedelta(hours=13)), NOW).swap)
-        self.assertTrue(live_lead.decide(None, self.candidate(10), NOW).swap)
+        self.assertTrue(live_lead.decide(None, self.candidate(50), NOW).swap)
+
+    def test_a_minor_story_never_leads_even_with_no_lead(self):
+        # 2026-10-30: a profile of a Malaysian engineer (score 15) became the first lead because nothing else had led.
+        self.assertFalse(live_lead.decide(None, self.candidate(15), NOW).swap)
+        cleared = {"story_id": "", "score": 0, "set_at": NOW - timedelta(minutes=5)}
+        self.assertFalse(live_lead.decide(cleared, self.candidate(49), NOW).swap)
+        self.assertTrue(live_lead.decide(cleared, self.candidate(55), NOW).swap)
 
     def test_after_30_hours_the_best_story_of_the_day_takes_over(self):
         pool = [self.candidate(40, story_id="a"), self.candidate(55, story_id="b"),
                 self.candidate(90, story_id="c", published=NOW - timedelta(hours=30))]
         self.assertIsNone(live_lead.stale_takeover(self.lead(70, 29), pool, NOW))
         self.assertEqual(live_lead.stale_takeover(self.lead(70, 31), pool, NOW)["story_id"], "b")
+        self.assertIsNone(live_lead.stale_takeover(self.lead(70, 31), pool[:1], NOW))  # 40 is too minor to lead
 
     def test_significance_adds_fixed_points_and_clamps(self):
         score = live_lead.significance(impact=4, action="final_rule", pickup_outlets=5, official=True, us_relevance=10, novel=True)
@@ -227,8 +235,17 @@ class DeskTests(unittest.TestCase):
         desk.first_pass(sid)
         self.assertEqual(desk.verify(sid), VERIFIED)
         story = self.store.get(sid)
-        self.assertEqual(story["score"], 24 + 6 + 0 + 0 + 10 + 10 - 10)  # impact 3, test, U.S., novel, one tier-3 source
+        self.assertEqual(story["score"], 32 + 15 + 0 + 0 + 10 + 10 - 10)  # impact 4, first operation, U.S., novel, one tier-3 source
         self.assertEqual(self.store.current_lead()["story_id"], sid)
+
+    def test_a_minor_verified_story_does_not_take_an_empty_lead(self):
+        sid = self.queue()
+        w = writer()
+        w.answers["live_score"] = {"impact": 1, "action": "plan", "reason": "profile of an engineer"}
+        desk = self.desk(w=w)
+        desk.first_pass(sid)
+        self.assertEqual(desk.verify(sid), VERIFIED)
+        self.assertIsNone(self.store.current_lead())
 
     def test_checker_down_keeps_first_pass_then_shows_headline_only(self):
         sid = self.queue()
@@ -500,6 +517,16 @@ class FeedTests(unittest.TestCase):
         self.assertEqual(feed["stories"][0]["check"], "checked")
         self.assertEqual(feed["ticker"][0]["source"], "FLYING")
         self.assertEqual(live_feed.content_hash(feed), live_feed.content_hash({**feed, "generated": "later", "wire": [1]}))
+
+    def test_minor_stories_stay_out_of_developing(self):
+        store = Store(":memory:")
+        for sid, score in (("big", 62), ("minor", 15)):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=1))}, NOW)
+            store.update(sid, NOW, status=VERIFIED, score=score, shown_at=iso(NOW), desk="air")
+        feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual(feed["developing"], ["big"])
+        self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "minor"})  # both stay in the feed
+        self.assertTrue(feed["site"]["tagline"])
 
     def test_write_site_copies_the_page_and_writes_the_feed(self):
         with tempfile.TemporaryDirectory() as tmp:

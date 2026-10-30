@@ -1,10 +1,10 @@
-/* Live page: poll feed.json, render the lead, ticker, markets and one feed; never move the page under a reader. */
+/* Live page: poll feed.json, render the tickers, lead, docket and one feed; never move the page under a reader. */
 (function () {
   "use strict";
   var TZ = "America/New_York";
   var STALE_MS = 10 * 60 * 1000; // no new feed for 10 minutes: tell the reader updates are paused
   var SWEEP_MS = 8000; // the "checking the wire" line shows one source at a time, this long each
-  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", sweepAt: 0 };
+  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0 };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -86,12 +86,11 @@
   }
 
   function renderLead(feed) {
-    var box = $("lead");
-    box.textContent = "";
-    var main = el("div");
+    var main = $("lead");
+    main.textContent = "";
     var lead = feed.lead;
     if (!lead) {
-      main.appendChild(el("p", "lead-empty", "The lead desk is choosing today's lead story."));
+      main.appendChild(el("p", "lead-empty", "No story so far has been significant enough to lead the page. The newest stories are below, as they come in."));
     } else {
       var eye = el("p", "eyebrow");
       eye.appendChild(el("span", "tag", "Lead"));
@@ -107,8 +106,8 @@
       if (lead.also && lead.also.length) src.appendChild(document.createTextNode(" · also " + lead.also.map(function (a) { return a.source; }).slice(0, 3).join(", ")));
       main.appendChild(src);
     }
-    box.appendChild(main);
-    var dev = el("div", "developing");
+    var dev = $("developing");
+    dev.textContent = "";
     var map = byId(feed);
     var items = (feed.developing || []).map(function (id) { return map[id]; }).filter(Boolean);
     if (items.length) {
@@ -122,7 +121,6 @@
       });
       dev.appendChild(ol);
     }
-    box.appendChild(dev);
   }
 
   function renderTicker(feed) {
@@ -144,27 +142,33 @@
     track.style.setProperty("--tick-seconds", Math.max(40, items.length * 6) + "s");
   }
 
+  function quoteNode(q) {
+    var item = el("span", "q");
+    var ab = el("abbr", null, q.symbol);
+    ab.title = q.name || q.symbol;
+    item.appendChild(ab);
+    item.appendChild(el("span", "px", Number(q.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    var p = Number(q.percent), tone = p > 0 ? "up" : p < 0 ? "down" : "flat";
+    item.appendChild(el("span", "chg " + tone, (p > 0 ? "▲ " : p < 0 ? "▼ " : "– ") + Math.abs(p).toFixed(2) + "%"));
+    return item;
+  }
+
   function renderMarket(feed) {
     var m = feed.market, box = $("market");
     box.hidden = !(m && m.quotes && m.quotes.length);
     if (box.hidden) return;
-    $("market-label").textContent = m.open ? m.label + " · " + clock(m.as_of) : m.label;
-    var ul = $("quotes");
-    ul.textContent = "";
-    var lastGroup = null;
-    m.quotes.forEach(function (q) {
-      if (lastGroup !== null && q.group !== lastGroup) ul.appendChild(el("li", "sep"));
-      lastGroup = q.group;
-      var li = el("li");
-      var ab = el("abbr", null, q.symbol);
-      ab.title = q.name || q.symbol;
-      ab.tabIndex = 0;
-      li.appendChild(ab);
-      li.appendChild(el("span", "px", Number(q.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
-      var p = Number(q.percent), tone = p > 0 ? "up" : p < 0 ? "down" : "flat";
-      li.appendChild(el("span", "chg " + tone, (p > 0 ? "▲ " : p < 0 ? "▼ " : "– ") + Math.abs(p).toFixed(2) + "%"));
-      ul.appendChild(li);
-    });
+    var key = m.as_of + "|" + m.label;
+    if (key === state.marketKey) return; // unchanged: let it keep rolling
+    state.marketKey = key;
+    var track = $("quotes");
+    track.textContent = "";
+    for (var pass = 0; pass < 2; pass++) { // two copies make the loop seamless, as on the wire
+      var when = el("span", "q when", m.open ? m.label + " · " + clock(m.as_of) : m.label);
+      track.appendChild(when);
+      m.quotes.forEach(function (q) { track.appendChild(quoteNode(q)); });
+      if (pass) Array.prototype.forEach.call(track.children, function (c, i) { if (i > m.quotes.length) c.setAttribute("aria-hidden", "true"); });
+    }
+    track.style.setProperty("--tick-seconds", Math.max(30, m.quotes.length * 4) + "s");
   }
 
   function saveHidden() { store("live-hidden", Object.keys(state.hidden).filter(function (k) { return state.hidden[k]; }).join(",")); }
@@ -193,18 +197,23 @@
     }
   }
 
+  function docketItem(r) {
+    var li = el("li");
+    li.appendChild(link(r.url, r.agency + ": " + r.action));
+    li.appendChild(el("span", "st", r.next || r.status));
+    return li;
+  }
+
   function renderDocket(feed) {
-    var rows = feed.docket || [];
+    var rows = feed.docket || [], first = 4;
     $("docket-box").hidden = !rows.length;
-    $("docket-count").textContent = rows.length ? "(" + rows.length + ")" : "";
-    var docket = $("docket");
-    docket.textContent = "";
-    rows.forEach(function (r) {
-      var li = el("li");
-      li.appendChild(link(r.url, r.agency + ": " + r.action));
-      li.appendChild(el("span", "st", r.next || r.status));
-      docket.appendChild(li);
-    });
+    var top = $("docket"), rest = $("docket-rest");
+    top.textContent = "";
+    rest.textContent = "";
+    rows.slice(0, first).forEach(function (r) { top.appendChild(docketItem(r)); });
+    rows.slice(first).forEach(function (r) { rest.appendChild(docketItem(r)); });
+    $("docket-more").hidden = rows.length <= first;
+    $("docket-more-label").textContent = (rows.length - first) + " more on the docket";
   }
 
   function renderFeed(feed, fresh) {
@@ -287,6 +296,7 @@
     $("site-name").textContent = feed.site.name;
     $("foot-name").textContent = feed.site.name;
     $("site-label").textContent = feed.site.label;
+    if (feed.site.tagline) $("tagline").textContent = feed.site.tagline;
     document.title = feed.site.name + " · " + feed.site.label;
     renderLead(feed);
     renderTicker(feed);
