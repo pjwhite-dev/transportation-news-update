@@ -1210,7 +1210,7 @@ SITE_JS = (ASSET_DIR / "site.js").read_text(encoding="utf-8")
 
 
 MOVED_TO_ROOT = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Advanced Transportation Update</title>
+<html lang="en"><head><meta charset="utf-8"><title>Advanced Transportation Live</title>
 <link rel="canonical" href="https://advancedtransportation.live/"><meta http-equiv="refresh" content="0; url=../">
 </head><body><p><a href="../">The live page has moved to advancedtransportation.live.</a></p></body></html>
 """

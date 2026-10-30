@@ -307,10 +307,10 @@
     state.pending = 0;
     $("new-pill").hidden = true;
     $("site-name").textContent = feed.site.name;
-    $("foot-name").textContent = feed.site.name;
+    $("foot-name").textContent = feed.site.name + " " + feed.site.label;
     $("site-label").textContent = feed.site.label;
     if (feed.site.tagline) $("tagline").textContent = feed.site.tagline;
-    document.title = feed.site.name + " · " + feed.site.label;
+    document.title = feed.site.name + " " + feed.site.label;
     renderLead(feed);
     renderTicker(feed);
     renderMarket(feed);
