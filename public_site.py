@@ -338,7 +338,8 @@ def _format_time(value: str) -> str:
 
 
 def _relative_prefix(is_archive_page: bool) -> str:
-    return "../../" if is_archive_page else ""
+    # The latest edition lives at /edition/ (the live page has the site root); archived ones at /archive/<day>/.
+    return "../../" if is_archive_page else "../"
 
 
 def canonical_source(value: str) -> str:
@@ -1067,7 +1068,8 @@ def page_shell(
     <header class="wrap topbar">
       <a class="brand" href="{prefix or './'}" aria-label="{html.escape(SITE_TITLE)}">Advanced Transportation <i>Update</i></a>
       <nav aria-label="Primary navigation">
-        {nav_link("latest", "Latest", prefix or "./")}
+        {nav_link("live", "Live", prefix or "./")}
+        {nav_link("latest", "Latest", prefix + "edition/")}
         {nav_link("archive", "Archive", prefix + "archive/")}
         {nav_link("search", "Search", prefix + "search/")}
         {copy_controls}
@@ -1109,7 +1111,7 @@ def edition_page(payload: dict[str, Any], day: date, archived: bool, market: dic
         <aside class="side no-copy" aria-label="Edition notes">{side}</aside>
       </main>
     """
-    canonical = f"/archive/{day.isoformat()}/" if archived else "/"
+    canonical = f"/archive/{day.isoformat()}/" if archived else "/edition/"
     eyebrow = "Weekend and Monday briefing" if day.weekday() == 0 else "Daily briefing"
     return page_shell(
         body=body,
@@ -1207,6 +1209,13 @@ SITE_CSS = (ASSET_DIR / "site.css").read_text(encoding="utf-8")
 SITE_JS = (ASSET_DIR / "site.js").read_text(encoding="utf-8")
 
 
+MOVED_TO_ROOT = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Advanced Transportation Update</title>
+<link rel="canonical" href="https://news.peterjwhite.org/"><meta http-equiv="refresh" content="0; url=../">
+</head><body><p><a href="../">The live page has moved to news.peterjwhite.org.</a></p></body></html>
+"""
+
+
 def build_public_site(root: Path, output: Path) -> dict[str, int]:
     editions = prepare_editions(load_editions(root))
     if not editions:
@@ -1225,7 +1234,8 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     # A raw collection is an input, not a publishable edition. Keep it in the
     # archive for continuity, but never let it replace the last complete briefing.
     latest_day = max(editorial_days) if editorial_days else max(editions)
-    (output / "index.html").write_text(
+    (output / "edition").mkdir()
+    (output / "edition" / "index.html").write_text(
         edition_page(
             editions[latest_day], latest_day, archived=False,
             market=load_market_snapshot(root / "data" / "market.json", today=latest_day),
@@ -1261,15 +1271,20 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     )
     (output / "assets" / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (output / "assets" / "site.js").write_text(SITE_JS, encoding="utf-8")
-    # The live page (/live/) and the owner's headline override page (/login/) are static; the live page reads
-    # its stories from the live-feed branch, which the local live service pushes.
-    for folder in ("live", "login"):
+    # The live page is the site root and the owner's headline override page is /login/. Both are static; the
+    # live page reads its stories from the live-feed branch, which the local live service pushes. /live/, its
+    # first address, sends readers to the root.
+    for folder, target in (("live", output), ("login", output / "login")):
         source = root / "site_assets" / folder
         if source.is_dir():
-            (output / folder).mkdir(exist_ok=True)
+            target.mkdir(exist_ok=True)
             for asset in source.iterdir():
                 if asset.is_file():
-                    shutil.copyfile(asset, output / folder / asset.name)
+                    shutil.copyfile(asset, target / asset.name)
+    (output / "live").mkdir(exist_ok=True)
+    (output / "live" / "index.html").write_text(MOVED_TO_ROOT, encoding="utf-8")
+    if not (output / "index.html").exists():
+        raise RuntimeError("site_assets/live/index.html is missing; the site would have no home page.")
     (output / "CNAME").write_text("news.peterjwhite.org\n", encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")
     return {"edition_count": len(editions), "latest_day": latest_day.toordinal(), "search_rows": len(index_rows)}

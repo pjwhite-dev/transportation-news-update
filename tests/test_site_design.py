@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import tempfile
 import unittest
 from datetime import date
@@ -50,6 +51,8 @@ class SiteDesignTests(unittest.TestCase):
         root = Path(cls.tmp.name) / "repo"
         archive = root / "data" / "archive"
         archive.mkdir(parents=True)
+        for folder in ("live", "login"):  # the live page and the override page, as in the repository
+            shutil.copytree(Path(public_site.__file__).parent / "site_assets" / folder, root / "site_assets" / folder)
         first = edition("2026-10-23", {"Autonomous Vehicles": [story("Waymo expands to Phoenix airport", "Reuters")]})
         second = edition(
             "2026-10-26",
@@ -65,7 +68,7 @@ class SiteDesignTests(unittest.TestCase):
         (archive / "2026-10-26.json").write_text(json.dumps(second), encoding="utf-8")
         cls.out = Path(cls.tmp.name) / "site"
         cls.result = public_site.build_public_site(root, cls.out)
-        cls.index = (cls.out / "index.html").read_text(encoding="utf-8")
+        cls.index = (cls.out / "edition" / "index.html").read_text(encoding="utf-8")
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -77,6 +80,17 @@ class SiteDesignTests(unittest.TestCase):
         self.assertIn("Advanced Transportation <i>Update</i>", self.index)
         self.assertNotIn("Transportation Daily", self.index)
         self.assertNotIn("Transportation Daily", (self.out / "email.html").read_text(encoding="utf-8"))
+
+    def test_the_live_page_has_the_root_and_the_edition_moves_to_edition(self) -> None:
+        root = (self.out / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="feed"', root)  # the live page
+        self.assertNotIn("edition-id", root)
+        self.assertTrue((self.out / "live.js").exists())
+        self.assertIn('<link rel="canonical" href="https://news.peterjwhite.org/edition/">', self.index)
+        self.assertIn('href="../edition/"', self.index)  # "Latest"
+        self.assertIn('href="../assets/site.css"', self.index)
+        self.assertIn('url=../', (self.out / "live" / "index.html").read_text(encoding="utf-8"))
+        self.assertTrue((self.out / "login" / "index.html").exists())
 
     def test_every_edition_page_carries_an_exact_edition_id_marker(self) -> None:
         self.assertIn('<meta name="edition-id" content="2026-10-26">', self.index)

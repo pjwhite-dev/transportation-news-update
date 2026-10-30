@@ -125,7 +125,7 @@ try {
         try {
             # Exact marker only: free text such as "October 26, 2026" also appears on the previous
             # edition (docket dates), which once reported a false "verified".
-            $response = Invoke-WebRequest -Uri ("https://news.peterjwhite.org/?cb=" + [guid]::NewGuid().ToString("N")) -TimeoutSec 20 -UseBasicParsing
+            $response = Invoke-WebRequest -Uri ("https://news.peterjwhite.org/edition/?cb=" + [guid]::NewGuid().ToString("N")) -TimeoutSec 20 -UseBasicParsing
             $hasEditionMarker = $response.Content -match ('<meta name="edition-id" content="' + [regex]::Escape($edition) + '">')
             if ($response.StatusCode -eq 200 -and $hasEditionMarker) {
                 $deploymentStatus = "verified"
@@ -145,7 +145,7 @@ try {
     [ordered]@{
         git_commit_sha = $commitSha
         deployment_status = $deploymentStatus
-        live_url = "https://news.peterjwhite.org"
+        live_url = "https://news.peterjwhite.org/edition/"
     } | ConvertTo-Json
 }
 catch {

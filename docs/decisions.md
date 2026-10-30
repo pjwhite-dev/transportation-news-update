@@ -137,3 +137,4 @@ Owner asked for: FAA, DOT and White House by Google search with `site:`; ticker 
   6 hours old, are applied; others are ignored without a reply. Requests are visible on the public repository.
 - **Market additions are live-only** (`market.extra` in config/live.yaml) so the morning edition's market section
   does not change.
+- **Live page at the root, edition at /edition/** (owner: "make the live page at news.peterjwhite.org"). The edition keeps its archive and search; the live page footer links "Morning edition" and "Archive". The email newsletter is untouched; any link in it to the bare domain now opens the live page, one click from the edition.

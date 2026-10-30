@@ -249,7 +249,7 @@ class PublicSiteTests(unittest.TestCase):
 
             result = build_public_site(root, output)
 
-            latest_html = (output / "index.html").read_text()
+            latest_html = (output / "edition" / "index.html").read_text()
             archive_html = (output / "archive" / "index.html").read_text()
             old_html = (
                 output / "archive" / "2026-09-09" / "index.html"

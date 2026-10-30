@@ -30,7 +30,7 @@ from alerts import redact, send_telegram
 import newsroom_live
 
 EASTERN = ZoneInfo("America/New_York")
-SITE = "https://news.peterjwhite.org/"
+SITE = "https://news.peterjwhite.org/edition/"  # the live page has the root
 EDITION_META = re.compile(r'<meta name="edition-id" content="(\d{4}-\d{2}-\d{2})">')
 LOG_TAIL_LINES = 150
 CONTEXT_CHARS = 24_000
