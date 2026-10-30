@@ -1,5 +1,5 @@
 {
- "as_of": "2026-10-29",
+ "as_of": "2026-10-30",
  "window_days": 7,
  "groups": [
   {
@@ -3503,6 +3503,655 @@
    ],
    "numbers": [],
    "summary": "Canadian volunteer Jesse Adams, who rescued animals and helped people in Ukraine, has been killed by a Russian drone strike while evacuating animals in Donetsk Oblast. On 25 October, his vehicle was struck by a Russian FPV drone, leaving him with severe injuries that doctors were unable to save.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "FAA approves Beta Technologies for vertical takeoff and landing",
+   "section": "Federal Policy & Implementation",
+   "url": "https://www.vtcng.com/shelburnenews/news/business_news/faa-approves-beta-technologies-for-vertical-takeoff-and-landing/article_242c0c75-ba48-4044-bab1-6fecddd928d0.html",
+   "urls": [
+    "https://www.vtcng.com/shelburnenews/news/business_news/faa-approves-beta-technologies-for-vertical-takeoff-and-landing/article_242c0c75-ba48-4044-bab1-6fecddd928d0.html"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "approves",
+    "beta",
+    "faa",
+    "landing",
+    "takeoff",
+    "technologies",
+    "vertical"
+   ],
+   "numbers": [],
+   "summary": "The Federal Aviation Administration granted a Special Airworthiness Certificate to South Burlington\u2019s Beta Technologies, allowing the company to conduct market survey flights in its electric vertical takeoff and landing aircraft. Beta\u2019s plane, which carries five passengers and up to 1,200 pounds of cargo, completed its first authorized flight on Oct. 20 from Plattsburgh International Airport to Patrick Leahy Burlington International Airport.",
+   "led": true
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Campus Guardian Angel drone plan hits budget roadblock as lawmakers cite $13M unspent",
+   "section": "UAS / Drones",
+   "url": "https://katv.com/news/local/campus-guardian-angel-drone-plan-hits-budget-roadblock-as-lawmakers-cite-13m-unspent-katv-news-share-inform-public-community",
+   "urls": [
+    "https://katv.com/news/local/campus-guardian-angel-drone-plan-hits-budget-roadblock-as-lawmakers-cite-13m-unspent-katv-news-share-inform-public-community"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "13m",
+    "angel",
+    "budget",
+    "campus",
+    "cite",
+    "drone",
+    "guardian",
+    "hits",
+    "lawmakers",
+    "plan",
+    "roadblock",
+    "unspent"
+   ],
+   "numbers": [
+    "$1 million",
+    "$13",
+    "$13 million",
+    "$16 million",
+    "$17 million"
+   ],
+   "summary": "Arkansas lawmakers rejected a motion to add $1 million to Fiscal Year 2028 school safety grants for testing drone technology, citing $13 million in unspent funds. The appropriation bill will include $16 million for school safety grants, maintaining the executive recommendation rather than the proposed $17 million.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Midwest UAS Test Site launches at Terre Haute Regional Airport, putting Indiana on front lines of drone technology",
+   "section": "Counter-UAS / Airspace Security",
+   "url": "https://www.wthitv.com/2026/10/30/midwest-uas-test-site-launches-terre-haute-regional-airport-putting-indiana-front-lines-drone-technology/",
+   "urls": [
+    "https://www.tribstar.com/news/local_news/midwest-unmanned-aircraft-system-test-site-launches-in-indiana/article_74fb70d6-082d-4bcf-8174-9815e353950c.html",
+    "https://www.wthitv.com/2026/10/30/midwest-uas-test-site-launches-terre-haute-regional-airport-putting-indiana-front-lines-drone-technology",
+    "https://www.yahoo.com/news/us/articles/midwest-uas-test-indiana-launches-031057040.html"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "airport",
+    "drone",
+    "front",
+    "haute",
+    "indiana",
+    "launches",
+    "lines",
+    "midwest",
+    "putting",
+    "regional",
+    "site",
+    "technology",
+    "terre",
+    "test",
+    "uas"
+   ],
+   "numbers": [],
+   "summary": "Terre Haute Regional Airport launched the Midwest Unmanned Aircraft System (UAS) Test Site of Indiana on Thursday, becoming one of nine Federal Aviation Administration-designated UAS test sites in the United States. The facility partners with the National Guard to conduct kinetic and counter-UAS testing in special use airspace over Camp Atterbury, capabilities the FAA Test Site Director says are unique in the country.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "US Military Counter-Drone Defenses Could Cost $74 Million Per Base",
+   "section": "Counter-UAS / Airspace Security",
+   "url": "https://www.military.com/74-million-per-base-how-the-us-military-plans-to-stop-emey-drones",
+   "urls": [
+    "https://www.military.com/74-million-per-base-how-the-us-military-plans-to-stop-emey-drones"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "base",
+    "cost",
+    "counter",
+    "defenses",
+    "drone",
+    "military",
+    "million",
+    "per"
+   ],
+   "numbers": [
+    "$5 million",
+    "$7.4 billion",
+    "$74 million"
+   ],
+   "summary": "The Congressional Budget Office estimated in 2026 that outfitting a typical military installation with a comprehensive, layered counter-drone defense system would cost approximately $74 million upfront, with a total funding projection at $7.4 billion. Annual upkeep costs are estimated at $5 million per year for each installation.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Ericsson, Play and Asseco show detection of unauthorized drones for Polish authorities",
+   "section": "Counter-UAS / Airspace Security",
+   "url": "https://www.ericsson.com/ko/press-releases/3/2026/ericsson-play-and-asseco-show-drone-detection-in-poland",
+   "urls": [
+    "https://www.ericsson.com/ko/press-releases/3/2026/ericsson-play-and-asseco-show-drone-detection-in-poland"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "asseco",
+    "authorities",
+    "detection",
+    "drones",
+    "ericsson",
+    "play",
+    "polish",
+    "show",
+    "unauthorized"
+   ],
+   "numbers": [],
+   "summary": "Ericsson, Play, and Asseco demonstrated a multi-layered drone detection solution at Ericsson R&D Center in Krak\u00f3w on October 15. The system combines Ericsson\u2019s Integrated Sensing and Communication technology with Play\u2019s 5G network and Asseco\u2019s PUSZCZYK acoustic detection to protect sensitive locations in Poland.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "US tests self-powered counter-drone system that can be set up quickly",
+   "section": "Counter-UAS / Airspace Security",
+   "url": "https://interestingengineering.com/military/us-tests-counter-drone-system",
+   "urls": [
+    "https://interestingengineering.com/military/us-tests-counter-drone-system"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "can",
+    "counter",
+    "drone",
+    "powered",
+    "quickly",
+    "self",
+    "set",
+    "system",
+    "tests"
+   ],
+   "numbers": [],
+   "summary": "Soldiers in the United States are testing Trust Automation\u2019s Rapidly Deployable Small-Unmanned Air Defense System, or RD-SUADS, a palletized counter-drone system designed to detect, track, identify and defeat small drones at bases and deployed sites. The system fits on a standard 463L military cargo pallet, allowing transport aboard C-130 Hercules and C-17 Globemaster III aircraft, and incorporates an integrated diesel generator providing up to four days of independent operation between refueling.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "FAA Cools Expectations for Commercial Air Taxi Flights",
+   "section": "AAM / eVTOL / Advanced Aviation",
+   "url": "https://www.israeldefense.co.il/en/node/72212",
+   "urls": [
+    "https://www.israeldefense.co.il/en/node/72212"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "air",
+    "commercial",
+    "cools",
+    "expectations",
+    "faa",
+    "flights",
+    "taxi"
+   ],
+   "numbers": [],
+   "summary": "FAA Deputy Associate Administrator Caitlin Locke stated that commercial eVTOL flights under the eIPP program will be very limited and face rigorous review, noting that completing type certification remains the easiest path for manufacturers. The agency granted Beta Technologies a special airworthiness certificate for market surveys on October 21, but no manufacturer has yet submitted a request for commercial operations under the tiered decision framework.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Archer Aviation, ITA Airways plan electric air taxis in Italy",
+   "section": "AAM / eVTOL / Advanced Aviation",
+   "url": "https://www.militaryaerospace.com/commercial-aerospace/news/55415389/archer-aviation-ita-airways-plan-electric-air-taxis-in-italy",
+   "urls": [
+    "https://ftnnews.com/travel-news/aviation/rome-airport-10-minute-air-taxi-flight-to-city",
+    "https://highways.today/2026/10/30/italy-air-taxi-ambitions",
+    "https://www.militaryaerospace.com/commercial-aerospace/news/55415389/archer-aviation-ita-airways-plan-electric-air-taxis-in-italy"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "air",
+    "airways",
+    "archer",
+    "aviation",
+    "electric",
+    "ita",
+    "italy",
+    "plan",
+    "taxis"
+   ],
+   "numbers": [],
+   "summary": "Archer Aviation and ITA Airways signed an agreement to explore electric air taxi services in Italy using Archer's Midnight aircraft. The partnership aims to connect airports and city centers, potentially reducing a one-hour road trip between Rome's Fiumicino Airport and the city center to less than 10 minutes, though no launch date or specific cities have been announced.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Cathie Wood\u2019s ARK Invest Loads Up On Joby Aviation Stock Ahead Of Florida Air Taxi Flight",
+   "section": "AAM / eVTOL / Advanced Aviation",
+   "url": "https://stocktwits.com/news-articles/markets/equity/cathie-wood-s-ark-invest-loads-up-on-joby-aviation-stock-ahead-of-florida-air-taxi-flight/cZUhjDAR9Ru",
+   "urls": [
+    "https://stocktwits.com/news-articles/markets/equity/cathie-wood-s-ark-invest-loads-up-on-joby-aviation-stock-ahead-of-florida-air-taxi-flight/cZUhjDAR9Ru",
+    "https://www.tradingview.com/news/stocktwits:d3f7be08b094b:0-cathie-wood-s-ark-invest-loads-up-on-joby-aviation-stock-ahead-of-florida-air-taxi-flight"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "ahead",
+    "air",
+    "ark",
+    "aviation",
+    "cathie",
+    "flight",
+    "florida",
+    "invest",
+    "joby",
+    "loads",
+    "stock",
+    "taxi",
+    "wood"
+   ],
+   "numbers": [],
+   "summary": "Cathie Wood\u2019s ARK Invest bought 263,693 shares of Joby Aviation on Thursday, ahead of the company\u2019s planned electric air-taxi flight across Tampa Bay, Florida, on Friday. The demonstration will retrace the route of the world\u2019s first commercial airline flight as Joby showcases its eVTOL (electric vertical takeoff and landing) technology.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "The UAE Just Inspected Archer's and Joby's Aircraft in Person. Here's Why Dubai, Not the FAA, Could Deliver the First Paying Passenger.",
+   "section": "AAM / eVTOL / Advanced Aviation",
+   "url": "https://www.aol.com/articles/uae-just-inspected-archers-jobys-023500000.html",
+   "urls": [
+    "https://www.aol.com/articles/uae-just-inspected-archers-jobys-023500000.html",
+    "https://www.fool.com/investing/2026/10/29/the-uae-just-inspected-archers-and-jobys-aircraft"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "aircraft",
+    "archer",
+    "deliver",
+    "dubai",
+    "faa",
+    "first",
+    "here",
+    "inspected",
+    "joby",
+    "just",
+    "not",
+    "passenger",
+    "paying",
+    "person",
+    "uae",
+    "why"
+   ],
+   "numbers": [],
+   "summary": "The UAE recently held regulatory inspections with Archer Aviation and Joby Aviation to advance air taxi services, targeting commercial operations by the end of 2026. The article notes that U.S. regulations are stricter and slower, making the UAE the likely first market for these electric vertical take-off and landing aircraft.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Toyota and Waymo Advance Autonomous Driving Collaboration for Safer Streets and Freedom of Movement for All",
+   "section": "Autonomous Vehicles",
+   "url": "https://waymo.com/blog/2026/10/toyota-bz4x-partnership/",
+   "urls": [
+    "https://english.kyodonews.net/articles/-/89958",
+    "https://report.az/en/other-countries/toyota-waymo-to-begin-autonomous-taxi-trial-service-in-japan-in-2027",
+    "https://techcrunch.com/2026/10/30/waymos-next-robotaxi-will-be-a-toyota-bz4x-destined-for-japan-and-the-uk",
+    "https://waymo.com/blog/2026/10/toyota-bz4x-partnership",
+    "https://www.globalbankingandfinance.com/toyota-waymo-test-autonomous-bz4xs-japan-2027-eye-overseas"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "advance",
+    "all",
+    "autonomous",
+    "collaboration",
+    "driving",
+    "freedom",
+    "movement",
+    "safer",
+    "streets",
+    "toyota",
+    "waymo"
+   ],
+   "numbers": [],
+   "summary": "Toyota and Waymo announced plans to test an autonomous Toyota bZ4X fleet in Japan in 2027, with deployment to the United Kingdom and other markets planned for the following years. Toyota will build the vehicles at its Takaoka plant in Toyota City, Aichi Prefecture, integrating Waymo\u2019s AV hardware under one roof.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Tesla Cybercab Begins Interstate Rides in Austin",
+   "section": "Autonomous Vehicles",
+   "url": "https://driveteslacanada.ca/robotaxi/tesla-cybercab-interstate-robotaxi-rides-austin/",
+   "urls": [
+    "https://driveteslacanada.ca/robotaxi/tesla-cybercab-interstate-robotaxi-rides-austin"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "austin",
+    "begins",
+    "cybercab",
+    "interstate",
+    "rides",
+    "tesla"
+   ],
+   "numbers": [],
+   "summary": "Tesla began taking passengers on interstate highways in Austin using its Cybercab, a first for the vehicle type. The company added 29 Cybercabs to its Texas Robotaxi fleet, bringing the total registered vehicles to 1,080.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "New Jersey Bill Could Bar Tesla's Camera-Only Robotaxis From State Pilot",
+   "section": "Autonomous Vehicles",
+   "url": "https://www.gadgetreview.com/new-jersey-bill-could-bar-teslas-camera-only-robotaxis-from-state-pilot",
+   "urls": [
+    "https://www.gadgetreview.com/new-jersey-bill-could-bar-teslas-camera-only-robotaxis-from-state-pilot"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "bar",
+    "bill",
+    "camera",
+    "jersey",
+    "only",
+    "pilot",
+    "robotaxis",
+    "state",
+    "tesla"
+   ],
+   "numbers": [
+    "50000 miles"
+   ],
+   "summary": "New Jersey Senate Bill 1677 would require fully autonomous vehicles to include a camera system plus two distinct sensing modalities, a threshold Tesla\u2019s camera-only robotaxis would likely fail. The bill mandates 50,000 miles of supervised in-state testing without a major incident before companies can remove human safety drivers.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Tesla wants Australian robotaxi trials in 2027",
+   "section": "Autonomous Vehicles",
+   "url": "https://ia.acs.org.au/article/2026/tesla-wants-australian-robotaxi-trials-in-2027.html",
+   "urls": [
+    "https://ia.acs.org.au/article/2026/tesla-wants-australian-robotaxi-trials-in-2027.html"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "2027",
+    "australian",
+    "robotaxi",
+    "tesla",
+    "trials",
+    "wants"
+   ],
+   "numbers": [
+    "$10 billion"
+   ],
+   "summary": "Tesla urged the Australian government to support an autonomous vehicle trial in 2027 by granting permits for testing on public roads, in a 16 October submission to a parliamentary inquiry on productivity. The company argued that accelerating the Automated Vehicle Safety Law implementation from 2029 to 2027 would save hundreds of lives and unlock more than $10 billion in benefits.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Tesla Extends Robotaxi Hours to 2 AM With Share and Calm Mode",
+   "section": "Autonomous Vehicles",
+   "url": "https://teslanorth.com/2026/10/29/robotaxi-hours-2am-calm-mode-share/",
+   "urls": [
+    "https://teslanorth.com/2026/10/29/robotaxi-hours-2am-calm-mode-share"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "calm",
+    "extends",
+    "hours",
+    "mode",
+    "robotaxi",
+    "share",
+    "tesla"
+   ],
+   "numbers": [],
+   "summary": "Tesla extended Robotaxi operating hours to 2 AM, adding three hours to the previous 11 PM cutoff. The update, posted October 29, also introduced Calm Mode, a rear-view camera feed, and Grok availability on Model Y vehicles.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "UN takes its automated driving rulebook on tour through Beijing \u2013 CarThreat",
+   "section": "Autonomous Vehicles",
+   "url": "https://carthreat.com/2026/10/30/un-takes-its-automated-driving-rulebook-on-tour-through-beijing/",
+   "urls": [
+    "https://carthreat.com/2026/10/30/un-takes-its-automated-driving-rulebook-on-tour-through-beijing"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "automated",
+    "beijing",
+    "carthreat",
+    "driving",
+    "rulebook",
+    "takes",
+    "through",
+    "tour"
+   ],
+   "numbers": [],
+   "summary": "UN officials used a Beijing conference on 21 October to press for harmonised automated driving rules, with UNECE deputy executive secretary Dmitry Mariyasin noting China\u2019s central role in drafting the framework. The event covered regulatory progress in Canada and Russia, as well as work by the Netherlands vehicle authority RDW on assessing an end-to-end AI driving system.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Waymo Expands Into Torrance After Quietly Testing On City Streets",
+   "section": "Autonomous Vehicles",
+   "url": "https://patch.com/california/redondobeach/waymo-expands-torrance-after-quietly-testing-city-streets",
+   "urls": [
+    "https://patch.com/california/redondobeach/waymo-expands-torrance-after-quietly-testing-city-streets"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "city",
+    "expands",
+    "quietly",
+    "streets",
+    "testing",
+    "torrance",
+    "waymo"
+   ],
+   "numbers": [],
+   "summary": "Waymo announced Tuesday that it is expanding its driverless taxi service to Torrance, adding the city to a broader rollout covering nearly 250 square miles across five U.S. markets. City officials confirmed that Waymo vehicles have already been testing locally with human drivers behind the wheel to familiarize the technology with Torrance roadways.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "White House makes Section 232 determination regarding foreign-made robots",
+   "section": "Robotics",
+   "url": "https://www.therobotreport.com/white-house-makes-section-232-determination-regarding-foreign-made-robots/",
+   "urls": [
+    "https://nam.org/trump-holds-off-on-new-machinery-robotics-tariffs-in-win-for-manufacturers",
+    "https://www.therobotreport.com/white-house-makes-section-232-determination-regarding-foreign-made-robots",
+    "https://www.whitehouse.gov/presidential-actions/2026/10/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united-states"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "232",
+    "determination",
+    "foreign",
+    "house",
+    "made",
+    "makes",
+    "regarding",
+    "robots",
+    "section",
+    "white"
+   ],
+   "numbers": [],
+   "summary": "President Donald J. Trump issued a proclamation stating that the secretary of commerce found robotics imports threaten U.S. national security. The president directed the secretary and the U.S. trade representative to negotiate with trading partners to adjust imports of robotics and industrial machinery.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "X-59 Heads to Florida From Edwards",
+   "section": "Civil Supersonics / High-Speed Aviation",
+   "url": "https://avbrief.com/x-59-heads-to-florida-from-edwards/",
+   "urls": [
+    "https://avbrief.com/x-59-heads-to-florida-from-edwards",
+    "https://avweb.com/aviation-news/nasa-x-59-begins-xc-flight-to-florida",
+    "https://theaviationist.com/2026/10/29/nasas-x-59-quesst-heads-to-kennedy-space-center"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "edwards",
+    "florida",
+    "heads"
+   ],
+   "numbers": [],
+   "summary": "NASA's X-59 quiet supersonic test aircraft launched on its first long cross-country flight from Edwards Air Force Base on Wednesday. The plane stopped in El Paso and Fort Worth before heading to the Kennedy Space Center for the Max Power event.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Audio recordings reveal decisions made moments before deadly train crash in Spain",
+   "section": "Advanced Rail / High-Speed Rail",
+   "url": "https://www.nbcnews.com/world/spain/audio-recordings-decisions-deadly-spain-train-crash-rcna606366",
+   "urls": [
+    "https://www.aa.com.tr/en/europe/safety-questions-mount-as-spain-s-high-speed-rail-disaster-death-toll-rises-to-69/4104941",
+    "https://www.abc.net.au/news/2026-10-30/europe-trains-safe-spain-tragedies/107324128",
+    "https://www.forumdaily.com/en/at-least-68-dead-in-crash-between-2-trains-in-central-spain",
+    "https://www.nbcnews.com/world/spain/audio-recordings-decisions-deadly-spain-train-crash-rcna606366",
+    "https://www.thetraveler.org/fcdo-updates-spain-rail-warning-after-toledo-train-collision",
+    "https://www.today.com/video/death-toll-of-high-speed-train-crash-in-spain-rises-to-69-272456773872",
+    "https://www.tribuneindia.com/news/world/spanish-rescuers-search-trains-in-hope-of-finding-survivors-of-deadly-crash-that-killed-68/amp"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "audio",
+    "before",
+    "crash",
+    "deadly",
+    "decisions",
+    "made",
+    "moments",
+    "recordings",
+    "reveal",
+    "spain",
+    "train"
+   ],
+   "numbers": [],
+   "summary": "Spanish transportation minister \u00d3scar Puente said a control center authorized a Renfe high-speed train to resume its journey without speed limitations while an Iryo train remained stopped ahead, breaking protocol. The resulting collision Wednesday killed at least 69 people and injured dozens more, with 67 passengers still missing as of Thursday.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Honeywell, Shield AI demonstrate coordinated autonomous aircraft",
+   "section": "Military UAS",
+   "url": "https://www.militaryaerospace.com/uncrewed/article/55415405/honeywell-shield-ai-demonstrate-coordinated-autonomous-aircraft",
+   "urls": [
+    "https://www.militaryaerospace.com/uncrewed/article/55415405/honeywell-shield-ai-demonstrate-coordinated-autonomous-aircraft"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "aircraft",
+    "autonomous",
+    "coordinated",
+    "demonstrate",
+    "honeywell",
+    "shield"
+   ],
+   "numbers": [],
+   "summary": "Honeywell Aerospace and Shield AI completed two autonomous flight demonstrations, culminating in a coordinated intelligence, surveillance, and reconnaissance mission in which two aircraft shared target information and autonomously executed assigned actions. The demonstrations used Shield AI's Hivemind Enterprise autonomy platform, with Honeywell engineers training on the system in late April and flying a BFD-SE8 multirotor aircraft autonomously in mid-June.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "JIATF-401 Leads a New Era in Counter-SUAS Defense | Soldier Systems Daily Soldier Systems Daily",
+   "section": "Military UAS",
+   "url": "https://soldiersystems.net/2026/10/30/jiatf-401-leads-a-new-era-in-counter-suas-defense/",
+   "urls": [
+    "https://soldiersystems.net/2026/10/30/jiatf-401-leads-a-new-era-in-counter-suas-defense"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "401",
+    "counter",
+    "daily",
+    "defense",
+    "era",
+    "jiatf",
+    "leads",
+    "soldier",
+    "suas",
+    "systems"
+   ],
+   "numbers": [],
+   "summary": "The Joint Interagency Task Force 401, established in August 2025, leads the Department of War\u2019s efforts to rapidly deliver counter-small unmanned aircraft systems capabilities. The task force utilizes unique procurement authorities and a centralized marketplace to bypass traditional timelines, integrating stakeholders from the military, federal agencies, and industry to build a layered defense against evolving drone threats.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Secret Service cites \u2018heightened threat environment\u2019 as air defense systems deployed at Mar-a-Lago and airport",
+   "section": "Military UAS",
+   "url": "https://www.wpbf.com/article/florida-mar-a-lago-air-defense-systems-missiles/74287233",
+   "urls": [
+    "https://www.wpbf.com/article/florida-mar-a-lago-air-defense-systems-missiles/74287233"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "air",
+    "airport",
+    "cites",
+    "defense",
+    "deployed",
+    "environment",
+    "heightened",
+    "lago",
+    "mar",
+    "secret",
+    "service",
+    "systems",
+    "threat"
+   ],
+   "numbers": [],
+   "summary": "The U.S. Secret Service requested the deployment of surface-to-air missile systems at Mar-a-Lago and Donald J. Trump International Airport, citing a heightened threat environment. NORAD and U.S. Northern Command confirmed the placement of ground-based air defense assets to counter aerial threats, including aircraft and drones.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Kim Jong Un calls for rapid expansion of drone technology and observes weapons tests",
+   "section": "International Security",
+   "url": "https://m.economictimes.com/news/defence/kim-jong-un-calls-for-rapid-expansion-of-drone-technology-and-observes-weapons-tests/articleshow/135338432.cms",
+   "urls": [
+    "https://m.economictimes.com/news/defence/kim-jong-un-calls-for-rapid-expansion-of-drone-technology-and-observes-weapons-tests/articleshow/135338432.cms"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "calls",
+    "drone",
+    "expansion",
+    "jong",
+    "kim",
+    "observes",
+    "rapid",
+    "technology",
+    "tests",
+    "weapons"
+   ],
+   "numbers": [],
+   "summary": "North Korean leader Kim Jong Un called for a rapid expansion of the country's drone technology and oversaw tests of drones, missiles, and other weapons, state media reported.",
+   "led": false
+  },
+  {
+   "edition": "2026-10-30",
+   "title": "Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dnipro Rail Station",
+   "section": "International Security",
+   "url": "https://www.sofx.com/jet-powered-russian-drone-evades-air-defenses-kills-14-at-crowded-dnipro-rail-station/",
+   "urls": [
+    "https://eaworldview.com/2026/10/ukraine-war-dnipro-russia-murders-14-civilians-on-a-train-platform",
+    "https://militarnyi.com/en/news/ukrainian-drone-strike-sets-russia-s-novokuybyshevsk-oil-refinery-ablaze",
+    "https://ukrmedia.news/en/suspilstvo/boryspil-bez-svitla-ataka-drona-30-zhovtnia",
+    "https://unn.ua/en/news/russia-struck-a-shopping-center-in-kharkiv-with-a-jet-powered-drone",
+    "https://www.independent.co.uk/news/world/europe/ukraine-russia-war-live-trump-putin-uk-oil-refineries-b3076107.html",
+    "https://www.sofx.com/jet-powered-russian-drone-evades-air-defenses-kills-14-at-crowded-dnipro-rail-station",
+    "https://www.theguardian.com/world/2026/oct/30/ukraine-war-briefing-russian-drone-attack-dnipro-rail-platform"
+   ],
+   "identifiers": [],
+   "tokens": [
+    "air",
+    "crowded",
+    "defenses",
+    "dnipro",
+    "drone",
+    "evades",
+    "jet",
+    "kills",
+    "powered",
+    "rail",
+    "russian",
+    "station"
+   ],
+   "numbers": [],
+   "summary": "A jet-powered Russian drone struck a crowded platform at Dnipro\u2019s main rail station Thursday, killing 14, Ukrainian officials said. 2. Ukraine\u2019s air force intercepted three of four jet-powered drones in the attack, faster turbojet models that outpace the low-cost interceptors Kyiv relies on. 3.",
    "led": false
   }
  ]
