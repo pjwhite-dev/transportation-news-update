@@ -86,6 +86,8 @@ class SiteDesignTests(unittest.TestCase):
         self.assertIn('id="feed"', root)  # the live page
         self.assertNotIn("edition-id", root)
         self.assertTrue((self.out / "live.js").exists())
+        self.assertRegex(root, r'src="live\.js\?v=[0-9a-f]{10}"')  # a new page never runs a cached old script
+        self.assertRegex(root, r'href="live\.css\?v=[0-9a-f]{10}"')
         self.assertIn('<link rel="canonical" href="https://advancedtransportation.live/edition/">', self.index)
         self.assertIn('href="../edition/"', self.index)  # "Latest"
         self.assertIn('href="../assets/site.css"', self.index)
