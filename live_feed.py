@@ -42,6 +42,9 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
         "check": BADGES.get(story["status"], ""),
         "official": bool(story["official"]),
     }
+    tier = live_lead.impact_tier(story["score"]) if story["status"] in (VERIFIED, HEADLINE) else ""
+    if tier:
+        out["impact"] = tier
     if story["also"]:
         out["also"] = [{"source": a.get("source", ""), "url": a.get("url", "")} for a in story["also"] if a.get("url")]
     corrections = [n["note"] for n in story["notes"] if str(n.get("note", "")).startswith("Correction")]

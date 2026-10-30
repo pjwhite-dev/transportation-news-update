@@ -77,6 +77,17 @@ def significance(
     return Score(max(0, min(100, sum(parts.values()))), parts)
 
 
+# The word readers see beside a scored story (never the number). Major starts where a story may lead.
+IMPACT_TIERS = ((75, "landmark"), (FLOOR, "major"), (30, "notable"), (0, "routine"))
+
+
+def impact_tier(score: float | None) -> str:
+    """'landmark', 'major', 'notable' or 'routine'; '' for a story not scored yet."""
+    if score is None:
+        return ""
+    return next(name for floor, name in IMPACT_TIERS if score >= floor)
+
+
 def bar(lead_score: float, hours: float) -> float:
     """The score a new story must reach to replace a lead that has stood `hours`."""
     return FLOOR + (lead_score + MARGIN - FLOOR) * math.exp(-max(0.0, hours) / TAU_HOURS)

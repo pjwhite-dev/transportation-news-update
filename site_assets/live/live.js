@@ -57,6 +57,21 @@
     return null;
   }
 
+  // AI-estimated impact, shown as a word; a story not scored yet has none.
+  var IMPACT = {
+    landmark: ["Landmark", "Rare: a decision or event likely to change the field"],
+    major: ["Major", "Significant government action, first-of-its-kind operation, or widely reported"],
+    notable: ["Notable", "Worth knowing: real news with a narrower reach"],
+    routine: ["Routine", "Incremental news: updates, small contracts, local items"]
+  };
+  function impactBadge(story) {
+    var t = IMPACT[story.impact];
+    if (!t) return null;
+    var b = el("span", "impact " + story.impact, t[0]);
+    b.title = "AI estimate of impact: " + t[1] + ". Not a judgment of the reporting.";
+    return b;
+  }
+
   function storyNode(story, isNew) {
     var art = el("article", "story" + (isNew ? " arrive" : ""));
     art.dataset.id = story.id;
@@ -66,6 +81,8 @@
     var t = el("time", null, storyTime(story));
     t.dateTime = story.published;
     side.appendChild(t);
+    var imp = impactBadge(story);
+    if (imp) side.appendChild(imp);
     art.appendChild(side);
     var body = el("div");
     var meta = el("div", "meta");
