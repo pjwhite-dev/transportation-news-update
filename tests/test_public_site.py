@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -246,6 +247,7 @@ class PublicSiteTests(unittest.TestCase):
             )
             (raw_archive / "2026-09-10.json").write_text(json.dumps(latest))
             output = root / "site"
+            shutil.copytree(Path(__file__).resolve().parents[1] / "site_assets" / "live", root / "site_assets" / "live")
 
             result = build_public_site(root, output)
 
