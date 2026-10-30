@@ -22,16 +22,19 @@ HEADERS = {
 }
 
 OFFICIAL_FEEDS = {
-    "White House": "https://www.whitehouse.gov/briefing-room/feed/",
-    "U.S. Department of Transportation": (
-        "https://www.transportation.gov/rss/press-releases.xml"
-    ),
-    "Federal Aviation Administration": "https://www.faa.gov/newsroom/all_news.rss",
     "NASA": "https://www.nasa.gov/news-release/feed/",
     "U.S. Department of Defense": (
         "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?"
         "ContentType=1&Site=945&max=50"
     ),
+}
+
+# Agencies whose feeds refuse us (FAA and DOT answer 403) or are gone (the White House feed, 404): a Google News
+# search limited to the agency's site finds the same releases (news_engine.fetch_official_site_search).
+OFFICIAL_SITE_SEARCHES = {
+    "White House": "whitehouse.gov",
+    "U.S. Department of Transportation": "transportation.gov",
+    "Federal Aviation Administration": "faa.gov",
 }
 
 SEARXNG_QUERIES = {

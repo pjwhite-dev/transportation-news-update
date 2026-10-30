@@ -1,9 +1,10 @@
-/* Live page: poll feed.json, render the lead, ticker, river and desks; never move the page under a reader. */
+/* Live page: poll feed.json, render the lead, ticker, markets and one feed; never move the page under a reader. */
 (function () {
   "use strict";
   var TZ = "America/New_York";
   var STALE_MS = 10 * 60 * 1000; // no new feed for 10 minutes: tell the reader updates are paused
-  var state = { feed: null, shown: null, seen: {}, view: "river", desk: "all", pending: 0, timer: null, tickerKey: "" };
+  var SWEEP_MS = 8000; // the "checking the wire" line shows one source at a time, this long each
+  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", sweepAt: 0 };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -32,28 +33,31 @@
     if (key === keyFmt.format(new Date(Date.now() - 864e5))) return "Yesterday";
     return dayFmt.format(d);
   }
-  function deskName(key) {
-    var desks = (state.shown && state.shown.desks) || [];
-    for (var i = 0; i < desks.length; i++) if (desks[i].key === key) return desks[i].name;
+  function catName(key) {
+    var cats = (state.shown && state.shown.desks) || [];
+    for (var i = 0; i < cats.length; i++) if (cats[i].key === key) return cats[i].name;
     return "";
   }
 
   function badge(story) {
-    if (story.check === "verified") return el("span", "badge verified", "✓ Verified");
-    if (story.check === "first-pass") return el("span", "badge first-pass", "First pass");
+    if (story.check === "checked") return el("span", "badge checked", "Summary double-checked");
+    if (story.check === "quick") return el("span", "badge quick", "Quick summary");
     return null;
   }
 
-  function storyNode(story, isNew, compact) {
+  function storyNode(story, isNew) {
     var art = el("article", "story" + (isNew ? " arrive" : ""));
     art.dataset.id = story.id;
+    art.dataset.cat = story.desk;
+    var side = el("div", "cat");
+    side.appendChild(el("b", null, catName(story.desk)));
     var t = el("time", null, clock(story.published));
     t.dateTime = story.published;
-    art.appendChild(t);
+    side.appendChild(t);
+    art.appendChild(side);
     var body = el("div");
     var meta = el("div", "meta");
     meta.appendChild(el("span", "who", story.source));
-    if (!compact && deskName(story.desk)) meta.appendChild(el("span", "deskname", deskName(story.desk)));
     var b = badge(story);
     if (b) meta.appendChild(b);
     if (story.official) meta.appendChild(el("span", "badge official", "Official source"));
@@ -91,7 +95,7 @@
     } else {
       var eye = el("p", "eyebrow");
       eye.appendChild(el("span", "tag", "Lead"));
-      if (deskName(lead.desk)) eye.appendChild(el("span", null, deskName(lead.desk)));
+      if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
       eye.appendChild(el("span", "since", "since " + clock(lead.since)));
       main.appendChild(eye);
       var h = el("h1");
@@ -140,51 +144,62 @@
     track.style.setProperty("--tick-seconds", Math.max(40, items.length * 6) + "s");
   }
 
-  function renderChips(feed) {
-    var nav = $("chips");
-    nav.textContent = "";
-    var all = [{ key: "all", name: "All desks", today: null }].concat(feed.desks);
-    all.forEach(function (d) {
-      var b = el("button", null, d.name);
-      b.type = "button";
-      b.setAttribute("aria-pressed", String(state.desk === d.key));
-      if (d.today != null) b.appendChild(el("span", null, String(d.today)));
-      b.addEventListener("click", function () { state.desk = d.key; store("live-desk", d.key); render(true); });
-      nav.appendChild(b);
-    });
-  }
-
-  function renderRiver(feed, fresh) {
-    var river = $("river");
-    river.textContent = "";
-    var list = feed.stories.filter(function (s) { return state.desk === "all" || s.desk === state.desk; });
-    if (!list.length) { river.appendChild(el("p", "empty", "Nothing on this desk in the last three days.")); return; }
-    var lastDay = "";
-    list.forEach(function (s) {
-      var d = dayLabel(s.published);
-      if (d !== lastDay) { river.appendChild(el("h2", "day", d)); lastDay = d; }
-      river.appendChild(storyNode(s, fresh[s.id]));
-    });
-  }
-
-  function renderSide(feed) {
-    var pulse = $("pulse");
-    pulse.textContent = "";
-    var max = Math.max.apply(null, feed.desks.map(function (d) { return d.today; }).concat([1]));
-    feed.desks.forEach(function (d) {
+  function renderMarket(feed) {
+    var m = feed.market, box = $("market");
+    box.hidden = !(m && m.quotes && m.quotes.length);
+    if (box.hidden) return;
+    $("market-label").textContent = m.open ? m.label + " · " + clock(m.as_of) : m.label;
+    var ul = $("quotes");
+    ul.textContent = "";
+    var lastGroup = null;
+    m.quotes.forEach(function (q) {
+      if (lastGroup !== null && q.group !== lastGroup) ul.appendChild(el("li", "sep"));
+      lastGroup = q.group;
       var li = el("li");
-      li.appendChild(el("span", null, d.name));
-      li.appendChild(el("b", null, String(d.today)));
-      var bar = el("span", "bar");
-      var fill = el("i");
-      fill.style.width = Math.round(100 * d.today / max) + "%";
-      bar.appendChild(fill);
-      li.appendChild(bar);
-      pulse.appendChild(li);
+      var ab = el("abbr", null, q.symbol);
+      ab.title = q.name || q.symbol;
+      ab.tabIndex = 0;
+      li.appendChild(ab);
+      li.appendChild(el("span", "px", Number(q.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+      var p = Number(q.percent), tone = p > 0 ? "up" : p < 0 ? "down" : "flat";
+      li.appendChild(el("span", "chg " + tone, (p > 0 ? "▲ " : p < 0 ? "▼ " : "– ") + Math.abs(p).toFixed(2) + "%"));
+      ul.appendChild(li);
     });
+  }
+
+  function saveHidden() { store("live-hidden", Object.keys(state.hidden).filter(function (k) { return state.hidden[k]; }).join(",")); }
+
+  function renderFilters(feed) {
+    var box = $("filters");
+    box.textContent = "";
+    feed.desks.forEach(function (d) {
+      var b = el("button");
+      b.type = "button";
+      b.dataset.cat = d.key;
+      b.setAttribute("aria-pressed", String(!state.hidden[d.key]));
+      b.title = (state.hidden[d.key] ? "Show " : "Hide ") + d.name;
+      b.appendChild(el("i"));
+      b.appendChild(document.createTextNode(d.name));
+      b.appendChild(el("span", null, String(d.today)));
+      b.addEventListener("click", function () { state.hidden[d.key] = !state.hidden[d.key]; saveHidden(); render(true); });
+      box.appendChild(b);
+    });
+    var anyHidden = feed.desks.some(function (d) { return state.hidden[d.key]; });
+    if (anyHidden) {
+      var all = el("button", "all", "Show all");
+      all.type = "button";
+      all.addEventListener("click", function () { state.hidden = {}; saveHidden(); render(true); });
+      box.appendChild(all);
+    }
+  }
+
+  function renderDocket(feed) {
+    var rows = feed.docket || [];
+    $("docket-box").hidden = !rows.length;
+    $("docket-count").textContent = rows.length ? "(" + rows.length + ")" : "";
     var docket = $("docket");
     docket.textContent = "";
-    (feed.docket || []).forEach(function (r) {
+    rows.forEach(function (r) {
       var li = el("li");
       li.appendChild(link(r.url, r.agency + ": " + r.action));
       li.appendChild(el("span", "st", r.next || r.status));
@@ -192,44 +207,59 @@
     });
   }
 
-  function renderDesks(feed, fresh) {
-    var box = $("desks-view");
+  function renderFeed(feed, fresh) {
+    var box = $("feed");
     box.textContent = "";
-    feed.desks.forEach(function (d) {
-      var col = el("section", "desk");
-      var h = el("h2", null, d.name);
-      h.appendChild(el("span", null, String(d.today)));
-      col.appendChild(h);
-      feed.stories.filter(function (s) { return s.desk === d.key; }).slice(0, 25).forEach(function (s) {
-        col.appendChild(storyNode(s, fresh[s.id], true));
-      });
-      box.appendChild(col);
+    var list = feed.stories.filter(function (s) { return !state.hidden[s.desk]; });
+    if (!list.length) {
+      box.appendChild(el("p", "empty", feed.stories.length ? "Every category is switched off. Turn one back on above." : "No stories in the last three days."));
+      return;
+    }
+    var lastDay = "";
+    list.forEach(function (s) {
+      var d = dayLabel(s.published);
+      if (d !== lastDay) { box.appendChild(el("h2", "day", d)); lastDay = d; }
+      box.appendChild(storyNode(s, fresh[s.id]));
     });
+  }
+
+  function level() {
+    var feed = state.feed;
+    return Date.now() - new Date(feed.generated).getTime() > STALE_MS ? "FROZEN" : feed.level;
   }
 
   function renderStatus() {
     var feed = state.feed;
     if (!feed) return;
-    var age = Date.now() - new Date(feed.generated).getTime();
-    var dot = $("dot"), text = $("status-text"), banner = $("banner");
-    var level = age > STALE_MS ? "FROZEN" : feed.level;
-    dot.className = "dot " + (level === "LIVE" || level === "LITE" ? "on" : level === "HEADLINES" ? "warn" : "off");
-    var secs = Math.max(0, Math.round(age / 1000));
-    text.textContent = level === "FROZEN" ? "Paused since " + clock(feed.generated) : "Updated " + (secs < 60 ? secs + " s" : Math.round(secs / 60) + " min") + " ago";
+    var lv = level(), dot = $("dot"), text = $("status-text"), banner = $("banner");
+    dot.className = "dot " + (lv === "LIVE" || lv === "LITE" ? "on" : lv === "HEADLINES" ? "warn" : "off");
+    var secs = Math.max(0, Math.round((Date.now() - new Date(feed.generated).getTime()) / 1000));
+    text.textContent = lv === "FROZEN" ? "Paused since " + clock(feed.generated) : "Live · updated " + (secs < 60 ? secs + " s" : Math.round(secs / 60) + " min") + " ago";
     var msg = "";
-    if (level === "FROZEN") msg = "Updates are paused since " + clock(feed.generated) + " ET. The stories below were current then.";
-    else if (level === "HEADLINES") msg = "Summaries are paused for a few minutes. New stories appear as headline, source and link.";
+    if (lv === "FROZEN") msg = "Updates are paused since " + clock(feed.generated) + " ET. The stories below were current then.";
+    else if (lv === "HEADLINES") msg = "Summaries are paused for a few minutes. New stories appear as headline, source and link.";
     banner.hidden = !msg;
-    banner.className = "banner wrap" + (level === "FROZEN" ? " warn" : "");
+    banner.className = "banner wrap" + (lv === "FROZEN" ? " warn" : "");
     banner.textContent = msg;
-    var wire = feed.wire || [];
+  }
+
+  // One source at a time, a few seconds each, with a gentle fade (no fade for readers who ask for less motion).
+  var quiet = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function sweepText(w) {
     var line = $("sweep");
     line.textContent = "";
-    if (wire.length && level !== "FROZEN") {
-      line.appendChild(document.createTextNode("Checking the wire · "));
-      line.appendChild(el("b", null, wire[0].source + " " + clock(wire[0].at)));
-      wire.slice(1, 6).forEach(function (w) { line.appendChild(document.createTextNode(" · " + w.source + " " + clock(w.at))); });
-    }
+    if (!w) return;
+    line.appendChild(document.createTextNode("Checking the wire · "));
+    line.appendChild(el("b", null, w.source));
+    line.appendChild(document.createTextNode(" · " + clock(w.at)));
+  }
+  function stepSweep() {
+    var wire = (state.feed && level() !== "FROZEN" && state.feed.wire) || [];
+    var w = wire.length ? wire[state.sweepAt++ % wire.length] : null;
+    var line = $("sweep");
+    if (quiet || !line.textContent) { sweepText(w); return; }
+    line.classList.add("fade");
+    setTimeout(function () { sweepText(w); line.classList.remove("fade"); }, 600);
   }
 
   function atTop() { return window.scrollY < 140; }
@@ -239,11 +269,12 @@
     if (!feed) return;
     if (!force && state.shown && !atTop()) {
       var known = byId(state.shown), count = 0;
-      feed.stories.forEach(function (s) { if (!known[s.id]) count++; });
+      feed.stories.forEach(function (s) { if (!known[s.id] && !state.hidden[s.desk]) count++; });
       state.pending = count;
       $("new-count").textContent = count === 1 ? "1 new story" : count + " new stories";
       $("new-pill").hidden = count === 0;
       renderTicker(feed);
+      renderMarket(feed);
       renderStatus();
       return;
     }
@@ -259,28 +290,21 @@
     document.title = feed.site.name + " · " + feed.site.label;
     renderLead(feed);
     renderTicker(feed);
-    renderChips(feed);
-    if (state.view === "river") { renderRiver(feed, fresh); renderSide(feed); }
-    else renderDesks(feed, fresh);
+    renderMarket(feed);
+    renderFilters(feed);
+    renderDocket(feed);
+    renderFeed(feed, fresh);
     renderStatus();
-  }
-
-  function setView(view) {
-    state.view = view;
-    store("live-view", view);
-    $("river-view").hidden = view !== "river";
-    $("desks-view").hidden = view !== "desks";
-    document.querySelectorAll(".views button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.view === view)); });
-    render(true);
   }
 
   function poll() {
     fetch("feed.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (feed) {
-        var changed = !state.feed || feed.generated !== state.feed.generated;
+        var first = !state.feed, changed = first || feed.generated !== state.feed.generated;
         state.feed = feed;
         if (changed) render(false); else renderStatus();
+        if (first) stepSweep();
         schedule(feed.site.poll_seconds);
       })
       .catch(function () { renderStatus(); schedule(30); });
@@ -295,12 +319,10 @@
     render(true);
   });
   window.addEventListener("scroll", function () { if (atTop() && state.pending) render(true); }, { passive: true });
-  document.querySelectorAll(".views button").forEach(function (b) { b.addEventListener("click", function () { setView(b.dataset.view); }); });
   document.addEventListener("visibilitychange", function () { if (!document.hidden) poll(); });
   setInterval(renderStatus, 5000);
+  setInterval(stepSweep, SWEEP_MS);
 
-  state.desk = store("live-desk") || "all";
-  var view = store("live-view");
-  if (view === "desks") { state.view = "desks"; $("river-view").hidden = true; $("desks-view").hidden = false; document.querySelectorAll(".views button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.view === "desks")); }); }
+  (store("live-hidden") || "").split(",").forEach(function (k) { if (k) state.hidden[k] = true; });
   poll();
 })();

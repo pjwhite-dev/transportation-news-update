@@ -1,6 +1,6 @@
 """Run the live site: wire, fast lane, slow lane, publisher and doctor in one supervised process.
 
-    python live_service.py run [--port 8766]   the service (a local preview at http://127.0.0.1:8766)
+    python live_service.py run [--port 8766]   the service (a local preview at http://127.0.0.1:8766/)
     python live_service.py sweep               poll every source once (one Google query) and print what was queued
     python live_service.py render              write feed.json from the store and exit
 
@@ -29,6 +29,7 @@ import newsroom_live  # noqa: E402
 from ai_providers import DEFAULT_OLLAMA_BASE_URL, OllamaProvider  # noqa: E402
 from live_desk import Desk  # noqa: E402
 from live_doctor import Doctor  # noqa: E402
+from live_market import MarketWatch, public_market  # noqa: E402
 from live_sources import Wire, load_config  # noqa: E402
 from live_store import Store, iso  # noqa: E402
 
@@ -64,20 +65,35 @@ def single_instance(path: Path):
     return handle
 
 
+def wire_name(name: str) -> str:
+    """'Trade: DroneDJ' -> 'DroneDJ'; a Google query keeps its engine: 'Google News: “eVTOL”'."""
+    kind, _, rest = name.partition(": ")
+    if kind == "Google News":
+        return f"Google News: “{rest.strip(chr(34))}”"
+    return rest or name
+
+
 def wire_status(store: Store) -> list[dict[str, Any]]:
     rows = sorted((s for s in store.sources() if s["last_poll"]), key=lambda s: s["last_poll"], reverse=True)
-    return [{"source": s["name"].split(": ", 1)[-1], "at": s["last_poll"], "ok": not s["last_error"]} for s in rows[:8]]
+    return [{"source": wire_name(s["name"]), "at": s["last_poll"], "ok": not s["last_error"]} for s in rows[:8]]
+
+
+def market_watch_for(config: dict[str, Any]) -> MarketWatch:
+    return MarketWatch(config, ROOT / config["market"]["output"])
 
 
 class Publisher:
-    def __init__(self, store: Store, config: dict[str, Any], doctor: Doctor, out_dir: Path) -> None:
-        self.store, self.config, self.doctor, self.out_dir = store, config, doctor, out_dir
+    def __init__(self, store: Store, config: dict[str, Any], doctor: Doctor, out_dir: Path, market: MarketWatch) -> None:
+        self.store, self.config, self.doctor, self.out_dir, self.market = store, config, doctor, out_dir, market
         self.last_hash = ""
 
     def publish(self) -> bool:
         now = datetime.now(timezone.utc)
         try:
-            feed = live_feed.build_feed(self.store, self.config, now=now, level=self.doctor.level, wire=wire_status(self.store))
+            feed = live_feed.build_feed(
+                self.store, self.config, now=now, level=self.doctor.level, wire=wire_status(self.store),
+                market=public_market(self.market.current(), now),
+            )
             live_feed.write_site(self.out_dir, feed)
         except Exception as exc:  # noqa: BLE001 - the doctor turns this into FROZEN
             self.doctor.feed_ok = False
@@ -112,13 +128,14 @@ def serve_preview(out_dir: Path, port: int) -> http.server.ThreadingHTTPServer:
     return server
 
 
-def build(config: dict[str, Any], store: Store) -> tuple[Wire, Desk, Doctor, Publisher, Path]:
+def build(config: dict[str, Any], store: Store) -> tuple[Wire, Desk, Doctor, Publisher, MarketWatch, Path]:
     models = providers(config)
     desk = Desk(store, config, writer=models["writer"], verifier=models["verifier"], scorer=models["scorer"])
     doctor = Doctor(store, desk, config, primary_writer=models["writer"], fallback_writer=models["fallback"], heartbeat_path=RUNTIME / "heartbeat.json")
     out_dir = ROOT / config["publish"]["output"]
-    publisher = Publisher(store, config, doctor, out_dir)
-    return Wire(store, config), desk, doctor, publisher, out_dir
+    market = market_watch_for(config)
+    publisher = Publisher(store, config, doctor, out_dir, market)
+    return Wire(store, config), desk, doctor, publisher, market, out_dir
 
 
 def main(argv: list[str]) -> int:
@@ -132,7 +149,9 @@ def main(argv: list[str]) -> int:
     if args.command == "render":
         out_dir = ROOT / config["publish"]["output"]
         level = (store.get_state("level") or {}).get("level", "LIVE")
-        live_feed.write_site(out_dir, live_feed.build_feed(store, config, now=datetime.now(timezone.utc), level=level, wire=wire_status(store)))
+        now = datetime.now(timezone.utc)
+        market = public_market(market_watch_for(config).current(), now)
+        live_feed.write_site(out_dir, live_feed.build_feed(store, config, now=now, level=level, wire=wire_status(store), market=market))
         print(out_dir / "feed.json")
         return 0
     if args.command == "sweep":
@@ -147,8 +166,9 @@ def main(argv: list[str]) -> int:
     if lock is None:
         print("The live service is already running.", file=sys.stderr)
         return 0
-    wire, desk, doctor, publisher, out_dir = build(config, store)
+    wire, desk, doctor, publisher, market, out_dir = build(config, store)
     doctor.add_worker("wire", wire.run)
+    doctor.add_worker("market", market.run)
     doctor.add_worker("fast", desk.run_fast)
     doctor.add_worker("slow", desk.run_slow)
     doctor.add_worker("publish", publisher.run)

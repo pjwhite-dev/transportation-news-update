@@ -2,7 +2,8 @@
 
 The page (site_assets/live/) is static; it polls feed.json and animates whatever changed. Only what a reader
 needs leaves the store: no article text, no model reasons, and no significance score (owner has not decided
-whether to show it; decisions.md 2026-10-30).
+whether to show it; decisions.md 2026-10-30). The public labels never say "verified": the checks are on our
+summary against the article, not on the reporting itself (owner, 2026-10-30).
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
 BRIEFING = ROOT / "data" / "latest_briefing.json"
 FEED_VERSION = 1
-BADGES = {FIRST_PASS: "first-pass", VERIFIED: "verified", HEADLINE: "headline"}
+BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
 
 
 def public_story(story: dict[str, Any]) -> dict[str, Any]:
@@ -65,7 +66,15 @@ def docket(path: Path = BRIEFING) -> list[dict[str, Any]]:
     return rows
 
 
-def build_feed(store: Store, config: dict[str, Any], *, now: datetime, level: str, wire: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def build_feed(
+    store: Store,
+    config: dict[str, Any],
+    *,
+    now: datetime,
+    level: str,
+    wire: list[dict[str, Any]] | None = None,
+    market: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     site = config["site"]
     stories = store.visible(now - timedelta(hours=float(site["river_hours"])), limit=500)
     public = [public_story(s) for s in stories]
@@ -102,6 +111,7 @@ def build_feed(store: Store, config: dict[str, Any], *, now: datetime, level: st
         "desks": desks,
         "stories": public,
         "docket": docket(),
+        "market": market,
         "wire": (wire or [])[:8],
     }
 

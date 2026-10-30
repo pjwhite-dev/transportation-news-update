@@ -25,6 +25,7 @@ import article_extract
 import editorial_checks
 import grounding
 import live_lead
+import live_sources
 import news_engine
 import newsroom_live
 import story_groups
@@ -70,6 +71,8 @@ _FR_ROUTINE = re.compile(
     r"agency forms? (?:submitted|undergoing)|meeting of the .* advisory committee|request for nominations",
     re.I,
 )
+# Paid market-research listings ("... Market Size, Share & 2032 Growth Trends Report") are not news.
+_MARKET_REPORT = re.compile(r"market size|\bCAGR\b|growth trends report|market (?:research )?report\b|forecast (?:to|till|through) 20\d\d", re.I)
 _OPINION = re.compile(r"/(?:opinion|opinions|editorial|commentary|op-ed)/|^(?:opinion|op-ed|commentary)\s*[:|]", re.I)
 
 
@@ -187,8 +190,12 @@ class Desk:
                 if not resolved:
                     raise StepFailed("Google News link could not be resolved to the publisher")
                 record["url"] = resolved
+                if live_sources.denied_host(resolved, self.config):
+                    return self._drop(story, now, "social or market-research site")
                 if not self.store.mark_seen(resolved, now):
                     return self._drop(story, now, "the publisher's page was already found by another source")
+            if _MARKET_REPORT.search(str(record.get("title", ""))):
+                return self._drop(story, now, "market-research listing, not news")
             official_api = record.get("origin") == "Federal Register API"
             if official_api and _FR_ROUTINE.search(str(record.get("title", ""))):
                 return self._drop(story, now, "routine Federal Register notice")

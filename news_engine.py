@@ -21,6 +21,7 @@ from coverage_history import annotate_previous_coverage
 from regulatory_tracker import build_regulatory_tracker
 from validation_gates import SUMMARY_CHAIN_VERSION
 from web_discovery import (
+    OFFICIAL_SITE_SEARCHES,
     enrich_article_metadata,
     fetch_official_feeds,
     fetch_searxng,
@@ -927,6 +928,24 @@ def fetch_google_news(
     return sorted(items, key=lambda item: item["published"], reverse=True)[:max_items], None
 
 
+def fetch_official_site_search(
+    source: str,
+    site: str,
+    window_start: datetime,
+    window_end: datetime,
+    max_items: int = 25,
+) -> tuple[list[dict[str, Any]], str | None]:
+    """An agency's releases through Google News limited to its site (for agencies whose own feeds refuse us)."""
+    found, error = fetch_google_news("Federal Actions", f"site:{site}", window_start, window_end, max_items=max_items)
+    items = [
+        {**item, "source": source, "origin": "Official site search"}
+        for item in found
+        # Navigation and tool pages ("tfrweb", "Search Results", "ATCSCC Advisory") are not releases.
+        if len(item["title"].split()) >= 5 and not item["title"].startswith("- ")
+    ]
+    return items, error
+
+
 def fetch_federal_register(
     window_start: datetime,
     window_end: datetime,
@@ -1062,8 +1081,14 @@ def collect_articles(
     errors.extend(federal_errors)
 
     official_items, official_errors = fetch_official_feeds(window_start, window_end)
-    newsroom_live.wire_feed("Agency feeds", "DOT, FAA, NHTSA and other official feeds", official_items, "; ".join(official_errors))
+    newsroom_live.wire_feed("Agency feeds", "NASA and DoD official feeds", official_items, "; ".join(official_errors))
     errors.extend(official_errors)
+    for agency, site in OFFICIAL_SITE_SEARCHES.items():
+        found, error = fetch_official_site_search(agency, site, window_start, window_end)
+        newsroom_live.wire_feed("Agency site search", f"site:{site}", found, error, section="Federal Actions")
+        items.extend(found)
+        if error:
+            errors.append(error)
     searxng_items, searxng_errors = fetch_searxng(
         os.environ.get("SEARXNG_BASE_URL", "http://localhost:8080"),
         window_start,

@@ -1,7 +1,8 @@
 """The wire for the live site: each source on its own clock, with conditional GETs and a circuit breaker.
 
-Sources: agency feeds (every 5 min), trade feeds (every 10), the Federal Register API (every 15), Google News
-queries (one every 30 s, so each query comes round about every 36 min) and the local SearXNG (hourly). Every
+Sources: agency feeds (every 5 min), agency site searches for the agencies whose feeds refuse us (Google News
+limited to faa.gov, transportation.gov and whitehouse.gov, every 10), trade feeds (every 10), the Federal Register
+API (every 15) and Google News queries (one every 30 s, so each query comes round about every 36 min). Every
 feed entry is handed to the store once; the store's `seen` table makes repeat sightings free.
 """
 
@@ -44,6 +45,7 @@ class Source:
     query: str = ""
     section: str = ""
     official: bool = False
+    site: str = ""  # Google sources only: limit the search to this agency site
 
 
 def build_sources(config: dict[str, Any]) -> list[Source]:
@@ -51,6 +53,10 @@ def build_sources(config: dict[str, Any]) -> list[Source]:
     sources = [
         Source(f"Agency: {name}", "rss", timedelta(minutes=wire["official_every"]), url=url, official=True)
         for name, url in web_discovery.OFFICIAL_FEEDS.items()
+    ]
+    sources += [
+        Source(f"Agency: {name}", "google", timedelta(minutes=wire["agency_search_every"]), site=site, official=True)
+        for name, site in web_discovery.OFFICIAL_SITE_SEARCHES.items()
     ]
     sources += [
         Source(f"Trade: {name}", "rss", timedelta(minutes=wire["trade_every"]), url=url)
@@ -63,6 +69,13 @@ def build_sources(config: dict[str, Any]) -> list[Source]:
     google_cycle = timedelta(seconds=max(1, len(queries)) * wire["google_min_gap_seconds"])
     sources += [Source(f"Google News: {q}", "google", google_cycle, query=q, section=s) for s, q in queries]
     return sources
+
+
+def denied_host(url: str, config: dict[str, Any]) -> bool:
+    """Social and market-research hosts never reach the page (checked on the wire and again after a Google link
+    resolves to its publisher)."""
+    host = urlparse(url).netloc.casefold().removeprefix("www.")
+    return any(host == h or host.endswith("." + h) for h in config["wire"].get("deny_hosts", []))
 
 
 def rest_for(failures: int, config: dict[str, Any]) -> timedelta:
@@ -144,7 +157,11 @@ class Wire:
             store.ensure_source(source.name, now + timedelta(seconds=(index * 7) % max(60, int(source.every.total_seconds()))))
 
     def _google(self, source: Source, since: datetime) -> list[dict[str, Any]]:
-        items, error = news_engine.fetch_google_news(source.section, source.query, since, self.clock(), max_items=25)
+        if source.site:
+            name = source.name.split(": ", 1)[-1]
+            items, error = news_engine.fetch_official_site_search(name, source.site, since, self.clock(), max_items=25)
+        else:
+            items, error = news_engine.fetch_google_news(source.section, source.query, since, self.clock(), max_items=25)
         if error:
             if any(code in error for code in ("429", "503")):
                 self.google_gap = min(self.google_gap * 2, float(self.config["wire"]["google_max_gap_seconds"]))
@@ -153,8 +170,7 @@ class Wire:
         return items
 
     def denied(self, url: str) -> bool:
-        host = urlparse(url).netloc.casefold().removeprefix("www.")
-        return any(host == h or host.endswith("." + h) for h in self.config["wire"].get("deny_hosts", []))
+        return denied_host(url, self.config)
 
     def due(self) -> list[Source]:
         now = self.clock()
@@ -222,12 +238,13 @@ class Wire:
     def run(self, stop: threading.Event, beat: Callable[[], None] = lambda: None) -> None:
         """Polls run in a small pool, so a slow source (the Federal Register makes 18 requests) never holds up the rest."""
         inflight: dict[str, Future] = {}
+        google = {s.name for s in self.sources if s.kind == "google"}
         with ThreadPoolExecutor(max_workers=6, thread_name_prefix="live-wire") as pool:
             while not stop.is_set():
                 beat()
                 for name in [n for n, f in inflight.items() if f.done()]:
                     inflight.pop(name)
-                google_busy = any(n.startswith("Google News:") for n in inflight)
+                google_busy = any(n in google for n in inflight)
                 for source in self.due():
                     if source.name in inflight:
                         continue

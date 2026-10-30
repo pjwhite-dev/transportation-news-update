@@ -9,10 +9,13 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 import live_doctor
 import live_feed
 import live_lead
+import live_market
+import news_engine
 from live_desk import Desk, Health, desk_for, edition_running
 from live_sources import Source, Wire, build_sources, load_config, rest_for
 from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIFIED, Store, iso, title_overlap, url_key
@@ -251,6 +254,19 @@ class DeskTests(unittest.TestCase):
         self.assertEqual(self.desk(w=w).first_pass(sid), DROPPED)
         self.assertEqual(w.calls, [])
 
+    def test_a_google_link_to_a_denied_host_is_dropped_after_it_resolves(self):
+        sid = self.queue("https://news.google.com/rss/articles/CBMiabc")
+        desk = self.desk()
+        desk.resolve = lambda url: "https://www.mordorintelligence.com/industry-reports/data-center-counter-drone"
+        self.assertEqual(desk.first_pass(sid), DROPPED)
+        self.assertIn("market-research", self.store.get(sid)["error"])
+
+    def test_market_research_listings_are_dropped_without_a_model(self):
+        sid = self.queue("https://www.example.com/report", title="Data Center Counter-Drone Market Size, Share & 2032 Growth Trends Report")
+        w = writer()
+        self.assertEqual(self.desk(w=w).first_pass(sid), DROPPED)
+        self.assertEqual(w.calls, [])
+
     def test_a_short_record_is_triaged_then_shown_as_headline_only(self):
         sid = self.queue("https://www.federalregister.gov/d/2026-2", origin="Federal Register API",
                          title="Normalizing Unmanned Aircraft Systems Beyond Visual Line of Sight Operations",
@@ -317,6 +333,69 @@ class WireTests(unittest.TestCase):
         self.assertTrue(all(s.every >= timedelta(minutes=5) for s in sources))
         self.assertNotIn("searxng", {s.kind for s in sources})  # off for the live wire (config)
 
+    def test_agencies_whose_feeds_refuse_us_are_searched_by_site(self):
+        sources = {s.name: s for s in build_sources(CONFIG)}
+        for name, site in (("Federal Aviation Administration", "faa.gov"), ("U.S. Department of Transportation", "transportation.gov"), ("White House", "whitehouse.gov")):
+            source = sources[f"Agency: {name}"]
+            self.assertEqual((source.kind, source.site, source.official), ("google", site, True))
+        self.assertFalse(any("faa.gov" in s.url or "whitehouse.gov" in s.url for s in sources.values()))
+        wire = Wire(self.store, CONFIG, sources=[sources["Agency: Federal Aviation Administration"]], clock=lambda: NOW)
+        with mock.patch.object(news_engine, "fetch_official_site_search", return_value=(self.items, None)) as search:
+            self.assertEqual(wire.poll(wire.sources[0]), 1)
+        self.assertEqual(search.call_args.args[:2], ("Federal Aviation Administration", "faa.gov"))
+        self.assertTrue(self.store.by_status(QUEUED)[0]["record"]["official_source"])
+
+    def test_site_search_drops_navigation_pages_and_names_the_agency(self):
+        found = [
+            {"title": "tfrweb", "source": "Federal Aviation Administration (.gov)", "url": "https://news.google.com/a"},
+            {"title": "- Federal Aviation Administration (.gov)", "source": "x", "url": "https://news.google.com/b"},
+            {"title": "FAA Proposes Rule to Normalize Beyond Visual Line of Sight Drone Flights", "source": "Federal Aviation Administration (.gov)", "url": "https://news.google.com/c"},
+        ]
+        with mock.patch.object(news_engine, "fetch_google_news", return_value=(found, None)) as google:
+            items, error = news_engine.fetch_official_site_search("Federal Aviation Administration", "faa.gov", NOW, NOW)
+        self.assertEqual(google.call_args.args[1], "site:faa.gov")
+        self.assertIsNone(error)
+        self.assertEqual([i["url"] for i in items], ["https://news.google.com/c"])
+        self.assertEqual((items[0]["source"], items[0]["origin"]), ("Federal Aviation Administration", "Official site search"))
+
+
+class MarketTests(unittest.TestCase):
+    def watch(self, tmp, now, as_of=None):
+        path = Path(tmp) / "market.json"
+        if as_of:
+            path.write_text(json.dumps({"as_of": as_of.isoformat(), "quotes": []}), encoding="utf-8")
+        return live_market.MarketWatch(CONFIG, path, fetch=lambda: None, fallback=Path(tmp) / "none.json", clock=lambda: now)
+
+    def test_refreshes_every_few_minutes_while_open_and_once_after_the_close(self):
+        open_now = datetime(2026, 10, 29, 18, 0, tzinfo=timezone.utc)  # Thursday 2:00 p.m. ET
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertTrue(self.watch(tmp, open_now).due(open_now))  # nothing saved yet
+            self.assertFalse(self.watch(tmp, open_now, open_now - timedelta(minutes=2)).due(open_now))
+            self.assertTrue(self.watch(tmp, open_now, open_now - timedelta(minutes=6)).due(open_now))
+            evening = datetime(2026, 10, 30, 1, 0, tzinfo=timezone.utc)  # Thursday 9:00 p.m. ET
+            self.assertTrue(self.watch(tmp, evening, open_now).due(evening))  # the close is not saved yet
+            self.assertFalse(self.watch(tmp, evening, evening - timedelta(hours=3)).due(evening))
+            saturday = datetime(2026, 10, 31, 16, 0, tzinfo=timezone.utc)
+            friday_close = datetime(2026, 10, 30, 21, 0, tzinfo=timezone.utc)  # Friday 5:00 p.m. ET
+            self.assertTrue(self.watch(tmp, saturday, evening).due(saturday))  # Friday's close is still owed
+            self.assertFalse(self.watch(tmp, saturday, friday_close).due(saturday))  # then it rests all weekend
+
+    def test_a_failed_fetch_waits_before_retrying_and_keeps_nothing(self):
+        now = datetime(2026, 10, 29, 18, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            watch = self.watch(tmp, now)
+            self.assertFalse(watch.refresh())
+            self.assertFalse(watch.due(now + timedelta(minutes=1)))
+            self.assertIsNone(watch.current())
+
+    def test_the_page_gets_prices_and_a_dated_label_only(self):
+        snapshot = {"as_of": "2026-10-29T18:00:00+00:00", "session_label": "Intraday, Thu., Oct. 29", "source": "Finnhub",
+                    "quotes": [{"symbol": "JOBY", "name": "Joby Aviation", "group": "eVTOL", "price": 9.1, "change": 0.2, "percent": 2.25, "quote_time": "x"}]}
+        out = live_market.public_market(snapshot, datetime(2026, 10, 29, 18, 0, tzinfo=timezone.utc))
+        self.assertTrue(out["open"])
+        self.assertEqual(out["quotes"][0], {"symbol": "JOBY", "name": "Joby Aviation", "group": "eVTOL", "price": 9.1, "change": 0.2, "percent": 2.25})
+        self.assertIsNone(live_market.public_market({**snapshot, "session_label": ""}, NOW))
+
 
 class DoctorTests(unittest.TestCase):
     def level(self, **signals):
@@ -377,7 +456,7 @@ class FeedTests(unittest.TestCase):
         self.assertNotIn("score", text)
         self.assertNotIn("passenger-carrying test flights of its ALIA electric aircraft from Burlington", text)
         self.assertEqual(feed["lead"]["id"], "s")
-        self.assertEqual(feed["stories"][0]["check"], "verified")
+        self.assertEqual(feed["stories"][0]["check"], "checked")
         self.assertEqual(feed["ticker"][0]["source"], "FLYING")
         self.assertEqual(live_feed.content_hash(feed), live_feed.content_hash({**feed, "generated": "later", "wire": [1]}))
 
@@ -387,6 +466,11 @@ class FeedTests(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text(encoding="utf-8")), {"version": 1})
             for name in ("index.html", "live.js", "live.css"):
                 self.assertTrue((Path(tmp) / name).exists())
+
+    def test_the_page_never_says_verified(self):
+        # We check our summary against the article; we do not verify the reporting (owner, 2026-10-30).
+        for name in ("index.html", "live.js", "live.css"):
+            self.assertNotIn("verif", (live_feed.ASSETS / name).read_text(encoding="utf-8").casefold(), name)
 
 
 if __name__ == "__main__":

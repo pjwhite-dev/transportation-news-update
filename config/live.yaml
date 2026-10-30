@@ -40,12 +40,13 @@ wire:
   federal_register_every: 15
   searxng_every: 0          # off: in the first real sweep 31 of its 86 results passed the reading step, nearly all
                             # market-research, LinkedIn and stock-chatter pages (2026-10-30). The edition keeps it.
-  official_every: 5
+  official_every: 5         # NASA and DoD feeds
+  agency_search_every: 10   # FAA, DOT and White House: their feeds refuse us, so Google News site:faa.gov etc.
   trade_every: 10
   rest_after_failures: 3
   deny_hosts: [linkedin.com, stocktwits.com, mordorintelligence.com, facebook.com, x.com, twitter.com, youtube.com, reddit.com]
   rest_minutes: [5, 15, 60]
-  official_feeds_from: web_discovery.OFFICIAL_FEEDS
+  official_feeds_from: web_discovery.OFFICIAL_FEEDS and OFFICIAL_SITE_SEARCHES
   trade_feeds:
     DroneLife: "https://dronelife.com/feed/"
     DroneDJ: "https://dronedj.com/feed/"
@@ -77,6 +78,10 @@ desk:
   writer_model: "qwen3.8:27b-q4_K_M"
   fallback_model: "qwen3.6:27b"
   verifier_model: "gemma4:31b"
+
+market:
+  every_minutes: 5          # Finnhub watchlist (market_watch.WATCHLIST) while NYSE is open; once after each close
+  output: ".runtime/live_site/market.json"
 
 publish:
   every_seconds: 15         # feed.json is rewritten at most this often, only when something changed
