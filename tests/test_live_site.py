@@ -761,11 +761,11 @@ class FeedTests(unittest.TestCase):
         self.assertEqual(feed["stories"][0]["check"], "checked")
         self.assertEqual(feed["ticker"][0]["source"], "FLYING")
         self.assertEqual(live_feed.content_hash(feed), live_feed.content_hash({**feed, "generated": "later", "wire": [1]}))
-        self.assertEqual(feed["stories"][0]["impact"], "major")  # scored 57: a word, never the number
+        self.assertEqual(feed["stories"][0]["impact"], "significant")  # scored 57: a word, never the number
 
     def test_impact_words_follow_the_lead_thresholds(self):
-        self.assertEqual([live_lead.impact_tier(s) for s in (None, 0, 29, 30, 49, 50, 74, 75, 100)],
-                         ["", "routine", "routine", "notable", "notable", "major", "major", "landmark", "landmark"])
+        self.assertEqual([live_lead.impact_tier(s) for s in (None, 0, 29, 30, 49, 50, 100)],
+                         ["", "minor", "minor", "notable", "notable", "significant", "significant"])
 
     def test_an_unscored_story_has_no_impact_word(self):
         store = Store(":memory:")

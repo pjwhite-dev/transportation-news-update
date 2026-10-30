@@ -59,10 +59,9 @@
 
   // AI-estimated impact, shown as a word; a story not scored yet has none.
   var IMPACT = {
-    landmark: ["Landmark", "Rare: a decision or event likely to change the field"],
-    major: ["Major", "Significant government action, first-of-its-kind operation, or widely reported"],
+    significant: ["Significant", "Major government action, a first-of-its-kind operation, or widely reported"],
     notable: ["Notable", "Worth knowing: real news with a narrower reach"],
-    routine: ["Routine", "Incremental news: updates, small contracts, local items"]
+    minor: ["Minor", "Incremental news: updates, small contracts, local items"]
   };
   function impactBadge(story) {
     var t = IMPACT[story.impact];
