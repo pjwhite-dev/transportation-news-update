@@ -194,8 +194,9 @@ class Wire:
                 continue
             next_due = parse_iso(state.get("next_due", "")) or now
             if next_due <= now:
-                out.append(source)
-        return sorted(out, key=lambda s: (s.kind == "google", s.name))
+                out.append((next_due, source))
+        # Longest-waiting first, so every Google search gets its turn (by name, the strip's searches never did).
+        return [s for _, s in sorted(out, key=lambda pair: (pair[1].kind == "google", pair[0], pair[1].name))]
 
     def poll(self, source: Source) -> int:
         """Poll one source; returns the number of new stories queued. Never raises."""

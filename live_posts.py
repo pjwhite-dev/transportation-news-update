@@ -17,7 +17,6 @@ from typing import Any
 
 import requests
 
-import news_engine
 import web_discovery
 from live_store import Store, iso, parse_iso
 
@@ -33,8 +32,28 @@ _JUNK = re.compile(
 )
 
 
+_TOPIC = re.compile(
+    r"\b(?:drones?|unmanned|uncrewed|UAS|UAV|counter-?drone|counter-?UAS|BVLOS|eVTOL|air ?taxis?|aircraft|aviation|"
+    r"airports?|airlines?|airspace|flights?|pilots?|helicopters?|vertiports?|FAA|rail(?:road|way)?s?|trains?|"
+    r"locomotives?|transit|subway|autonomous|self-driving|driverless|robotaxis?|trucks?|trucking|freight|"
+    r"vehicles?|highways?|spaceport|launch|satellites?|robots?|robotics|transportation)\b",
+    re.I,
+)
+# The FAA's site also publishes instrument procedures ("RNAV (GPS) RWY 18", "WAZKO ONE ARRIVAL") and chart files.
+_CHART = re.compile(r"\b(?:RNAV|RWY|ILS|LOC|VOR|GPS|ARRIVAL|DEPARTURE|APPROACH)\b")
+
+
 def keep(title: str) -> bool:
-    return len(title.split()) >= 5 and not title.startswith("- ") and not _JUNK.search(title)
+    words = title.split()
+    if len(words) < 5 or title.startswith("- ") or _JUNK.search(title) or "\\" in title:
+        return False
+    letters = [c for c in title if c.isalpha()]
+    if letters and sum(c.isupper() for c in letters) / len(letters) > 0.6:
+        return False  # chart and form names are set in capitals; releases are not
+    half = len(words) // 2
+    if half and words[:half] == words[half:2 * half]:
+        return False  # "WAZKO ONE ARRIVAL WAZKO ONE ARRIVAL"
+    return len(_CHART.findall(title)) < 2
 
 
 def post_item(org: str, title: str, url: str, published: str, kind: str) -> dict[str, Any]:
@@ -73,7 +92,9 @@ def from_wire_items(org: str, items: list[dict[str, Any]], kind: str) -> list[di
 
 def relevant(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """For organizations that also post about other things (NASA, airlines, carmakers): portfolio topics only."""
-    return [i for i in items if news_engine.automated_record_is_portfolio_relevant({"title": i["title"], "source": i["org"]})]
+    # Whole words in the title alone: the edition's substring check let "Panamanian Jungle" through, and an
+    # organization's name ("Department of Defense") must not make every item relevant.
+    return [i for i in items if _TOPIC.search(i["title"])]
 
 
 def record(store: Store, items: list[dict[str, Any]], now: datetime, keep_days: float = 7) -> int:

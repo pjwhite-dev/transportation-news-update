@@ -110,9 +110,9 @@ posts:                      # the "From official sources" strip above the feed (
     - {name: CSX, kind: google, site: csx.com, topical: false}
     - {name: Airbus, kind: google, site: airbus.com}
     - {name: Tesla, kind: google, site: tesla.com}
-    - {name: MTA, kind: bluesky, handle: mta.info, topical: false}
+    - {name: MTA, kind: bluesky, handle: mta.info}
     - {name: Transportation Research Board, kind: bluesky, handle: trb.org, topical: false}
-    - {name: Amtrak Cascades, kind: bluesky, handle: amtrakcascades.wsdot.wa.gov, topical: false}
+    - {name: Amtrak Cascades, kind: bluesky, handle: amtrakcascades.wsdot.wa.gov}
 
 market:
   every_minutes: 5          # Finnhub watchlist (market_watch.WATCHLIST) while NYSE is open; once after each close

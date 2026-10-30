@@ -316,6 +316,22 @@ class OfficialStripTests(unittest.TestCase):
                       "Full Self-Driving (Supervised) Referral Program - Tesla", "CSX Customer Advisory: Toledo, Ohio, Incident"):
             self.assertFalse(live_posts.keep(title), title)
         self.assertTrue(live_posts.keep("Zipline Now Making Quieter Deliveries with Acoustics Breakthrough"))
+        for title in ("RNAV (GPS) RWY 18 RNAV (GPS) RWY 18", "WAZKO ONE ARRIVAL WAZKO ONE ARRIVAL",
+                      "G:\\GRAPHICS\\TAPS\\United States\\Gulfport Biloxi Intl KGPT\\hi_ils_y_or_loc"):
+            self.assertFalse(live_posts.keep(title), title)
+
+    def test_an_organizations_name_does_not_make_its_items_relevant(self):
+        items = [self.item("U.S. Department of Defense", "Army Mountain Division Takes on Panamanian Jungle"),
+                 self.item("U.S. Department of Defense", "Army fields new counter-drone interceptor at Fort Sill")]
+        self.assertEqual([i["title"] for i in live_posts.relevant(items)], ["Army fields new counter-drone interceptor at Fort Sill"])
+
+    def test_every_google_search_gets_a_turn(self):
+        early = Source("Official: NTSB", "google", timedelta(minutes=60), site="ntsb.gov", posts=True)
+        late = Source("Google News: drone delivery", "google", timedelta(minutes=30), query="drone delivery")
+        wire = Wire(self.store, CONFIG, sources=[late, early], fetchers={"google": lambda s, since: []}, clock=lambda: NOW)
+        self.store.update_source(early.name, next_due=iso(NOW - timedelta(minutes=20)))
+        self.store.update_source(late.name, next_due=iso(NOW - timedelta(minutes=1)))
+        self.assertEqual(wire.due()[0].name, "Official: NTSB")
 
     def test_record_keeps_a_week_newest_first_and_never_twice(self):
         old = self.item("FAA", "FAA issues a final rule on drone operations", hours=24 * 8)
