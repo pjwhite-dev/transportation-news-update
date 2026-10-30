@@ -71,6 +71,9 @@ New-NewsroomTask "newsroom-hermes-gateway" $hidden "$hiddenArgs -Command `"& '$H
 New-NewsroomTask "newsroom-wsl" $hidden "$hiddenArgs -Command `"wsl.exe -d $Distro -- sleep infinity`"" $atLogon -LongRunning
 # The local newsroom dashboard (read-only view of the runs): http://127.0.0.1:8765
 New-NewsroomTask "newsroom-dashboard" $pythonw "newsroom_dashboard.py" $atLogon -LongRunning
+# The live site (news.peterjwhite.org/live/): wire, editing lanes, feed push. It pauses its model work while the
+# edition holds .runtime\edition.lock, so the two never compete for the GPU.
+New-NewsroomTask "newsroom-live" $pythonw "live_service.py run" $atLogon -LongRunning
 
 # 3. The scheduled jobs.
 $weekdays430 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday -At 4:30AM
@@ -83,7 +86,7 @@ New-NewsroomTask "newsroom-doctor" $pythonw "doctor.py" $weekdays815
 New-NewsroomTask "newsroom-tracker" $pythonw "-m tracker.core" (New-ScheduledTaskTrigger -Daily -At 4:00AM)
 
 # 4. Start the logon tasks now so nothing waits for the next sign-in.
-foreach ($name in "newsroom-ollama", "newsroom-hermes-gateway", "newsroom-wsl", "newsroom-dashboard") {
+foreach ($name in "newsroom-ollama", "newsroom-hermes-gateway", "newsroom-wsl", "newsroom-dashboard", "newsroom-live") {
     if ($PSCmdlet.ShouldProcess($name, "Start now")) { Start-ScheduledTask -TaskName $name }
 }
 

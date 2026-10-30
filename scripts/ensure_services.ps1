@@ -45,3 +45,19 @@ if (-not $dashboardUp) {
     Note "Dashboard not answering; starting newsroom-dashboard."
     Start-ScheduledTask -TaskName "newsroom-dashboard" -ErrorAction SilentlyContinue
 }
+
+# The live site (live_service.py). Its heartbeat file is refreshed only while every worker is healthy, so a
+# missing or stale file means the process is down or hung: restart its task. A task started in the last
+# 10 minutes is still loading its models and is left alone.
+$liveTask = Get-ScheduledTask -TaskName "newsroom-live" -ErrorAction SilentlyContinue
+if ($liveTask) {
+    $beat = Join-Path $runtime "live_site\heartbeat.json"
+    $stale = (-not (Test-Path $beat)) -or (((Get-Date) - (Get-Item $beat).LastWriteTime).TotalMinutes -gt 10)
+    $justStarted = ((Get-Date) - (Get-ScheduledTaskInfo -TaskName "newsroom-live").LastRunTime).TotalMinutes -lt 10
+    if ($stale -and -not $justStarted) {
+        Note "Live site heartbeat missing or stale; restarting newsroom-live."
+        Stop-ScheduledTask -TaskName "newsroom-live" -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 5
+        Start-ScheduledTask -TaskName "newsroom-live" -ErrorAction SilentlyContinue
+    }
+}
