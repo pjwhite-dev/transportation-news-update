@@ -84,6 +84,29 @@ class StaleStoryTests(unittest.TestCase):
         self.assertEqual(facts.date_source, "byline beside the headline")
         self.assertEqual(facts.h1_count, 1)  # the banner is not a second headline ("not an article")
 
+    def test_robots_txt_is_obeyed_before_a_page_is_read(self):
+        class Session:
+            def __init__(self, robots_status, robots_text=""):
+                self.robots_status, self.robots_text, self.asked = robots_status, robots_text, []
+
+            def get(self, url, headers=None, timeout=None, allow_redirects=True):
+                self.asked.append(url)
+                if url.endswith("/robots.txt"):
+                    return type("R", (), {"status_code": self.robots_status, "text": self.robots_text, "headers": {}, "url": url})()
+                return type("R", (), {"status_code": 200, "text": "<html></html>", "headers": {"content-type": "text/html"}, "url": url})()
+
+        rules = "User-agent: *\nDisallow: /private/\n"
+        session = Session(200, rules)
+        self.assertEqual(ax.fetch_page("https://robots-a.example/private/story", session, 5)[0], ax.ROBOTS_DISALLOWED)
+        self.assertEqual(ax.fetch_page("https://robots-a.example/news/story", session, 5)[0], 200)
+        self.assertEqual(session.asked.count("https://robots-a.example/robots.txt"), 1)  # read once, then cached
+        self.assertEqual(session.asked[-1], "https://robots-a.example/news/story")
+        self.assertEqual(ax.fetch_page("https://robots-b.example/a", Session(403), 5)[0], 200)  # no robots.txt: no rules
+        self.assertEqual(ax.fetch_page("https://robots-c.example/a", Session(503), 5)[0], ax.ROBOTS_DISALLOWED)  # unreadable: wait
+        verdict = ax.evaluate_candidate({"url": "https://robots-a.example/private/story", "title": "A drone story"},
+                                        (ax.ROBOTS_DISALLOWED, "", "https://robots-a.example/private/story"), now=datetime(2026, 10, 30, 12))
+        self.assertEqual(verdict.reason, "the site's robots.txt asks bots not to read this page")
+
     def test_window_is_48_hours_and_72_over_weekends_and_holidays(self):
         self.assertEqual(cal.freshness_hours(datetime(2026, 10, 27, 9, tzinfo=ET)), 48)   # Tuesday
         self.assertEqual(cal.freshness_hours(datetime(2026, 10, 26, 9, tzinfo=ET)), 72)   # Monday

@@ -1,7 +1,7 @@
 """Reads the article itself: real publication date, clean headline, body text, article-ness.
 
-Deterministic. The only network call is fetching the candidate's own page (an honest, identified
-User-Agent, one request per URL). Every decision returns a reason so the QA report can show it.
+Deterministic. The only network calls are fetching the candidate's own page (an honest, identified
+User-Agent, one request per URL) and, once a day per site, that site's robots.txt, whose rules are obeyed. Every decision returns a reason so the QA report can show it.
 """
 
 from __future__ import annotations
@@ -12,6 +12,8 @@ import html as htmllib
 import json
 import re
 import threading
+import time
+import urllib.robotparser
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
@@ -32,6 +34,11 @@ EASTERN = ZoneInfo("America/New_York")
 USER_AGENT = "AdvancedTransportationNewsBot/1.0 (+https://advancedtransportation.live)"
 MAX_FUTURE = timedelta(days=2)
 BODY_CHARS = 8000
+ROBOTS_DISALLOWED = -1  # fetch_page's status when the site's robots.txt asks us not to read the page
+_ROBOTS_TTL = 24 * 3600
+_ROBOTS_RETRY = 10 * 60
+_ROBOTS: dict[str, tuple[float, Any]] = {}
+_ROBOTS_LOCK = threading.Lock()
 
 _MONTHS = {m: i for i, m in enumerate(
     ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october",
@@ -536,7 +543,36 @@ class Verdict:
     record: dict[str, Any] = field(default_factory=dict)
 
 
+def robots_allows(url: str, session: requests.Session, timeout: float) -> bool:
+    """The site's robots.txt rules for our User-Agent (RFC 9309), cached a day per site. No robots.txt (a 4xx
+    answer) means no rules; one that cannot be read (5xx, no answer) means wait, and is asked again in 10 minutes."""
+    parts = urlparse(url)
+    root = f"{parts.scheme}://{parts.netloc}"
+    now = time.time()
+    with _ROBOTS_LOCK:
+        cached = _ROBOTS.get(root)
+    if cached is None or now >= cached[0]:
+        try:
+            response = session.get(root + "/robots.txt", headers={"User-Agent": USER_AGENT}, timeout=min(timeout, 15))
+            if response.status_code >= 500:
+                rules: Any = False
+            elif response.status_code >= 400:
+                rules = True
+            else:
+                rules = urllib.robotparser.RobotFileParser()
+                rules.parse(response.text.splitlines())
+        except requests.RequestException:
+            rules = False
+        cached = (now + (_ROBOTS_TTL if rules is not False else _ROBOTS_RETRY), rules)
+        with _ROBOTS_LOCK:
+            _ROBOTS[root] = cached
+    rules = cached[1]
+    return rules if isinstance(rules, bool) else rules.can_fetch(USER_AGENT, url)
+
+
 def fetch_page(url: str, session: requests.Session, timeout: float) -> tuple[int | None, str, str]:
+    if not robots_allows(url, session, timeout):
+        return ROBOTS_DISALLOWED, "", url
     try:
         response = session.get(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"},
                                timeout=timeout, allow_redirects=True)
@@ -624,6 +660,8 @@ def evaluate_candidate(
         published = date_from_url(url)
         facts.date_source = "date in URL" if published else ""
     if published is None:
+        if status == ROBOTS_DISALLOWED:
+            return Verdict(False, "the site's robots.txt asks bots not to read this page")
         why = "page could not be fetched" if not body else "no publication date found in the article"
         return Verdict(False, f"no verifiable publication date ({why}; HTTP {status})")
     if published > now + MAX_FUTURE:
@@ -633,6 +671,8 @@ def evaluate_candidate(
         return Verdict(False, f"stale: published {published.date()} ({facts.date_source}), before the {cutoff:%b %d %H:%M} cutoff")
 
     if not official:
+        if status == ROBOTS_DISALLOWED:
+            return Verdict(False, "the site's robots.txt asks bots not to read this page")
         if not body:
             return Verdict(False, f"page could not be fetched (HTTP {status}), so it cannot be confirmed as an article")
         words_needed = int(freshness["min_body_words"])
