@@ -41,11 +41,20 @@ relevant=true only if the ARTICLE is a news report about drones/UAS, counter-UAS
 airspace integration, autonomous vehicles or trucks, robotics, supersonic aviation, advanced or high-speed rail,
 uncrewed maritime or ground systems, or U.S. transportation policy on those topics. Product reviews, deals,
 how-to guides, opinion columns, sports and celebrity items are not relevant. Use only the ARTICLE."""
-TRIAGE_SCHEMA = {
-    "type": "object",
-    "properties": {"relevant": {"type": "boolean"}, "reason": {"type": "string"}},
-    "required": ["relevant", "reason"],
-}
+TRIAGE_CATEGORY = """category: the one reader category that fits best, by key: {choices}. "rail" covers all rail,
+freight and passenger; "policy" covers U.S. government action (rules, laws, Congress, agencies) whatever the vehicle."""
+
+
+def triage_schema(config: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "relevant": {"type": "boolean"},
+            "category": {"type": "string", "enum": [d["key"] for d in config["desks"]]},
+            "reason": {"type": "string"},
+        },
+        "required": ["relevant", "category", "reason"],
+    }
 
 SCORE_SYSTEM = """You rate how significant ONE verified news story is for senior U.S. transportation-policy readers.
 Use only the ARTICLE. impact, 0-5:
@@ -94,8 +103,27 @@ def desk_for(section: str, config: dict[str, Any]) -> str:
     return config["desks"][-1]["key"]
 
 
+_DRONE_WORDS = re.compile(r"\b(?:drones?|uas|uavs?|unmanned|uncrewed|quadcopter|bvlos|remote id|airspace)\b", re.I)
+_RAIL_WORDS = re.compile(r"\b(?:rail(?:way|road)?s?|trains?|locomotives?|rolling stock|amtrak|metro|subway|tram)\b", re.I)
+
+
+def file_story(section: str, text: str, config: dict[str, Any]) -> str:
+    """The category before any model sees the story. The edition's infer_section ends in "UAS / Drones" for
+    anything it does not recognize, so a story with no drone words is filed by rail words, else in the last
+    category, never as a drone story (the triage model's category replaces this when it runs)."""
+    if section == "UAS / Drones" and not _DRONE_WORDS.search(text):
+        has_rail = any(d["key"] == "rail" for d in config["desks"])
+        return "rail" if has_rail and _RAIL_WORDS.search(text) else config["desks"][-1]["key"]
+    return desk_for(section, config)
+
+
 class StepFailed(Exception):
     """A step failed in an expected way (bad page, model refused, budget exceeded); counts as an attempt."""
+
+
+class ModelDown(Exception):
+    """The writer could not be reached or timed out. Not the story's fault: it stays queued, costs no attempt, and
+    the doctor's HEADLINES level shows it as headline and link if the writer stays down."""
 
 
 @dataclass
@@ -157,6 +185,9 @@ class Desk:
             return self._first_pass(story, now)
         except StepFailed as exc:
             return self._attempt_failed(story, now, str(exc))
+        except ModelDown as exc:
+            self.store.update(story["id"], now, error=str(exc)[:400])
+            return QUEUED
         except Exception as exc:  # noqa: BLE001 - a crash costs this story, never the worker
             crashes = story["crashes"] + 1
             if crashes >= 2:
@@ -225,7 +256,7 @@ class Desk:
                 url=str(enriched["url"]), title=str(enriched["title"]),
                 source=editorial_checks.source_label(str(enriched.get("source", "")), str(enriched["url"]), str(enriched.get("page_original_publisher", ""))),
                 published=iso(published) if published else story["published"],
-                section=section, desk=desk_for(section, self.config),
+                section=section, desk=file_story(section, f"{enriched['title']} {enriched.get('page_text', '')[:3000]}", self.config),
                 official=int(bool(record.get("official_source")) or story_groups.source_tier(enriched) == 1),
                 page_text=str(enriched.get("page_text", "")),
                 record={**{k: v for k, v in enriched.items() if k != "page_text"}, "_enriched": True},
@@ -241,9 +272,11 @@ class Desk:
         source = story["page_text"]
         short = len(source.split()) < MIN_WORDS_TO_SUMMARIZE
         with self.model_slots:
-            relevant, why = self._triage(story["title"], source or str(story["record"].get("summary", "")))
+            relevant, why, category = self._triage(story["title"], source or str(story["record"].get("summary", "")))
             if not relevant:
                 return self._drop(story, now, f"not a portfolio story: {why}")
+            if category and category != story["desk"]:
+                self.store.update(story["id"], now, desk=category)
             if short:
                 return self._show(story, now, HEADLINE, "", "headline only: the article text is too short to summarize")
             summary, method = self._write_checked(story["title"], source)
@@ -251,18 +284,23 @@ class Desk:
             return self._show(story, now, HEADLINE, "", "headline only: no summary passed the article check")
         return self._show(story, now, FIRST_PASS, summary, method)
 
-    def _triage(self, title: str, source: str) -> tuple[bool, str]:
+    def _triage(self, title: str, source: str) -> tuple[bool, str, str]:
+        """(relevant, reason, category key or '')."""
+        desks = self.config["desks"]
+        system = TRIAGE_SYSTEM + "\n" + TRIAGE_CATEGORY.format(choices="; ".join(f'"{d["key"]}" = {d["name"]}' for d in desks))
         try:
             result = self.writer.generate_structured(
-                [{"role": "system", "content": TRIAGE_SYSTEM},
+                [{"role": "system", "content": system},
                  {"role": "user", "content": f"HEADLINE\n{title}\n\nARTICLE\n{source[:3000]}"}],
-                schema_name="live_triage", schema=TRIAGE_SCHEMA, max_output_tokens=120,
+                schema_name="live_triage", schema=triage_schema(self.config), max_output_tokens=160,
             )
         except Exception as exc:  # noqa: BLE001
             self.health.fail("writer")
-            raise StepFailed(f"writer unavailable: {exc}") from exc
+            raise ModelDown(f"writer unavailable: {exc}") from exc
         self.health.ok("writer")
-        return bool(result.value.get("relevant")), str(result.value.get("reason", ""))[:200]
+        category = str(result.value.get("category", ""))
+        valid = {d["key"] for d in desks}
+        return bool(result.value.get("relevant")), str(result.value.get("reason", ""))[:200], category if category in valid else ""
 
     def _write_checked(self, title: str, source: str) -> tuple[str, str]:
         """A first-pass summary every name, number and date of which is in the article ('' when none passes)."""
@@ -272,7 +310,7 @@ class Desk:
                 text = self.write(title, source, problems)
             except Exception as exc:  # noqa: BLE001
                 self.health.fail("writer")
-                raise StepFailed(f"writer unavailable: {exc}") from exc
+                raise ModelDown(f"writer unavailable: {exc}") from exc
             self.health.ok("writer")
             text = grounding.drop_filler_sentences(editorial_checks.style_text(text), source)
             found = grounding.deterministic_problems(text, source, title) if text else [grounding.Problem("empty", "empty summary")]

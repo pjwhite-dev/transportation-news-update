@@ -16,7 +16,7 @@ import live_feed
 import live_lead
 import live_market
 import news_engine
-from live_desk import Desk, Health, desk_for, edition_running
+from live_desk import Desk, Health, desk_for, edition_running, file_story
 from live_sources import Source, Wire, build_sources, load_config, rest_for
 from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIFIED, Store, iso, title_overlap, url_key
 
@@ -189,13 +189,13 @@ class DeskTests(unittest.TestCase):
         sid = self.queue()
         self.assertEqual(self.desk(w=writer(relevant=False)).first_pass(sid), DROPPED)
 
-    def test_writer_down_twice_drops_after_two_attempts(self):
+    def test_writer_failures_are_counted_for_the_doctor(self):
         sid = self.queue()
         w = writer()
         w.fail.add("live_triage")
         desk = self.desk(w=w)
         self.assertEqual(desk.first_pass(sid), QUEUED)
-        self.assertEqual(desk.first_pass(sid), DROPPED)
+        self.assertEqual(desk.first_pass(sid), QUEUED)
         self.assertEqual(desk.health.failures["writer"], 2)
 
     def test_while_the_edition_has_the_gpu_stories_wait_then_go_up_as_headlines(self):
@@ -260,6 +260,35 @@ class DeskTests(unittest.TestCase):
         desk.resolve = lambda url: "https://www.mordorintelligence.com/industry-reports/data-center-counter-drone"
         self.assertEqual(desk.first_pass(sid), DROPPED)
         self.assertIn("market-research", self.store.get(sid)["error"])
+
+    def test_the_triage_model_picks_the_category(self):
+        sid = self.queue()
+        w = writer()
+        w.answers["live_triage"] = {"relevant": True, "category": "policy", "reason": "FAA approval"}
+        self.assertEqual(self.desk(w=w).first_pass(sid), FIRST_PASS)
+        self.assertEqual(self.store.get(sid)["desk"], "policy")
+
+    def test_unrecognized_stories_are_not_filed_as_drone_news(self):
+        # 2026-10-30: freight rail earnings and a train-theft arrest were labelled "Drones & Airspace".
+        self.assertEqual(file_story("UAS / Drones", "CPKC reports record revenue on grain and intermodal traffic by rail", CONFIG), "rail")
+        self.assertEqual(file_story("UAS / Drones", "9 cartel associates arrested in California train theft ring", CONFIG), "rail")
+        self.assertEqual(file_story("UAS / Drones", "Port authority names a new chief executive", CONFIG), CONFIG["desks"][-1]["key"])
+        self.assertEqual(file_story("UAS / Drones", "Zipline drone delivery noise", CONFIG), "drones")
+        self.assertEqual(file_story("Autonomous Vehicles", "Aurora driverless trucks", CONFIG), "av")
+
+    def test_a_writer_outage_never_drops_a_story(self):
+        # 2026-10-30: a wrong fallback tag made every call fail and 54 real stories were dropped after two "attempts".
+        sid = self.queue()
+        w = writer()
+        w.fail = {"live_triage", "story_summary"}
+        desk = self.desk(w=w)
+        for _ in range(3):
+            self.assertEqual(desk.first_pass(sid), QUEUED)
+        story = self.store.get(sid)
+        self.assertEqual(story["stage_attempts"], 0)
+        self.assertIn("writer unavailable", story["error"])
+        desk.level = "HEADLINES"  # the doctor's answer to a writer that stays down
+        self.assertEqual(desk.first_pass(sid), HEADLINE)
 
     def test_market_research_listings_are_dropped_without_a_model(self):
         sid = self.queue("https://www.example.com/report", title="Data Center Counter-Drone Market Size, Share & 2032 Growth Trends Report")
@@ -357,6 +386,18 @@ class WireTests(unittest.TestCase):
         self.assertIsNone(error)
         self.assertEqual([i["url"] for i in items], ["https://news.google.com/c"])
         self.assertEqual((items[0]["source"], items[0]["origin"]), ("Federal Aviation Administration", "Official site search"))
+
+
+class ServiceTests(unittest.TestCase):
+    def test_a_configured_model_that_is_not_installed_is_reported(self):
+        import live_service
+        installed = {CONFIG["desk"]["writer_model"], CONFIG["desk"]["verifier_model"]}
+        self.assertEqual(live_service.missing_models(CONFIG, installed), [CONFIG["desk"]["fallback_model"]])
+        self.assertEqual(live_service.missing_models(CONFIG, installed | {CONFIG["desk"]["fallback_model"]}), [])
+
+    def test_model_calls_allow_for_a_model_load(self):
+        self.assertGreaterEqual(CONFIG["doctor"]["model_stall_seconds"], 90)
+        self.assertGreater(CONFIG["doctor"]["silent_after_seconds"], max(CONFIG["desk"]["budgets_seconds"].values()))
 
 
 class MarketTests(unittest.TestCase):

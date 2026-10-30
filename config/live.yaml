@@ -66,17 +66,17 @@ wire:
 desk:
   parallel_stories: 1       # model calls at once; matches OLLAMA_NUM_PARALLEL=1 (one slot already writes about
                             # 1,000 first passes an hour; more slots multiply the edition's 32k context memory)
-  budgets_seconds:          # per story per step; two attempts, then the story is dropped
-    read: 30
-    first_pass: 45
-    verify: 240
-    score: 120
+  budgets_seconds:          # per story per step, including a model load: writer and checker do not fit on the
+    read: 30                #   24 GB card together, so each switch reloads one (about a minute before the first word)
+    first_pass: 150
+    verify: 300
+    score: 240
   verify_every: 10          # slow lane wakes this often, or sooner when 6 stories are waiting
   verify_batch: 6
   first_pass_wait: 20       # a story waiting this long for the writer goes up as a headline instead
   similar_title_overlap: 0.8
   writer_model: "qwen3.8:27b-q4_K_M"
-  fallback_model: "qwen3.6:27b"
+  fallback_model: "qwen3.6:27b-q4_K_M"   # the installed tag (live_service checks every model at start)
   verifier_model: "gemma4:31b"
 
 market:
@@ -89,8 +89,8 @@ publish:
 
 doctor:
   heartbeat_seconds: 30
-  silent_after_seconds: 300  # longer than the slowest step (a 4-minute check)
+  silent_after_seconds: 600  # longer than the slowest step (a 5-minute check)
   lite_queue_minutes: 30    # verify queue older than this: LITE (first pass keeps flowing, lead holds)
   writer_restarts: 2
-  model_stall_seconds: 30
+  model_stall_seconds: 120  # no output for this long: the call fails (covers a model load after a switch)
   frozen_alert_minutes: 15

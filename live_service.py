@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import requests
+
 ROOT = Path(__file__).resolve().parent
 RUNTIME = ROOT / ".runtime" / "live_site"
 os.environ.setdefault("NEWSROOM_LIVE_DIR", str(RUNTIME))
@@ -49,6 +51,25 @@ def providers(config: dict[str, Any]) -> dict[str, OllamaProvider]:
         # Scoring is the one fast-lane-adjacent call that thinks; it runs in the slow lane only.
         "scorer": OllamaProvider(model=desk["writer_model"], timeout_seconds=int(budgets["score"]), think=True, keep_alive="24h", **common),
     }
+
+
+def missing_models(config: dict[str, Any], installed: set[str]) -> list[str]:
+    """Configured models Ollama does not have (a wrong tag silently turns every story into a writer failure)."""
+    desk = config["desk"]
+    wanted = [desk["writer_model"], desk["fallback_model"], desk["verifier_model"]]
+    return [m for m in wanted if m not in installed and f"{m}:latest" not in installed]
+
+
+def check_models(config: dict[str, Any]) -> None:
+    base = os.environ.get("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE_URL).rstrip("/")
+    try:
+        installed = {m["name"] for m in requests.get(f"{base}/api/tags", timeout=15).json().get("models", [])}
+    except (requests.RequestException, ValueError) as exc:
+        print(f"live_service: cannot list Ollama models ({type(exc).__name__}); the doctor will handle it.", file=sys.stderr)
+        return
+    for model in missing_models(config, installed):
+        print(f"live_service: model {model!r} is not installed in Ollama", file=sys.stderr)
+        newsroom_live.emit("live-config-error", desk="doctor", model=model, error="model not installed")
 
 
 def single_instance(path: Path):
@@ -166,6 +187,7 @@ def main(argv: list[str]) -> int:
     if lock is None:
         print("The live service is already running.", file=sys.stderr)
         return 0
+    check_models(config)
     wire, desk, doctor, publisher, market, out_dir = build(config, store)
     doctor.add_worker("wire", wire.run)
     doctor.add_worker("market", market.run)
