@@ -106,7 +106,6 @@ posts:                      # the "From official sources" strip above the feed (
     - {name: Wisk, kind: google, site: wisk.aero, topical: false}
     - {name: Kodiak, kind: google, site: kodiak.ai, topical: false}
     - {name: Union Pacific, kind: google, site: up.com, topical: false}
-    - {name: BNSF, kind: google, site: bnsf.com, topical: false}
     - {name: CSX, kind: google, site: csx.com, topical: false}
     - {name: Airbus, kind: google, site: airbus.com}
     - {name: Tesla, kind: google, site: tesla.com}
