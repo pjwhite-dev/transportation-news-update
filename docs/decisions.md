@@ -126,3 +126,14 @@ Owner asked for: FAA, DOT and White House by Google search with `site:`; ticker 
 - Google queries on the sweep line show their first phrase ("Google News: unmanned aircraft system") instead of the raw query.
 - Checked without the GPU (owner stopped GPU use for the newsroom at 12:40 UTC): feed rendered from the store with `live_service.py render` and served as static files.
 - **Stories with only a date show when we found them, not noon.** Pages that give just a date are stamped noon Eastern by the shared date reader (kept, the edition depends on it). On the live page such a story is never dated later than we found it, keeps a feed's real time from the same day, and shows "found 8:29 a.m." in place of a clock time ("no time given" if it is from an earlier day).
+- **Public delivery through GitHub only.** news.peterjwhite.org's DNS is on Google Cloud DNS, not Cloudflare, and
+  the brief names GitHub Pages; so the page is served by Pages at /live/ and its feed is a file on the `live-feed`
+  branch read from raw.githubusercontent.com (CORS open, cached up to 5 minutes). No new service or account. Each
+  push is an ordinary commit (no force, per AGENTS.md), at most every 3 minutes plus a 10-minute heartbeat, so the
+  branch grows by roughly 150-250 small commits a day; if that ever matters, the branch can be replaced with the
+  owner's approval.
+- **Headline override login = GitHub sign-in** (owner's choice of three). The /login page holds no secret and
+  changes nothing itself; it opens a pre-filled issue. Only issues opened by the repository owner, less than
+  6 hours old, are applied; others are ignored without a reply. Requests are visible on the public repository.
+- **Market additions are live-only** (`market.extra` in config/live.yaml) so the morning edition's market section
+  does not change.

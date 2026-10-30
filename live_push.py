@@ -89,10 +89,21 @@ class FeedPusher:
         except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
             self.error = str(exc)[:300]
             newsroom_live.emit("live-push-fail", desk="press", error=self.error)
+            self._note(now)
             return False
         self.last_push, self.last_hash, self.error = now, feed_hash, ""
         newsroom_live.emit("live-push", desk="press", stories=len(feed.get("stories", [])))
+        self._note(now)
         return True
+
+    def _note(self, now: datetime) -> None:
+        """push.json beside the feed, for the newsroom dashboard: when the public copy last went out."""
+        held = (json.loads((self.out_dir / "feed.json").read_text(encoding="utf-8")).get("lead") or {}).get("held_until", "")
+        status = {"at": now.isoformat(), "pushed": self.last_push.isoformat() if self.last_push else "", "error": self.error, "held_until": held}
+        try:
+            (self.out_dir.parent / "push.json").write_text(json.dumps(status), encoding="utf-8")
+        except OSError:
+            pass
 
     def run(self, stop: threading.Event, beat: Callable[[], None] = lambda: None) -> None:
         while not stop.is_set():

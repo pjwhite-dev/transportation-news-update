@@ -38,12 +38,25 @@ as headline only after 20 minutes.
 
 LIVE → LITE (checker unhealthy, its queue older than 30 min, or the edition has the GPU) → HEADLINES (writer and
 fallback down) → FROZEN (the feed cannot be written; the page itself also shows "paused since" when feed.json is
-more than 10 minutes old). Two writer failures in a row switch to qwen3.6; the primary is retried every 15 min.
+more than 10 minutes old locally, 25 minutes on the public site). Two writer failures in a row switch to qwen3.6; the primary is retried every 15 min.
 A crashed worker thread is restarted; a story that crashes a worker twice is quarantined.
+
+## Public site and the owner's override
+
+- **Page**: https://news.peterjwhite.org/live/ (GitHub Pages; `public_site.py` copies `site_assets/live/`).
+- **Feed**: `live_push.py` commits `feed.json` to the `live-feed` branch (worktree `C:/newsroom/.wt/live-feed`)
+  and pushes, never forced: when the stories change (at most every 3 min) and every 10 min regardless. The page
+  reads it from raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused"
+  after 25 min without a new copy. `.runtime/live_site/push.json` records the last push for the dashboard.
+- **Headline override**: https://news.peterjwhite.org/login/ (not linked from the page, `noindex`). Pick a story
+  and 1-48 hours; the page opens a pre-filled GitHub issue ("Headline override: ..."; body `story:` and `hours:`;
+  `hours: 0` ends it). `live_override.py` reads open issues every minute with the stored `github_token` and applies
+  only those opened by `pjwhite-dev` and less than 6 hours old, then answers and closes them. While an override
+  holds, no story replaces the lead; when it ends, the best checked story of the last day scoring 50+ leads, or
+  none does.
 
 ## Not done yet
 
-- Publishing: the feed is local only until the owner picks delivery (Cloudflare edge, approval needed, or Pages).
 - Scheduling: no Task Scheduler entry yet, and the services check does not yet restart the live service.
 - Nightly copy chief (re-audit, source scorecard, corrections), the lead write-up with a critic pass, and
   Healthchecks "live-feed" (needs a new check URL stored with `scripts/set_secret.py`).

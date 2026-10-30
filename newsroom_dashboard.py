@@ -146,10 +146,16 @@ def live_site() -> dict[str, Any]:
     except (KeyError, ValueError):
         age = None
     counts = beat.get("counts", {})
+    try:
+        push = json.loads((ROOT / ".runtime" / "live_site" / "push.json").read_text(encoding="utf-8"))
+        pushed_age = (datetime.now(timezone.utc) - datetime.fromisoformat(push["pushed"])).total_seconds() if push.get("pushed") else None
+    except (OSError, ValueError, KeyError):
+        push, pushed_age = {}, None
     return {
         "running": age is not None and age < 300, "age": age, "level": beat.get("level", ""), "reason": beat.get("reason", ""),
         "on_page": sum(counts.get(k, 0) for k in ("first_pass", "verified", "headline")), "queued": counts.get("queued", 0),
         "preview": "http://127.0.0.1:8766/",
+        "public_age": pushed_age, "public_error": push.get("error", ""), "held_until": push.get("held_until", ""),
     }
 
 

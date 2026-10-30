@@ -127,3 +127,17 @@ Afternoon: owner stopped GPU use for the newsroom (live service stopped, models 
 Owner allowed the GPU again. Service restarted 13:58 UTC: triage now returns a category, summaries and second checks land (Tesla Australia 15, Toyota/Waymo 25, Waymo picks bZ4X 46). Nothing reached 50, so there is no lead; the score-46 Waymo story sits in Developing as intended.
 Owner asked why the newest stories said 12:00 p.m. Cause: when a page gives only a date, `parse_date` stamps noon Eastern, which also replaced a feed's real time and floated today's date-only stories above newer ones. Fix (`settle_published` in live_desk, cap in live_store): a bare date never replaces a feed time from the same day; no story is dated after we found it; date-only stories show "found 8:29 a.m." (or "no time given" for an earlier day). 13 stored stories repaired. Tests 412 pass (6 new). Checked in the browser.
 Seen, not yet fixed: two outlets' versions of the Toyota/Waymo robotaxi story both appear (titles too different for the same-story check).
+
+## 2026-10-30 (afternoon, later): the live site goes public
+Owner asked: make it live at news.peterjwhite.org, a logo (chose the radar, animated), a /login page to force the
+headline for 1-48 h (no visible button), "Checking the wire:" as a fixed label with faster cycling, more companies on
+the markets ticker, a "more" at the bottom of the feed, and a shorter Developing/docket column.
+Done: radar mark with a 4 s sweep and a contact that lights as the beam passes (still for reduced motion) plus
+favicon; sweep line cycles the last 40 sources every 1.4 s; 12 live-only tickers (TSLA, UBER, AUR, MBLY, NSC, WAB,
+AAL, LUV, AVAV, KTOS, EH, EVEX; the edition's list is unchanged); 25 stories then "Show 25 more" (feed.json holds
+at most 300); Developing 3, docket 2 plus "N more". Override through GitHub issues (owner's choice of login
+method) with `live_override.py`; feed delivery with `live_push.py` to the `live-feed` branch. Dashboard shows when
+the public copy last went out and any owner override. Tests: 428 pass (test_live_site 73).
+Merged feat/live-site into main (fast-forward after merging today's main in) and pushed; first live-feed push at
+15:03 UTC. Seen: the fast lane is behind (472 stories waiting at 15:04); the service still runs only from this
+session, so the public page shows "paused" when it stops.
