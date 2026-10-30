@@ -368,7 +368,7 @@ class OfficialStripTests(unittest.TestCase):
                  "published": iso(NOW - timedelta(hours=2)), "source": "FAA"}
         sources = [Source("Official: NTSB", "google", timedelta(minutes=60), site="ntsb.gov", official=True, posts=True, topical=False),
                    Source("Agency: Federal Aviation Administration", "google", timedelta(minutes=10), site="faa.gov", official=True)]
-        wire = Wire(self.store, CONFIG, sources=sources, fetchers={"google": lambda s, since: [dict(found, url=found["url"] + s.site)]}, clock=lambda: NOW)
+        wire = Wire(self.store, CONFIG, sources=sources, fetchers={"google": lambda s, since: [dict(found, url=found["url"] + s.site, title=f"{found['title']} ({s.site})")]}, clock=lambda: NOW)
         self.assertEqual(wire.poll(sources[0]), 0)
         self.assertEqual(self.store.counts().get("queued", 0), 0)
         wire.poll(sources[1])

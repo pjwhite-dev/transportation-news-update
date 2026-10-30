@@ -27,7 +27,9 @@ BLUESKY = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
 _JUNK = re.compile(
     r"\b(?:intern(?:ship)?|careers?|jobs?|job opening|hiring|referral program|contact us|search results?|"
     r"tfrweb|log ?in|sign ?in|privacy|terms of|historical data|stock quote|investor relations|customer advisory|"
-    r"carrier search|faq|cookie)\b",
+    r"carrier search|faq|cookie|"
+    # job ads ("Conductor Trainee - Tacoma, WA 98421", "Sr. Staff Technical Recruiter", "UX Designer: Hardware")
+    r"recruiter|trainee|designer|engineer|technician|specialist|analyst|coordinator|apply now|\d{5})\b",
     re.I,
 )
 
@@ -57,7 +59,10 @@ def keep(title: str) -> bool:
 
 
 def post_item(org: str, title: str, url: str, published: str, kind: str) -> dict[str, Any]:
-    return {"org": org, "title": web_discovery.clean_spaces(title)[:220], "url": url, "published": published, "kind": kind}
+    title = re.sub(r"^\S+@\S+\s+", "", web_discovery.clean_spaces(title))  # "PressOffice@dot.gov GOLDEN AGE …"
+    if " | " in title:
+        title = title.rsplit(" | ", 1)[0]  # "… Pilot Program | Federal Aviation Administration"
+    return {"org": org, "title": title[:220], "url": url, "published": published, "kind": kind}
 
 
 def fetch_bluesky(handle: str, org: str, since: datetime, session: requests.Session | None = None) -> list[dict[str, Any]]:
@@ -110,14 +115,17 @@ def record(store: Store, items: list[dict[str, Any]], now: datetime, keep_days: 
 
 
 def public_posts(store: Store, now: datetime, limit: int = 15, per_org: int = 2) -> list[dict[str, Any]]:
-    """Newest first, at most `per_org` from any one organization so a busy newsroom cannot fill the strip."""
-    out, count = [], {}
+    """Newest first, at most `per_org` from any one organization so a busy newsroom cannot fill the strip, and
+    one copy of an announcement that several agencies' sites carry (DOT, FAA and FRA often post the same)."""
+    out, count, titles = [], {}, set()
     for item in store.get_state(POSTS_KEY, []) or []:
         published = parse_iso(item.get("published", ""))
         if published is None or published > now + timedelta(minutes=5):
             continue
-        if count.get(item["org"], 0) >= per_org:
+        title = re.sub(r"\W+", " ", item["title"]).casefold().strip()[:70]
+        if count.get(item["org"], 0) >= per_org or title in titles or not keep(item["title"]):
             continue
+        titles.add(title)
         count[item["org"]] = count.get(item["org"], 0) + 1
         out.append(item)
         if len(out) >= limit:

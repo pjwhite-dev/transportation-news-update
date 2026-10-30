@@ -240,7 +240,10 @@ class Wire:
         return new
 
     def _to_strip(self, source: Source, items: list[dict[str, Any]], now: datetime, keep_days: float) -> None:
-        """Official sources also feed the "From official sources" strip (title, link and time only)."""
+        """Official sources also feed the "From official sources" strip (title, link and time only); Federal
+        Register documents are notices, not releases, and stay off it."""
+        if source.kind not in ("rss", "google", "bluesky"):
+            return
         org = source.name.split(": ", 1)[-1]
         if source.kind == "bluesky":
             strip = items
