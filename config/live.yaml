@@ -1,7 +1,7 @@
 # Live site settings (live_service.py). Times in minutes unless named otherwise.
 
 site:
-  # Owner has not picked a new name yet (2026-10-30); the current site name stays until they do.
+  # Owner, 2026-10-30: the site is advancedtransportation.live, titled "Advanced Transportation Live".
   name: "Advanced Transportation"   # shown with live_label: "Advanced Transportation Live"
   live_label: "Live"
   path: "live"            # the page now has the site root (advancedtransportation.live); /live/ redirects there
