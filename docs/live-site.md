@@ -38,6 +38,11 @@ close (`.runtime/live_site/market.json`, falling back to the edition's `data/mar
 While the edition holds `.runtime/edition.lock`, model work pauses; stories are still read and filed and go up
 as headline only after 20 minutes.
 
+FAA and DOT sites refuse the reader (HTTP 403 to its own User-Agent). Their releases, found by the wire's news
+searches, go up as headline and link only, dated by that search and never summarized (config
+`desk.headline_only_hosts`). The reader obeys each site's robots.txt (`article_extract.robots_allows`). The request
+asking the agencies to let the reader in is in `docs/agency-access-request.md`.
+
 ## Doctor levels
 
 LIVE → LITE (checker unhealthy, its queue older than 30 min, or the edition has the GPU) → HEADLINES (writer and

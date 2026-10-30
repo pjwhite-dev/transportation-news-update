@@ -117,6 +117,15 @@ def file_story(section: str, text: str, config: dict[str, Any]) -> str:
     return desk_for(section, config)
 
 
+def _agency_headline(record: dict[str, Any]) -> dict[str, Any]:
+    """A refused agency release as a headline-only record: the search's title without its " | Agency" tail."""
+    title = str(record.get("title", ""))
+    if " | " in title:
+        title = title.rsplit(" | ", 1)[0]
+    return {**record, "title": title.strip(), "page_text": "", "_agency_refused": True,
+            "date_source": "date of the news search that found it (the agency's site refuses our reader)"}
+
+
 def date_only(value: datetime | None) -> bool:
     """article_extract.parse_date stamps a bare date at noon Eastern; that exact noon means no time was given."""
     if value is None:
@@ -228,6 +237,18 @@ class Desk:
         self.store.update(story["id"], now, stage_attempts=attempts, error=reason[:400])
         return QUEUED
 
+    def _agency_refuses(self, record: dict[str, Any], page: tuple[int | None, str, str] | None, now: datetime) -> bool:
+        """An agency site that refuses our reader (config desk.headline_only_hosts; owner, 2026-10-30) still gets its
+        release on the page as a headline and link, dated by the news search that found it, if that date is recent."""
+        host = urlparse(str(record.get("url", ""))).netloc.casefold().removeprefix("www.")
+        hosts = self.config["desk"].get("headline_only_hosts") or []
+        if not any(host == h or host.endswith("." + h) for h in hosts):
+            return False
+        if page is None or page[1] or page[0] not in (401, 403, article_extract.ROBOTS_DISALLOWED):
+            return False  # it answered, so the normal checks stand
+        published = parse_iso(str(record.get("published", "")))
+        return published is not None and article_extract.window_cutoff(now) <= published <= now + timedelta(minutes=5)
+
     def _drop(self, story: dict[str, Any], now: datetime, reason: str) -> str:
         self.store.update(story["id"], now, status=DROPPED, error=reason[:400])
         newsroom_live.emit("live-drop", desk="editors", title=story["title"][:160], reason=reason[:200])
@@ -256,10 +277,11 @@ class Desk:
             verdict = article_extract.evaluate_candidate(
                 record, page, now=now, follow=self.fetch,
             )
-            if not verdict.keep:
+            refused = not verdict.keep and self._agency_refuses(record, page, now)
+            if not verdict.keep and not refused:
                 # Hard rules (stale, not an article, bad headline) do not get better on a retry.
                 return self._drop(story, now, verdict.reason)
-            enriched = verdict.record
+            enriched = verdict.record if verdict.keep else _agency_headline(record)
             reason = editorial_checks.off_topic_reason(enriched)
             if reason:
                 return self._drop(story, now, reason)
@@ -286,6 +308,9 @@ class Desk:
             )
             story = self.store.get(story["id"]) or story
 
+        if story["record"].get("_agency_refused"):
+            # Nothing was read, so nothing is summarized: the agency's own headline and link only.
+            return self._show(story, now, HEADLINE, "", "headline only: the agency's site refuses our reader")
         if self.level == "HEADLINES" or self.gpu_busy():
             waited = now - (parse_iso(story["found_at"]) or now)
             if waited >= timedelta(minutes=float(self.config["desk"]["first_pass_wait"])) or self.level == "HEADLINES":

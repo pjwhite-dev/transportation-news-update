@@ -483,6 +483,28 @@ class DeskTests(unittest.TestCase):
         self.assertEqual(self.desk(fetch=fake_page(NOW - timedelta(days=9))).first_pass(sid), DROPPED)
         self.assertIn("stale", self.store.get(sid)["error"])
 
+    def test_a_refused_faa_release_goes_up_as_headline_and_link_only(self):
+        url = "https://www.faa.gov/newsroom/secretary-marks-evtol-pilot-program-milestone"
+        sid = self.queue(url, title="Secretary Marks Major Milestone in eVTOL Pilot Program | Federal Aviation Administrat",
+                         source="Federal Aviation Administration", official_source=True)
+        w = writer()
+        self.assertEqual(self.desk(w=w, fetch=lambda u: (403, "", u)).first_pass(sid), HEADLINE)
+        story = self.store.get(sid)
+        self.assertEqual(story["title"], "Secretary Marks Major Milestone in eVTOL Pilot Program")
+        self.assertEqual(story["summary"], "")
+        self.assertEqual(story["published"], iso(NOW - timedelta(hours=1)))  # the news search's date
+        self.assertEqual(w.calls, [])  # nothing was read, so no model is asked anything
+        self.assertTrue(story["shown_at"])
+
+    def test_only_listed_agencies_and_only_refusals_and_only_recent_get_headline_only(self):
+        refuse = lambda u: (403, "", u)
+        other = self.queue("https://www.example-news.com/faa-story")
+        self.assertEqual(self.desk(fetch=refuse).first_pass(other), DROPPED)  # not an agency on the list
+        gone = self.queue("https://www.faa.gov/newsroom/gone-release")
+        self.assertEqual(self.desk(fetch=lambda u: (404, "", u)).first_pass(gone), DROPPED)  # missing, not refused
+        old = self.queue("https://www.transportation.gov/briefing-room/old-release", published=iso(NOW - timedelta(days=9)))
+        self.assertEqual(self.desk(fetch=refuse).first_pass(old), DROPPED)  # the search's date is too old
+
     def test_writer_says_off_topic_drops_the_story(self):
         sid = self.queue()
         self.assertEqual(self.desk(w=writer(relevant=False)).first_pass(sid), DROPPED)

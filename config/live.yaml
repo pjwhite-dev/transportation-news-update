@@ -76,6 +76,9 @@ desk:
   verify_batch: 6
   first_pass_wait: 20       # a story waiting this long for the writer goes up as a headline instead
   similar_title_overlap: 0.8
+  # Agency sites that refuse our reader (HTTP 403 to its own User-Agent): their releases go up as headline and link
+  # only, dated by the news search that found them, never summarized (owner, 2026-10-30, "Yes, headline-only").
+  headline_only_hosts: [faa.gov, transportation.gov]
   writer_model: "qwen3.8:27b-q4_K_M"
   fallback_model: "qwen3.6:27b-q4_K_M"   # the installed tag (live_service checks every model at start)
   verifier_model: "gemma4:31b"
