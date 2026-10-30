@@ -1,141 +1,141 @@
 {
-  "as_of": "2026-10-29T09:18:33.577575+00:00",
+  "as_of": "2026-10-30T10:45:18.217879+00:00",
   "source": "Finnhub",
   "quotes": [
     {
       "symbol": "SPY",
       "name": "S&P 500 (SPDR S&P 500 ETF)",
       "group": "Market overview",
-      "price": 772.31,
-      "change": 2.65,
-      "percent": 0.34,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 769.36,
+      "change": -2.95,
+      "percent": -0.38,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "DIA",
       "name": "Dow Jones Industrial Average (SPDR Dow Jones ETF)",
       "group": "Market overview",
-      "price": 524.68,
-      "change": 1.4,
-      "percent": 0.27,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 522.73,
+      "change": -1.95,
+      "percent": -0.37,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "QQQ",
       "name": "Nasdaq-100 (Invesco QQQ ETF)",
       "group": "Market overview",
-      "price": 725.61,
-      "change": 4.36,
-      "percent": 0.6,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 715.34,
+      "change": -10.27,
+      "percent": -1.42,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "BA",
       "name": "Boeing",
       "group": "Aerospace & defense",
-      "price": 167.14,
-      "change": -1.04,
-      "percent": -0.62,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 172.65,
+      "change": 5.51,
+      "percent": 3.3,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "LMT",
       "name": "Lockheed Martin",
       "group": "Aerospace & defense",
-      "price": 629.75,
-      "change": 6.76,
-      "percent": 1.09,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 643.59,
+      "change": 13.84,
+      "percent": 2.2,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "RTX",
       "name": "RTX Corporation",
       "group": "Aerospace & defense",
-      "price": 195.84,
-      "change": 1.24,
-      "percent": 0.64,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 199.4,
+      "change": 3.56,
+      "percent": 1.82,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "GE",
       "name": "GE Aerospace",
       "group": "Aerospace & defense",
-      "price": 301.13,
-      "change": 3.47,
-      "percent": 1.17,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 313.05,
+      "change": 11.92,
+      "percent": 3.96,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "UNP",
       "name": "Union Pacific",
       "group": "Rail & freight",
-      "price": 297.8,
-      "change": -2.08,
-      "percent": -0.69,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 301.93,
+      "change": 4.13,
+      "percent": 1.39,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "CSX",
       "name": "CSX Corporation",
       "group": "Rail & freight",
-      "price": 51.98,
-      "change": -0.29,
-      "percent": -0.55,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 52.24,
+      "change": 0.26,
+      "percent": 0.5,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "UPS",
       "name": "United Parcel Service",
       "group": "Rail & freight",
-      "price": 105.62,
-      "change": -0.47,
-      "percent": -0.44,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 107.33,
+      "change": 1.71,
+      "percent": 1.62,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "FDX",
       "name": "FedEx",
       "group": "Rail & freight",
-      "price": 304.58,
-      "change": -2.52,
-      "percent": -0.82,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 307.82,
+      "change": 3.24,
+      "percent": 1.06,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "DAL",
       "name": "Delta Air Lines",
       "group": "Airlines",
-      "price": 80.35,
-      "change": -1.1,
-      "percent": -1.35,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 81.64,
+      "change": 1.29,
+      "percent": 1.61,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "UAL",
       "name": "United Airlines Holdings",
       "group": "Airlines",
-      "price": 103.43,
-      "change": -1.28,
-      "percent": -1.22,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 105.21,
+      "change": 1.78,
+      "percent": 1.72,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "JOBY",
       "name": "Joby Aviation",
       "group": "eVTOL",
       "price": 5.08,
-      "change": 0.07,
-      "percent": 1.4,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "change": 0.0,
+      "percent": 0.0,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     },
     {
       "symbol": "ACHR",
       "name": "Archer Aviation",
       "group": "eVTOL",
-      "price": 4.34,
-      "change": 0.11,
-      "percent": 2.6,
-      "quote_time": "2026-10-28T20:00:00+00:00"
+      "price": 4.38,
+      "change": 0.04,
+      "percent": 0.92,
+      "quote_time": "2026-10-29T20:00:00+00:00"
     }
   ]
 }

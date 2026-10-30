@@ -1,0 +1,1179 @@
+{
+ "edition": "2026-10-30",
+ "summary": {
+  "non-article-url": 31,
+  "article-check": 129,
+  "scope": 5,
+  "group": 10,
+  "cross-edition": 1,
+  "summary-regenerated": 2,
+  "summary-fallback": 6,
+  "edition-cap": 7,
+  "official-source": 1
+ },
+ "notes": {
+  "candidates_after_article_check": 236,
+  "stories_entering_quality_pass": 45,
+  "stories_after_quality_pass": 25
+ },
+ "events": [
+  {
+   "stage": "non-article-url",
+   "title": "UAS Sentry",
+   "url": "https://uassentry.com/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Drone News, Rules & Part 107 Training | Drone Authority",
+   "url": "https://droneauthority.org/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Reuters | Breaking International News & Views",
+   "url": "https://www.reuters.com/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Robotics - Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Robotics",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Home | Scottish Environment Protection Agency (SEPA)",
+   "url": "https://www.sepa.org.uk/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "The Asahi Shimbun | Breaking News, Japan News and Analysis",
+   "url": "https://www.asahi.com/ajw/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Hezbollah FPV and Explosive Drone Operations Against Israeli Forces and Israel’s Counter-Drone Response in Southern Leba",
+   "url": "https://centralintelligence.co/drones/topics/hezbollah-fpv-drones-test-israeli-defenses-20260921",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "National Airspace System",
+   "url": "https://nasstatus.faa.gov/map",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "mea advisory: Latest News & Videos, Photos about mea advisory | The Economic Times - Page 1",
+   "url": "https://economictimes.indiatimes.com/topic/mea-advisory",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "RedBeard on X: \"Daily Global Risk Brief — October 29, 2026\" / X",
+   "url": "https://x.com/nightdesk22/status/2115968085781811665",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "buk missile system: Latest News & Videos, Photos about buk missile system | The Economic Times - Page 1",
+   "url": "https://economictimes.indiatimes.com/topic/buk-missile-system",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "低空经济与先进空中交通会议峰会论坛展览会导航 · 2026—2027 重点日程 | 北创大为 东创大为",
+   "url": "https://www.aam.bj.cn/conference.html",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Stocktwits AI Roundup: Intel, Amazon, Alphabet Results Trigger Meltdown As Big Tech’s Record Spending Returns To Focus",
+   "url": "https://stocktwits.com/news-articles/markets/equity/stocktwits-ai-roundup-intel-amazon-alphabet-results-trigger-meltdown-as-big-tech-s-record-spending-returns-to-focus/cZUhVBWR9T2",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Sports - Heavy.com",
+   "url": "https://heavy.com/sports/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "RecallGazette — Vehicle Problems, Recalls & Safety Data",
+   "url": "https://recallgazette.com/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Check a product against recent recall notices | Fresh Recalls",
+   "url": "https://freshrecalls.com/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "TechCrunch | Startup and Technology News",
+   "url": "https://techcrunch.com/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "autonomous vehicle india: Latest News & Videos, Photos about autonomous vehicle india | The Economic Times - Page 1",
+   "url": "https://economictimes.indiatimes.com/topic/autonomous-vehicle-india",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "maglev train in india: Latest News & Videos, Photos about maglev train in india | The Economic Times - Page 1",
+   "url": "https://economictimes.indiatimes.com/topic/maglev-train-in-india",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Kansai International Airport - Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Kansai_International_Airport",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "ICRAM-2027 | 6th International Conference on Recent Advances in Mechanical Infrastructure | IITRAM Ahmedabad",
+   "url": "https://icram2027.netlify.app/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "National Airspace System",
+   "url": "https://nasstatus-alpha.faa.gov/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "FAA NMS - Federal Aviation Administration",
+   "url": "https://nms.aim.faa.gov/nat",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Tesla Robotaxi Houston: 254 Sq Mi, 10x Larger [2026]",
+   "url": "https://tech-insider.org/tesla-robotaxi-houston-254-square-miles-10x-geofence-2026/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Are world’s militaries, including India, waking up to drone, missile warfare?",
+   "url": "https://thefederal.com/category/news/drones-ai-modern-warfare-philip-thomas-rakesh-sharma-261250",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Cathie Wood’s ARK Invest Loads Up On Joby Aviation Stock Ahead Of Florida Air Taxi Flight",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/cathie-wood-ark-invest-loads-060104211.html",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Tesla Robotaxi: 40 Min for 2 Blocks in Houston [2026]",
+   "url": "https://tech-insider.org/tesla-robotaxi-houston-40-minutes-two-blocks-2026/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "5 Best Autonomous Vehicle Stocks To Buy backed by Hedge Funds",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-autonomous-vehicle-stocks-194343488.html",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Waymo Ojai Privacy: 5 Risks Riders Should Know [2026]",
+   "url": "https://tech-insider.org/waymo-ojai-chinese-built-robotaxi-privacy-spy-risk-2026/",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "US GDP accelerates to 3.4% in the third quarter, giving Trump a messaging boost on eve of midterms",
+   "url": "https://finance.yahoo.com/economy/article/us-gdp-accelerates-to-34-in-the-third-quarter-giving-trump-a-messaging-boost-on-eve-of-midterms-140447511.html",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "non-article-url",
+   "title": "Top 7 CAT Coaching Institutes in India: Features & Success Rates",
+   "url": "https://www.tribuneindia.com/news/business/top-7-cat-coaching-institutes-in-india-features-success-rates/amp/?utm=relatedarticles",
+   "reason": "listing, social, quote, topic or roundup page"
+  },
+  {
+   "stage": "article-check",
+   "title": "Leveraging Technological Innovation, Evidence- Based Decision-Making ...",
+   "url": "https://www.undrr.org/media/120092/download?startDownload=20261030",
+   "reason": "no verifiable publication date (page could not be fetched; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Jordan News Agency (Petra)",
+   "url": "https://org.petra.gov.jo/Include/ListNews.jsp?lang=en&name=en_news",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Brunei's No.1 News Website",
+   "url": "https://brudirect.com/post/Audio-reveals-exchanges-between-Spain-train-operators-and-drivers-moments-before-deadly-crash",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Hindu Population in Pakistan Declines to 1.7% from 14.6% in 1941 ...",
+   "url": "https://neopolitico.com/asia/hindu-population-in-pakistan-declines-to-1-7-from-14-6-in-1941-british-organisation-flags-forced-conversions-and-displacement/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 409)"
+  },
+  {
+   "stage": "article-check",
+   "title": "United States | United States | Today's latest from Al Jazeera",
+   "url": "https://www.aljazeera.com/where/united-states/",
+   "reason": "bad headline 'United States': too short to be a headline"
+  },
+  {
+   "stage": "article-check",
+   "title": "What's Coming in Aviation - Omni Flights",
+   "url": "https://omniflights.com/whats-coming",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 429)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Top Stories – [your]NEWS",
+   "url": "https://yournews.com/area/top-stories/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Iran Missile & Drone Strikes — Live Map 🇮🇷",
+   "url": "https://sebastians.in/gulf/iran",
+   "reason": "stale: published 2026-02-28 (meta article:published_time), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ukraine war latest: Signs inside 'dead zone' suggest Russia could ...",
+   "url": "https://news.sky.com/story/ukraine-war-latest-zelenskyy-russia-shopping-centre-12541713",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Drone strikes and hybrid warfare escalate around the Russia-Ukraine war — developing storyline — IJR News",
+   "url": "https://ijr.com/discover/storyline/drone-strikes-and-hybrid-warfare-escalate-around-the-russia-ukraine-war-4fa30397",
+   "reason": "stale: published 2026-10-17 (byline beside the headline), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "Latest Ukraine and Russia at War News - reuters.com",
+   "url": "https://www.reuters.com/world/ukraine-russia-war/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 401)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ukraine war latest: Putin 'prepared' for war with Europe, but 'doesn't ...",
+   "url": "https://news.sky.com/story/ukraine-russia-war-latest-ukrainian-sea-drones-destroy-russian-ship-near-crimea-arrest-warrants-issued-for-russian-military-commanders-12541713",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Lefkada drone incident: Accident or provocation? Greece seeks answers",
+   "url": "https://en.parapolitika.gr/greece/207937/lefkada-drone-incident-accident-or-provocation-greece-seeks-answers/",
+   "reason": "stale: published 2026-05-11 (meta article:published_time), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "News feed - The Kyiv Independent",
+   "url": "https://kyivindependent.com/news-archive/",
+   "reason": "bad headline 'News feed': too short to be a headline"
+  },
+  {
+   "stage": "article-check",
+   "title": "European Defence Agency News Monitoring Service & Press Release ...",
+   "url": "https://eupolitics.einnews.com/news/european-defense-agency",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Advanced Air Mobility (AAM) Certification - SKYbrary Aviation Safety",
+   "url": "https://skybrary.aero/articles/advanced-air-mobility-aam-certification",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Florida Polytechnic University Deploys First Personal eVTOL for Law ...",
+   "url": "https://www.aaminternational.com/2026/10/florida-polytechnic-university-deploys-first-personal-evtol-for-law-enforcement-research/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Zoox recalls robotaxis after self-driving crash in Las Vegas",
+   "url": "https://www.wionews.com/autonews/zoox-recalls-robotaxis-after-self-driving-crash-in-las-vegas-9043732",
+   "reason": "stale: published 2025-05-07 (labelled 'Published' text), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "Zoox recalls robotaxis over unexpected braking issue following US investigation",
+   "url": "https://www.wionews.com/autonews/zoox-recalls-robotaxis-over-unexpected-braking-issue-following-us-investigation-8872690",
+   "reason": "stale: published 2025-03-20 (labelled 'Published' text), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "UUV (Unmanned Undersea Vehicle) News Monitoring",
+   "url": "https://military.einnews.com/news/uuv",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "China Train Tickets: The Ultimate Booking Guide | Trip.com",
+   "url": "https://www.trip.com/trains/china/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Global High-Speed Train Ranking - Omio",
+   "url": "https://www.omio.com/trains/high-speed",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Media Releases | Transport for NSW",
+   "url": "https://www.transport.nsw.gov.au/news-and-events/media-releases",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "China Train Ticket Release Calculator: 15-Day Alarm (2026)",
+   "url": "https://chinatrainplanner.com/tools/ticket-release-calculator",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "The China Educational Equipment Exhibition · Finder Expo",
+   "url": "https://finderexpo.com/exhibitions/the-china-educational-equipment-exhibition-vw19xou05dur",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "FRA-Homepage",
+   "url": "https://safetydata.fra.dot.gov/OfficeofSafety/default.aspx",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "| Federal Aviation Administration",
+   "url": "https://www.faa.gov/airport-status/TUP",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Washington Dulles International Airport",
+   "url": "https://www.fly.faa.gov/fly/flyfaa/flyfaaindex?ARPT=IAD&p=0",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Los Angeles International Airport",
+   "url": "https://www.fly.faa.gov/fly/flyfaa/flyfaaindex?ARPT=LAX&p=0",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Chat - ask.fmcsa.dot.gov",
+   "url": "https://ask.fmcsa.dot.gov/app/chat/chat_launch/1000",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ronald Reagan Washington National Airport",
+   "url": "https://www.fly.faa.gov/fly/flyfaa/flyfaaindex?ARPT=DCA&p=0",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Smart Shooter ships first SMASH Hopper MG weapon stations to Asian customer",
+   "url": "https://app.dealroom.co/news/note/smart-shooter-ships-first-smash-hopper-mg-weapon-stations-to-asian-customer",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Hsiao calls for trusted drone supply chain at Taiwan forum",
+   "url": "https://www.taiwannews.com.tw/en/news/6468977",
+   "reason": "not an article: only 135 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Toyota to build Waymo robotaxis for Japan, U.K. in first step to creating large-scale global business",
+   "url": "https://www.autonews.com/toyota/an-toyota-waymo-robotaxi-japan-uk-1030/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Renk Reframes Its Growth Story: Unmanned Warship Gears, a Pending Miba Sale and a Lower Bar for 2027",
+   "url": "https://www.ad-hoc-news.de/boerse/news/unternehmensnachrichten/renk-reframes-its-growth-story-unmanned-warship-gears-a-pending-miba-sale-and-a-lower-bar-for-2027/70432981",
+   "reason": "bad headline 'Renk Reframes Its Growth Story: Unmanned Warship Gears, a Pending Miba Sale and a Lower Bar for 2027': is the publication name"
+  },
+  {
+   "stage": "article-check",
+   "title": "10,000 workers mobilized to accelerate Ho Chi Minh City high-speed rail project",
+   "url": "https://vietnamnet.vn/en/10-000-workers-mobilized-to-accelerate-ho-chi-minh-city-high-speed-rail-project-2569946.html",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tracking Cathie Wood: Buy Joby Aviation and Cerebras Systems, Sell Tempus AI and 10x Genomics",
+   "url": "https://www.moomoo.com/community/feed/tracking-cathie-wood-buy-joby-aviation-and-cerebras-systems-sell-117528732762118",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Russian Missile and Drone Attack on Kyiv Kills One - Oj",
+   "url": "https://odessa-journal.com/russian-missiles-turn-another-night-in-kyiv-into-tragedy",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Toyota, Waymo to test autonomous bZ4Xs in Japan in 2027, eye overseas expansion",
+   "url": "https://www.reuters.com/world/asia-pacific/toyota-waymo-test-autonomous-bz4xs-japan-2027-eye-overseas-expansion-2026-10-30/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 401)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Toyota and Waymo to Launch Driverless Robotaxis in Japan in 2027, Supplying bZ4X Vehicles",
+   "url": "https://finance.biggo.com/news/1b24f98a-9747-4e0a-a3bc-81e3d1ce1b00",
+   "reason": "not an article: denied host (finance.biggo.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Waymo to test autonomous Toyota bZ4X EVs in Jap...",
+   "url": "https://pluang.com/en/news-feed/waymo-gandeng-toyota-robotaksi-jepang-inggris",
+   "reason": "not an article: denied host (pluang.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "[News] Innoviz Sees Strong Counter-UAS Demand at AUSA 2026, Reinforcing the Fit of Innoviz Perciz for U.S. Defense and Homeland Security Mar",
+   "url": "http://www.ledinside.com/node/36482",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tesla Cybercab Hit in Austin: What Owners Should Know",
+   "url": "https://www.basenor.com/blogs/news/tesla-cybercab-hit-in-austin-what-owners-should-know",
+   "reason": "not an article: denied host (basenor.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tesla Robotaxi Calm Mode: What It Does and Who Gets It",
+   "url": "https://www.basenor.com/blogs/news/tesla-robotaxi-calm-mode-what-it-does-and-who-gets-it",
+   "reason": "not an article: denied host (basenor.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Scaling Autonomous Naval Fleets With Tactical Surface Vessels",
+   "url": "https://www.unmannedsystemstechnology.com/2026/10/scaling-autonomous-naval-fleets-with-tactical-surface-vessels/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "New Compact AUV Balances High-End Survey & Defense Performance",
+   "url": "https://www.unmannedsystemstechnology.com/2026/10/new-compact-auv-balances-high-end-survey-defense-performance/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "SPARTAN VTOL Drone to Integrate Dragonflight Autonomy for U.S. Navy Program",
+   "url": "https://www.unmannedsystemstechnology.com/2026/10/spartan-vtol-drone-to-integrate-dragonflight-autonomy-for-u-s-navy-program/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Kim Jong-un Demonstrates Drones Striking South Korean, U.S. Military Models",
+   "url": "https://www.chosun.com/english/national-en/2026/10/30/2S33LJXBKNHW5N6QSQ4RIKNOH4/",
+   "reason": "not an article: only 10 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "The proof that Putin exploited Ukraine’s Starlink blackout",
+   "url": "https://www.telegraph.co.uk/world-news/2026/10/30/proof-putin-exploited-ukraine-starlink-blackout-drones/",
+   "reason": "not an article: only 114 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "The Houthis announce the execution of 6 missile and drone attacks on Saudi Arabia targeting oil refineries, airports, and Aramco facilities",
+   "url": "https://news.cgtn.com/news/2026-10-30/news-1RF1OuGeg5q/p.html",
+   "reason": "not an article: only 87 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Russian drone debris sparks fire in northern Kyiv",
+   "url": "https://breakingthenews.net/Article/Russian-drone-debris-sparks-fire-in-northern-Kyiv/67440471",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "10 US military aircraft land in Israel: Trump meets West Asia commander to discuss possible fresh strikes a...",
+   "url": "https://www.bhaskarenglish.in/amp/international/news/trump-meets-commander-cooper-israel-iran-attack-preparations-139534770.html",
+   "reason": "bad headline '10 US military aircraft land in Israel: Trump meets West Asia commander to discuss possible fresh strikes a...': looks like a page label or slug ('...'); ends on a cut-off word"
+  },
+  {
+   "stage": "article-check",
+   "title": "Malaysian engineer develops electric air taxi with sights on Southeast Asia",
+   "url": "https://borneobulletin.com.bn/malaysian-engineer-develops-electric-air-taxi-with-sights-on-southeast-asia/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ukrainian FPV Drones Strike russian Positions, Vehicles, Personnel, and Murom-M System (Video)",
+   "url": "https://en.defence-ua.com/news/ukrainian_fpv_drones_strike_russian_positions_vehicles_personnel_and_murom_m_system_video-20260.html",
+   "reason": "not an article: only 141 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "National Guard troops strike Russian Molniya-13 mothership drone over Donetsk region",
+   "url": "https://www.ukrinform.net/rubric-ato/4179582-national-guard-troops-strike-russian-molniya13-mothership-drone-over-donetsk-region.html",
+   "reason": "not an article: only 100 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ondas Holdings: A $99,000 Counter-Drone Bundle, a $270 Million Order Book and the November Reckoning",
+   "url": "https://www.ad-hoc-news.de/boerse/news/unternehmensnachrichten/ondas-holdings-a-99-000-counter-drone-bundle-a-270-million-order-book-and-the-november-reckoning/70432647",
+   "reason": "bad headline 'Ondas Holdings: A $99,000 Counter-Drone Bundle, a $270 Million Order Book and the November Reckoning': is the publication name"
+  },
+  {
+   "stage": "article-check",
+   "title": "Indiana steel region receives infrastructure upgrades",
+   "url": "https://www.recyclingtoday.com/news/indiana-burns-harbor-chicago-south-shore-railroad-grants-steel-metal/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Archer And ITA Airways Plan Electric Air Taxis In Italy",
+   "url": "https://www.aviationbusinessme.com/news/archer-ita-airways-electric-air-tax",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 405)"
+  },
+  {
+   "stage": "article-check",
+   "title": "India's First Hydrogen-Powered Train: Advancing Green Rail Mobility",
+   "url": "https://www.pib.gov.in/FactsheetDetails.aspx?Id=150774&reg=30&lang=14",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Opinion: California’s autonomous-truck fight needs Becerra’s brand of pragmatism",
+   "url": "https://www.bizjournals.com/sacramento/news/2026/10/29/another-voice-kovacevich-autonomous-trucks.html",
+   "reason": "not an article: only 0 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Midwest UAS Test Site of Indiana launches",
+   "url": "https://www.mywabashvalley.com/news/local-news/midwest-uas-test-site-of-indiana-launches/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tesla Cybercab cruises into Singapore",
+   "url": "https://www.theedgesingapore.com/edgegear/motoring-news/tesla-cybercab-cruises-singapore",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "'Maa bulaye aur beta gaon na jaye, pardes mein itna dum nahin hai': Bihar labourer spends his entire sala",
+   "url": "https://timesofindia.indiatimes.com/etimes/trending/maa-bulaye-aur-beta-gaon-na-jaye-pardes-mein-itna-dum-nahin-hai-bihar-labourer-spends-his-entire-salary-on-a-flight-home-for-chhath-puja-wins-hearts-online/articleshow/135228667.cms",
+   "reason": "stale: published 2026-10-27 (json-ld datePublished), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "Are self-driving cars operating on streets in Washington state?",
+   "url": "https://myedmondsnews.com/2026/10/are-self-driving-cars-operating-on-streets-in-washington-state/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Young Celebrates Launch of Indiana Drone Test Site",
+   "url": "https://www.young.senate.gov/newsroom/press-releases/young-celebrates-launch-of-indiana-drone-test-site/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Can Axon Stock Jump 50%?",
+   "url": "https://www.trefis.com/stock/axon/articles/621251/can-axon-stock-jump-50/2026-10-29",
+   "reason": "not an article: non-article URL pattern (stock)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Toyota And Waymo Set A 2027 Test Run In Japan",
+   "url": "https://finimize.com/content/toyota-and-waymo-plan-robotaxi-tests-in-japan-in-2027",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 405)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Indiana Launches Midwest Drone Test Site",
+   "url": "https://www.wwbl.com/2026/10/29/indiana-launches-midwest-drone-test-site/",
+   "reason": "not an article: only 95 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Waymo",
+   "url": "https://www.britannica.com/money/Waymo",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Rapid Support Forces drone strikes target gold mines in Sudan’s Blue Nile",
+   "url": "https://sudantribune.com/article/320658",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "FAA Pilot Project Paves Way To Autonomous Caravan Cargo Flights",
+   "url": "https://aviationweek.com/aerospace/advanced-air-mobility/faa-pilot-project-paves-way-autonomous-caravan-cargo-flights",
+   "reason": "not an article: only 121 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "After earnings, we raise our Tesla stock Fair Value Estimate. Are shares a buy?",
+   "url": "https://www.morningstar.com.au/stocks/after-earnings-we-raise-our-tesla-stock-fair-value-estimate-are-shares-buy",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Oil Touches Two-Week High After Drone Attack on UAE Nuclear Power Plant",
+   "url": "https://energynow.com/2026/05/oil-touches-two-week-high-after-drone-attack-on-uae-nuclear-power-plant/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Quadruped Robots Compete for Public Sector Roles in Government Job Fair",
+   "url": "https://www.chosun.com/english/industry-en/2026/10/30/KTNYDEWFTBHBLAO2AXSHYUE4IY/",
+   "reason": "not an article: only 10 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Could Atlas Engineered Products (TSXV:AEP) Accelerate Robotic Truss Line?",
+   "url": "https://kalkinemedia.com/ca/stocks/industrial/could-atlas-engineered-products-tsxvaep-accelerate-robotic-truss-line",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Gjermania dhe Ukraina testojnë një robot tokësor të armatosur për vendosje në vijën e frontit",
+   "url": "https://reporteri.net/en/NEWS/boat/Germany-and-Ukraine-test-armed-ground-robot-for-frontline-deployment/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Augsburg: First test run through the new underground turning loop at Hauptbahnhof",
+   "url": "https://megaproject.com/news/railway/augsburg-first-test-run-through-the-new-underground-turning-loop-at-hauptbahnhof",
+   "reason": "not an article: only 12 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "UK Rail SME MoniRail Secures Share of £50 Million as Part of the UK Government’s Investment in Quantum Technologies",
+   "url": "https://megaproject.com/news/railway/uk-rail-sme-monirail-secures-share-of-ps50-million-as-part-of-the-uk-governments-investment-in-quantum-technologies",
+   "reason": "not an article: only 19 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Iran says 3 oil tankers struck mines, and other Mideast news",
+   "url": "https://www.dailyindependent.com/national/iran-says-3-oil-tankers-struck-mines-and-other-mideast-news/article_4d6e2caf-55a6-5e96-af01-cd15f5ea5ce3.html",
+   "reason": "not an article: only 149 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tesla Cybercab Accessibility: What Riders Need to Know",
+   "url": "https://www.basenor.com/blogs/news/tesla-cybercab-accessibility-what-riders-need-to-know",
+   "reason": "not an article: denied host (basenor.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Western Hemisphere Nations Meet to Advance Anti-Cartel Campaign Plan",
+   "url": "https://www.war.gov/News/News-Stories/Article/Article/4637181/western-hemisphere-nations-meet-to-advance-anti-cartel-campaign-plan/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Bristow Group Declares Cash Dividend",
+   "url": "https://www.streetinsider.com/PRNewswire/Bristow+Group+Declares+Cash+Dividend/27258829.html",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Assistant Secretary Says New Infrastructure Initiatives Are a 'National Calling'",
+   "url": "https://www.war.gov/News/News-Stories/Article/Article/4637154/assistant-secretary-says-new-infrastructure-initiatives-are-a-national-calling/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Army Opens Indiana National Guard Ranges to Commercial Drone Testing",
+   "url": "https://www.executivegov.com/articles/army-indiana-national-guard-commercial-drone-test-ranges",
+   "reason": "not an article: only 148 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "South Korea's Autonomous A2Z Completes Prototype of Skateboard-Type Driverless Logistics Vehicle Carrying 1.3 Tons of Cargo",
+   "url": "https://finance.biggo.com/news/535513e8-b92c-44d1-913f-b0fbd0ad0765",
+   "reason": "not an article: denied host (finance.biggo.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Eleven robots are being deployed to carry guest-room deliveries across two Singapore hotels.",
+   "url": "https://www.stocktitan.net/news/YFOR/yy-force-deploys-11-commercial-hospitality-robots-at-novotel-mercure-zmbjymewuzwc.html",
+   "reason": "not an article: denied host (stocktitan.net)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Powerus (Nasdaq:PUSA) - Stock Analysis",
+   "url": "https://simplywall.st/stocks/us/consumer-services/nasdaq-pusa/powerus",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Bigwave Robotics Launches Hyper Foundry to Connect Robot Data, AI Training and Deployment",
+   "url": "https://www.democratandchronicle.com/press-release/story/259848/bigwave-robotics-launches-hyper-foundry-to-connect-robot-data-ai-training-and-deployment/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 402)"
+  },
+  {
+   "stage": "article-check",
+   "title": "UT Martin receives grant for processing facility",
+   "url": "https://news.utm.edu/2026/10/29/ut-martin-receives-grant-for-processing-facility/",
+   "reason": "not an article: only 60 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Drone Demonstration [Image 1 of 3]",
+   "url": "https://www.dvidshub.net/image/10054998/drone-demonstration",
+   "reason": "stale: published 2026-10-23 (byline beside the headline), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "5 Best Autonomous Vehicle Stocks To Buy backed by Hedge Funds",
+   "url": "https://www.insidermonkey.com/news/5-best-autonomous-vehicle-stocks-to-buy-backed-by-hedge-funds-1860034/?amp=1",
+   "reason": "not an article: only 91 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Marine Corps Base Hawaii Barracks Project Crosses Halfway Mark",
+   "url": "https://www.war.gov/News/News-Stories/Article/Article/4637113/marine-corps-base-hawaii-barracks-project-crosses-halfway-mark/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "8th All India Conference of GRP Chiefs Focuses on Intelligence-Led Policing, Railway Security",
+   "url": "https://ddnews.gov.in/en/8th-all-india-conference-of-grp-chiefs-focuses-on-intelligence-led-policing-railway-security/",
+   "reason": "no verifiable publication date (page could not be fetched; HTTP None)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Drone scandal at Canada’s high-security prison! A hamburger meal was delivered to an inmate",
+   "url": "https://en.haberler.com/drone-scandal-at-canada-s-high-security-prison-a-2323840/",
+   "reason": "not an article: only 62 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Spanish rescue workers search for any survivors in high-speed rail crash, with 69 dead",
+   "url": "https://www.cbc.ca/news/world/spain-search-questions-train-crash-9.7400725",
+   "reason": "no verifiable publication date (page could not be fetched; HTTP None)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Army Mountain Division Takes on Panamanian Jungle",
+   "url": "https://www.war.gov/News/News-Stories/Article/Article/4636612/army-mountain-division-takes-on-panamanian-jungle/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Aurora ramping up its driverless truck production",
+   "url": "https://landline.media/aurora-ramping-up-its-driverless-truck-production/",
+   "reason": "not an article: only 11 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Hydrogen train | PM Modi Haryana Chandigarh Punjab visit",
+   "url": "https://ddnews.gov.in/en/pm-modi-to-visit-haryana-chandigarh-and-punjab-today-launch-projects-worth-rs-26800-crore-flag-off-indias-first-hydrogen-train/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Archer Aviation Lands First European Airline Partner as ITA Airways Signs Italy Air Taxi Deal",
+   "url": "https://finance.biggo.com/news/337f84da-eae2-4d80-8fbf-86287e1b58f3",
+   "reason": "not an article: denied host (finance.biggo.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Foundry Robotics raises $100M, buys Avea to build adaptive factory robots",
+   "url": "https://app.dealroom.co/news/note/foundry-robotics-raises-100m-buys-avea-to-build-adaptive-factory-robots",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Can a Jake Paul-Backed Startup Revive US Titanium Sponge Output?",
+   "url": "https://kalkinemedia.com/au/stocks/metal-and-mining/can-a-jake-paul-backed-startup-revive-us-titanium-sponge-output",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Iran says 3 oil tankers struck mines, and other Mideast news",
+   "url": "https://www.clintonherald.com/news/national_news/iran-says-3-oil-tankers-struck-mines-and-other-mideast-news/article_7b877091-2e50-5cbb-874b-97ebbab1d358.html",
+   "reason": "not an article: only 140 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Daily_Brief: #Sudanese army recaptures strategic base near #Ethiopian border from RSF-SPLM-N alliance",
+   "url": "https://addisstandard.com/brief/n-60523/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Bill aims to study how self-driving vehicles can be integrat...",
+   "url": "https://www.thetimesweekly.com/news/bill-aims-to-study-how-self-driving-vehicles-can-be-integrated-into-illinois-transit-284f4ae0/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "California awards $US 282m high-speed fleet contract",
+   "url": "https://www.railjournal.com/regions/north-america/california-awards-us-282m-high-speed-fleet-contract/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Ondas (ONDS) Unveils $99,000 Portable Counter Drone System",
+   "url": "https://simplywall.st/stocks/us/tech/nasdaq-onds/ondas/news/ondas-onds-unveils-99000-portable-counter-drone-system/amp",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "LS Group Integrates AI in Manufacturing, Robotics Expansion",
+   "url": "https://www.chosun.com/english/industry-en/2026/10/30/SI4RUM27RNAS7AU76JQHIEGRVU/",
+   "reason": "not an article: only 8 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Spain Train Crash Kills 68 People, Dozens Injured",
+   "url": "https://www.democracynow.org/2026/10/29/headlines/spain_train_crash_kills_68_people_dozens_injured",
+   "reason": "not an article: only 113 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "How Silvus Is Connecting Soldiers and Systems Across the Battlefield",
+   "url": "https://www.defensenews.com/video/2026/10/29/how-silvus-is-connecting-soldiers-and-systems-across-the-battlefield/",
+   "reason": "not an article: only 42 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "“Labor Shortages Fuel Robot Market”: China and Japan Expand Automation Investment, Potentially Reshaping Asian Manufacturing",
+   "url": "https://economy.ac/news/2026/10/202610300286",
+   "reason": "stale: published 2026-10-27 (json-ld datePublished), before the Oct 28 04:30 cutoff"
+  },
+  {
+   "stage": "article-check",
+   "title": "Humanoid robot firms including AgiBot report rapid revenue growth",
+   "url": "https://www.globaltimes.cn/page/202610/1373258.shtml",
+   "reason": "not an article: non-article URL pattern (page)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Agibot Rolls Out 20,000 Robots in First Half, Revenue Nears 2 Billion Yuan; Peng Zhihui Proposes \"Worken\" as a Measure of Physical AI Value",
+   "url": "https://finance.biggo.com/news/e8393871-e26b-4bb5-90bf-5a0360f371fb",
+   "reason": "not an article: denied host (finance.biggo.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "AGIBOT Introduces Worken to Measure Productive Robot Work at AGIBOT Innovation Day 2026",
+   "url": "https://themalaysianreserve.com/2026/10/29/agibot-introduces-worken-to-measure-productive-robot-work-at-agibot-innovation-day-2026/amp/",
+   "reason": "not an article: only 0 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Iran’s army says it downed MQ-1 drone east of Strait of Hormuz",
+   "url": "https://azertag.az/en/xeber/irans_army_says_it_downed_mq_1_drone_east_of_strait_of_hormuz-4486863",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Archer Aviation (ACHR) Strikes Italy Air Taxi Deal With Lufthansa’s ITA",
+   "url": "https://www.tipranks.com/news/archer-aviation-achr-strikes-italy-air-taxi-deal-with-lufthansas-ita",
+   "reason": "not an article: denied host (tipranks.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Archer and ITA Airways Partner on the Development of Air Taxi Services in Italy",
+   "url": "https://investors.archer.com/news/news-details/2026/Archer-and-ITA-Airways-Partner-on-the-Development-of-Air-Taxi-Services-in-Italy/default.aspx",
+   "reason": "not an article: only 17 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Russian drone strike kills at least 14 on Ukrainian rail platform",
+   "url": "https://www.cbc.ca/news/world/ukraine-humanitarian-aid-russia-ceasefire-9.7400790",
+   "reason": "no verifiable publication date (page could not be fetched; HTTP None)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Lake Erie Accident Report Faults ‘Uncrewed Vessel’ Watchstanding",
+   "url": "https://loosecannon.substack.com/p/lake-erie-accident-report-faults",
+   "reason": "not an article: denied host (substack.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Berkshire Grey Unveils Enhanced AI Capabilities Powered by BG Pilot™ Software",
+   "url": "https://www.businesswire.com/news/home/20261029194714/en/Berkshire-Grey-Unveils-Enhanced-AI-Capabilities-Powered-by-BG-Pilot-Software",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Zazie Beetz, the actress from Atlanta and Joker who now leads Nocturne",
+   "url": "https://www.martincid.com/people/zazie-beetz/",
+   "reason": "not an article: non-article URL pattern (people)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Senate is skeptical about making daylight saving time permanent despite Trump's pressure",
+   "url": "https://www.dailyherald.com/20261029/nation-and-world-politics/senate-is-skeptical-about-making-daylight-saving-time-permanent-despite-trumps-pressure/",
+   "reason": "not an article: only 0 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Joby Aviation (JOBY) Could Be 72% Undervalued As ARK Buys And 2026 Outlook Rises",
+   "url": "https://simplywall.st/stocks/us/transportation/nyse-joby/joby-aviation/news/joby-aviation-joby-could-be-72-undervalued-as-ark-buys-and-2/amp",
+   "reason": "not an article: non-article URL pattern (stocks)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Tesla Starts Optimus Robot Production in California",
+   "url": "https://www.thomasnet.com/insights/tesla-optimus-humanoid-robot-production-california/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "‘4 days, 3 cities, and a partnership coming of age’: Piyush Goyal reflects on productive Japan visit",
+   "url": "https://ddnews.gov.in/en/4-days-3-cities-and-a-partnership-coming-of-age-piyush-goyal-reflects-on-productive-japan-visit/",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 200)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Two killed in Israeli drone strike on vehicle at Gaza's Al-Maghazi camp",
+   "url": "https://www.jfeed.com/latest-news/two-killed-in-israeli-drone-strike-on-vehicle-at-gaza-s-al-maghazi-camp-57527",
+   "reason": "not an article: only 33 words of body text (need 150)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Bleu Robotics raises €5m to scale industrial robot AI",
+   "url": "https://www.theengineer.co.uk/content/news/bleu-robotics-secures-5m-for-humanoid-robot-ai",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Bleu Robotics secures €5m to accelerate humanoid robot deployment",
+   "url": "https://www.eurekamagazine.co.uk/content/news/bleu-robotics-secures-5m-to-accelerate-humanoid-robot-deployment",
+   "reason": "no verifiable publication date (no publication date found in the article; HTTP 403)"
+  },
+  {
+   "stage": "article-check",
+   "title": "South Korea to Begin Public-Sector Purchase of 1,700 AI Robots; 'Robot Dog Job Fair' Draws Military, Fire Agencies",
+   "url": "https://finance.biggo.com/news/e9248a65-2443-457f-8d92-085c82b0a34b",
+   "reason": "not an article: denied host (finance.biggo.com)"
+  },
+  {
+   "stage": "article-check",
+   "title": "Clinton police use drone to find juveniles accused of stealing car and fleeing into woods",
+   "url": "https://www.wfsb.com/2026/10/29/clinton-police-use-drone-find-5-juveniles-accused-stealing-car-fleeing-into-woods/",
+   "reason": "not an article: only 143 words of body text (need 150)"
+  },
+  {
+   "stage": "scope",
+   "title": "FAA Cools Expectations for Commercial Air Taxi Flights",
+   "url": "https://www.israeldefense.co.il/en/node/72212",
+   "reason": "moved from Military UAS to AAM / eVTOL / Advanced Aviation: Military UAS requires uncrewed systems, drone warfare or counter-uas in a military setting."
+  },
+  {
+   "stage": "scope",
+   "title": "Archer Aviation, ITA Airways plan electric air taxis in Italy",
+   "url": "https://www.militaryaerospace.com/commercial-aerospace/news/55415389/archer-aviation-ita-airways-plan-electric-air-taxis-in-italy",
+   "reason": "moved from International Security to AAM / eVTOL / Advanced Aviation: International Security requires foreign security events or policy that turn on drones, counter-uas or other uncrewed systems."
+  },
+  {
+   "stage": "scope",
+   "title": "Ukraine pauses strikes on Russian refineries after US pressure: Report",
+   "url": "https://www.turkiyetoday.com/world/ukraine-pauses-strikes-on-russian-refineries-after-us-pressure-report-3231313",
+   "reason": "dropped from International Security: no drone, counter-UAS, AAM, AV, rail, supersonic or space-transport angle"
+  },
+  {
+   "stage": "scope",
+   "title": "Russian overnight attacks leave 350,000 without power in Dnipro",
+   "url": "https://www.kyivpost.com/post/88615",
+   "reason": "dropped from International Security: no drone, counter-UAS, AAM, AV, rail, supersonic or space-transport angle"
+  },
+  {
+   "stage": "group",
+   "title": "FCC 800 MHz Drone Spectrum Rule and Part 108 BVLOS – Reboot Hub",
+   "url": "https://reboot-hub.com/blogs/industry-hotspot-analysis/fcc-opens-800-mhz-spectrum-to-drones-as-part-108-deadline-nears",
+   "reason": "same event as 'FCC clears drone operations in 800MHz band' (); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "FCC Opens 50 MHz of Cellular Spectrum for Drone Operations",
+   "url": "https://dronelife.com/2026/10/29/fcc-opens-cellular-spectrum-drones-800-mhz/",
+   "reason": "same event as 'FCC clears drone operations in 800MHz band' (verifier: Both reports describe the same FCC vote to remove a restriction on 50 MHz of the 800 MHz band to allow for drone operati); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "Toyota, Waymo to test autonomous bZ4Xs in Japan in 2027, eye overseas expansion",
+   "url": "https://www.globalbankingandfinance.com/toyota-waymo-test-autonomous-bz4xs-japan-2027-eye-overseas/",
+   "reason": "same event as 'Toyota and Waymo Advance Autonomous Driving Collaboration for Safer St' (verifier: Both reports describe the same announcement regarding the collaboration between Toyota and Waymo to test autonomous bZ4X); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "NASA X-59 Begins Cross-Country Flight to Florida",
+   "url": "https://avweb.com/aviation-news/nasa-x-59-begins-xc-flight-to-florida/",
+   "reason": "same event as 'X-59 Heads to Florida From Edwards' (verifier: Both reports describe the same specific event: the cross-country flight of NASA's X-59 quiet supersonic aircraft from Ed); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "NASA’s X-59 QueSST Heads to Kennedy Space Center",
+   "url": "https://theaviationist.com/2026/10/29/nasas-x-59-quesst-heads-to-kennedy-space-center/",
+   "reason": "same event as 'X-59 Heads to Florida From Edwards' (verifier: Both reports describe the same specific event: the X-59 aircraft's first long cross-country flight from California (Edwa); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "A collision between two trains in central Spain has killed 68 people and injured dozens.",
+   "url": "https://www.forumdaily.com/en/at-least-68-dead-in-crash-between-2-trains-in-central-spain/",
+   "reason": "same event as 'Audio recordings reveal decisions made moments before deadly train cra' (verifier: Both reports describe the same high-speed train crash in Spain involving a moving train colliding with a stopped train, ); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "Spain’s latest deadly train crash puts human error and systemic failure under scrutiny",
+   "url": "https://www.yahoo.com/news/world/articles/spain-latest-deadly-train-crash-050320853.html",
+   "reason": "same event as 'Audio recordings reveal decisions made moments before deadly train cra' (verifier: Both reports describe the same high-speed train crash in Spain that resulted in 69 deaths.); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "Ukraine war briefing: Outrage in Europe after Russian drone kills 14 on rail platform in Dnipro",
+   "url": "https://www.theguardian.com/world/2026/oct/30/ukraine-war-briefing-russian-drone-attack-dnipro-rail-platform",
+   "reason": "same event as 'Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dni' (); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "Ukraine War, Day 1,709: Russia Murders 14 Civilians on a Train Platform in Dnipro",
+   "url": "https://eaworldview.com/2026/10/ukraine-war-dnipro-russia-murders-14-civilians-on-a-train-platform/",
+   "reason": "same event as 'Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dni' (verifier: Both reports describe the same specific event: a Russian drone strike on a railway platform in Dnipro, Ukraine, which re); folded into Additional coverage"
+  },
+  {
+   "stage": "group",
+   "title": "North Korea Expands Drone and AI Weapons Programme as Tensions With South Korea Rise",
+   "url": "https://moderndiplomacy.eu/2026/10/30/north-korea-expands-drone-and-ai-weapons-programme-as-tensions-with-south-korea-rise/",
+   "reason": "same event as 'North Korea’s Kim urges drone dominance, greater military AI use amid ' (verifier: Both reports describe the same event: North Korean leader Kim Jong Un calling for 'absolute superiority' in drone techno); folded into Additional coverage"
+  },
+  {
+   "stage": "cross-edition",
+   "title": "FCC Opens 50 MHz of Cellular Spectrum for Drone Operations",
+   "url": "https://dronelife.com/2026/10/29/fcc-opens-cellular-spectrum-drones-800-mhz/",
+   "reason": "already published 2026-10-26 as 'What is BVLOS? FAA Part 108 Rules Explained (2026)'; no new facts"
+  },
+  {
+   "stage": "summary-regenerated",
+   "title": "UN takes its automated driving rulebook on tour through Beijing – CarThreat",
+   "url": "https://carthreat.com/2026/10/30/un-takes-its-automated-driving-rulebook-on-tour-through-beijing/",
+   "reason": "unsupported: 'The event highlighted a gap in cyber security requirements and the need for a single approval pathway to avoid fresh validation across jurisdictions, though no timetable for binding national alignment emerged.' (Article doesn't state the event highlighted the cyber gap or the need for a single pathway.)",
+   "method": "regenerated"
+  },
+  {
+   "stage": "summary-regenerated",
+   "title": "Waymo Expands Into Torrance After Quietly Testing On City Streets",
+   "url": "https://patch.com/california/redondobeach/waymo-expands-torrance-after-quietly-testing-city-streets",
+   "reason": "unsupported: 'The company stated that its vehicles had already been testing locally with human drivers, and it has trained more than 6,500 first responders in Greater Los Angeles since 2022.' (City official, not the company, stated vehicles were testing locally.)",
+   "method": "regenerated"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dnipro Rail Station",
+   "url": "https://www.sofx.com/jet-powered-russian-drone-evades-air-defenses-kills-14-at-crowded-dnipro-rail-station/",
+   "reason": "unsupported: 'Ukraine’s air force intercepted three of four jet-powered drones in the attack, faster turbojet models that outpace the low-cost interceptors Kyiv relies on.' (The term 'turbojet' is not mentioned in the article.)",
+   "method": "extractive-fallback"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dnipro Rail Station",
+   "url": "https://www.sofx.com/jet-powered-russian-drone-evades-air-defenses-kills-14-at-crowded-dnipro-rail-station/",
+   "reason": "unsupported: 'Ukraine’s air force intercepted three of four jet-powered drones in the attack, faster turbojet models that outpace the low-cost interceptors Kyiv relies on.' (Article mentions \"jet-powered\", not \"turbojet\".)",
+   "method": "extractive-fallback"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Jet-Powered Russian Drone Evades Air Defenses, Kills 14 at Crowded Dnipro Rail Station",
+   "url": "https://www.sofx.com/jet-powered-russian-drone-evades-air-defenses-kills-14-at-crowded-dnipro-rail-station/",
+   "reason": "used the article's first sentences after two failed attempts"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Washington Didn’t See This Coming: Iran Has Been Importing Rocket Propellants and Drone Parts Right Under Its Nose, Reuters Says",
+   "url": "https://nationalsecurityjournal.org/washington-didnt-see-this-coming-iran-has-been-importing-rocket-propellants-and-drone-parts-right-under-its-nose-reuters-says/",
+   "reason": "unsupported: 'Reuters reported that Iran’s Islamic Revolutionary Guard Corps has been importing rocket propellants and drone parts, with records showing most items were exempt from duty and marked as military equipment.' (Article does not mention 'rocket propellants and drone parts'.)",
+   "method": "extractive-fallback"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Washington Didn’t See This Coming: Iran Has Been Importing Rocket Propellants and Drone Parts Right Under Its Nose, Reuters Says",
+   "url": "https://nationalsecurityjournal.org/washington-didnt-see-this-coming-iran-has-been-importing-rocket-propellants-and-drone-parts-right-under-its-nose-reuters-says/",
+   "reason": "unsupported: 'Reuters reported that Iran’s Islamic Revolutionary Guard Corps has been importing rocket propellants and drone parts, with records showing most items were exempt from duty and marked as military equipment.' (Article does not mention \"rocket propellants\" or \"drone parts\".)",
+   "method": "extractive-fallback"
+  },
+  {
+   "stage": "summary-fallback",
+   "title": "Washington Didn’t See This Coming: Iran Has Been Importing Rocket Propellants and Drone Parts Right Under Its Nose, Reuters Says",
+   "url": "https://nationalsecurityjournal.org/washington-didnt-see-this-coming-iran-has-been-importing-rocket-propellants-and-drone-parts-right-under-its-nose-reuters-says/",
+   "reason": "used the article's first sentences after two failed attempts"
+  },
+  {
+   "stage": "scope",
+   "title": "FAA approves Beta Technologies for vertical takeoff and landing",
+   "url": "https://www.vtcng.com/shelburnenews/news/business_news/faa-approves-beta-technologies-for-vertical-takeoff-and-landing/article_242c0c75-ba48-4044-bab1-6fecddd928d0.html",
+   "reason": "moved from AAM / eVTOL / Advanced Aviation to Federal Policy & Implementation: federal action in the headline"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "North Korea’s Kim urges drone dominance, greater military AI use amid border tensions",
+   "url": "https://en.philenews.com/international/north-koreas-kim-urges-drone-dominance-greater-military-ai-use-amid-border-tensions/",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "French Navy to deploy VTOL drones on support vessels from late 2026",
+   "url": "https://www.bairdmaritime.com/security/naval/unmanned-naval-systems/french-navy-aliaca-drone-deployment",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "Ukrainian Drones Hit Russian Military Food Supplier, Oil Refinery in Overnight Attacks",
+   "url": "https://www.kyivpost.com/post/88629",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "Saudi Arabia Intercepts Houthi Drone Over Makkah",
+   "url": "https://indtoday.com/saudi-arabia-intercepts-houthi-drone-over-makkah/",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "One person killed and one injured in overnight Russian attack on Kyiv – photos",
+   "url": "https://www.pravda.com.ua/eng/news/2026/10/30/8060384/",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "Washington Didn’t See This Coming: Iran Has Been Importing Rocket Propellants and Drone Parts Right Under Its Nose, Reuters Says",
+   "url": "https://nationalsecurityjournal.org/washington-didnt-see-this-coming-iran-has-been-importing-rocket-propellants-and-drone-parts-right-under-its-nose-reuters-says/",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "edition-cap",
+   "title": "China Tightens Export Controls on Drone Engines, Autopilots and Communication Systems",
+   "url": "https://quwa.org/drone-market-intelligence/china-tightens-export-controls-on-drone-engines-autopilots-and-communication-systems/",
+   "reason": "cut to keep the edition to 25 stories (priority tier 3, importance 4)"
+  },
+  {
+   "stage": "official-source",
+   "title": "White House makes Section 232 determination regarding foreign-made robots",
+   "url": "https://www.whitehouse.gov/presidential-actions/2026/10/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united-states/",
+   "reason": "linked The White House: Both reports describe the same event: a Section 232 determination and proclamation by the President of the United States"
+  }
+ ]
+}
