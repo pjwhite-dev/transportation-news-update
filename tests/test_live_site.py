@@ -493,8 +493,15 @@ class DeskTests(unittest.TestCase):
         self.assertEqual(story["title"], "Secretary Marks Major Milestone in eVTOL Pilot Program")
         self.assertEqual(story["summary"], "")
         self.assertEqual(story["published"], iso(NOW - timedelta(hours=1)))  # the news search's date
-        self.assertEqual(w.calls, [])  # nothing was read, so no model is asked anything
+        self.assertEqual(w.calls, ["live_triage"])  # judged on its headline; nothing read, so nothing summarized
         self.assertTrue(story["shown_at"])
+
+    def test_a_refused_release_off_the_portfolio_or_outside_the_newsroom_is_dropped(self):
+        refuse = lambda u: (403, "", u)
+        grants = self.queue("https://www.transportation.gov/briefing-room/highway-safety-grants", title="Secretary Invests $1 Billion in Highway Safety Grants")
+        self.assertEqual(self.desk(w=writer(relevant=False), fetch=refuse).first_pass(grants), DROPPED)
+        notice = self.queue("https://www.faa.gov/air_traffic/publications/domesticnotices/dom26052_af.html", title="Regional Airport incorrect airport diagram notice")
+        self.assertEqual(self.desk(fetch=refuse).first_pass(notice), DROPPED)
 
     def test_only_listed_agencies_and_only_refusals_and_only_recent_get_headline_only(self):
         refuse = lambda u: (403, "", u)

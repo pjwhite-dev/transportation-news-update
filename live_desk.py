@@ -238,12 +238,12 @@ class Desk:
         return QUEUED
 
     def _agency_refuses(self, record: dict[str, Any], page: tuple[int | None, str, str] | None, now: datetime) -> bool:
-        """An agency site that refuses our reader (config desk.headline_only_hosts; owner, 2026-10-30) still gets its
+        """An agency site that refuses our reader (config desk.headline_only_pages; owner, 2026-10-30) still gets its
         release on the page as a headline and link, dated by the news search that found it, if that date is recent."""
-        host = urlparse(str(record.get("url", ""))).netloc.casefold().removeprefix("www.")
-        hosts = self.config["desk"].get("headline_only_hosts") or []
-        if not any(host == h or host.endswith("." + h) for h in hosts):
-            return False
+        parts = urlparse(str(record.get("url", "")))
+        page_path = parts.netloc.casefold().removeprefix("www.") + parts.path
+        if not any(page_path.startswith(prefix) for prefix in self.config["desk"].get("headline_only_pages") or []):
+            return False  # only the agencies' press-release pages, not their notices and charts
         if page is None or page[1] or page[0] not in (401, 403, article_extract.ROBOTS_DISALLOWED):
             return False  # it answered, so the normal checks stand
         published = parse_iso(str(record.get("published", "")))
@@ -309,7 +309,14 @@ class Desk:
             story = self.store.get(story["id"]) or story
 
         if story["record"].get("_agency_refused"):
-            # Nothing was read, so nothing is summarized: the agency's own headline and link only.
+            # Nothing was read, so nothing is summarized: the agency's own headline and link only. The writer still
+            # judges from the headline whether it belongs in the portfolio, as it does for every story.
+            if self.level == "HEADLINES" or self.gpu_busy():
+                return QUEUED
+            with self.model_slots:
+                relevant, why, _ = self._triage(story["title"], story["title"])
+            if not relevant:
+                return self._drop(story, now, f"not a portfolio story: {why}")
             return self._show(story, now, HEADLINE, "", "headline only: the agency's site refuses our reader")
         if self.level == "HEADLINES" or self.gpu_busy():
             waited = now - (parse_iso(story["found_at"]) or now)

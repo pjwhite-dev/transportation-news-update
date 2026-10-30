@@ -40,7 +40,7 @@ as headline only after 20 minutes.
 
 FAA and DOT sites refuse the reader (HTTP 403 to its own User-Agent). Their releases, found by the wire's news
 searches, go up as headline and link only, dated by that search and never summarized (config
-`desk.headline_only_hosts`). The reader obeys each site's robots.txt (`article_extract.robots_allows`). The request
+`desk.headline_only_pages`; the writer still judges relevance from the headline). The reader obeys each site's robots.txt (`article_extract.robots_allows`). The request
 asking the agencies to let the reader in is in `docs/agency-access-request.md`.
 
 ## Doctor levels
