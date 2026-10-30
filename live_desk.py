@@ -244,8 +244,8 @@ class Desk:
         page_path = parts.netloc.casefold().removeprefix("www.") + parts.path
         if not any(page_path.startswith(prefix) for prefix in self.config["desk"].get("headline_only_pages") or []):
             return False  # only the agencies' press-release pages, not their notices and charts
-        if page is None or page[1] or page[0] not in (401, 403, article_extract.ROBOTS_DISALLOWED):
-            return False  # it answered, so the normal checks stand
+        if page is None or page[0] not in (401, 403, article_extract.ROBOTS_DISALLOWED):
+            return False  # it answered (or the page is gone), so the normal checks stand; a 403's body is its error page
         published = parse_iso(str(record.get("published", "")))
         return published is not None and article_extract.window_cutoff(now) <= published <= now + timedelta(minutes=5)
 

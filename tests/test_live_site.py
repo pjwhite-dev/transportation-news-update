@@ -488,7 +488,7 @@ class DeskTests(unittest.TestCase):
         sid = self.queue(url, title="Secretary Marks Major Milestone in eVTOL Pilot Program | Federal Aviation Administrat",
                          source="Federal Aviation Administration", official_source=True)
         w = writer()
-        self.assertEqual(self.desk(w=w, fetch=lambda u: (403, "", u)).first_pass(sid), HEADLINE)
+        self.assertEqual(self.desk(w=w, fetch=lambda u: (403, "<html><h1>Access Denied</h1></html>", u)).first_pass(sid), HEADLINE)
         story = self.store.get(sid)
         self.assertEqual(story["title"], "Secretary Marks Major Milestone in eVTOL Pilot Program")
         self.assertEqual(story["summary"], "")
