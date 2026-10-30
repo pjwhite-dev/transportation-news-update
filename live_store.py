@@ -159,6 +159,8 @@ class Store:
     def add_story(self, record: dict[str, Any], now: datetime) -> str:
         story_id = str(record.get("id") or url_key(str(record["url"])))
         published = parse_iso(str(record.get("published", "")))
+        if published is not None and published > now:
+            published = now  # a bare date for today is stamped at noon; never date a story after we found it
         with self.tx() as db:
             db.execute(
                 """INSERT OR IGNORE INTO stories(id, url, title, source, origin, published, found_at, status, title_key,

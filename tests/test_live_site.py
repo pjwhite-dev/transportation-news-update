@@ -16,7 +16,7 @@ import live_feed
 import live_lead
 import live_market
 import news_engine
-from live_desk import Desk, Health, desk_for, edition_running, file_story
+from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, settle_published
 from live_sources import Source, Wire, build_sources, load_config, rest_for
 from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIFIED, Store, iso, title_overlap, url_key
 
@@ -156,6 +156,41 @@ class StoreTests(unittest.TestCase):
 
 def fake_page(published: datetime, title: str = "FAA approves Beta Technologies passenger test flights"):
     return lambda url: (200, article_html(title, published), url)
+
+
+class PublishedTimeTests(unittest.TestCase):
+    """A source that gives only a date must not show as 12:00 p.m. or jump above newer stories."""
+    noon_today = datetime(2026, 10, 30, 16, 0, tzinfo=timezone.utc)  # noon Eastern, how parse_date stamps a bare date
+
+    def test_a_bare_date_never_replaces_a_feed_time_from_that_day(self):
+        feed = NOW - timedelta(minutes=30)
+        self.assertTrue(date_only(self.noon_today))
+        self.assertEqual(settle_published(self.noon_today, feed, NOW), (feed, False))
+
+    def test_a_bare_date_for_today_is_never_later_than_when_we_found_it(self):
+        self.assertEqual(settle_published(self.noon_today, None, NOW), (NOW, True))
+
+    def test_a_bare_date_from_an_earlier_day_keeps_that_day(self):
+        yesterday = self.noon_today - timedelta(days=1)
+        self.assertEqual(settle_published(yesterday, None, NOW), (yesterday, True))
+
+    def test_a_real_page_time_is_kept(self):
+        page = NOW - timedelta(hours=2, minutes=7)
+        self.assertEqual(settle_published(page, NOW - timedelta(hours=1), NOW), (page, False))
+
+    def test_the_store_never_dates_a_story_after_it_was_found(self):
+        store = Store(":memory:")
+        sid = store.add_story({"url": "https://example.com/a", "title": "A story", "published": iso(self.noon_today)}, NOW)
+        self.assertEqual(store.get(sid)["published"], iso(NOW))
+
+    def test_the_feed_marks_a_date_without_a_time(self):
+        story = {"id": "s", "title": "T", "summary": "", "url": "u", "source": "S", "desk": "air", "section": "",
+                 "published": iso(NOW), "found_at": iso(NOW), "shown_at": iso(NOW), "status": FIRST_PASS,
+                 "official": 0, "also": [], "notes": [], "record": {"_date_only": True}}
+        out = live_feed.public_story(story)
+        self.assertFalse(out["time_known"])
+        self.assertEqual(out["found"], iso(NOW))
+        self.assertTrue(live_feed.public_story({**story, "record": {}})["time_known"])
 
 
 class DeskTests(unittest.TestCase):

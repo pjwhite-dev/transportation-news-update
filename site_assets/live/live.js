@@ -27,6 +27,12 @@
   var dayFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "short", day: "numeric" });
   var keyFmt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
   function clock(iso) { return iso ? timeFmt.format(new Date(iso)).replace("AM", "a.m.").replace("PM", "p.m.") : ""; }
+  // A source that gives only a date: show when we found it (on that day), never a made-up time.
+  function storyTime(story) {
+    if (story.time_known !== false) return clock(story.published);
+    if (story.found && keyFmt.format(new Date(story.found)) === keyFmt.format(new Date(story.published))) return "found " + clock(story.found);
+    return "no time given";
+  }
   function dayLabel(iso) {
     var d = new Date(iso), today = keyFmt.format(new Date()), key = keyFmt.format(d);
     if (key === today) return "Today";
@@ -51,7 +57,7 @@
     art.dataset.cat = story.desk;
     var side = el("div", "cat");
     side.appendChild(el("b", null, catName(story.desk)));
-    var t = el("time", null, clock(story.published));
+    var t = el("time", null, storyTime(story));
     t.dateTime = story.published;
     side.appendChild(t);
     art.appendChild(side);
@@ -116,7 +122,7 @@
       items.forEach(function (s) {
         var li = el("li");
         li.appendChild(link(s.url, s.title));
-        li.appendChild(el("div", "meta", s.source + " · " + clock(s.published)));
+        li.appendChild(el("div", "meta", s.source + " · " + storyTime(s)));
         ol.appendChild(li);
       });
       dev.appendChild(ol);

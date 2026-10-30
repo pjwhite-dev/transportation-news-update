@@ -125,3 +125,4 @@ Owner asked for: FAA, DOT and White House by Google search with `site:`; ticker 
 - **Tagline under the title** (config `site.tagline`): "Updates itself around the clock. New stories appear within minutes, each summarized by AI and linked to its source."
 - Google queries on the sweep line show their first phrase ("Google News: unmanned aircraft system") instead of the raw query.
 - Checked without the GPU (owner stopped GPU use for the newsroom at 12:40 UTC): feed rendered from the store with `live_service.py render` and served as static files.
+- **Stories with only a date show when we found them, not noon.** Pages that give just a date are stamped noon Eastern by the shared date reader (kept, the edition depends on it). On the live page such a story is never dated later than we found it, keeps a feed's real time from the same day, and shows "found 8:29 a.m." in place of a clock time ("no time given" if it is from an earlier day).

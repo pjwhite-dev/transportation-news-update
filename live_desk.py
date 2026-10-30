@@ -117,6 +117,28 @@ def file_story(section: str, text: str, config: dict[str, Any]) -> str:
     return desk_for(section, config)
 
 
+def date_only(value: datetime | None) -> bool:
+    """article_extract.parse_date stamps a bare date at noon Eastern; that exact noon means no time was given."""
+    if value is None:
+        return False
+    local = value.astimezone(article_extract.EASTERN)
+    return (local.hour, local.minute, local.second, local.microsecond) == (12, 0, 0, 0)
+
+
+def settle_published(page: datetime | None, feed: datetime | None, found: datetime | None) -> tuple[datetime | None, bool]:
+    """The publication time to show and sort by, and whether only the day is known. A page that gives only a
+    date never replaces a feed time from that same day, and no story is stamped later than we found it (a bare
+    date for today would otherwise sit at noon and float above stories that came in after it)."""
+    when, day_only = page or feed, date_only(page or feed)
+    if day_only and feed is not None and not date_only(feed):
+        eastern = article_extract.EASTERN
+        if feed.astimezone(eastern).date() == when.astimezone(eastern).date():
+            when, day_only = feed, False
+    if when is not None and found is not None and when > found:
+        when = found
+    return when, day_only
+
+
 class StepFailed(Exception):
     """A step failed in an expected way (bad page, model refused, budget exceeded); counts as an attempt."""
 
@@ -250,7 +272,8 @@ class Desk:
                 enriched["page_text"] = str(record.get("summary", ""))
                 enriched["source"] = "Federal Register"
             section = news_engine.infer_section(enriched)
-            published = parse_iso(str(enriched.get("published", "")))
+            published, day_only = settle_published(
+                parse_iso(str(enriched.get("published", ""))), parse_iso(story["published"]), parse_iso(story["found_at"]))
             self.store.update(
                 story["id"], now,
                 url=str(enriched["url"]), title=str(enriched["title"]),
@@ -259,7 +282,7 @@ class Desk:
                 section=section, desk=file_story(section, f"{enriched['title']} {enriched.get('page_text', '')[:3000]}", self.config),
                 official=int(bool(record.get("official_source")) or story_groups.source_tier(enriched) == 1),
                 page_text=str(enriched.get("page_text", "")),
-                record={**{k: v for k, v in enriched.items() if k != "page_text"}, "_enriched": True},
+                record={**{k: v for k, v in enriched.items() if k != "page_text"}, "_enriched": True, "_date_only": day_only},
             )
             story = self.store.get(story["id"]) or story
 

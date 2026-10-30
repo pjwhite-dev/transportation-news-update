@@ -36,6 +36,8 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
         "desk": story["desk"],
         "section": story["section"],
         "published": story["published"],
+        "found": story["found_at"],
+        "time_known": not story["record"].get("_date_only"),
         "shown": story["shown_at"],
         "check": BADGES.get(story["status"], ""),
         "official": bool(story["official"]),
