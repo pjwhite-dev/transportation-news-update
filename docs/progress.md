@@ -141,3 +141,4 @@ the public copy last went out and any owner override. Tests: 428 pass (test_live
 Merged feat/live-site into main (fast-forward after merging today's main in) and pushed; first live-feed push at
 15:03 UTC. Seen: the fast lane is behind (472 stories waiting at 15:04); the service still runs only from this
 session, so the public page shows "paused" when it stops.
+Scheduled (owner: "Yes, schedule it"): task `newsroom-live` registered at logon from C:\newsroom and started 15:09 UTC; the store (SQLite backup, integrity ok), market snapshot and event log were copied from the worktree's runtime folder. The services check restarts it on a stale heartbeat (ran once: left the healthy service alone). Dashboard restarted to pick up the public-push status; it shows LIVE, public copy pushed under a minute ago. The live service now uses the GPU around the clock, pausing model work while the edition holds the lock.

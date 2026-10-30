@@ -7,6 +7,11 @@ site" canvas artifact (the mockup's "lead bar" panel was never on the real page)
 
 ## Running it
 
+Task `newsroom-live` (at logon, from C:
+ewsroom, registered by `scripts/windows/install_tasks.ps1`) runs `live_service.py run`
+with no time limit. `scripts/ensure_services.ps1` (every 5 min) restarts it when `.runtime/live_site/heartbeat.json`
+is missing or older than 10 minutes, unless the task started in the last 10 minutes.
+
     python live_service.py run       # the service; preview at http://127.0.0.1:8766
     python live_service.py sweep     # poll every source once, print what was queued
     python live_service.py render    # write feed.json from the store
@@ -57,6 +62,5 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
 
 ## Not done yet
 
-- Scheduling: no Task Scheduler entry yet, and the services check does not yet restart the live service.
 - Nightly copy chief (re-audit, source scorecard, corrections), the lead write-up with a critic pass, and
   Healthchecks "live-feed" (needs a new check URL stored with `scripts/set_secret.py`).
