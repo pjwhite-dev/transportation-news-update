@@ -452,11 +452,51 @@ class Desk:
         )
 
     # --- lead desk --------------------------------------------------------------------------------------------
+    # The owner can force any story on the page to lead for 1-48 hours (live_override reads the request). While
+    # that holds, no story replaces it; when it ends, the best checked story of the last day that scores enough
+    # leads, or no story does.
+    def override(self, now: datetime | None = None) -> dict[str, Any] | None:
+        held = self.store.get_state(live_lead.OVERRIDE_KEY)
+        if not held:
+            return None
+        until = parse_iso(str(held.get("until", "")))
+        return held if until and (now or self.clock()) < until else None
+
+    def force_lead(self, story_id: str, hours: int, note: str = "") -> str:
+        """Make a story the lead for `hours` (1-48); 0 ends the owner's choice now. Returns what was done."""
+        now = self.clock()
+        if hours == 0:
+            if self.override(now) is None:
+                return "no headline override was running"
+            self.store.set_state(live_lead.OVERRIDE_KEY, None)
+            self._lead_after_override(now, "the owner ended the override")
+            return "override ended"
+        if not 1 <= hours <= live_lead.OVERRIDE_MAX_HOURS:
+            raise ValueError(f"hours must be 1 to {live_lead.OVERRIDE_MAX_HOURS}, not {hours}")
+        story = self.store.get(story_id)
+        if story is None or story["status"] not in (FIRST_PASS, VERIFIED, HEADLINE):
+            raise ValueError(f"no story {story_id!r} is on the page")
+        until = now + timedelta(hours=hours)
+        self.store.set_state(live_lead.OVERRIDE_KEY, {"story_id": story_id, "until": iso(until), "set_at": iso(now), "hours": hours, "note": note[:200]})
+        self.store.set_lead(story_id, now, int(story["score"] or 0), None, f"owner's choice for {hours} h {note}".strip())
+        newsroom_live.emit("live-lead-override", desk="editors", title=story["title"][:160], hours=hours, until=iso(until))
+        return f"{story['title'][:120]} leads until {iso(until)}"
+
+    def _lead_after_override(self, now: datetime, reason: str) -> None:
+        pool = [s for s in self.store.visible(now - live_lead.BEST_OF_WINDOW) if s["status"] == VERIFIED and (s["score"] or 0) >= live_lead.FLOOR]
+        best = max(pool, key=lambda s: (s["score"] or 0, s["published"]), default=None)
+        if best is None:
+            self.store.set_lead("", now, 0, None, f"{reason}; no story of the last day scores enough to lead")
+        else:
+            self.store.set_lead(best["id"], now, int(best["score"] or 0), None, f"{reason}; best checked story of the last day")
+
     def offer_lead(self, story_id: str) -> bool:
         story = self.store.get(story_id)
         if story is None or story["status"] != VERIFIED:
             return False
         now = self.clock()
+        if self.override(now) is not None:
+            return False
         lead = self.store.current_lead()
         candidate = {"story_id": story["id"], "score": story["score"], "verified": True, "published": parse_iso(story["published"])}
         decision = live_lead.decide(lead, candidate, now)
@@ -467,6 +507,13 @@ class Desk:
 
     def check_stale_lead(self) -> bool:
         now = self.clock()
+        held = self.store.get_state(live_lead.OVERRIDE_KEY)
+        if held:
+            if self.override(now) is not None:
+                return False
+            self.store.set_state(live_lead.OVERRIDE_KEY, None)
+            self._lead_after_override(now, f"the owner's {held.get('hours')} h override ended")
+            return True
         lead = self.store.current_lead()
         pool = [
             {"story_id": s["id"], "score": s["score"], "verified": True, "published": parse_iso(s["published"])}

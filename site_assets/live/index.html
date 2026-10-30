@@ -4,17 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advanced Transportation Update · Live</title>
+<meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
 <meta name="description" content="Drones, counter-UAS, advanced air mobility, autonomous vehicles, rail and robotics news, updated around the clock. AI summaries, each linked to its source.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="live.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
 <header class="cover">
   <div class="topbar wrap">
     <div class="masthead">
-      <a class="brand" href="./"><span id="site-name">Advanced Transportation Update</span> <i id="site-label">Live</i></a>
+      <a class="brand" href="./">
+        <svg class="radar" viewBox="0 0 42 42" aria-hidden="true" focusable="false">
+          <circle cx="21" cy="21" r="18" class="ring"/>
+          <circle cx="21" cy="21" r="10" class="ring inner"/>
+          <g class="beam">
+            <path d="M21 21 L5.41 12 A18 18 0 0 1 21 3 Z" class="trail" opacity=".12"/>
+            <path d="M21 21 L12 5.41 A18 18 0 0 1 21 3 Z" class="trail" opacity=".18"/>
+            <path d="M21 21 L17.26 3.39 A18 18 0 0 1 21 3 Z" class="trail" opacity=".28"/>
+            <line x1="21" y1="21" x2="21" y2="3" class="arm"/>
+          </g>
+          <circle cx="29" cy="9" r="5" class="ping"/>
+          <circle cx="29" cy="9" r="3.2" class="blip"/>
+          <circle cx="21" cy="21" r="1.8" class="hub"/>
+        </svg>
+        <span><span id="site-name">Advanced Transportation Update</span> <i id="site-label">Live</i></span></a>
       <p class="tagline" id="tagline">Updates itself around the clock. New stories appear within minutes, each summarized by AI and linked to its source.</p>
     </div>
     <div class="status" aria-live="polite">
@@ -36,19 +52,18 @@
 </div>
 
 <div class="cover">
-  <p class="sweep wrap" aria-hidden="true"><span id="sweep"></span></p>
+  <p class="sweep wrap" aria-hidden="true"><span class="sweep-label">Checking the wire:</span> <span id="sweep"></span></p>
   <section class="lead wrap" aria-label="Lead story">
     <div id="lead"></div>
     <aside class="lead-side">
       <div class="developing" id="developing"></div>
       <section class="docket" id="docket-box" hidden>
-        <h2>Rulemaking docket</h2>
+        <h2>Rulemaking docket <span class="note">from this morning's edition</span></h2>
         <ul id="docket"></ul>
         <details id="docket-more" hidden>
           <summary id="docket-more-label">More</summary>
           <ul id="docket-rest"></ul>
         </details>
-        <p class="note">From this morning's edition tracker.</p>
       </section>
     </aside>
   </section>

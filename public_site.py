@@ -1261,6 +1261,15 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     )
     (output / "assets" / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (output / "assets" / "site.js").write_text(SITE_JS, encoding="utf-8")
+    # The live page (/live/) and the owner's headline override page (/login/) are static; the live page reads
+    # its stories from the live-feed branch, which the local live service pushes.
+    for folder in ("live", "login"):
+        source = root / "site_assets" / folder
+        if source.is_dir():
+            (output / folder).mkdir(exist_ok=True)
+            for asset in source.iterdir():
+                if asset.is_file():
+                    shutil.copyfile(asset, output / folder / asset.name)
     (output / "CNAME").write_text("news.peterjwhite.org\n", encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")
     return {"edition_count": len(editions), "latest_day": latest_day.toordinal(), "search_rows": len(index_rows)}

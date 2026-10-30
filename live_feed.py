@@ -21,6 +21,7 @@ from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
+LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (news.peterjwhite.org/login/)
 BRIEFING = ROOT / "data" / "latest_briefing.json"
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
@@ -79,7 +80,7 @@ def build_feed(
     market: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     site = config["site"]
-    stories = store.visible(now - timedelta(hours=float(site["river_hours"])), limit=500)
+    stories = store.visible(now - timedelta(hours=float(site["river_hours"])), limit=int(site.get("feed_limit", 300)))
     public = [public_story(s) for s in stories]
     by_id = {s["id"]: s for s in stories}
 
@@ -89,6 +90,9 @@ def build_feed(
         story = by_id.get(lead_row["story_id"]) or store.get(lead_row["story_id"])
         if story is not None:
             lead = {**public_story(story), "since": iso(lead_row["set_at"])}
+            held = store.get_state(live_lead.OVERRIDE_KEY) or {}
+            if held.get("story_id") == story["id"] and (parse_iso(str(held.get("until", ""))) or now) > now:
+                lead["held_until"] = held["until"]  # the owner chose this lead; the /login page shows until when
 
     day = now - timedelta(hours=24)
     developing = sorted(
@@ -96,7 +100,7 @@ def build_feed(
          and (s["score"] or 0) >= live_lead.DEVELOPING_FLOOR
          and (parse_iso(s["published"]) or now) >= now - timedelta(hours=12)),
         key=lambda s: (s["score"] or 0, s["published"]), reverse=True,
-    )[:4]
+    )[:3]
 
     ticker = sorted(stories, key=lambda s: s["shown_at"], reverse=True)[: int(site["ticker_items"])]
     desks = []
@@ -116,7 +120,7 @@ def build_feed(
         "stories": public,
         "docket": docket(),
         "market": market,
-        "wire": (wire or [])[:8],
+        "wire": (wire or [])[:40],
     }
 
 
@@ -129,11 +133,13 @@ def content_hash(feed: dict[str, Any]) -> str:
 def write_site(out_dir: Path, feed: dict[str, Any]) -> Path:
     """Write feed.json atomically and refresh the page's static files."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    for asset in ASSETS.iterdir():
-        if asset.is_file():
-            target = out_dir / asset.name
-            if not target.exists() or target.read_bytes() != asset.read_bytes():
-                shutil.copyfile(asset, target)
+    for folder, target_dir in ((ASSETS, out_dir), (LOGIN, out_dir / "login")):
+        target_dir.mkdir(parents=True, exist_ok=True)
+        for asset in folder.iterdir():
+            if asset.is_file():
+                target = target_dir / asset.name
+                if not target.exists() or target.read_bytes() != asset.read_bytes():
+                    shutil.copyfile(asset, target)
     path = out_dir / "feed.json"
     temp = path.with_suffix(".json.tmp")
     temp.write_text(json.dumps(feed, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

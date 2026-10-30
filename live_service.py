@@ -28,11 +28,14 @@ RUNTIME = ROOT / ".runtime" / "live_site"
 os.environ.setdefault("NEWSROOM_LIVE_DIR", str(RUNTIME))
 
 import live_feed  # noqa: E402
+import market_watch  # noqa: E402
 import newsroom_live  # noqa: E402
 from ai_providers import DEFAULT_OLLAMA_BASE_URL, OllamaProvider  # noqa: E402
 from live_desk import Desk  # noqa: E402
 from live_doctor import Doctor  # noqa: E402
 from live_market import MarketWatch, public_market  # noqa: E402
+from live_override import OverrideDesk  # noqa: E402
+from live_push import FeedPusher  # noqa: E402
 from live_sources import Wire, load_config  # noqa: E402
 from live_store import Store, iso  # noqa: E402
 
@@ -99,11 +102,19 @@ def wire_name(name: str) -> str:
 
 def wire_status(store: Store) -> list[dict[str, Any]]:
     rows = sorted((s for s in store.sources() if s["last_poll"]), key=lambda s: s["last_poll"], reverse=True)
-    return [{"source": wire_name(s["name"]), "at": s["last_poll"], "ok": not s["last_error"]} for s in rows[:8]]
+    return [{"source": wire_name(s["name"]), "at": s["last_poll"], "ok": not s["last_error"]} for s in rows[:40]]
+
+
+def live_watchlist(config: dict[str, Any]) -> tuple[tuple[str, str, str], ...]:
+    """The edition's watchlist plus the live page's extra companies (config market.extra), no repeats."""
+    known = {symbol for symbol, _, _ in market_watch.WATCHLIST}
+    extra = tuple((str(s), str(n), str(g)) for s, n, g in config["market"].get("extra") or [] if s not in known)
+    return market_watch.WATCHLIST + extra
 
 
 def market_watch_for(config: dict[str, Any]) -> MarketWatch:
-    return MarketWatch(config, ROOT / config["market"]["output"])
+    watchlist = live_watchlist(config)
+    return MarketWatch(config, ROOT / config["market"]["output"], fetch=lambda: market_watch.fetch_snapshot(watchlist=watchlist))
 
 
 class Publisher:
@@ -197,6 +208,8 @@ def main(argv: list[str]) -> int:
     doctor.add_worker("fast", desk.run_fast)
     doctor.add_worker("slow", desk.run_slow)
     doctor.add_worker("publish", publisher.run)
+    doctor.add_worker("override", OverrideDesk(desk, config).run)
+    doctor.add_worker("push", FeedPusher(config, out_dir, ROOT).run)
     publisher.publish()
     serve_preview(out_dir, args.port)
     newsroom_live.emit("live-start", desk="doctor", port=args.port, pid=os.getpid())

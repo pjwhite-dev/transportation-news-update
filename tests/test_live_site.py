@@ -16,7 +16,11 @@ import live_feed
 import live_lead
 import live_market
 import news_engine
+import requests
+
 from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, settle_published
+from live_override import OverrideDesk, parse_request
+from live_push import FeedPusher
 from live_sources import Source, Wire, build_sources, load_config, rest_for
 from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIFIED, Store, iso, title_overlap, url_key
 
@@ -193,6 +197,164 @@ class PublishedTimeTests(unittest.TestCase):
         self.assertTrue(live_feed.public_story({**story, "record": {}})["time_known"])
 
 
+class FakeResponse:
+    def __init__(self, data=None, status=200):
+        self.data, self.status_code = data, status
+
+    def json(self):
+        return self.data
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(str(self.status_code))
+
+
+class FakeGitHub:
+    def __init__(self, issues):
+        self.issues, self.posts, self.patches = issues, [], []
+
+    def get(self, url, **kw):
+        return FakeResponse(self.issues)
+
+    def post(self, url, **kw):
+        self.posts.append((url, kw["json"]["body"]))
+        return FakeResponse({})
+
+    def patch(self, url, **kw):
+        self.patches.append(url)
+        return FakeResponse({})
+
+
+class OverrideRequestTests(unittest.TestCase):
+    def setUp(self):
+        self.store = Store(":memory:")
+        self.desk = Desk(self.store, CONFIG, writer=writer(), verifier=verifier(), fetch=fake_page(NOW - timedelta(hours=1)),
+                         resolve=lambda url: None, clock=lambda: NOW, gpu_busy=lambda: False)
+        self.sid = self.store.add_story({"id": "story-one", "url": "https://www.flyingmag.com/faa-beta",
+                                         "title": "FAA approves Beta Technologies passenger test flights",
+                                         "source": "FLYING", "published": iso(NOW - timedelta(hours=1))}, NOW)
+        self.desk.first_pass(self.sid)
+
+    def issue(self, number, body, login="pjwhite-dev", title="Headline override: FAA approves Beta", age=timedelta(minutes=2)):
+        return {"number": number, "title": title, "body": body, "user": {"login": login},
+                "created_at": iso(NOW - age).replace("+00:00", "Z")}
+
+    def run_check(self, issues):
+        github = FakeGitHub(issues)
+        desk = OverrideDesk(self.desk, CONFIG, session=github, token=lambda: "test-token", clock=lambda: NOW)
+        return desk.check(), github
+
+    def test_the_owners_request_is_applied_answered_and_closed(self):
+        applied, github = self.run_check([self.issue(7, f"story: {self.sid}\nhours: 12\n\nLead for 12 h")])
+        self.assertEqual(applied, 1)
+        self.assertEqual(self.store.current_lead()["story_id"], self.sid)
+        self.assertIn("Done:", github.posts[0][1])
+        self.assertEqual(len(github.patches), 1)
+
+    def test_requests_from_anyone_else_are_ignored(self):
+        applied, github = self.run_check([self.issue(8, f"story: {self.sid}\nhours: 12", login="someone-else")])
+        self.assertEqual(applied, 0)
+        self.assertIsNone(self.store.current_lead())
+        self.assertEqual(github.posts, [])
+
+    def test_bad_or_old_requests_are_answered_but_not_applied(self):
+        applied, github = self.run_check([
+            self.issue(9, f"story: {self.sid}\nhours: 60"),
+            self.issue(10, "make it the lead please"),
+            self.issue(11, f"story: {self.sid}\nhours: 4", age=timedelta(hours=7)),
+        ])
+        self.assertEqual(applied, 0)
+        self.assertIsNone(self.store.current_lead())
+        self.assertEqual(len(github.posts), 3)
+        self.assertTrue(all(body.startswith("Not applied") for _, body in github.posts))
+
+    def test_a_request_is_handled_once(self):
+        issue = self.issue(12, f"story: {self.sid}\nhours: 3")
+        self.run_check([issue])
+        applied, github = self.run_check([issue])  # closing failed upstream; it is still listed
+        self.assertEqual(applied, 0)
+        self.assertEqual(github.posts, [])
+
+    def test_parse_request(self):
+        self.assertEqual(parse_request("story: abc123\nhours: 0"), ("abc123", 0))
+        self.assertIsNone(parse_request("story: abc123"))
+
+
+class PublicPageTests(unittest.TestCase):
+    def test_the_public_page_has_no_login_link(self):
+        page = Path("site_assets/live/index.html").read_text(encoding="utf-8") + Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        self.assertNotIn("login", page.lower())
+
+    def test_the_login_page_reads_the_same_feed_and_never_says_verified(self):
+        login = Path("site_assets/login/index.html").read_text(encoding="utf-8")
+        live = Path("site_assets/live/index.html").read_text(encoding="utf-8")
+        feed = 'name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json"'
+        self.assertIn(feed, login)
+        self.assertIn(feed, live)
+        self.assertIn('name="robots" content="noindex', login)
+        self.assertNotIn("verif", login.lower())
+
+    def test_the_live_page_adds_companies_without_changing_the_edition_list(self):
+        import live_service
+        import market_watch
+        symbols = [s for s, _, _ in live_service.live_watchlist(CONFIG)]
+        self.assertEqual(symbols[: len(market_watch.WATCHLIST)], [s for s, _, _ in market_watch.WATCHLIST])
+        self.assertIn("TSLA", symbols)
+        self.assertEqual(len(symbols), len(set(symbols)))
+
+
+class FeedPushTests(unittest.TestCase):
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp())
+        (self.dir / "out").mkdir()
+        (self.dir / "wt" / ".git").mkdir(parents=True)
+        self.calls = []
+        self.now = NOW
+
+    def pusher(self, fail=""):
+        def run(args, cwd):
+            self.calls.append(args[0])
+            failed = args[0] == fail
+            return SimpleNamespace(returncode=1 if failed else 0, stdout="", stderr="boom" if failed else "")
+        config = {**CONFIG, "push": {**CONFIG["push"], "worktree": str(self.dir / "wt")}}
+        return FeedPusher(config, self.dir / "out", self.dir, run=run, clock=lambda: self.now)
+
+    def write_feed(self, title):
+        (self.dir / "out" / "feed.json").write_text(json.dumps({"generated": iso(self.now), "stories": [{"title": title}]}), encoding="utf-8")
+
+    def test_pushes_when_stories_change_but_not_more_often_than_the_gap(self):
+        pusher = self.pusher()
+        self.write_feed("a")
+        self.assertTrue(pusher.push_once())
+        self.assertEqual(self.calls, ["add", "commit", "push"])
+        self.now += timedelta(seconds=60)
+        self.write_feed("b")
+        self.assertFalse(pusher.push_once())  # changed, but only a minute later
+        self.now += timedelta(seconds=150)
+        self.assertTrue(pusher.push_once())
+
+    def test_a_heartbeat_push_goes_out_even_when_nothing_changed(self):
+        pusher = self.pusher()
+        self.write_feed("a")
+        pusher.push_once()
+        self.now += timedelta(seconds=300)
+        self.assertFalse(pusher.push_once())
+        self.now += timedelta(seconds=301)
+        self.assertTrue(pusher.push_once())
+
+    def test_a_failed_push_is_retried_and_reported(self):
+        pusher = self.pusher(fail="push")
+        self.write_feed("a")
+        self.assertFalse(pusher.push_once())
+        self.assertIn("git push failed", pusher.error)
+        self.assertIsNone(pusher.last_push)
+
+    def test_the_push_never_forces(self):
+        source = Path("live_push.py").read_text(encoding="utf-8")
+        self.assertNotIn("--force", source)
+        self.assertNotIn("+{BRANCH}", source)
+
+
 class DeskTests(unittest.TestCase):
     def setUp(self):
         self.store = Store(":memory:")
@@ -281,6 +443,53 @@ class DeskTests(unittest.TestCase):
         desk.first_pass(sid)
         self.assertEqual(desk.verify(sid), VERIFIED)
         self.assertIsNone(self.store.current_lead())
+
+    def two_pages(self):
+        """The Beta story, plus a different minor feature at /minor-feature."""
+        beta, minor = fake_page(NOW - timedelta(hours=1)), fake_page(NOW - timedelta(hours=1), "Profile: a drone hobbyist builds a hangar")
+        return lambda url: (minor if "minor" in url else beta)(url)
+
+    def test_the_owner_can_force_a_minor_story_to_lead_and_it_holds(self):
+        big, minor = self.queue(), self.queue("https://example.com/minor-feature")
+        desk = self.desk(fetch=self.two_pages())
+        desk.first_pass(minor)
+        desk.force_lead(minor, 6)
+        self.assertEqual(self.store.current_lead()["story_id"], minor)
+        desk.first_pass(big)
+        self.assertEqual(desk.verify(big), VERIFIED)  # scores 57: would take a minor lead, but the owner's choice holds
+        self.assertEqual(self.store.current_lead()["story_id"], minor)
+        feed = live_feed.build_feed(self.store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual(feed["lead"]["held_until"], iso(NOW + timedelta(hours=6)))
+
+    def test_when_the_override_ends_the_best_qualifying_story_leads(self):
+        big, minor = self.queue(), self.queue("https://example.com/minor-feature")
+        desk = self.desk(fetch=self.two_pages())
+        desk.first_pass(minor)
+        desk.force_lead(minor, 2)
+        desk.first_pass(big)
+        desk.verify(big)
+        self.now = NOW + timedelta(hours=2, minutes=1)
+        self.assertTrue(desk.check_stale_lead())
+        self.assertEqual(self.store.current_lead()["story_id"], big)
+        self.assertIsNone(desk.override())
+
+    def test_ending_the_override_early_with_no_qualifying_story_clears_the_lead(self):
+        minor = self.queue("https://example.com/minor-feature")
+        desk = self.desk()
+        desk.first_pass(minor)
+        desk.force_lead(minor, 48)
+        self.assertEqual(desk.force_lead(minor, 0), "override ended")
+        self.assertEqual(self.store.current_lead()["story_id"], "")
+
+    def test_override_hours_and_story_are_checked(self):
+        sid = self.queue()
+        desk = self.desk()
+        desk.first_pass(sid)
+        for hours in (49, -1):
+            with self.assertRaises(ValueError):
+                desk.force_lead(sid, hours)
+        with self.assertRaises(ValueError):
+            desk.force_lead("not-a-story", 4)
 
     def test_checker_down_keeps_first_pass_then_shows_headline_only(self):
         sid = self.queue()

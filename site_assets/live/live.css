@@ -21,7 +21,20 @@ button{font:inherit}
 .cover{background:var(--night);color:var(--ice)}
 .topbar{display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap;padding-block:18px 14px}
 .masthead{flex:1 1 auto}
-.brand{font:500 clamp(1.15rem,3.6vw,1.9rem)/1.1 var(--serif);color:var(--ice);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:.5em;font:500 clamp(1.15rem,3.6vw,1.9rem)/1.1 var(--serif);color:var(--ice);text-decoration:none}
+/* the radar mark: the beam turns once every 4 s and the contact lights as it passes (about 34 degrees in) */
+.radar{width:1.55em;height:1.55em;flex:none;overflow:visible}
+.radar .ring{fill:none;stroke:var(--amber);stroke-width:2.2}
+.radar .ring.inner{stroke-width:1.2;opacity:.45}
+.radar .trail{fill:var(--amber)}
+.radar .arm{stroke:var(--amber);stroke-width:2.2;stroke-linecap:round}
+.radar .hub{fill:var(--amber)}
+.radar .blip{fill:var(--live);animation:blip 4s linear infinite}
+.radar .ping{fill:none;stroke:var(--live);stroke-width:1.2;opacity:0;transform-box:fill-box;transform-origin:center;animation:ping 4s ease-out infinite}
+.radar .beam{transform-origin:21px 21px;animation:sweep-turn 4s linear infinite}
+@keyframes sweep-turn{to{transform:rotate(360deg)}}
+@keyframes blip{0%,8%{opacity:.25}10%{opacity:1}55%{opacity:.5}100%{opacity:.25}}
+@keyframes ping{0%,9%{opacity:0;transform:scale(.6)}10%{opacity:.9;transform:scale(.6)}40%,100%{opacity:0;transform:scale(1.9)}}
 .tagline{margin:6px 0 0;font-size:.84rem;color:var(--dim);max-width:46em}
 .brand i{color:var(--amber);font-style:italic;font-weight:400}
 .status{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--dim)}
@@ -31,12 +44,13 @@ button{font:inherit}
 .dot.off{background:#6F7F98}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(47,210,122,.7)}70%{box-shadow:0 0 0 9px rgba(47,210,122,0)}100%{box-shadow:0 0 0 0 rgba(47,210,122,0)}}
 .sweep{margin:0 auto;padding-top:12px;font:400 .75rem var(--mono);color:var(--dim);min-height:2.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sweep span{display:inline-block;transition:opacity .6s ease}
-.sweep span.fade{opacity:0}
+.sweep span{display:inline-block;vertical-align:bottom}
+#sweep{transition:opacity .15s ease;max-width:calc(100% - 11em);overflow:hidden;text-overflow:ellipsis}
+#sweep.fade{opacity:0}
 .sweep b{color:var(--ice);font-weight:600}
 
 .lead{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;padding-block:18px 40px}
-.lead-side{display:flex;flex-direction:column;gap:26px}
+.lead-side{display:flex;flex-direction:column;gap:20px;align-self:start}
 .lead .eyebrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:0 0 14px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
 .tag{background:var(--amber);color:var(--night);padding:2px 7px;border-radius:3px}
 .since{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none}
@@ -49,19 +63,19 @@ button{font:inherit}
 .lead .src a:hover{text-decoration:underline}
 .developing h2{margin:0 0 10px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .developing ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.developing li{padding:12px 0;border-top:1px solid rgba(159,176,200,.22)}
-.developing a{text-decoration:none;font:500 1rem/1.3 var(--serif);color:var(--ice)}
+.developing li{padding:9px 0;border-top:1px solid rgba(159,176,200,.22)}
+.developing a{text-decoration:none;font:500 .98rem/1.3 var(--serif);color:var(--ice);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .developing a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
 .developing .meta{font-size:.75rem;color:var(--dim);margin-top:4px}
 .lead-empty{color:var(--dim);font-size:1rem;padding-block:20px;max-width:36em}
 .lead-side .docket h2{margin:0 0 10px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .lead-side .docket ul{list-style:none;margin:0;padding:0}
-.lead-side .docket li{padding:10px 0;border-top:1px solid rgba(159,176,200,.22);font-size:.84rem}
+.lead-side .docket li{padding:8px 0;border-top:1px solid rgba(159,176,200,.22);font-size:.82rem;line-height:1.35}
 .lead-side .docket li a{color:var(--ice);font-weight:600;text-decoration:none}
 .lead-side .docket li a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
 .lead-side .docket .st{display:block;margin-top:2px;color:var(--dim);font-size:.78rem}
 .lead-side .docket summary{cursor:pointer;color:var(--amber);font-size:.8rem;font-weight:700;padding:8px 0;min-height:32px}
-.lead-side .note{color:var(--dim)}
+.lead-side .note{color:var(--dim);font-weight:400;letter-spacing:0;text-transform:none;margin-left:4px}
 
 /* ---- tickers: the wire, then markets, stuck together at the top ---- */
 .tickers{position:sticky;top:0;z-index:30}
@@ -133,6 +147,8 @@ main{padding-block:22px 48px}
 .footer{background:var(--wash);border-top:1px solid var(--line);font-size:.84rem;color:var(--soft);padding-block:22px}
 .footer p{margin:0 0 8px;max-width:64em}
 
+.feed .more{display:block;margin:24px auto 8px;padding:10px 22px;min-height:44px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-weight:600;cursor:pointer}
+.feed .more:hover{border-color:var(--steel);background:var(--wash)}
 @media (max-width:1000px){
   .lead{grid-template-columns:1fr;gap:20px}
   .story{grid-template-columns:150px minmax(0,1fr);gap:0 16px}
@@ -146,5 +162,7 @@ main{padding-block:22px 48px}
 @media (prefers-reduced-motion:reduce){
   .ticker-track{animation:none;flex-wrap:wrap;width:auto}
   .dot.on,.story.arrive{animation:none}
-  .sweep span{transition:none}
+  #sweep{transition:none}
+  .radar .beam,.radar .blip,.radar .ping{animation:none}
+  .radar .blip{opacity:1}
 }

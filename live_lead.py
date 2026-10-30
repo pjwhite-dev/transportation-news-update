@@ -24,6 +24,8 @@ BIG_LEAD_PROTECTION = timedelta(hours=3)
 MAX_LEAD_AGE = timedelta(hours=12)  # a story older than this cannot take the lead
 STALE_LEAD = timedelta(hours=30)  # after this the best verified story of the last day takes over
 BEST_OF_WINDOW = timedelta(hours=24)
+OVERRIDE_KEY = "lead_override"  # store state: the owner's forced lead {story_id, until, hours}
+OVERRIDE_MAX_HOURS = 48
 
 # Model picks the class; the points are fixed here.
 ACTION_POINTS = {

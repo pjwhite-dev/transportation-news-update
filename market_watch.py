@@ -69,6 +69,7 @@ def fetch_snapshot(
     session: requests.Session | None = None,
     secrets: Callable[[str], str | None] = get_secret,
     now: datetime | None = None,
+    watchlist: tuple[tuple[str, str, str], ...] = WATCHLIST,
 ) -> dict[str, Any] | None:
     """Return a new snapshot, or None when the key is missing or too few quotes came back."""
     key = secrets(SECRET)
@@ -77,7 +78,7 @@ def fetch_snapshot(
         return None
     session = session or requests.Session()
     quotes = []
-    for symbol, name, group in WATCHLIST:
+    for symbol, name, group in watchlist:
         try:
             result = _quote(session, symbol, key)
         except (requests.RequestException, ValueError) as exc:

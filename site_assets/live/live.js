@@ -2,9 +2,15 @@
 (function () {
   "use strict";
   var TZ = "America/New_York";
-  var STALE_MS = 10 * 60 * 1000; // no new feed for 10 minutes: tell the reader updates are paused
-  var SWEEP_MS = 8000; // the "checking the wire" line shows one source at a time, this long each
-  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0 };
+  // On the public site the feed comes from the live-feed branch on GitHub (pushed every few minutes, cached
+  // up to 5 minutes by GitHub); the local preview reads the file the service writes next to the page.
+  var feedMeta = document.querySelector('meta[name="live-feed"]');
+  var PUBLIC = !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !!(feedMeta && feedMeta.content);
+  var FEED_URL = PUBLIC ? feedMeta.content : "feed.json";
+  var STALE_MS = (PUBLIC ? 25 : 10) * 60 * 1000; // no new feed for this long: tell the reader updates are paused
+  var PAGE = 25; // stories shown at first, and added by each "Show more"
+  var SWEEP_MS = 1400; // the "Checking the wire:" line steps through the sources, this long each
+  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0, limit: 25 };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -211,7 +217,7 @@
   }
 
   function renderDocket(feed) {
-    var rows = feed.docket || [], first = 4;
+    var rows = feed.docket || [], first = 2;
     $("docket-box").hidden = !rows.length;
     var top = $("docket"), rest = $("docket-rest");
     top.textContent = "";
@@ -231,11 +237,18 @@
       return;
     }
     var lastDay = "";
-    list.forEach(function (s) {
+    list.slice(0, state.limit).forEach(function (s) {
       var d = dayLabel(s.published);
       if (d !== lastDay) { box.appendChild(el("h2", "day", d)); lastDay = d; }
       box.appendChild(storyNode(s, fresh[s.id]));
     });
+    var left = list.length - state.limit;
+    if (left > 0) {
+      var more = el("button", "more", "Show " + Math.min(PAGE, left) + " more stories");
+      more.type = "button";
+      more.addEventListener("click", function () { state.limit += PAGE; renderFeed(state.shown, {}); });
+      box.appendChild(more);
+    }
   }
 
   function level() {
@@ -258,15 +271,12 @@
     banner.textContent = msg;
   }
 
-  // One source at a time, a few seconds each, with a gentle fade (no fade for readers who ask for less motion).
+  // The label stays put; only the source changes, quickly, with a short fade (no fade for readers who ask for less motion).
   var quiet = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function sweepText(w) {
     var line = $("sweep");
     line.textContent = "";
-    if (!w) return;
-    line.appendChild(document.createTextNode("Checking the wire · "));
-    line.appendChild(el("b", null, w.source));
-    line.appendChild(document.createTextNode(" · " + clock(w.at)));
+    if (w) line.appendChild(el("b", null, w.source));
   }
   function stepSweep() {
     var wire = (state.feed && level() !== "FROZEN" && state.feed.wire) || [];
@@ -274,7 +284,7 @@
     var line = $("sweep");
     if (quiet || !line.textContent) { sweepText(w); return; }
     line.classList.add("fade");
-    setTimeout(function () { sweepText(w); line.classList.remove("fade"); }, 600);
+    setTimeout(function () { sweepText(w); line.classList.remove("fade"); }, 150);
   }
 
   function atTop() { return window.scrollY < 140; }
@@ -314,7 +324,7 @@
   }
 
   function poll() {
-    fetch("feed.json?t=" + Date.now(), { cache: "no-store" })
+    fetch(FEED_URL + (PUBLIC ? "" : "?t=" + Date.now()), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (feed) {
         var first = !state.feed, changed = first || feed.generated !== state.feed.generated;
@@ -327,7 +337,7 @@
   }
   function schedule(seconds) {
     clearTimeout(state.timer);
-    state.timer = setTimeout(poll, Math.max(5, seconds || 15) * 1000);
+    state.timer = setTimeout(poll, Math.max(PUBLIC ? 60 : 5, seconds || 15) * 1000);
   }
 
   $("new-pill").addEventListener("click", function () {

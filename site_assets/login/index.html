@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
+<meta name="override-repo" content="pjwhite-dev/transportation-news-update">
+<title>Headline override · Advanced Transportation Update</title>
+<link rel="icon" href="../live/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{--night:#0A1424;--ice:#EAF0F8;--dim:#9FB0C8;--amber:#F2B33D;--live:#2FD27A;--ink:#0E1726;--soft:#46546B;--faint:#6F7F98;--line:#E3E8EF;--wash:#F4F7FB;--steel:#3B5B8C;--green:#1F6B4F;--green-wash:#E4F3EC;
+  --serif:'Fraunces',Georgia,serif;--sans:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Arial,sans-serif}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.5}
+.wrap{width:min(860px,100% - 32px);margin-inline:auto}
+header{background:var(--night);color:var(--ice);padding:22px 0 20px}
+header a{color:var(--ice);text-decoration:none;font:500 1.35rem/1.2 var(--serif);display:inline-flex;align-items:center;gap:10px}
+header a i{color:var(--amber);font-weight:400}
+header p{margin:6px 0 0;color:var(--dim);font-size:.9rem}
+h1{font:600 1.5rem/1.2 var(--serif);margin:28px 0 6px}
+.lede{color:var(--soft);margin:0 0 20px}
+.now{background:var(--wash);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:22px}
+.now b{display:block;font:600 1.05rem/1.3 var(--serif);margin-top:2px}
+.now small{color:var(--soft)}
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:end;margin-bottom:14px}
+label{font-size:.82rem;font-weight:600;color:var(--soft);display:flex;flex-direction:column;gap:4px}
+select,input[type=search]{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;min-height:42px;background:#fff}
+input[type=search]{width:min(360px,80vw)}
+ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+li label{flex-direction:row;align-items:flex-start;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-weight:400;color:var(--ink);cursor:pointer}
+li label:hover{background:var(--wash)}
+li input{margin-top:5px;flex:none;width:18px;height:18px}
+li .t{font:500 1rem/1.3 var(--serif);display:block}
+li .m{font-size:.8rem;color:var(--faint)}
+.bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 0;margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;font-weight:700;border-radius:999px;padding:10px 20px;min-height:44px;cursor:pointer;border:1px solid var(--steel);background:var(--steel);color:#fff}
+button.quiet{background:#fff;color:var(--steel)}
+button:disabled{opacity:.5;cursor:default}
+.hint{font-size:.82rem;color:var(--soft);flex:1 1 260px}
+.err{color:#B3261E;font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a href="../live/"><svg width="30" height="30" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="18" fill="none" stroke="#F2B33D" stroke-width="2.4"/><path d="M21 21 L8 12.5 A16 16 0 0 1 21 3 Z" fill="#F2B33D" opacity=".3"/><line x1="21" y1="21" x2="21" y2="3" stroke="#F2B33D" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="9" r="3.4" fill="#2FD27A"/></svg>Advanced Transportation Update <i>Live</i></a>
+    <p>Owner tools</p>
+  </div>
+</header>
+<main class="wrap">
+  <h1>Choose the headline</h1>
+  <p class="lede">Pick a story and how long it should lead. You confirm on GitHub, signed in as the site's owner; requests from anyone else are ignored. The page changes about a minute after you submit, and readers see it within about five more.</p>
+  <div class="now" id="now">Loading the current page…</div>
+  <div class="controls">
+    <label>Lead for
+      <select id="hours"></select>
+    </label>
+    <label>Find a story
+      <input type="search" id="find" placeholder="Waymo, FAA, Part 108">
+    </label>
+  </div>
+  <ul id="list"></ul>
+  <div class="bar">
+    <button type="button" id="go" disabled>Continue on GitHub</button>
+    <button type="button" class="quiet" id="end" hidden>End the override now</button>
+    <span class="hint" id="hint">Choose a story first.</span>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var meta = function (n) { var m = document.querySelector('meta[name="' + n + '"]'); return m ? m.content : ""; };
+  var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  var FEED = local ? "../feed.json" : meta("live-feed");
+  var REPO = meta("override-repo");
+  var fmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "2-digit" });
+  var $ = function (id) { return document.getElementById(id); };
+  var stories = [], chosen = null, lead = null;
+
+  for (var h = 1; h <= 48; h++) {
+    var o = document.createElement("option");
+    o.value = h; o.textContent = h === 1 ? "1 hour" : h + " hours";
+    if (h === 6) o.selected = true;
+    $("hours").appendChild(o);
+  }
+
+  function when(iso) { return iso ? fmt.format(new Date(iso)).replace("AM", "a.m.").replace("PM", "p.m.") : ""; }
+  function text(tag, cls, s) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = s; return e; }
+
+  function issueUrl(id, hours, title) {
+    var head = hours === 0 ? "Headline override: end now" : "Headline override: " + title.slice(0, 80);
+    var body = "story: " + id + "\nhours: " + hours + "\n\n" + (hours === 0 ? "End the owner's headline override now." : "Lead for " + hours + " h: " + title);
+    return "https://github.com/" + REPO + "/issues/new?title=" + encodeURIComponent(head) + "&body=" + encodeURIComponent(body);
+  }
+
+  function renderNow() {
+    var box = $("now");
+    box.textContent = "";
+    box.appendChild(text("small", null, "Leading now"));
+    box.appendChild(text("b", null, lead ? lead.title : "No story is leading"));
+    if (lead && lead.held_until) box.appendChild(text("small", null, "Your choice, until " + when(lead.held_until) + " ET"));
+    $("end").hidden = !(lead && lead.held_until);
+  }
+
+  function renderList() {
+    var q = $("find").value.trim().toLowerCase(), list = $("list");
+    list.textContent = "";
+    stories.filter(function (s) { return !q || (s.title + " " + s.source).toLowerCase().indexOf(q) >= 0; }).slice(0, 80).forEach(function (s) {
+      var li = document.createElement("li"), lab = document.createElement("label"), r = document.createElement("input");
+      r.type = "radio"; r.name = "story"; r.value = s.id; r.checked = chosen === s.id;
+      r.addEventListener("change", function () { chosen = s.id; $("go").disabled = false; $("hint").textContent = "Opens GitHub in a new tab with the request filled in. Press Create there to send it."; });
+      var span = document.createElement("span");
+      span.appendChild(text("span", "t", s.title));
+      span.appendChild(text("span", "m", s.source + " · " + when(s.published) + (s.check === "checked" ? " · summary double-checked" : s.check === "quick" ? " · quick summary" : " · headline only")));
+      lab.appendChild(r); lab.appendChild(span); li.appendChild(lab); list.appendChild(li);
+    });
+  }
+
+  $("find").addEventListener("input", renderList);
+  $("go").addEventListener("click", function () {
+    var s = stories.filter(function (x) { return x.id === chosen; })[0];
+    if (!s) { $("hint").textContent = "Choose a story first."; return; }
+    window.open(issueUrl(s.id, Number($("hours").value), s.title), "_blank", "noopener");
+  });
+  $("end").addEventListener("click", function () { if (lead) window.open(issueUrl(lead.id, 0, lead.title), "_blank", "noopener"); });
+
+  fetch(FEED, { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (feed) { stories = feed.stories || []; lead = feed.lead; renderNow(); renderList(); })
+    .catch(function () { $("now").textContent = ""; $("now").appendChild(text("span", "err", "Could not load the live page's stories. Try again in a minute.")); });
+})();
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@ site:
   path: "live"            # served at news.peterjwhite.org/live/ until the owner approves the cutover
   poll_seconds: 15        # how often a reader's page checks feed.json
   river_hours: 72         # stories older than this leave the page (they stay in the store)
+  feed_limit: 300         # newest stories in feed.json; the page shows 25 at a time
   ticker_items: 24
 
 # Topic desks shown to readers. Each of the edition's sections belongs to exactly one desk.
@@ -82,7 +83,32 @@ desk:
 
 market:
   every_minutes: 5          # Finnhub watchlist (market_watch.WATCHLIST) while NYSE is open; once after each close
+  extra:                    # live page only, after the edition's list (the free plan allows 60 calls a minute)
+    - [TSLA, Tesla, Autonomous vehicles]
+    - [UBER, Uber Technologies, Autonomous vehicles]
+    - [AUR, Aurora Innovation, Autonomous vehicles]
+    - [MBLY, Mobileye, Autonomous vehicles]
+    - [NSC, Norfolk Southern, Rail & freight]
+    - [WAB, Wabtec, Rail & freight]
+    - [AAL, American Airlines, Airlines]
+    - [LUV, Southwest Airlines, Airlines]
+    - [AVAV, AeroVironment, Drones & defense]
+    - [KTOS, Kratos Defense, Drones & defense]
+    - [EH, EHang, eVTOL]
+    - [EVEX, Eve Holding, eVTOL]
   output: ".runtime/live_site/market.json"
+
+override:                   # the owner's headline override, requested from news.peterjwhite.org/login/
+  repo: "pjwhite-dev/transportation-news-update"
+  owner: "pjwhite-dev"        # only issues this GitHub account opens are applied
+  every_seconds: 60
+  max_request_age_hours: 6
+
+push:                       # feed.json to the live-feed branch, read by the public page from GitHub
+  enabled: true
+  worktree: "C:/newsroom/.wt/live-feed"
+  min_seconds: 180          # at most this often when stories change
+  heartbeat_seconds: 600    # at least this often, so the page can tell when updates have stopped
 
 publish:
   every_seconds: 15         # feed.json is rewritten at most this often, only when something changed
