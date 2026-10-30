@@ -20,8 +20,8 @@ www.transportation.gov, including robots.txt, gets HTTP 403. It identifies itsel
 
     AdvancedTransportationNewsBot/1.0 (+https://advancedtransportation.live)
 
-faa.gov's robots.txt allows all crawlers into /newsroom, so I believe a firewall rule is catching the word "Bot"
-rather than a decision to keep news readers out. I would rather ask than disguise the reader as a browser.
+faa.gov's robots.txt allows all crawlers into /newsroom, and the same pages open for a plain command-line
+request, so I believe a firewall rule is catching the reader's name rather than a decision to keep news readers out. I would rather ask than disguise the reader as a browser.
 
 What the reader does:
 - It reads each press release page once, after the release appears in a news search for faa.gov or
