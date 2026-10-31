@@ -36,6 +36,7 @@ from live_doctor import Doctor  # noqa: E402
 from live_market import MarketWatch, public_market  # noqa: E402
 from live_override import OverrideDesk  # noqa: E402
 from live_push import FeedPusher  # noqa: E402
+from live_sort import Sorter  # noqa: E402
 from live_sources import Wire, load_config  # noqa: E402
 from live_store import Store, iso  # noqa: E402
 
@@ -207,6 +208,7 @@ def main(argv: list[str]) -> int:
     doctor.add_worker("market", market.run)
     doctor.add_worker("fast", desk.run_fast)
     doctor.add_worker("slow", desk.run_slow)
+    doctor.add_worker("sort", Sorter(desk).run)
     doctor.add_worker("publish", publisher.run)
     doctor.add_worker("override", OverrideDesk(desk, config).run)
     doctor.add_worker("push", FeedPusher(config, out_dir, ROOT).run)

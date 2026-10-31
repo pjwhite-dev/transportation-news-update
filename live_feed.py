@@ -18,6 +18,7 @@ from typing import Any
 
 import live_lead
 import live_posts
+import live_sort
 from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 
 ROOT = Path(__file__).resolve().parent
@@ -48,6 +49,8 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
         out["impact"] = tier
     if story["also"]:
         out["also"] = [{"source": a.get("source", ""), "url": a.get("url", "")} for a in story["also"] if a.get("url")]
+    if story["record"].get("_scope") == "world":
+        out["scope"] = "world"  # the page shows these only when the reader asks for everything
     corrections = [n["note"] for n in story["notes"] if str(n.get("note", "")).startswith("Correction")]
     if corrections:
         out["correction"] = corrections[-1]
@@ -65,7 +68,32 @@ def build_feed(
 ) -> dict[str, Any]:
     site = config["site"]
     stories = store.visible(now - timedelta(hours=float(site["river_hours"])), limit=int(site.get("feed_limit", 300)))
-    public = [public_story(s) for s in stories]
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for s in stories:
+        groups.setdefault(s["group_id"] or s["id"], []).append(s)
+    primary = {}
+    for members in groups.values():
+        best = max(members, key=live_sort.primary_rank) if len(members) > 1 else members[0]
+        primary.update((m["id"], best) for m in members)
+    shown = [s for s in stories if primary[s["id"]] is s]  # one entry per event, in publication order
+
+    def grouped(story: dict[str, Any]) -> dict[str, Any]:
+        """The story with the group's other reports listed under it (one link per outlet)."""
+        out = public_story(story)
+        others = [m for m in groups.get(story["group_id"] or story["id"], []) if m["id"] != story["id"]]
+        if not others:
+            return out
+        also, outlets = list(out.get("also", [])), {story["source"].casefold()}
+        outlets |= {a["source"].casefold() for a in also}
+        for m in sorted(others, key=lambda m: m["shown_at"]):
+            if m["source"].casefold() not in outlets:
+                outlets.add(m["source"].casefold())
+                also.append({"source": m["source"], "url": m["url"], "title": m["title"]})
+        out["also"] = also
+        out["members"] = [m["id"] for m in others]  # a link to any report of the event finds this entry
+        return out
+
+    public = [grouped(s) for s in shown]
     by_id = {s["id"]: s for s in stories}
 
     lead_row = store.current_lead()
@@ -73,23 +101,26 @@ def build_feed(
     if lead_row and lead_row["story_id"]:
         story = by_id.get(lead_row["story_id"]) or store.get(lead_row["story_id"])
         if story is not None:
-            lead = {**public_story(story), "since": iso(lead_row["set_at"])}
+            lead = {**grouped(story), "since": iso(lead_row["set_at"])}
             held = store.get_state(live_lead.OVERRIDE_KEY) or {}
             if held.get("story_id") == story["id"] and (parse_iso(str(held.get("until", ""))) or now) > now:
                 lead["held_until"] = held["until"]  # the owner chose this lead; the /login page shows until when
 
     day = now - timedelta(hours=24)
+    lead_group = (by_id[lead["id"]]["group_id"] or lead["id"]) if lead and lead["id"] in by_id else (lead or {}).get("id")
     developing = sorted(
-        (s for s in stories if s["status"] == VERIFIED and (not lead or s["id"] != lead["id"])
+        (s for s in shown if s["status"] == VERIFIED and (s["group_id"] or s["id"]) != lead_group
          and (s["score"] or 0) >= live_lead.DEVELOPING_FLOOR
          and (parse_iso(s["published"]) or now) >= now - timedelta(hours=12)),
         key=lambda s: (s["score"] or 0, s["published"]), reverse=True,
     )[:3]
 
-    ticker = sorted(stories, key=lambda s: s["shown_at"], reverse=True)[: int(site["ticker_items"])]
+    # The wire bar: the newest summarized U.S. stories, one per event (headline-only and world stories stay in the list).
+    ticker = sorted((s for s in shown if s["status"] in (FIRST_PASS, VERIFIED) and s["record"].get("_scope") != "world"),
+                    key=lambda s: s["shown_at"], reverse=True)[: int(site["ticker_items"])]
     desks = []
     for desk in config["desks"]:
-        count = sum(1 for s in stories if s["desk"] == desk["key"] and (parse_iso(s["published"]) or now) >= day)
+        count = sum(1 for s in shown if s["desk"] == desk["key"] and (parse_iso(s["published"]) or now) >= day)
         desks.append({"key": desk["key"], "name": desk["name"], "today": count})
 
     return {

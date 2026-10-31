@@ -22,6 +22,7 @@ import requests
 from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, gpu_paused, settle_published, triage_schema
 from live_override import OverrideDesk, parse_request
 from live_push import FeedPusher
+from live_sort import Sorter, candidates
 from live_sources import Source, Wire, build_sources, load_config, rest_for
 from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIFIED, Store, iso, title_overlap, url_key
 
@@ -288,6 +289,19 @@ class PublicPageTests(unittest.TestCase):
     def test_the_public_page_has_no_login_link(self):
         page = Path("site_assets/live/index.html").read_text(encoding="utf-8") + Path("site_assets/live/live.js").read_text(encoding="utf-8")
         self.assertNotIn("login", page.lower())
+
+    def test_the_page_can_be_shared_paused_and_linked_into(self):
+        page = Path("site_assets/live/index.html").read_text(encoding="utf-8")
+        script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        style = Path("site_assets/live/live.css").read_text(encoding="utf-8")
+        for tag in ('property="og:title"', 'property="og:image" content="https://advancedtransportation.live/og-card.png"', 'name="twitter:card"'):
+            self.assertIn(tag, page)
+        self.assertTrue(Path("site_assets/live/og-card.png").exists())
+        self.assertIn('id="motion"', page)  # a Pause button for readers whose device does not ask for less motion
+        self.assertIn(".still .ticker-track{animation:none}", style)
+        self.assertIn('"#s-"', script)  # every story has an address
+        self.assertIn("view=all", script)
+        self.assertNotIn("verif", (page + script).lower())
 
     def test_the_login_page_reads_the_same_feed_and_never_says_verified(self):
         login = Path("site_assets/login/index.html").read_text(encoding="utf-8")
@@ -970,3 +984,79 @@ class FeedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SortTests(unittest.TestCase):
+    """One entry per event on the page (Techmeme-style), and U.S. stories apart from world ones (owner, 2026-10-31)."""
+
+    def setUp(self):
+        self.store = Store(":memory:")
+        self.model = FakeModel("qwen-fake", live_sort={"us": True, "same_as": 0, "reason": "new event"})
+        self.desk = Desk(self.store, CONFIG, writer=self.model, verifier=verifier(), fetch=fake_page(NOW), resolve=lambda u: None, clock=lambda: NOW, gpu_busy=lambda: False)
+        self.sorter = Sorter(self.desk)
+
+    def put(self, sid, title, source, minutes_ago, status=VERIFIED, summary=""):
+        self.store.add_story({"id": sid, "url": f"https://{source.lower().replace(' ', '')}.com/{sid}", "title": title, "source": source,
+                              "published": iso(NOW - timedelta(minutes=minutes_ago))}, NOW)
+        self.store.update(sid, NOW, status=status, shown_at=iso(NOW - timedelta(minutes=minutes_ago)), desk="drones",
+                          summary=summary or f"{title}. The Federal Communications Commission acted on Thursday.")
+
+    def test_the_same_event_from_three_outlets_is_one_entry(self):
+        self.put("a", "FCC Opens 800 MHz Spectrum to Drones", "DroneLife", 90)
+        self.put("b", "FCC clears drone operations in 800MHz band", "Reuters", 60)
+        self.put("c", "Waymo starts robotaxi rides in Denver", "The Verge", 30, summary="Waymo began rides in Denver on Thursday.")
+        self.assertEqual(self.sorter.sort_once(), 3)  # newest first: c, then b (asks about a), then a
+        self.model.answers["live_sort"] = lambda m: {"us": True, "same_as": 1 if "[1] FCC Opens 800 MHz" in m[1]["content"] else 0, "reason": "same FCC order"}
+        for sid in ("a", "b", "c"):
+            record = self.store.get(sid)["record"]
+            self.store.update(sid, NOW, record={**record, "_sorted": False})
+        self.sorter.sort_once()
+        self.assertEqual(self.store.get("a")["group_id"], self.store.get("b")["group_id"])
+        self.assertEqual(self.store.get("c")["group_id"], "")
+        feed = live_feed.build_feed(self.store, CONFIG, now=NOW, level="LIVE")
+        ids = [s["id"] for s in feed["stories"]]
+        self.assertEqual(len(ids), 2)
+        entry = next(s for s in feed["stories"] if s["id"] in ("a", "b"))
+        self.assertEqual(entry["id"], "a")  # both checked, same tier: the first report leads the group
+        self.assertEqual([x["source"] for x in entry["also"]], ["Reuters"])
+        self.assertEqual(entry["members"], ["b"])
+        self.assertEqual(sum(1 for t in feed["ticker"] if t["id"] in ("a", "b")), 1)
+
+    def test_a_checked_report_leads_its_group_over_a_quick_one(self):
+        self.put("a", "FCC Opens 800 MHz Spectrum to Drones", "DroneLife", 90, status=FIRST_PASS)
+        self.put("b", "FCC clears drone operations in 800MHz band", "Reuters", 60)
+        for sid in ("a", "b"):
+            self.store.update(sid, NOW, group_id="a")
+        feed = live_feed.build_feed(self.store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual([s["id"] for s in feed["stories"]], ["b"])
+
+    def test_world_stories_are_marked_and_kept_off_the_wire_bar(self):
+        self.put("k", "Russian drone strikes leave Kyiv districts without water", "Kyiv Post", 20)
+        self.model.answers["live_sort"] = {"us": False, "same_as": 0, "reason": "war abroad"}
+        self.sorter.sort_once()
+        feed = live_feed.build_feed(self.store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual(feed["stories"][0]["scope"], "world")
+        self.assertEqual(feed["ticker"], [])
+
+    def test_only_reports_sharing_names_within_two_days_are_asked_about(self):
+        self.put("a", "FCC Opens 800 MHz Spectrum to Drones", "DroneLife", 60)
+        self.put("old", "FCC Opens Spectrum Inquiry", "DroneLife", 60 * 50)
+        self.put("x", "Amtrak names new chief", "AP", 30, summary="Amtrak named a chief.")
+        pool = self.sorter.pool(NOW)
+        story = self.store.get("a")
+        self.assertEqual([c["id"] for c in candidates(story, pool)], [])
+        self.put("b", "FCC clears drone operations in 800MHz band", "Reuters", 30)
+        self.assertEqual([c["id"] for c in candidates(story, self.sorter.pool(NOW))], ["b"])
+
+    def test_sorting_waits_while_the_gpu_is_held_and_gives_up_safely(self):
+        self.put("a", "FCC Opens 800 MHz Spectrum to Drones", "DroneLife", 60)
+        self.desk.gpu_busy = lambda: True
+        self.assertEqual(self.sorter.sort_once(), 0)
+        self.assertEqual(self.model.calls, [])
+        self.desk.gpu_busy = lambda: False
+        self.model.fail = {"live_sort"}
+        for _ in range(3):
+            self.sorter.sort_once()
+        record = self.store.get("a")["record"]
+        self.assertTrue(record["_sorted"])
+        self.assertEqual(record["_scope"], "us")  # unknown counts as U.S., so a story is never hidden by an outage

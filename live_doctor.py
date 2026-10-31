@@ -182,6 +182,7 @@ class Doctor:
                 "writer": getattr(self.desk.writer, "model", ""),
                 "workers": {w.name: w.restarts for w in self.workers.values()},
                 "counts": self.store.counts(),
+                "unsorted": self.store.unsorted(now - timedelta(hours=float(self.config["site"]["river_hours"]))),
             }
             temp = self.heartbeat_path.with_suffix(".tmp")
             temp.write_text(json.dumps(data), encoding="utf-8")

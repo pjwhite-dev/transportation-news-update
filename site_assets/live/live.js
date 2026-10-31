@@ -10,7 +10,8 @@
   var STALE_MS = (PUBLIC ? 25 : 10) * 60 * 1000; // no new feed for this long: tell the reader updates are paused
   var PAGE = 25; // stories shown at first, and added by each "Show more"
   var SWEEP_MS = 1400; // the "Checking the wire:" line steps through the sources, this long each
-  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0, limit: 25 };
+  var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0, limit: 25,
+    view: "us", target: "", targetDone: false, openAlso: {} };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -53,9 +54,17 @@
   }
 
   function badge(story) {
-    if (story.check === "checked") return el("span", "badge checked", "Summary double-checked");
-    if (story.check === "quick") return el("span", "badge quick", "Quick summary");
-    return null;
+    var b = null;
+    if (story.check === "checked") {
+      b = el("span", "badge checked", "\u2713\u2713 Double-checked");
+      b.title = "Our code matched every name, number and date in this summary to the article, and a second AI model confirmed each sentence. Not a check of the reporting itself.";
+    } else if (story.check === "quick") {
+      b = el("span", "badge quick", "\u2713");
+      b.title = "Our code matched every name, number and date in this summary to the article. Not a check of the reporting itself.";
+      b.setAttribute("aria-label", "Summary names, numbers and dates matched to the article");
+      b.setAttribute("role", "img");
+    }
+    return b;
   }
 
   // AI-estimated impact, shown as a word; a story not scored yet has none.
@@ -73,7 +82,8 @@
   }
 
   function storyNode(story, isNew) {
-    var art = el("article", "story" + (isNew ? " arrive" : ""));
+    var art = el("article", "story" + (isNew ? " arrive" : "") + (story.id === state.target ? " target" : ""));
+    art.id = "s-" + story.id;
     art.dataset.id = story.id;
     art.dataset.cat = story.desk;
     var side = el("div", "cat");
@@ -90,22 +100,60 @@
     var b = badge(story);
     if (b) meta.appendChild(b);
     if (story.official) meta.appendChild(el("span", "badge official", "Official source"));
+    if (story.scope === "world") meta.appendChild(el("span", "badge world", "World"));
+    meta.appendChild(copyButton(story));
     body.appendChild(meta);
     var h = el("h3");
     h.appendChild(link(story.url, story.title));
     body.appendChild(h);
     if (story.summary) body.appendChild(el("p", null, story.summary));
-    if (story.also && story.also.length) {
-      var also = el("div", "also", "Also reported by ");
-      story.also.slice(0, 4).forEach(function (a, i) {
-        if (i) also.appendChild(document.createTextNode(", "));
-        also.appendChild(link(a.url, a.source));
-      });
-      body.appendChild(also);
-    }
+    if (story.also && story.also.length) body.appendChild(alsoLine(story));
     if (story.correction) body.appendChild(el("div", "fix", story.correction));
     art.appendChild(body);
     return art;
+  }
+
+  // The other outlets on the same event: three by name, the rest one click away.
+  function alsoLine(story) {
+    var all = story.also, open = state.openAlso[story.id], box = el("div", "also");
+    box.appendChild(el("b", null, all.length === 1 ? "Also reported by " : "Also reported by " + all.length + " outlets: "));
+    (open ? all : all.slice(0, 3)).forEach(function (a, i) {
+      if (i) box.appendChild(document.createTextNode(", "));
+      var l = link(a.url, a.source);
+      if (a.title) l.title = a.title;
+      box.appendChild(l);
+    });
+    if (!open && all.length > 3) {
+      var more = el("button", "also-more", "+" + (all.length - 3) + " more");
+      more.type = "button";
+      more.addEventListener("click", function () { state.openAlso[story.id] = true; box.replaceWith(alsoLine(story)); });
+      box.appendChild(document.createTextNode(" "));
+      box.appendChild(more);
+    }
+    return box;
+  }
+
+  // Every story has its own address (#s-<id>); a link to any outlet's report of an event finds the event's entry.
+  function storyLink(story) { return location.origin + location.pathname + "#s-" + story.id; }
+  function copyButton(story) {
+    var b = el("button", "copy", "Copy link");
+    b.type = "button";
+    b.setAttribute("aria-label", "Copy a link to this story");
+    b.addEventListener("click", function () {
+      var url = storyLink(story);
+      var done = function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy link"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this link:", url); });
+      else prompt("Copy this link:", url);
+      history.replaceState(null, "", location.pathname + location.search + "#s-" + story.id);
+    });
+    return b;
+  }
+  function findStory(feed, id) {
+    for (var i = 0; i < feed.stories.length; i++) {
+      var s = feed.stories[i];
+      if (s.id === id || (s.members && s.members.indexOf(id) >= 0)) return s;
+    }
+    return null;
   }
 
   function byId(feed) {
@@ -118,13 +166,19 @@
     var main = $("lead");
     main.textContent = "";
     var lead = feed.lead;
+    // Big only while it is news: its first hour, a Significant story, or the owner's pick. Otherwise a compact card,
+    // so the newest stories are on the first screen.
+    var big = lead && ((lead.held_until && new Date(lead.held_until) > Date.now()) || lead.impact === "significant"
+      || Date.now() - new Date(lead.since).getTime() < 3600e3);
+    main.parentNode.classList.toggle("compact", !!lead && !big);
     if (!lead) {
       main.appendChild(el("p", "lead-empty", "No story so far has been significant enough to lead the page. The newest stories are below, as they come in."));
     } else {
       var eye = el("p", "eyebrow");
       eye.appendChild(el("span", "tag", "Lead"));
       if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
-      eye.appendChild(el("span", "since", "since " + clock(lead.since)));
+      var day = dayLabel(lead.since);
+      eye.appendChild(el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since)));
       main.appendChild(eye);
       var h = el("h1");
       h.appendChild(link(lead.url, lead.title));
@@ -138,7 +192,7 @@
     var dev = $("developing");
     dev.textContent = "";
     var map = byId(feed);
-    var items = (feed.developing || []).map(function (id) { return map[id]; }).filter(Boolean);
+    var items = (feed.developing || []).map(function (id) { return map[id]; }).filter(function (s) { return s && inView(s); });
     if (items.length) {
       dev.appendChild(el("h2", null, "Developing"));
       var ol = el("ol");
@@ -211,8 +265,8 @@
     if (!card) return;
     var step = card.getBoundingClientRect().width + 12;
     var end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
-    if (dir > 0 && end) track.scrollTo({ left: 0, behavior: quiet ? "auto" : "smooth" });
-    else track.scrollBy({ left: dir * step, behavior: quiet ? "auto" : "smooth" });
+    if (dir > 0 && end) track.scrollTo({ left: 0, behavior: quiet() ? "auto" : "smooth" });
+    else track.scrollBy({ left: dir * step, behavior: quiet() ? "auto" : "smooth" });
   }
 
   function renderMarket(feed) {
@@ -233,11 +287,33 @@
     track.style.setProperty("--tick-seconds", Math.max(30, m.quotes.length * 4) + "s");
   }
 
-  function saveHidden() { store("live-hidden", Object.keys(state.hidden).filter(function (k) { return state.hidden[k]; }).join(",")); }
+  function shownDesks() { return ((state.feed && state.feed.desks) || []).filter(function (d) { return !state.hidden[d.key]; }).map(function (d) { return d.key; }); }
+  function saveHidden() {
+    store("live-hidden", Object.keys(state.hidden).filter(function (k) { return state.hidden[k]; }).join(","));
+    store("live-view", state.view);
+    // The address says what is shown (?desk=av,rail&view=all), so a filtered page can be shared.
+    var q = [], all = (state.feed && state.feed.desks) || [], on = shownDesks();
+    if (all.length && on.length < all.length) q.push("desk=" + on.join(","));
+    if (state.view === "all") q.push("view=all");
+    history.replaceState(null, "", location.pathname + (q.length ? "?" + q.join("&") : "") + location.hash);
+  }
+  function inView(s) { return state.view === "all" || s.scope !== "world" || s.id === state.target; }
 
   function renderFilters(feed) {
     var box = $("filters");
     box.textContent = "";
+    var scope = el("div", "scope");
+    scope.setAttribute("role", "group");
+    scope.setAttribute("aria-label", "Which stories");
+    [["us", "U.S. focus", "Stories about U.S. government, companies and places"], ["all", "Everything", "Also stories from abroad with no U.S. angle"]].forEach(function (v) {
+      var b = el("button", null, v[1]);
+      b.type = "button";
+      b.title = v[2];
+      b.setAttribute("aria-pressed", String(state.view === v[0]));
+      b.addEventListener("click", function () { state.view = v[0]; saveHidden(); render(true); });
+      scope.appendChild(b);
+    });
+    box.appendChild(scope);
     feed.desks.forEach(function (d) {
       var b = el("button");
       b.type = "button";
@@ -262,7 +338,12 @@
   function renderFeed(feed, fresh) {
     var box = $("feed");
     box.textContent = "";
-    var list = feed.stories.filter(function (s) { return !state.hidden[s.desk]; });
+    var list = feed.stories.filter(function (s) { return (!state.hidden[s.desk] || s.id === state.target) && inView(s); });
+    var away = feed.stories.filter(function (s) { return !state.hidden[s.desk] && !inView(s); }).length;
+    if (state.target && !state.targetDone) {
+      var at = list.findIndex(function (s) { return s.id === state.target; });
+      if (at >= state.limit) state.limit = Math.ceil((at + 1) / PAGE) * PAGE;
+    }
     if (!list.length) {
       box.appendChild(el("p", "empty", feed.stories.length ? "Every category is switched off. Turn one back on above." : "No stories in the last three days."));
       return;
@@ -279,6 +360,12 @@
       more.type = "button";
       more.addEventListener("click", function () { state.limit += PAGE; renderFeed(state.shown, {}); });
       box.appendChild(more);
+    }
+    if (away) {
+      var world = el("button", "more world-more", away + (away === 1 ? " story from abroad is" : " stories from abroad are") + " hidden. Show everything");
+      world.type = "button";
+      world.addEventListener("click", function () { state.view = "all"; saveHidden(); render(true); });
+      box.appendChild(world);
     }
   }
 
@@ -315,7 +402,16 @@
   }
 
   // The label stays put; only the source changes, quickly, with a short fade (no fade for readers who ask for less motion).
-  var quiet = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function quiet() { return reduced || document.documentElement.classList.contains("still"); }
+  function setStill(on) {
+    document.documentElement.classList.toggle("still", on);
+    var b = $("motion");
+    b.setAttribute("aria-pressed", String(on));
+    b.textContent = on ? "Play" : "Pause";
+    b.title = on ? "Start the moving headlines again" : "Stop the moving headlines and animations";
+    store("live-still", on ? "1" : "");
+  }
   function sweepText(w) {
     var line = $("sweep");
     line.textContent = "";
@@ -325,7 +421,8 @@
     var wire = (state.feed && level() !== "FROZEN" && state.feed.wire) || [];
     var w = wire.length ? wire[state.sweepAt++ % wire.length] : null;
     var line = $("sweep");
-    if (quiet || !line.textContent) { sweepText(w); return; }
+    if (quiet() && line.textContent) return;
+    if (quiet() || !line.textContent) { sweepText(w); return; }
     line.classList.add("fade");
     setTimeout(function () { sweepText(w); line.classList.remove("fade"); }, 150);
   }
@@ -337,7 +434,7 @@
     if (!feed) return;
     if (!force && state.shown && !atTop()) {
       var known = byId(state.shown), count = 0;
-      feed.stories.forEach(function (s) { if (!known[s.id] && !state.hidden[s.desk]) count++; });
+      feed.stories.forEach(function (s) { if (!known[s.id] && !state.hidden[s.desk] && inView(s)) count++; });
       state.pending = count;
       $("new-count").textContent = count === 1 ? "1 new story" : count + " new stories";
       $("new-pill").hidden = count === 0;
@@ -363,6 +460,29 @@
     renderFilters(feed);
     renderFeed(feed, fresh);
     renderStatus();
+    showTarget();
+  }
+
+  function readTarget() {
+    var m = /^#s-([\w-]+)$/.exec(location.hash);
+    state.target = m ? m[1] : "";
+    state.targetDone = false;
+  }
+  function showTarget() {
+    if (!state.target || state.targetDone || !state.shown) return;
+    var story = findStory(state.shown, state.target);
+    if (!story) {
+      state.targetDone = true;
+      var banner = $("banner");
+      banner.hidden = false;
+      banner.className = "banner wrap";
+      banner.textContent = "That story has left the live page: stories stay for three days.";
+      return;
+    }
+    if (story.id !== state.target) { state.target = story.id; renderFeed(state.shown, {}); }
+    state.targetDone = true;
+    var node = $("s-" + story.id);
+    if (node) node.scrollIntoView({ block: "center", behavior: quiet() ? "auto" : "smooth" });
   }
 
   function poll() {
@@ -371,6 +491,10 @@
       .then(function (feed) {
         var first = !state.feed, changed = first || feed.generated !== state.feed.generated;
         state.feed = feed;
+        if (state.onlyDesks) {
+          feed.desks.forEach(function (d) { state.hidden[d.key] = state.onlyDesks.indexOf(d.key) < 0; });
+          state.onlyDesks = null;
+        }
         if (changed) render(false); else renderStatus();
         if (first) stepSweep();
         schedule(feed.site.poll_seconds);
@@ -394,8 +518,16 @@
   $("official-next").addEventListener("click", function () { stepPosts(1); });
   ["mouseenter", "focusin", "touchstart"].forEach(function (ev) { $("official").addEventListener(ev, function () { state.postsHeld = true; }, { passive: true }); });
   ["mouseleave", "focusout"].forEach(function (ev) { $("official").addEventListener(ev, function () { state.postsHeld = false; }); });
-  if (!quiet) setInterval(function () { if (!state.postsHeld && !document.hidden) stepPosts(1); }, 7000);
+  setInterval(function () { if (!quiet() && !state.postsHeld && !document.hidden) stepPosts(1); }, 7000);
+  $("motion").addEventListener("click", function () { setStill(!document.documentElement.classList.contains("still")); });
+  setStill(!!store("live-still"));
+  window.addEventListener("hashchange", function () { readTarget(); if (state.shown) { renderFeed(state.shown, {}); showTarget(); } });
 
-  (store("live-hidden") || "").split(",").forEach(function (k) { if (k) state.hidden[k] = true; });
+  // The address wins over what this browser remembers: ?desk=av,rail shows only those desks, ?view=all everything.
+  var params = new URLSearchParams(location.search), desks = params.get("desk");
+  state.view = params.get("view") === "all" ? "all" : params.has("desk") ? "us" : (store("live-view") === "all" ? "all" : "us");
+  if (desks) state.onlyDesks = desks.split(",");
+  else (store("live-hidden") || "").split(",").forEach(function (k) { if (k) state.hidden[k] = true; });
+  readTarget();
   poll();
 })();

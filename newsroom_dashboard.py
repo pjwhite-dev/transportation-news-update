@@ -154,6 +154,7 @@ def live_site() -> dict[str, Any]:
     return {
         "running": age is not None and age < 300, "age": age, "level": beat.get("level", ""), "reason": beat.get("reason", ""),
         "on_page": sum(counts.get(k, 0) for k in ("first_pass", "verified", "headline")), "queued": counts.get("queued", 0),
+        "unsorted": beat.get("unsorted"),
         "preview": "http://127.0.0.1:8766/",
         "public_age": pushed_age, "public_error": push.get("error", ""), "held_until": push.get("held_until", ""),
     }

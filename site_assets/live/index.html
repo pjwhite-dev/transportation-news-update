@@ -6,6 +6,18 @@
 <title>Advanced Transportation Live</title>
 <meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
 <meta name="description" content="Drones, counter-UAS, advanced air mobility, autonomous vehicles, rail and robotics news, updated around the clock. AI summaries, each linked to its source.">
+<link rel="canonical" href="https://advancedtransportation.live/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Advanced Transportation Live">
+<meta property="og:title" content="Advanced Transportation Live">
+<meta property="og:description" content="Drones, advanced air mobility, autonomous vehicles, rail and robotics news, updated around the clock. AI summaries, each linked to its source.">
+<meta property="og:url" content="https://advancedtransportation.live/">
+<meta property="og:image" content="https://advancedtransportation.live/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Advanced Transportation Live: a radar mark on a night-blue field">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0A1424">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -43,6 +55,7 @@
   <div class="ticker" aria-label="Latest from the wire">
     <span class="ticker-label">Wire</span>
     <div class="ticker-window"><div class="ticker-track" id="ticker"></div></div>
+    <button type="button" class="motion" id="motion" aria-pressed="false">Pause</button>
   </div>
   <div class="ticker market-ticker" id="market" aria-label="Market watch" hidden>
     <span class="ticker-label">Markets</span>
@@ -82,7 +95,7 @@
 
 <footer class="footer">
   <div class="wrap">
-    <p><b>How this page works.</b> A local newsroom checks agency, trade and search feeds around the clock. Each story is read and summarized by AI, and the summary links to the source. <span class="badge quick">Quick summary</span> means code has matched every name, number and date in our summary to the article. <span class="badge checked">Summary double-checked</span> means a second AI model, from a different family, has also confirmed that each sentence says what the article says. Neither is a check of the reporting itself. <b>Minor</b>, <b>Notable</b> and <b>Significant</b> are an AI estimate of a story's impact (government action, scale, how widely it is reported), not a judgment of the reporting. If a summary fails a check, only the headline and link are shown. Always read the source.</p>
+    <p><b>How this page works.</b> A local newsroom checks agency, trade and search feeds around the clock. Each story is read and summarized by AI, and the summary links to the source. Reports of the same event from several outlets are shown once, with the other outlets listed under it. <span class="badge quick">&#10003;</span> means code has matched every name, number and date in our summary to the article. <span class="badge checked">&#10003;&#10003; Double-checked</span> means a second AI model, from a different family, has also confirmed that each sentence says what the article says. Neither is a check of the reporting itself. <b>Minor</b>, <b>Notable</b> and <b>Significant</b> are an AI estimate of a story's impact (government action, scale, how widely it is reported), not a judgment of the reporting. If a summary fails a check, only the headline and link are shown. Always read the source. <b>U.S. focus</b> (the default) leaves out stories from abroad with no U.S. government, company or place in them; <b>Everything</b> shows them too. Each story's <b>Copy link</b> gives an address that opens the page at that story.</p>
     <p>Market quotes from Finnhub, delayed; not investment advice. Index tiles use the ETFs that track each index.</p>
     <p><span id="foot-name">Advanced Transportation Live</span> · advancedtransportation.live</p>
   </div>

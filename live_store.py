@@ -226,6 +226,15 @@ class Store:
             rows = self._db.execute("SELECT status, COUNT(*) AS n FROM stories GROUP BY status").fetchall()
         return {r["status"]: r["n"] for r in rows}
 
+    def unsorted(self, since: datetime) -> int:
+        """Stories on the page the sorter (live_sort.py) has not grouped and placed yet."""
+        marks = ", ".join("?" for _ in VISIBLE)
+        with self._lock:
+            row = self._db.execute(
+                f"SELECT COUNT(*) FROM stories WHERE status IN ({marks}) AND published >= ? "
+                "AND COALESCE(json_extract(record, '$._sorted'), 0) = 0", (*VISIBLE, iso(since))).fetchone()
+        return int(row[0])
+
     # --- sources ----------------------------------------------------------------------------------------------
     def source(self, name: str) -> dict[str, Any] | None:
         with self._lock:

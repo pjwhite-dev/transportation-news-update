@@ -67,6 +67,11 @@ button{font:inherit}
 .developing a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
 .developing .meta{font-size:.75rem;color:var(--dim);margin-top:4px}
 .lead-empty{color:var(--dim);font-size:1rem;padding-block:20px;max-width:36em}
+/* an older lead: a compact card, so the newest stories reach the first screen */
+.lead.compact{padding-block:10px 22px}
+.lead.compact h1{font-size:clamp(1.35rem,2.6vw,1.9rem);line-height:1.15;margin-bottom:10px}
+.lead.compact .deck{font-size:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
+.lead.compact .developing a{-webkit-line-clamp:2}
 
 /* ---- tickers: the wire, then markets, stuck together at the top ---- */
 .tickers{position:sticky;top:0;z-index:30}
@@ -80,6 +85,8 @@ button{font:inherit}
 .ticker-track b{font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;margin-right:6px}
 .ticker-track a::after{content:"◆";margin-left:26px;font-size:.55rem;vertical-align:2px;opacity:.55}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.motion{flex:none;appearance:none;border:0;border-left:1px solid rgba(10,20,36,.25);background:var(--night);color:var(--amber);font:700 .72rem var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:0 14px;min-width:72px;min-height:40px;cursor:pointer}
+.motion:hover{color:var(--ice)}
 
 /* ---- markets ticker ---- */
 .market-ticker{background:var(--night-2);color:var(--ice);border-top:1px solid rgba(159,176,200,.18)}
@@ -153,6 +160,18 @@ main{padding-block:22px 48px}
 .badge.quick{color:var(--amber-ink);background:#FDF1D8}
 .badge.checked{color:var(--green);background:var(--green-wash)}
 .badge.official{color:var(--steel);background:#E7EEF8}
+.badge.quick{cursor:help}
+.badge.checked{cursor:help}
+.badge.world{color:var(--soft);background:var(--wash)}
+.story .copy{margin-left:auto;appearance:none;border:0;background:none;padding:2px 0;color:var(--faint);font:600 .72rem var(--sans);cursor:pointer;opacity:.75}
+.story:hover .copy,.story .copy:focus-visible{opacity:1;color:var(--steel)}
+.story .also b{font-weight:600;color:var(--soft)}
+.also-more{appearance:none;border:0;background:none;padding:0;color:var(--steel);font:600 .8rem var(--sans);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.story.target{background:linear-gradient(90deg,#FDF1D8,transparent 70%);box-shadow:-12px 0 0 #FDF1D8}
+.scope{display:inline-flex;border:1px solid #C9D3E0;border-radius:999px;overflow:hidden;margin-right:4px}
+.scope button{appearance:none;border:0;background:#fff;color:var(--faint);padding:6px 14px;min-height:38px;font:600 .84rem var(--sans);cursor:pointer}
+.scope button[aria-pressed="true"]{background:var(--night);color:var(--ice)}
+.feed .world-more{color:var(--soft);font-weight:500;border-style:dashed}
 .empty{color:var(--soft);padding:24px 0}
 
 .footer{background:var(--wash);border-top:1px solid var(--line);font-size:.84rem;color:var(--soft);padding-block:22px}
@@ -165,15 +184,27 @@ main{padding-block:22px 48px}
   .story{grid-template-columns:150px minmax(0,1fr);gap:0 16px}
 }
 @media (max-width:640px){
+  .lead.compact .lead-side{display:none}
+  .lead.compact .deck{-webkit-line-clamp:3}
   .story{grid-template-columns:1fr}
   .story .cat{flex-direction:row;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:6px;padding-top:0}
   .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;width:100%}
   .filters button{flex:none}
 }
+/* Still: the device asks for less motion, or the reader pressed Pause. The bars stop and scroll by hand instead. */
 @media (prefers-reduced-motion:reduce){
-  .ticker-track{animation:none;flex-wrap:wrap;width:auto}
+  .ticker-window{overflow-x:auto;scrollbar-width:thin}
+  .ticker-track{animation:none}
+  .ticker-track [aria-hidden="true"]{display:none}
   .dot.on,.story.arrive{animation:none}
   #sweep{transition:none}
   .radar .beam,.radar .blip,.radar .ping{animation:none}
   .radar .blip{opacity:1}
 }
+.still .ticker-window{overflow-x:auto;scrollbar-width:thin}
+.still .ticker-track{animation:none}
+.still .ticker-track [aria-hidden="true"]{display:none}
+.still .dot.on,.still .story.arrive{animation:none}
+.still #sweep{transition:none}
+.still .radar .beam,.still .radar .blip,.still .radar .ping{animation:none}
+.still .radar .blip{opacity:1}
