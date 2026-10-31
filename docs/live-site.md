@@ -40,6 +40,14 @@ as headline only after 20 minutes. The owner can pause model work the same way u
 `.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`); it lapses by itself, and unloading the models
 (`ollama stop <model>`) frees the card at once.
 
+**Sorting** (`live_sort.py`, worker "sort"): once a story is on the page, one short writer call per story names the
+earlier report (of up to eight sharing names or figures, within two days) that covers the same event, and says
+whether the story is about the United States. Same-event stories share `group_id`; the feed shows each event once
+(the most-checked report, then an official source, then the first) with the other outlets under it, and only
+summarized U.S. stories, one per event, ride the wire bar. `record._scope` "world" stories are hidden in the page's
+default "U.S. focus" view and shown under "Everything". Sorting waits while the GPU is held; three failures leave
+a story on its own, counted as U.S. The dashboard shows how many stories wait to be sorted.
+
 There is no policy desk: a rule, law or agency action goes on the desk of what it is about (the triage model picks
 it; before that, stories from the edition's policy sections, `topic_sections` in config, are filed by their words).
 
@@ -63,6 +71,10 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
   midnight to 4 a.m. Eastern (`push.overnight`) only once an hour, on the hour. The page reads it from
   raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused" after 25 min
   without a new copy (75 min for an overnight copy, when it also tells readers it updates hourly). `.runtime/live_site/push.json` records the last push for the dashboard.
+- **Page features**: every story has an address (`#s-<id>`, "Copy link"; a link to any outlet's report finds
+  its event's entry); the desks and view are in the address (`?desk=av,rail&view=all`); the lead is a compact card
+  unless it is in its first hour, rated Significant, or the owner's pick; "Pause" in the wire bar stops all motion,
+  as the device's reduced-motion setting does; link previews use `og-card.png` (`scripts/make_og_card.py`).
 - **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). It opens
   on a sign-in form: the owner pastes a fine-grained GitHub token (this repository only, Issues read and write); the
   page asks GitHub's API whose token it is and shows the story list only for `pjwhite-dev` with access to the
