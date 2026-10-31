@@ -168,7 +168,7 @@ main{padding-block:22px 48px}
 .story .also b{font-weight:600;color:var(--soft)}
 .also-more{appearance:none;border:0;background:none;padding:0;color:var(--steel);font:600 .8rem var(--sans);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .story.target{background:linear-gradient(90deg,#FDF1D8,transparent 70%);box-shadow:-12px 0 0 #FDF1D8}
-.scope{display:inline-flex;border:1px solid #C9D3E0;border-radius:999px;overflow:hidden;margin-right:4px}
+.scope{flex:none;display:inline-flex;border:1px solid #C9D3E0;border-radius:999px;overflow:hidden;margin-right:4px}
 .scope button{appearance:none;border:0;background:#fff;color:var(--faint);padding:6px 14px;min-height:38px;font:600 .84rem var(--sans);cursor:pointer}
 .scope button[aria-pressed="true"]{background:var(--night);color:var(--ice)}
 .feed .world-more{color:var(--soft);font-weight:500;border-style:dashed}
