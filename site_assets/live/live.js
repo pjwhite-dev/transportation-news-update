@@ -481,8 +481,11 @@
     }
     if (story.id !== state.target) { state.target = story.id; renderFeed(state.shown, {}); }
     state.targetDone = true;
-    var node = $("s-" + story.id);
-    if (node) node.scrollIntoView({ block: "center", behavior: quiet() ? "auto" : "smooth" });
+    // A jump, not a glide: a smooth scroll started while the page is still loading may never run. Once more when
+    // the fonts arrive, since they change the height of everything above the story.
+    var jump = function () { var node = $("s-" + story.id); if (node) node.scrollIntoView({ block: "center" }); };
+    jump();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(jump);
   }
 
   function poll() {
