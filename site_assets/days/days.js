@@ -222,7 +222,7 @@
       var file = state.files[d.day], desks = deskNames(file);
       file.stories.forEach(function (s) { if (matches(s, ws, desks)) hits.push({ day: d.day, story: s, desks: desks }); });
     });
-    $("feed-title").textContent = (hits.length === 1 ? "1 story matches" : hits.length + " stories match") + " in " + (days.length === 1 ? "1 day" : days.length + " days");
+    $("feed-title").textContent = (hits.length === 1 ? "1 story matches" : hits.length + " stories match") + " (" + (days.length === 1 ? "1 day" : days.length + " days") + " searched)";
     if (!hits.length) box.appendChild(el("p", "found", "Nothing in the past days matches “" + state.q.trim() + "”."));
     var lastDay = "";
     hits.slice(0, state.limit).forEach(function (h) {

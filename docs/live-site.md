@@ -13,9 +13,9 @@ is missing or older than 10 minutes, unless the task started in the last 10 minu
 
     python live_service.py run       # the service; preview at http://127.0.0.1:8766
     python live_service.py sweep     # poll every source once, print what was queued
-    python live_service.py render    # write feed.json from the store
+    python live_service.py render    # write feed.json and the daily archive from the store
 
-The preview serves only while `run` is running. Store: `.runtime/live_site/live.db`. Output: `.runtime/live_site/out/` (index.html, live.css, live.js, feed.json).
+The preview serves only while `run` is running. Store: `.runtime/live_site/live.db`. Output: `.runtime/live_site/out/` (index.html, live.css, live.js, feed.json, and days/ for the archive).
 Events: `.runtime/live_site/events.jsonl`. Heartbeat: `.runtime/live_site/heartbeat.json` (only written while
 every worker is beating; a stale file means restart the process). Settings: `config/live.yaml`.
 
@@ -75,6 +75,16 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
   its event's entry); the desks and view are in the address (`?desk=av,rail&view=all`); the lead is a compact card
   unless it is in its first hour, rated Significant, or the owner's pick; "Pause" in the wire bar stops all motion,
   as the device's reduced-motion setting does; link previews use `og-card.png` (`scripts/make_og_card.py`).
+  Search (the box above the categories, or "/") looks through every story in feed.json in the browser, whatever
+  the category and U.S. focus switches say, and is in the address (`?q=waymo`). Light or dark follows the device
+  (`prefers-color-scheme`; tokens at the top of live.css). Today's stories show "N min/h ago", earlier ones the
+  clock time under their day; the exact time is on hover; a source that gives only a date says "No time given".
+- **Past days** (`live_days.py`; https://advancedtransportation.live/days/, page in `site_assets/days/`): every
+  finished Eastern day as `days/<YYYY-MM-DD>.json` plus `days/index.json`, the same public fields and grouping as
+  feed.json, written by the publisher once an hour and at midnight, and pushed beside feed.json on `live-feed`. A
+  day is rewritten for three days after it ends (late checks and grouping), then left alone. `/days/` lists the
+  days and searches all of them (`?q=`, every file is fetched in the browser); `?d=2026-10-30` shows one day, with
+  the same U.S. focus switch. /archive/ remains the morning edition's archive.
 - **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). It opens
   on a sign-in form: the owner pastes a fine-grained GitHub token (this repository only, Issues read and write); the
   page asks GitHub's API whose token it is and shows the story list only for `pjwhite-dev` with access to the
