@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Past days · Advanced Transportation Live</title>
+<meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
+<meta name="description" content="Every earlier day of Advanced Transportation Live: drones, advanced air mobility, autonomous vehicles, rail and robotics news, one page per day, searchable.">
+<link rel="canonical" href="https://advancedtransportation.live/days/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Advanced Transportation Live">
+<meta property="og:title" content="Past days · Advanced Transportation Live">
+<meta property="og:image" content="https://advancedtransportation.live/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0A1424">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../live.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="cover">
+  <div class="topbar wrap">
+    <div class="masthead">
+      <a class="brand" href="../">
+        <svg class="radar" viewBox="0 0 42 42" aria-hidden="true" focusable="false">
+          <circle cx="21" cy="21" r="18" class="ring"/>
+          <circle cx="21" cy="21" r="10" class="ring inner"/>
+          <g>
+            <path d="M21 21 L5.41 12 A18 18 0 0 1 21 3 Z" class="trail" opacity=".12"/>
+            <path d="M21 21 L12 5.41 A18 18 0 0 1 21 3 Z" class="trail" opacity=".18"/>
+            <path d="M21 21 L17.26 3.39 A18 18 0 0 1 21 3 Z" class="trail" opacity=".28"/>
+            <line x1="21" y1="21" x2="21" y2="3" class="arm"/>
+          </g>
+          <circle cx="29" cy="9" r="3.2" class="hub"/>
+          <circle cx="21" cy="21" r="1.8" class="hub"/>
+        </svg>
+        <span>Advanced Transportation <i>Live</i></span></a>
+    </div>
+    <a class="back" href="../">Live page &rarr;</a>
+  </div>
+  <div class="page-head wrap">
+    <p class="kicker">Past days</p>
+    <h1 id="title">Every earlier day</h1>
+    <p id="intro">Each day's stories as they stood at the end of the day, newest first. Times are Eastern.</p>
+    <nav class="day-nav" id="day-nav" aria-label="Other days"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div class="feed-head" id="feed-head">
+    <h2 id="feed-title">Days</h2>
+    <form class="search" role="search" id="search">
+      <label class="vh" for="q">Search every past day</label>
+      <input type="search" id="q" name="q" placeholder="Search every past day" autocomplete="off" enterkeyhint="search">
+    </form>
+  </div>
+  <div class="feed" id="feed" aria-live="polite"></div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Stories are summarized by AI from the source, which each one links to. <span class="badge quick">&#10003;</span> means code has matched every name, number and date in the summary to the article; <span class="badge checked">&#10003;&#10003; Double-checked</span> means a second AI model has also confirmed each sentence. Neither is a check of the reporting itself. Always read the source. Today's stories are on the <a href="../">live page</a>.</p>
+    <p>Advanced Transportation Live · advancedtransportation.live</p>
+  </div>
+</footer>
+<script src="days.js" defer></script>
+</body>
+</html>

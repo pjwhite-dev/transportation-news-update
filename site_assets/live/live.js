@@ -11,7 +11,7 @@
   var PAGE = 25; // stories shown at first, and added by each "Show more"
   var SWEEP_MS = 1400; // the "Checking the wire:" line steps through the sources, this long each
   var state = { feed: null, shown: null, seen: {}, hidden: {}, pending: 0, timer: null, tickerKey: "", marketKey: "", sweepAt: 0, limit: 25,
-    view: "us", target: "", targetDone: false, openAlso: {} };
+    view: "us", target: "", targetDone: false, openAlso: {}, q: "" };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -34,12 +34,34 @@
   var dayFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "short", day: "numeric" });
   var keyFmt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
   var hourFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", hourCycle: "h23" });
-  function clock(iso) { return iso ? timeFmt.format(new Date(iso)).replace("AM", "a.m.").replace("PM", "p.m.") : ""; }
-  // A source that gives only a date: show when we found it (on that day), never a made-up time.
+  var fullFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  function ampm(text) { return text.replace("AM", "a.m.").replace("PM", "p.m."); }
+  function clock(iso) { return iso ? ampm(timeFmt.format(new Date(iso))) : ""; }
+  function exact(iso) { return ampm(fullFmt.format(new Date(iso))) + " ET"; }
+  function rel(iso) {
+    var mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    if (mins < 1) return "just now";
+    return mins < 60 ? mins + " min ago" : Math.floor(mins / 60) + " h ago";
+  }
+  // Today's stories say how long ago they were published; earlier ones give the time, under their day's heading.
+  // The exact time is on hover. A source that gives only a date gets no made-up time.
   function storyTime(story) {
-    if (story.time_known !== false) return clock(story.published);
-    if (story.found && keyFmt.format(new Date(story.found)) === keyFmt.format(new Date(story.published))) return "found " + clock(story.found);
-    return "no time given";
+    if (story.time_known === false) {
+      return { text: "No time given", rel: false,
+        title: "The source gives only the date." + (story.found ? " We first saw it " + exact(story.found) + "." : "") };
+    }
+    var today = keyFmt.format(new Date(story.published)) === keyFmt.format(new Date());
+    return { text: today ? rel(story.published) : clock(story.published), title: exact(story.published), rel: today };
+  }
+  function timeNode(story) {
+    var t = storyTime(story), node = el("time", null, t.text);
+    node.dateTime = story.published;
+    node.title = t.title;
+    if (t.rel) node.dataset.rel = "1";
+    return node;
+  }
+  function refreshTimes() {
+    Array.prototype.forEach.call(document.querySelectorAll("time[data-rel]"), function (n) { n.textContent = storyTime({ published: n.dateTime }).text; });
   }
   function dayLabel(iso) {
     var d = new Date(iso), today = keyFmt.format(new Date()), key = keyFmt.format(d);
@@ -51,6 +73,21 @@
     var cats = (state.shown && state.shown.desks) || [];
     for (var i = 0; i < cats.length; i++) if (cats[i].key === key) return cats[i].name;
     return "";
+  }
+
+  // Search: every word must appear in the headline, summary, outlets or category (case and accents ignored).
+  function fold(text) { return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+  function words(q) { return fold(q).split(/\s+/).filter(Boolean); }
+  function matches(s, ws) {
+    var hay = fold([s.title, s.summary, s.source, catName(s.desk)].concat((s.also || []).map(function (a) { return a.source + " " + (a.title || ""); })).join(" "));
+    return ws.every(function (w) { return hay.indexOf(w) >= 0; });
+  }
+  function marked(text, ws) {
+    var frag = document.createDocumentFragment();
+    if (!ws || !ws.length) { frag.appendChild(document.createTextNode(text)); return frag; }
+    var re = new RegExp("(" + ws.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("|") + ")", "gi");
+    text.split(re).forEach(function (part, i) { if (part) frag.appendChild(i % 2 ? el("mark", null, part) : document.createTextNode(part)); });
+    return frag;
   }
 
   function badge(story) {
@@ -81,16 +118,14 @@
     return b;
   }
 
-  function storyNode(story, isNew) {
+  function storyNode(story, isNew, ws) {
     var art = el("article", "story" + (isNew ? " arrive" : "") + (story.id === state.target ? " target" : ""));
     art.id = "s-" + story.id;
     art.dataset.id = story.id;
     art.dataset.cat = story.desk;
     var side = el("div", "cat");
     side.appendChild(el("b", null, catName(story.desk)));
-    var t = el("time", null, storyTime(story));
-    t.dateTime = story.published;
-    side.appendChild(t);
+    side.appendChild(timeNode(story));
     var imp = impactBadge(story);
     if (imp) side.appendChild(imp);
     art.appendChild(side);
@@ -103,10 +138,11 @@
     if (story.scope === "world") meta.appendChild(el("span", "badge world", "World"));
     meta.appendChild(copyButton(story));
     body.appendChild(meta);
-    var h = el("h3");
-    h.appendChild(link(story.url, story.title));
+    var h = el("h3"), a = link(story.url, null);
+    a.appendChild(marked(story.title, ws));
+    h.appendChild(a);
     body.appendChild(h);
-    if (story.summary) body.appendChild(el("p", null, story.summary));
+    if (story.summary) { var p = el("p"); p.appendChild(marked(story.summary, ws)); body.appendChild(p); }
     if (story.also && story.also.length) body.appendChild(alsoLine(story));
     if (story.correction) body.appendChild(el("div", "fix", story.correction));
     art.appendChild(body);
@@ -178,7 +214,9 @@
       eye.appendChild(el("span", "tag", "Lead"));
       if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
       var day = dayLabel(lead.since);
-      eye.appendChild(el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since)));
+      var since = el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since));
+      since.title = "Lead since " + exact(lead.since);
+      eye.appendChild(since);
       main.appendChild(eye);
       var h = el("h1");
       h.appendChild(link(lead.url, lead.title));
@@ -199,7 +237,9 @@
       items.forEach(function (s) {
         var li = el("li");
         li.appendChild(link(s.url, s.title));
-        li.appendChild(el("div", "meta", s.source + " · " + storyTime(s)));
+        var meta = el("div", "meta", s.source + " · ");
+        meta.appendChild(timeNode(s));
+        li.appendChild(meta);
         ol.appendChild(li);
       });
       dev.appendChild(ol);
@@ -291,11 +331,12 @@
   function saveHidden() {
     store("live-hidden", Object.keys(state.hidden).filter(function (k) { return state.hidden[k]; }).join(","));
     store("live-view", state.view);
-    // The address says what is shown (?desk=av,rail&view=all), so a filtered page can be shared.
-    var q = [], all = (state.feed && state.feed.desks) || [], on = shownDesks();
-    if (all.length && on.length < all.length) q.push("desk=" + on.join(","));
-    if (state.view === "all") q.push("view=all");
-    history.replaceState(null, "", location.pathname + (q.length ? "?" + q.join("&") : "") + location.hash);
+    // The address says what is shown (?desk=av,rail&view=all&q=waymo), so a filtered page or a search can be shared.
+    var parts = [], all = (state.feed && state.feed.desks) || [], on = shownDesks();
+    if (all.length && on.length < all.length) parts.push("desk=" + on.join(","));
+    if (state.view === "all") parts.push("view=all");
+    if (state.q.trim()) parts.push("q=" + encodeURIComponent(state.q.trim()));
+    history.replaceState(null, "", location.pathname + (parts.length ? "?" + parts.join("&") : "") + location.hash);
   }
   function inView(s) { return state.view === "all" || s.scope !== "world" || s.id === state.target; }
 
@@ -336,10 +377,25 @@
   }
 
   function renderFeed(feed, fresh) {
-    var box = $("feed");
+    var box = $("feed"), ws = words(state.q);
     box.textContent = "";
-    var list = feed.stories.filter(function (s) { return (!state.hidden[s.desk] || s.id === state.target) && inView(s); });
-    var away = feed.stories.filter(function (s) { return !state.hidden[s.desk] && !inView(s); }).length;
+    // A search looks through every story on the page, whatever the category and U.S. focus switches say.
+    $("feed-head").classList.toggle("searching", ws.length > 0);
+    $("feed-title").textContent = ws.length ? "Search results, newest first" : "Every story, newest first";
+    var list = ws.length ? feed.stories.filter(function (s) { return matches(s, ws); })
+      : feed.stories.filter(function (s) { return (!state.hidden[s.desk] || s.id === state.target) && inView(s); });
+    var away = ws.length ? 0 : feed.stories.filter(function (s) { return !state.hidden[s.desk] && !inView(s); }).length;
+    if (ws.length) {
+      var said = "\u201c" + state.q.trim() + "\u201d", found = el("p", "found");
+      found.appendChild(document.createTextNode(list.length
+        ? (list.length === 1 ? "1 story" : list.length + " stories") + " from the last three days " + (list.length === 1 ? "matches " : "match ") + said + ", in every category. "
+        : "No story from the last three days matches " + said + ". "));
+      var past = el("a", null, "Search past days too");
+      past.href = "days/?q=" + encodeURIComponent(state.q.trim());
+      found.appendChild(past);
+      box.appendChild(found);
+      if (!list.length) return;
+    }
     if (state.target && !state.targetDone) {
       var at = list.findIndex(function (s) { return s.id === state.target; });
       if (at >= state.limit) state.limit = Math.ceil((at + 1) / PAGE) * PAGE;
@@ -352,7 +408,7 @@
     list.slice(0, state.limit).forEach(function (s) {
       var d = dayLabel(s.published);
       if (d !== lastDay) { box.appendChild(el("h2", "day", d)); lastDay = d; }
-      box.appendChild(storyNode(s, fresh[s.id]));
+      box.appendChild(storyNode(s, fresh[s.id], ws));
     });
     var left = list.length - state.limit;
     if (left > 0) {
@@ -476,7 +532,11 @@
       var banner = $("banner");
       banner.hidden = false;
       banner.className = "banner wrap";
-      banner.textContent = "That story has left the live page: stories stay for three days.";
+      banner.textContent = "That story has left the live page: stories stay for three days. Every earlier day is in ";
+      var past = el("a", null, "Past days");
+      past.href = "days/";
+      banner.appendChild(past);
+      banner.appendChild(document.createTextNode("."));
       return;
     }
     if (story.id !== state.target) { state.target = story.id; renderFeed(state.shown, {}); }
@@ -516,6 +576,7 @@
   window.addEventListener("scroll", function () { if (atTop() && state.pending) render(true); }, { passive: true });
   document.addEventListener("visibilitychange", function () { if (!document.hidden) poll(); });
   setInterval(renderStatus, 5000);
+  setInterval(refreshTimes, 60000);
   setInterval(stepSweep, SWEEP_MS);
   $("official-prev").addEventListener("click", function () { stepPosts(-1); });
   $("official-next").addEventListener("click", function () { stepPosts(1); });
@@ -524,10 +585,31 @@
   setInterval(function () { if (!quiet() && !state.postsHeld && !document.hidden) stepPosts(1); }, 7000);
   $("motion").addEventListener("click", function () { setStill(!document.documentElement.classList.contains("still")); });
   setStill(!!store("live-still"));
+  var searchTimer = null;
+  $("q").addEventListener("input", function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function () {
+      state.q = $("q").value;
+      state.limit = PAGE;
+      saveHidden();
+      if (state.shown) renderFeed(state.shown, {});
+    }, 150);
+  });
+  $("q").addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && $("q").value) { $("q").value = ""; $("q").dispatchEvent(new Event("input")); }
+  });
+  $("search").addEventListener("submit", function (e) { e.preventDefault(); $("q").blur(); });
+  // "/" jumps to the search box, as on most news and code sites.
+  document.addEventListener("keydown", function (e) {
+    var tag = (document.activeElement || {}).tagName || "";
+    if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) { e.preventDefault(); $("q").focus(); }
+  });
   window.addEventListener("hashchange", function () { readTarget(); if (state.shown) { renderFeed(state.shown, {}); showTarget(); } });
 
   // The address wins over what this browser remembers: ?desk=av,rail shows only those desks, ?view=all everything.
   var params = new URLSearchParams(location.search), desks = params.get("desk");
+  state.q = params.get("q") || "";
+  $("q").value = state.q;
   state.view = params.get("view") === "all" ? "all" : params.has("desk") ? "us" : (store("live-view") === "all" ? "all" : "us");
   if (desks) state.onlyDesks = desks.split(",");
   else (store("live-hidden") || "").split(",").forEach(function (k) { if (k) state.hidden[k] = true; });

@@ -17,7 +17,7 @@ import os
 import re
 import sys
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parent
 RUNTIME = ROOT / ".runtime" / "live_site"
 os.environ.setdefault("NEWSROOM_LIVE_DIR", str(RUNTIME))
 
+import live_days  # noqa: E402
 import live_feed  # noqa: E402
 import market_watch  # noqa: E402
 import newsroom_live  # noqa: E402
@@ -122,6 +123,7 @@ class Publisher:
     def __init__(self, store: Store, config: dict[str, Any], doctor: Doctor, out_dir: Path, market: MarketWatch) -> None:
         self.store, self.config, self.doctor, self.out_dir, self.market = store, config, doctor, out_dir, market
         self.last_hash = ""
+        self.days_at: datetime | None = None
 
     def publish(self) -> bool:
         now = datetime.now(timezone.utc)
@@ -140,7 +142,22 @@ class Publisher:
         if digest != self.last_hash:
             self.last_hash = digest
             newsroom_live.emit("live-publish", desk="press", stories=len(feed["stories"]), lead=(feed["lead"] or {}).get("title", "")[:120])
+        self.archive(now)
         return True
+
+    def archive(self, now: datetime) -> None:
+        """The daily archive (live_days.py): once an hour, and as soon as a day ends. A failure never stops the page."""
+        day = lambda t: t.astimezone(live_days.EASTERN).date()
+        if self.days_at and now - self.days_at < timedelta(hours=1) and day(self.days_at) == day(now):
+            return
+        self.days_at = now
+        try:
+            written = live_days.write_days(self.store, self.config, self.out_dir, now)
+        except Exception as exc:  # noqa: BLE001
+            newsroom_live.emit("live-days-fail", desk="press", error=repr(exc)[:300])
+            return
+        if written:
+            newsroom_live.emit("live-days", desk="press", files=", ".join(written)[:200])
 
     def run(self, stop: threading.Event, beat) -> None:
         every = float(self.config["publish"]["every_seconds"])
@@ -188,6 +205,7 @@ def main(argv: list[str]) -> int:
         now = datetime.now(timezone.utc)
         market = public_market(market_watch_for(config).current(), now)
         live_feed.write_site(out_dir, live_feed.build_feed(store, config, now=now, level=level, wire=wire_status(store), market=market))
+        live_days.write_days(store, config, out_dir, now)
         print(out_dir / "feed.json")
         return 0
     if args.command == "sweep":

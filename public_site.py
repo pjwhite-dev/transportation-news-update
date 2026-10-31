@@ -1271,10 +1271,10 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     )
     (output / "assets" / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (output / "assets" / "site.js").write_text(SITE_JS, encoding="utf-8")
-    # The live page is the site root and the owner's headline override page is /login/. Both are static; the
-    # live page reads its stories from the live-feed branch, which the local live service pushes. /live/, its
-    # first address, sends readers to the root.
-    for folder, target in (("live", output), ("login", output / "login")):
+    # The live page is the site root, its daily archive is /days/ and the owner's headline override page is
+    # /login/. All are static; they read their stories from the live-feed branch, which the local live service
+    # pushes. /live/, the live page's first address, sends readers to the root.
+    for folder, target in (("live", output), ("login", output / "login"), ("days", output / "days")):
         source = root / "site_assets" / folder
         if source.is_dir():
             target.mkdir(exist_ok=True)
@@ -1283,13 +1283,15 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
                     shutil.copyfile(asset, target / asset.name)
     # Browsers may keep live.css and live.js for 10 minutes (GitHub Pages); a version stamp makes a new page
     # never run with an old script (the old one crashed on a removed element and the page showed nothing).
-    page = output / "index.html"
-    if page.exists():
-        text = page.read_text(encoding="utf-8")
-        for name in ("live.css", "live.js"):
-            stamp = hashlib.sha256((output / name).read_bytes()).hexdigest()[:10]
-            text = text.replace(f'"{name}"', f'"{name}?v={stamp}"')
-        page.write_text(text, encoding="utf-8")
+    stamped = ((output / "index.html", {"live.css": output / "live.css", "live.js": output / "live.js"}),
+               (output / "days" / "index.html", {"../live.css": output / "live.css", "days.js": output / "days" / "days.js"}))
+    for page, files in stamped:
+        if page.exists():
+            text = page.read_text(encoding="utf-8")
+            for name, path in files.items():
+                stamp = hashlib.sha256(path.read_bytes()).hexdigest()[:10]
+                text = text.replace(f'"{name}"', f'"{name}?v={stamp}"')
+            page.write_text(text, encoding="utf-8")
     (output / "live").mkdir(exist_ok=True)
     (output / "live" / "index.html").write_text(MOVED_TO_ROOT, encoding="utf-8")
     if not (output / "index.html").exists():

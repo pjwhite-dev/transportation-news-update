@@ -24,6 +24,7 @@ from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
 LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (advancedtransportation.live/login/)
+DAYS = ROOT / "site_assets" / "days"  # the daily archive page (advancedtransportation.live/days/; live_days.py)
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
 
@@ -57,6 +58,35 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def group_stories(stories: list[dict[str, Any]]) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]]]:
+    """Every event's reports (by `group_id`, or the story's own id), and one entry per event, in the given order."""
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for s in stories:
+        groups.setdefault(s["group_id"] or s["id"], []).append(s)
+    primary = {}
+    for members in groups.values():
+        best = max(members, key=live_sort.primary_rank) if len(members) > 1 else members[0]
+        primary.update((m["id"], best) for m in members)
+    return groups, [s for s in stories if primary[s["id"]] is s]
+
+
+def grouped_story(story: dict[str, Any], groups: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+    """The story with the group's other reports listed under it (one link per outlet)."""
+    out = public_story(story)
+    others = [m for m in groups.get(story["group_id"] or story["id"], []) if m["id"] != story["id"]]
+    if not others:
+        return out
+    also, outlets = list(out.get("also", [])), {story["source"].casefold()}
+    outlets |= {a["source"].casefold() for a in also}
+    for m in sorted(others, key=lambda m: m["shown_at"]):
+        if m["source"].casefold() not in outlets:
+            outlets.add(m["source"].casefold())
+            also.append({"source": m["source"], "url": m["url"], "title": m["title"]})
+    out["also"] = also
+    out["members"] = [m["id"] for m in others]  # a link to any report of the event finds this entry
+    return out
+
+
 def build_feed(
     store: Store,
     config: dict[str, Any],
@@ -68,31 +98,8 @@ def build_feed(
 ) -> dict[str, Any]:
     site = config["site"]
     stories = store.visible(now - timedelta(hours=float(site["river_hours"])), limit=int(site.get("feed_limit", 300)))
-    groups: dict[str, list[dict[str, Any]]] = {}
-    for s in stories:
-        groups.setdefault(s["group_id"] or s["id"], []).append(s)
-    primary = {}
-    for members in groups.values():
-        best = max(members, key=live_sort.primary_rank) if len(members) > 1 else members[0]
-        primary.update((m["id"], best) for m in members)
-    shown = [s for s in stories if primary[s["id"]] is s]  # one entry per event, in publication order
-
-    def grouped(story: dict[str, Any]) -> dict[str, Any]:
-        """The story with the group's other reports listed under it (one link per outlet)."""
-        out = public_story(story)
-        others = [m for m in groups.get(story["group_id"] or story["id"], []) if m["id"] != story["id"]]
-        if not others:
-            return out
-        also, outlets = list(out.get("also", [])), {story["source"].casefold()}
-        outlets |= {a["source"].casefold() for a in also}
-        for m in sorted(others, key=lambda m: m["shown_at"]):
-            if m["source"].casefold() not in outlets:
-                outlets.add(m["source"].casefold())
-                also.append({"source": m["source"], "url": m["url"], "title": m["title"]})
-        out["also"] = also
-        out["members"] = [m["id"] for m in others]  # a link to any report of the event finds this entry
-        return out
-
+    groups, shown = group_stories(stories)
+    grouped = lambda story: grouped_story(story, groups)
     public = [grouped(s) for s in shown]
     by_id = {s["id"]: s for s in stories}
 
@@ -149,7 +156,7 @@ def content_hash(feed: dict[str, Any]) -> str:
 def write_site(out_dir: Path, feed: dict[str, Any]) -> Path:
     """Write feed.json atomically and refresh the page's static files."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    for folder, target_dir in ((ASSETS, out_dir), (LOGIN, out_dir / "login")):
+    for folder, target_dir in ((ASSETS, out_dir), (LOGIN, out_dir / "login"), (DAYS, out_dir / "days")):
         target_dir.mkdir(parents=True, exist_ok=True)
         for asset in folder.iterdir():
             if asset.is_file():

@@ -11,6 +11,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
+import live_days
 import live_doctor
 import live_feed
 import live_lead
@@ -303,6 +304,25 @@ class PublicPageTests(unittest.TestCase):
         self.assertIn("view=all", script)
         self.assertNotIn("verif", (page + script).lower())
 
+    def test_search_dark_mode_and_clear_times(self):
+        page = Path("site_assets/live/index.html").read_text(encoding="utf-8")
+        script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        style = Path("site_assets/live/live.css").read_text(encoding="utf-8")
+        days = Path("site_assets/days/index.html").read_text(encoding="utf-8") + Path("site_assets/days/days.js").read_text(encoding="utf-8")
+        self.assertIn('role="search"', page)
+        self.assertIn('href="days/"', page)  # Past days
+        self.assertIn("q=", script)  # a search can be shared
+        self.assertIn("@media (prefers-color-scheme:dark)", style)
+        light = style.split("@media (prefers-color-scheme:dark)")[0]
+        self.assertNotIn("background:#fff", style.replace("--paper:#fff", ""))  # every surface follows the theme
+        self.assertIn("--paper:#fff", light)
+        self.assertIn(" h ago", script)  # today's stories: how long ago, the exact time on hover
+        self.assertIn("node.title", script)
+        self.assertNotIn('"found "', script)  # "found 12:07 a.m." read like a publication time
+        self.assertIn("No time given", script)
+        self.assertNotIn("verif", days.lower())
+        self.assertNotIn("login", days.lower())
+
     def test_the_login_page_reads_the_same_feed_and_never_says_verified(self):
         login = Path("site_assets/login/index.html").read_text(encoding="utf-8")
         live = Path("site_assets/live/index.html").read_text(encoding="utf-8")
@@ -480,6 +500,23 @@ class FeedPushTests(unittest.TestCase):
         script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
         self.assertIn("feed.overnight", script)
         self.assertIn("once an hour", script)
+
+    def test_the_daily_archive_goes_out_with_the_feed_when_it_changed(self):
+        self.write_feed("one")
+        days = self.dir / "out" / "days"
+        days.mkdir()
+        (days / "2026-10-29.json").write_text("{}", encoding="utf-8")
+        (days / "index.html").write_text("page", encoding="utf-8")  # the page itself is published with the site, not here
+        adds = []
+        pusher = self.pusher()
+        pusher.run_git = lambda args, cwd: (adds.append(args) if args[0] == "add" else None) or SimpleNamespace(returncode=0, stdout="", stderr="")
+        self.assertTrue(pusher.push_once())
+        self.assertEqual(adds[-1], ["add", "feed.json", "days"])
+        self.assertEqual(sorted(p.name for p in (self.dir / "wt" / "days").iterdir()), ["2026-10-29.json"])
+        self.now += timedelta(hours=1)
+        self.write_feed("two")
+        self.assertTrue(pusher.push_once())
+        self.assertEqual(adds[-1], ["add", "feed.json"])  # unchanged days are left alone
 
     def test_the_push_never_forces(self):
         source = Path("live_push.py").read_text(encoding="utf-8")
@@ -984,6 +1021,55 @@ class FeedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DaysTests(unittest.TestCase):
+    """The daily archive (/days/): one file per finished Eastern day, the same grouping as the live page."""
+
+    def setUp(self):
+        self.store = Store(":memory:")
+        self.dir = Path(tempfile.mkdtemp())
+
+    def put(self, sid, published, group="", status=VERIFIED, source="Reuters"):
+        self.store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "source": source, "published": iso(published)}, published)
+        self.store.update(sid, published, status=status, shown_at=iso(published), desk="av", group_id=group, summary="A summary.")
+
+    def test_days_are_eastern_and_today_waits_for_the_live_page(self):
+        # NOW is 10 a.m. Eastern on Oct. 30. 3 a.m. UTC on the 30th is still the 29th in New York.
+        self.put("late29", datetime(2026, 10, 30, 3, 0, tzinfo=timezone.utc))
+        self.put("early30", datetime(2026, 10, 30, 5, 0, tzinfo=timezone.utc))
+        self.put("dropped", datetime(2026, 10, 29, 15, 0, tzinfo=timezone.utc), status=DROPPED)
+        written = live_days.write_days(self.store, CONFIG, self.dir, NOW)
+        self.assertEqual(written, ["2026-10-29.json", "index.json"])
+        day = json.loads((self.dir / "days" / "2026-10-29.json").read_text(encoding="utf-8"))
+        self.assertEqual([s["id"] for s in day["stories"]], ["late29"])
+        self.assertEqual(json.loads((self.dir / "days" / "index.json").read_text(encoding="utf-8"))["days"], [{"day": "2026-10-29", "stories": 1}])
+        written = live_days.write_days(self.store, CONFIG, self.dir, NOW + timedelta(days=1))
+        self.assertEqual(written, ["2026-10-30.json", "index.json"])
+        index = json.loads((self.dir / "days" / "index.json").read_text(encoding="utf-8"))
+        self.assertEqual([d["day"] for d in index["days"]], ["2026-10-30", "2026-10-29"])  # newest first
+
+    def test_an_event_is_one_entry_with_the_other_outlets_listed(self):
+        when = datetime(2026, 10, 29, 15, 0, tzinfo=timezone.utc)
+        self.put("a", when, group="a")
+        self.put("b", when + timedelta(minutes=30), group="a", source="DroneLife")
+        live_days.write_days(self.store, CONFIG, self.dir, NOW)
+        day = json.loads((self.dir / "days" / "2026-10-29.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(day["stories"]), 1)
+        self.assertEqual([a["source"] for a in day["stories"][0]["also"]], ["DroneLife"])
+        self.assertEqual(next(d for d in day["desks"] if d["key"] == "av")["count"], 1)
+        self.assertNotIn("score", json.dumps(day))
+
+    def test_recent_days_catch_up_and_older_ones_are_left_alone(self):
+        self.put("old", datetime(2026, 10, 20, 15, 0, tzinfo=timezone.utc))
+        self.put("new", datetime(2026, 10, 29, 15, 0, tzinfo=timezone.utc))
+        live_days.write_days(self.store, CONFIG, self.dir, NOW)
+        self.assertEqual(live_days.write_days(self.store, CONFIG, self.dir, NOW + timedelta(hours=1)), [])  # nothing changed
+        self.store.update("old", NOW, status=VERIFIED, summary="Changed long after.")
+        self.store.update("new", NOW, summary="Checked later.")
+        self.assertEqual(live_days.write_days(self.store, CONFIG, self.dir, NOW + timedelta(hours=2)), ["2026-10-29.json"])
+        old = json.loads((self.dir / "days" / "2026-10-20.json").read_text(encoding="utf-8"))
+        self.assertEqual(old["stories"][0]["summary"], "A summary.")
 
 
 class SortTests(unittest.TestCase):

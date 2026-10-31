@@ -214,6 +214,22 @@ class Store:
             ).fetchall()
         return [_story(r) for r in rows]
 
+    def visible_between(self, start: datetime, end: datetime) -> list[dict[str, Any]]:
+        """Stories on the page published in [start, end), newest first: one day of the archive (live_days.py)."""
+        marks = ", ".join("?" for _ in VISIBLE)
+        with self._lock:
+            rows = self._db.execute(
+                f"SELECT * FROM stories WHERE status IN ({marks}) AND published >= ? AND published < ? ORDER BY published DESC",
+                (*VISIBLE, iso(start), iso(end)),
+            ).fetchall()
+        return [_story(r) for r in rows]
+
+    def visible_published(self) -> list[str]:
+        """When every story on the page (now or earlier) was published, for finding the archive's days."""
+        marks = ", ".join("?" for _ in VISIBLE)
+        with self._lock:
+            return [r[0] for r in self._db.execute(f"SELECT published FROM stories WHERE status IN ({marks})", VISIBLE).fetchall()]
+
     def similar_visible(self, title: str, since: datetime, threshold: float = 0.8) -> dict[str, Any] | None:
         """A story already on the page whose headline shares most words with `title` (same report, other outlet)."""
         for story in self.visible(since, limit=600):

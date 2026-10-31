@@ -609,7 +609,7 @@ async function loadState() {
     <div class="svc" style="grid-column:1/3"><span class="lamp ${st.models && st.models.length ? "on" : ""}"></span>Loaded: ${esc((st.models || []).join(", ") || "none (models load on demand)")}</div>
     <div class="svc" style="grid-column:1/3;color:var(--paper-dim)">Writer ${esc(st.writer)} · Verifier ${esc(st.verifier)}</div>
     ${(() => { const L = st.live_site || {}; return `<div class="svc" style="grid-column:1/3"><span class="lamp ${L.running ? (L.level === "LIVE" ? "on" : "") : "off"}"></span>Live site: ${L.running
-      ? `${esc(L.level)}${L.reason ? " (" + esc(L.reason) + ")" : ""} · ${L.on_page} on the page, ${L.queued} waiting${L.unsorted ? ", " + L.unsorted + " to group" : ""} · <a href="${esc(L.preview)}" target="_blank" rel="noopener" style="color:inherit">open</a>`
+      ? `${esc(L.level)}${L.reason ? " (" + esc(L.reason) + ")" : ""} · ${L.on_page} on the page, ${L.queued} waiting${L.unsorted ? ", " + L.unsorted + " to group" : ""} · <a href="${esc(L.preview)}" target="_blank" rel="noopener" style="color:inherit">open</a> · <a href="${esc(L.preview)}days/" target="_blank" rel="noopener" style="color:inherit">${L.days || 0} past days</a>`
         + ` · public copy ${L.public_error ? "FAILING: " + esc(L.public_error) : L.public_age == null ? "not pushed yet" : "pushed " + Math.round(L.public_age / 60) + " min ago"}`
         + (L.held_until ? ` · owner's headline until ${esc(new Date(L.held_until).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }))}` : "")
       : "not running"}</div>`; })()}

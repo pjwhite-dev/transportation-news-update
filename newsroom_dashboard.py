@@ -151,10 +151,14 @@ def live_site() -> dict[str, Any]:
         pushed_age = (datetime.now(timezone.utc) - datetime.fromisoformat(push["pushed"])).total_seconds() if push.get("pushed") else None
     except (OSError, ValueError, KeyError):
         push, pushed_age = {}, None
+    try:  # the daily archive (live_days.py): how many finished days are on /days/
+        days = len(json.loads((ROOT / ".runtime" / "live_site" / "out" / "days" / "index.json").read_text(encoding="utf-8"))["days"])
+    except (OSError, ValueError, KeyError):
+        days = 0
     return {
         "running": age is not None and age < 300, "age": age, "level": beat.get("level", ""), "reason": beat.get("reason", ""),
         "on_page": sum(counts.get(k, 0) for k in ("first_pass", "verified", "headline")), "queued": counts.get("queued", 0),
-        "unsorted": beat.get("unsorted"),
+        "unsorted": beat.get("unsorted"), "days": days,
         "preview": "http://127.0.0.1:8766/",
         "public_age": pushed_age, "public_error": push.get("error", ""), "held_until": push.get("held_until", ""),
     }

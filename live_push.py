@@ -1,7 +1,8 @@
 """Deliver feed.json to the public site: commit it to the live-feed branch and push (never force).
 
 The page at advancedtransportation.live (the site root, GitHub Pages) reads the file from raw.githubusercontent.com, so
-the reader page and the feed are both served by GitHub and no new service is exposed. A push goes out when
+the reader page and the feed are both served by GitHub and no new service is exposed. The daily archive's files
+(days/*.json, live_days.py) go out with it. A push goes out when
 the stories changed (at most every `min_seconds`) and at least every `heartbeat_seconds`, so the page can
 tell readers when updates have stopped. Overnight (`overnight`, Eastern hours) it goes out once an hour, on the
 hour, whatever changed. The branch has its own worktree beside this one.
@@ -93,8 +94,9 @@ class FeedPusher:
             return False
         try:
             shutil.copyfile(source, self.worktree / "feed.json")
+            paths = ["feed.json"] + self.copy_days()
             steps = (
-                ["add", "feed.json"],
+                ["add", *paths],
                 ["commit", "--quiet", "-m", f"Live feed {now.strftime('%Y-%m-%d %H:%M')} UTC"],
                 ["push", "--quiet", "origin", f"{BRANCH}:{BRANCH}"],
             )
@@ -111,6 +113,17 @@ class FeedPusher:
         newsroom_live.emit("live-push", desk="press", stories=len(feed.get("stories", [])))
         self._note(now)
         return True
+
+    def copy_days(self) -> list[str]:
+        """The daily archive's files (live_days.py) that changed, copied beside feed.json; ["days"] when any did."""
+        changed = False
+        for path in sorted((self.out_dir / "days").glob("*.json")):
+            target = self.worktree / "days" / path.name
+            if not target.exists() or target.read_bytes() != path.read_bytes():
+                target.parent.mkdir(exist_ok=True)
+                shutil.copyfile(path, target)
+                changed = True
+        return ["days"] if changed else []
 
     def _note(self, now: datetime) -> None:
         """push.json beside the feed, for the newsroom dashboard: when the public copy last went out."""

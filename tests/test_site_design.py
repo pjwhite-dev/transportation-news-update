@@ -51,7 +51,7 @@ class SiteDesignTests(unittest.TestCase):
         root = Path(cls.tmp.name) / "repo"
         archive = root / "data" / "archive"
         archive.mkdir(parents=True)
-        for folder in ("live", "login"):  # the live page and the override page, as in the repository
+        for folder in ("live", "login", "days"):  # the live page, the override page and the daily archive
             shutil.copytree(Path(public_site.__file__).parent / "site_assets" / folder, root / "site_assets" / folder)
         first = edition("2026-10-23", {"Autonomous Vehicles": [story("Waymo expands to Phoenix airport", "Reuters")]})
         second = edition(
@@ -93,6 +93,9 @@ class SiteDesignTests(unittest.TestCase):
         self.assertIn('href="../assets/site.css"', self.index)
         self.assertIn('url=../', (self.out / "live" / "index.html").read_text(encoding="utf-8"))
         self.assertTrue((self.out / "login" / "index.html").exists())
+        days = (self.out / "days" / "index.html").read_text(encoding="utf-8")  # the live page's daily archive
+        self.assertRegex(days, r'src="days\.js\?v=[0-9a-f]{10}"')
+        self.assertRegex(days, r'href="\.\./live\.css\?v=[0-9a-f]{10}"')
 
     def test_every_edition_page_carries_an_exact_edition_id_marker(self) -> None:
         self.assertIn('<meta name="edition-id" content="2026-10-26">', self.index)
