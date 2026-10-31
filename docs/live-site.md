@@ -36,7 +36,12 @@ Markets: `live_market.py` refreshes the Finnhub watchlist every 5 minutes while 
 close (`.runtime/live_site/market.json`, falling back to the edition's `data/market.json`).
 
 While the edition holds `.runtime/edition.lock`, model work pauses; stories are still read and filed and go up
-as headline only after 20 minutes.
+as headline only after 20 minutes. The owner can pause model work the same way until a set time with
+`.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`); it lapses by itself, and unloading the models
+(`ollama stop <model>`) frees the card at once.
+
+There is no policy desk: a rule, law or agency action goes on the desk of what it is about (the triage model picks
+it; before that, stories from the edition's policy sections, `topic_sections` in config, are filed by their words).
 
 FAA and DOT sites refuse the reader (HTTP 403 to its own User-Agent). Their releases, found by the wire's news
 searches, go up as headline and link only, dated by that search and never summarized (config
@@ -54,9 +59,10 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
 
 - **Page**: https://advancedtransportation.live/ (GitHub Pages; `public_site.py` copies `site_assets/live/` to the root; the morning edition is at /edition/ and /live/ redirects to the root).
 - **Feed**: `live_push.py` commits `feed.json` to the `live-feed` branch (worktree `C:/newsroom/.wt/live-feed`)
-  and pushes, never forced: when the stories change (at most every 3 min) and every 10 min regardless. The page
-  reads it from raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused"
-  after 25 min without a new copy. `.runtime/live_site/push.json` records the last push for the dashboard.
+  and pushes, never forced: when the stories change (at most every 3 min) and every 10 min regardless; from
+  midnight to 4 a.m. Eastern (`push.overnight`) only once an hour, on the hour. The page reads it from
+  raw.githubusercontent.com (GitHub caches it up to 5 min), polls every 60 s, and says "paused" after 25 min
+  without a new copy (75 min for an overnight copy, when it also tells readers it updates hourly). `.runtime/live_site/push.json` records the last push for the dashboard.
 - **Headline override**: https://advancedtransportation.live/login/ (not linked from the page, `noindex`). It opens
   on a sign-in form: the owner pastes a fine-grained GitHub token (this repository only, Issues read and write); the
   page asks GitHub's API whose token it is and shows the story list only for `pjwhite-dev` with access to the
