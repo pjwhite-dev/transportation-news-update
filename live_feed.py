@@ -97,6 +97,7 @@ def build_feed(
         "generated": iso(now),
         "level": level,
         "site": {"name": site["name"], "label": site["live_label"], "poll_seconds": int(site["poll_seconds"])},
+        "overnight": config.get("push", {}).get("overnight"),  # Eastern hours when the public copy updates hourly
         "lead": lead,
         "developing": [public_story(s)["id"] for s in developing],
         "ticker": [{"id": s["id"], "source": s["source"], "title": s["title"], "url": s["url"]} for s in ticker],

@@ -44,7 +44,7 @@ def compute_level(
     if writer_failures >= 3:
         return "HEADLINES", f"the writer failed {writer_failures} times in a row"
     if gpu_busy:
-        return "LITE", "the morning edition has the GPU"
+        return "LITE", "the GPU is held: the morning edition, or the owner paused model work"
     if verifier_failures >= 3:
         return "LITE", f"the checker failed {verifier_failures} times in a row"
     if oldest_unverified and now - oldest_unverified > timedelta(minutes=float(doctor["lite_queue_minutes"])):

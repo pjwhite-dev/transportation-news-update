@@ -3,7 +3,8 @@
 The page at advancedtransportation.live (the site root, GitHub Pages) reads the file from raw.githubusercontent.com, so
 the reader page and the feed are both served by GitHub and no new service is exposed. A push goes out when
 the stories changed (at most every `min_seconds`) and at least every `heartbeat_seconds`, so the page can
-tell readers when updates have stopped. The branch has its own worktree beside this one.
+tell readers when updates have stopped. Overnight (`overnight`, Eastern hours) it goes out once an hour, on the
+hour, whatever changed. The branch has its own worktree beside this one.
 """
 
 from __future__ import annotations
@@ -15,11 +16,21 @@ import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
+from zoneinfo import ZoneInfo
 
 import live_feed
 import newsroom_live
 
 BRANCH = "live-feed"
+EASTERN = ZoneInfo("America/New_York")
+
+
+def overnight(now: datetime, config: dict[str, Any]) -> bool:
+    """True inside the push settings' overnight hours (Eastern), when the public page updates only hourly."""
+    hours = config["push"].get("overnight") or {}
+    if not hours:
+        return False
+    return int(hours["from_hour"]) <= now.astimezone(EASTERN).hour < int(hours["to_hour"])
 
 
 def git(args: list[str], cwd: Path, timeout: float = 90) -> subprocess.CompletedProcess[str]:
@@ -41,6 +52,7 @@ class FeedPusher:
         self.worktree = Path(settings["worktree"])
         self.min_gap = timedelta(seconds=float(settings.get("min_seconds", 180)))
         self.heartbeat = timedelta(seconds=float(settings.get("heartbeat_seconds", 600)))
+        self.config = config
         self.out_dir, self.repo_root, self.run_git, self.clock = out_dir, repo_root, run, clock
         self.last_push: datetime | None = None
         self.last_hash = ""
@@ -60,6 +72,10 @@ class FeedPusher:
     def due(self, feed_hash: str, now: datetime) -> bool:
         if self.last_push is None:
             return True
+        if overnight(now, self.config):
+            # Once an hour, on the hour (Eastern): due when the last push was in an earlier hour.
+            hour = lambda t: t.astimezone(EASTERN).replace(minute=0, second=0, microsecond=0)
+            return hour(self.last_push) < hour(now)
         since = now - self.last_push
         return since >= self.heartbeat or (feed_hash != self.last_hash and since >= self.min_gap)
 

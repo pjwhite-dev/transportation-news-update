@@ -9,6 +9,7 @@ crashes a worker twice is quarantined. Nothing that fails a check is ever shown.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import threading
@@ -34,6 +35,7 @@ from live_store import DROPPED, FIRST_PASS, HEADLINE, QUARANTINED, QUEUED, VERIF
 
 ROOT = Path(__file__).resolve().parent
 EDITION_LOCK = Path(os.environ.get("NEWSROOM_EDITION_LOCK") or ROOT / ".runtime" / "edition.lock")  # override when run from a worktree
+GPU_PAUSE = "gpu_pause.json"  # in the live runtime folder: {"until": ISO time}; the owner's one-off pause of model work
 MIN_WORDS_TO_SUMMARIZE = 25
 
 TRIAGE_SYSTEM = """You file ONE news article for a live transportation-policy news site.
@@ -94,6 +96,21 @@ def edition_running(lock: Path = EDITION_LOCK) -> bool:
             return False
     except OSError:
         return True
+
+
+def gpu_paused(now: datetime | None = None, path: Path | None = None) -> bool:
+    """True until the owner's pause file's "until" time passes; an expired, missing or unreadable file is no pause."""
+    path = path or Path(os.environ.get("NEWSROOM_LIVE_DIR") or ROOT / ".runtime" / "live_site") / GPU_PAUSE
+    try:
+        until = parse_iso(str(json.loads(path.read_text(encoding="utf-8")).get("until", "")))
+    except (OSError, ValueError, AttributeError):
+        return False
+    return until is not None and (now or datetime.now(timezone.utc)) < until
+
+
+def gpu_held() -> bool:
+    """The GPU is not ours: the morning edition is running, or the owner paused model work."""
+    return edition_running() or gpu_paused()
 
 
 def desk_for(section: str, config: dict[str, Any]) -> str:
@@ -186,7 +203,7 @@ class Desk:
         fetch: Callable[[str], tuple[int | None, str, str]] | None = None,
         resolve: Callable[[str], str | None] | None = None,
         clock: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
-        gpu_busy: Callable[[], bool] = edition_running,
+        gpu_busy: Callable[[], bool] = gpu_held,
         health: Health | None = None,
     ) -> None:
         self.store = store

@@ -32,6 +32,7 @@
   var timeFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" });
   var dayFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "short", day: "numeric" });
   var keyFmt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+  var hourFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", hourCycle: "h23" });
   function clock(iso) { return iso ? timeFmt.format(new Date(iso)).replace("AM", "a.m.").replace("PM", "p.m.") : ""; }
   // A source that gives only a date: show when we found it (on that day), never a made-up time.
   function storyTime(story) {
@@ -281,9 +282,20 @@
     }
   }
 
+  // Overnight (feed.overnight, Eastern hours) the public copy goes out once an hour, so a feed made then is not
+  // late until the next hour's has had time to arrive.
+  function overnight(feed) {
+    var span = feed.overnight;
+    if (!PUBLIC || !span) return false;
+    var hour = parseInt(hourFmt.format(new Date(feed.generated)), 10) % 24;
+    return hour >= span.from_hour && hour < span.to_hour;
+  }
+  function hourName(h) { return (h % 12 || 12) + (h < 12 ? " a.m." : " p.m."); }
+
   function level() {
     var feed = state.feed;
-    return Date.now() - new Date(feed.generated).getTime() > STALE_MS ? "FROZEN" : feed.level;
+    var stale = overnight(feed) ? 75 * 60 * 1000 : STALE_MS;
+    return Date.now() - new Date(feed.generated).getTime() > stale ? "FROZEN" : feed.level;
   }
 
   function renderStatus() {
@@ -296,6 +308,7 @@
     var msg = "";
     if (lv === "FROZEN") msg = "Updates are paused since " + clock(feed.generated) + " ET. The stories below were current then.";
     else if (lv === "HEADLINES") msg = "Summaries are paused for a few minutes. New stories appear as headline, source and link.";
+    else if (overnight(feed)) msg = "Overnight this page updates once an hour, until " + hourName(feed.overnight.to_hour) + " ET.";
     banner.hidden = !msg;
     banner.className = "banner wrap" + (lv === "FROZEN" ? " warn" : "");
     banner.textContent = msg;

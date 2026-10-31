@@ -19,7 +19,7 @@ import live_posts
 import news_engine
 import requests
 
-from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, settle_published
+from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, gpu_paused, settle_published
 from live_override import OverrideDesk, parse_request
 from live_push import FeedPusher
 from live_sources import Source, Wire, build_sources, load_config, rest_for
@@ -442,6 +442,31 @@ class FeedPushTests(unittest.TestCase):
         self.assertIn("git push failed", pusher.error)
         self.assertIsNone(pusher.last_push)
 
+    def test_overnight_the_page_updates_once_an_hour_on_the_hour(self):
+        self.now = datetime(2026, 10, 31, 3, 50, tzinfo=timezone.utc)  # 11:50 p.m. Eastern (EDT)
+        pusher = self.pusher()
+        self.write_feed("a")
+        self.assertTrue(pusher.push_once())
+        self.now += timedelta(minutes=10, seconds=5)  # 12:00 a.m.: the first hourly push, though nothing changed
+        self.assertTrue(pusher.push_once())
+        for minutes in (5, 20, 59):  # changes and heartbeats wait for the next hour
+            self.now = datetime(2026, 10, 31, 4, minutes, tzinfo=timezone.utc)
+            self.write_feed(f"b{minutes}")
+            self.assertFalse(pusher.push_once())
+        self.now = datetime(2026, 10, 31, 5, 0, 30, tzinfo=timezone.utc)  # 1 a.m.
+        self.assertTrue(pusher.push_once())
+        self.now = datetime(2026, 10, 31, 8, 0, 10, tzinfo=timezone.utc)  # 4 a.m.: back to every few minutes
+        self.assertTrue(pusher.push_once())
+        self.write_feed("c")
+        self.now += timedelta(minutes=3)
+        self.assertTrue(pusher.push_once())
+
+    def test_the_feed_tells_the_page_the_overnight_hours(self):
+        self.assertEqual(CONFIG["push"]["overnight"], {"from_hour": 0, "to_hour": 4})
+        script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        self.assertIn("feed.overnight", script)
+        self.assertIn("once an hour", script)
+
     def test_the_push_never_forces(self):
         source = Path("live_push.py").read_text(encoding="utf-8")
         self.assertNotIn("--force", source)
@@ -698,6 +723,15 @@ class DeskTests(unittest.TestCase):
 
     def test_no_edition_lock_means_the_gpu_is_free(self):
         self.assertFalse(edition_running(Path(tempfile.gettempdir()) / "no-such-edition.lock"))
+
+    def test_the_owners_gpu_pause_lasts_until_its_time_then_lapses(self):
+        path = Path(tempfile.mkdtemp()) / "gpu_pause.json"
+        self.assertFalse(gpu_paused(NOW, path))  # no file
+        path.write_text(json.dumps({"until": iso(NOW + timedelta(hours=1))}), encoding="utf-8")
+        self.assertTrue(gpu_paused(NOW, path))
+        self.assertFalse(gpu_paused(NOW + timedelta(hours=1), path))  # one time only: it lapses by itself
+        path.write_text("not json", encoding="utf-8")
+        self.assertFalse(gpu_paused(NOW, path))
 
 
 class WireTests(unittest.TestCase):

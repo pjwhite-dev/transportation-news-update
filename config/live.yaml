@@ -143,6 +143,8 @@ push:                       # feed.json to the live-feed branch, read by the pub
   worktree: "C:/newsroom/.wt/live-feed"
   min_seconds: 180          # at most this often when stories change
   heartbeat_seconds: 600    # at least this often, so the page can tell when updates have stopped
+  # Midnight to 4 a.m. Eastern the public page updates once an hour, on the hour (owner, 2026-10-30).
+  overnight: {from_hour: 0, to_hour: 4}
 
 publish:
   every_seconds: 15         # feed.json is rewritten at most this often, only when something changed
