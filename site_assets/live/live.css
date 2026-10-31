@@ -198,6 +198,7 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
 .also-more{appearance:none;border:0;background:none;padding:0;color:var(--steel);font:600 .8rem var(--sans);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .story.target{background:linear-gradient(90deg,var(--hi),transparent 70%);box-shadow:-12px 0 0 var(--hi)}
 .scope{flex:none;display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;margin-right:4px}
+.scope[hidden]{display:none}
 .scope button{appearance:none;border:0;background:var(--card);color:var(--faint);padding:6px 14px;min-height:38px;font:600 .84rem var(--sans);cursor:pointer}
 .scope button[aria-pressed="true"]{background:var(--toggle-on);color:var(--toggle-on-ink)}
 .feed .world-more{color:var(--soft);font-weight:500;border-style:dashed}

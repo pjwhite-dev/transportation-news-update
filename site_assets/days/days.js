@@ -7,7 +7,7 @@
   var PUBLIC = !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !!(feedMeta && feedMeta.content);
   var BASE = PUBLIC ? feedMeta.content.replace(/feed\.json$/, "days/") : "./";
   var PAGE = 40;
-  var state = { index: null, day: null, files: {}, q: "", limit: PAGE, all: false };
+  var state = { index: null, day: null, files: {}, q: "", limit: PAGE, view: "us" };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -24,6 +24,7 @@
     a.rel = "noopener";
     return a;
   }
+  function store(key, value) { try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key, value); } catch (e) { return null; } }
   function getJson(name) {
     return fetch(BASE + name + (PUBLIC ? "" : "?t=" + Date.now()), { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
@@ -123,6 +124,7 @@
   function saveAddress() {
     var parts = [];
     if (state.day) parts.push("d=" + state.day);
+    if (state.view === "all") parts.push("view=all");
     if (state.q.trim()) parts.push("q=" + encodeURIComponent(state.q.trim()));
     history.replaceState(null, "", location.pathname + (parts.length ? "?" + parts.join("&") : "") + location.hash);
   }
@@ -146,13 +148,29 @@
     box.appendChild(more);
   }
 
+  // U.S. focus or Everything, as on the live page (the same saved choice); a search looks through everything.
+  function renderScope() {
+    var box = $("scope");
+    box.textContent = "";
+    box.hidden = !state.day;
+    [["us", "U.S. focus", "Stories about U.S. government, companies and places"], ["all", "Everything", "Also stories from abroad with no U.S. angle"]].forEach(function (v) {
+      var b = el("button", null, v[1]);
+      b.type = "button";
+      b.title = v[2];
+      b.setAttribute("aria-pressed", String(state.view === v[0]));
+      b.addEventListener("click", function () { state.view = v[0]; store("live-view", state.view); saveAddress(); render(); });
+      box.appendChild(b);
+    });
+  }
+
   // One day: its stories newest first; a search narrows them.
   function renderDay() {
     var file = state.files[state.day], box = $("feed"), ws = words(state.q), desks = deskNames(file);
     box.textContent = "";
     $("feed-head").classList.toggle("searching", ws.length > 0);
-    var list = file.stories.filter(function (s) { return !ws.length || matches(s, ws, desks); });
-    $("feed-title").textContent = ws.length ? (list.length === 1 ? "1 story matches" : list.length + " stories match") : (file.stories.length === 1 ? "1 story" : file.stories.length + " stories");
+    var list = file.stories.filter(function (s) { return ws.length ? matches(s, ws, desks) : state.view === "all" || s.scope !== "world"; });
+    var away = ws.length ? 0 : file.stories.length - list.length;
+    $("feed-title").textContent = ws.length ? (list.length === 1 ? "1 story matches" : list.length + " stories match") : (list.length === 1 ? "1 story" : list.length + " stories");
     if (ws.length) {
       var found = el("p", "found");
       found.appendChild(document.createTextNode(list.length ? "" : "Nothing on this day matches “" + state.q.trim() + "”. "));
@@ -163,6 +181,12 @@
     }
     list.slice(0, state.limit).forEach(function (s) { box.appendChild(storyNode(s, desks, ws)); });
     moreButton(box, list.length - state.limit, renderDay);
+    if (away) {
+      var world = el("button", "more world-more", away + (away === 1 ? " story from abroad is" : " stories from abroad are") + " hidden. Show everything");
+      world.type = "button";
+      world.addEventListener("click", function () { state.view = "all"; store("live-view", "all"); saveAddress(); render(); });
+      box.appendChild(world);
+    }
     jumpToStory();
   }
 
@@ -216,6 +240,7 @@
 
   function render() {
     renderNav();
+    renderScope();
     if (state.day && state.files[state.day]) renderDay();
     else if (!state.day) renderAll();
   }
@@ -255,6 +280,7 @@
   var params = new URLSearchParams(location.search), d = params.get("d") || "";
   state.day = /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null;
   state.q = params.get("q") || "";
+  state.view = params.get("view") === "all" || (!params.has("view") && store("live-view") === "all") ? "all" : "us";
   $("q").value = state.q;
   getJson("index.json").then(function (index) { state.index = index; render(); }, function () {
     state.index = { days: [] };
