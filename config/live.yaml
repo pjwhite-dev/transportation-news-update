@@ -10,11 +10,11 @@ site:
   feed_limit: 300         # newest stories in feed.json; the page shows 25 at a time
   ticker_items: 24
 
-# Topic desks shown to readers. Each of the edition's sections belongs to exactly one desk.
+# Topic desks shown to readers. Each of the edition's sections belongs to exactly one desk, or is in topic_sections.
+# No policy desk (owner, 2026-10-30): a rule, law or agency action counts only when it is about one of these
+# topics, so it goes on that topic's desk ("California lawmakers press regulators on AVs" is Autonomous Vehicles).
+topic_sections: ["Federal Policy & Implementation", "Federal Register", "Surface Transportation Reauthorization"]
 desks:
-  - key: policy
-    name: "Policy & Regulation"
-    sections: ["Federal Policy & Implementation", "Federal Register", "Surface Transportation Reauthorization"]
   - key: drones
     name: "Drones & Airspace"
     sections: ["UAS / Drones", "UTM / Airspace Integration"]

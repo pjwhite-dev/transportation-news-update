@@ -19,7 +19,7 @@ import live_posts
 import news_engine
 import requests
 
-from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, gpu_paused, settle_published
+from live_desk import Desk, Health, date_only, desk_for, edition_running, file_story, gpu_paused, settle_published, triage_schema
 from live_override import OverrideDesk, parse_request
 from live_push import FeedPusher
 from live_sources import Source, Wire, build_sources, load_config, rest_for
@@ -672,9 +672,24 @@ class DeskTests(unittest.TestCase):
     def test_the_triage_model_picks_the_category(self):
         sid = self.queue()
         w = writer()
-        w.answers["live_triage"] = {"relevant": True, "category": "policy", "reason": "FAA approval"}
+        w.answers["live_triage"] = {"relevant": True, "category": "air", "reason": "FAA approval"}
         self.assertEqual(self.desk(w=w).first_pass(sid), FIRST_PASS)
-        self.assertEqual(self.store.get(sid)["desk"], "policy")
+        self.assertEqual(self.store.get(sid)["desk"], "air")
+
+    def test_there_is_no_policy_desk_policy_goes_on_the_desk_it_is_about(self):
+        # Owner, 2026-10-30: "California Lawmakers ... Reign In Autonomous Vehicles" is Autonomous Vehicles.
+        self.assertNotIn("policy", [d["key"] for d in CONFIG["desks"]])
+        self.assertNotIn("policy", triage_schema(CONFIG)["properties"]["category"]["enum"])
+        cases = {
+            "California Lawmakers and Drivers Pressure Regulators to Reign In Autonomous Vehicles": "av",
+            "FCC Opens 800 MHz Spectrum to Drones as Part 108 Deadline Nears": "drones",
+            "FAA Official Says Commercial eVTOL Flights Before Type Certification Would Be Very Limited": "air",
+            "FCC proposes spectrum changes for counter-UAS detection": "sec",
+            "Blaine receives $66 million to build overpass at Bell Road rail crossing": "rail",
+            "White House makes Section 232 determination regarding foreign-made robots": "robot",
+        }
+        for title, key in cases.items():
+            self.assertEqual(file_story("Federal Policy & Implementation", title, CONFIG), key, title)
 
     def test_unrecognized_stories_are_not_filed_as_drone_news(self):
         # 2026-10-30: freight rail earnings and a train-theft arrest were labelled "Drones & Airspace".
@@ -714,7 +729,7 @@ class DeskTests(unittest.TestCase):
         self.assertEqual(self.store.get(sid)["source"], "Federal Register")
 
     def test_sections_map_to_one_desk_each(self):
-        sections = [s for d in CONFIG["desks"] for s in d["sections"]]
+        sections = [s for d in CONFIG["desks"] for s in d["sections"]] + CONFIG["topic_sections"]
         self.assertEqual(len(sections), len(set(sections)))
         import news_engine
 

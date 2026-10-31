@@ -44,7 +44,8 @@ airspace integration, autonomous vehicles or trucks, robotics, supersonic aviati
 uncrewed maritime or ground systems, or U.S. transportation policy on those topics. Product reviews, deals,
 how-to guides, opinion columns, sports and celebrity items are not relevant. Use only the ARTICLE."""
 TRIAGE_CATEGORY = """category: the one reader category that fits best, by key: {choices}. "rail" covers all rail,
-freight and passenger; "policy" covers U.S. government action (rules, laws, Congress, agencies) whatever the vehicle."""
+freight and passenger. Government action (rules, laws, Congress, agencies, tariffs) goes in the category of the
+vehicle or system it is about: an AV law is "av", an FCC drone-spectrum rule is "drones"."""
 
 
 def triage_schema(config: dict[str, Any]) -> dict[str, Any]:
@@ -124,10 +125,25 @@ _DRONE_WORDS = re.compile(r"\b(?:drones?|uas|uavs?|unmanned|uncrewed|quadcopter|
 _RAIL_WORDS = re.compile(r"\b(?:rail(?:way|road)?s?|trains?|locomotives?|rolling stock|amtrak|metro|subway|tram)\b", re.I)
 
 
+# A policy story goes on the desk of what it is about; the first of these whose words it has, in this order.
+_TOPIC_WORDS = (
+    ("sec", re.compile(r"\b(?:counter-?(?:uas|drones?)|c-uas|military|army|navy|air force|pentagon|defen[cs]e|munitions?)\b", re.I)),
+    ("av", re.compile(r"\b(?:autonomous (?:vehicles?|trucks?|driving)|automated (?:vehicles?|driving)|self-driving|driverless|robotaxis?|adas|waymo)\b", re.I)),
+    ("air", re.compile(r"\b(?:evtols?|air taxis?|advanced air mobility|aam|vertiports?|powered-lift|supersonic)\b", re.I)),
+    ("drones", _DRONE_WORDS),
+    ("rail", _RAIL_WORDS),
+    ("robot", re.compile(r"\brobot(?:s|ics)?\b", re.I)),
+)
+
+
 def file_story(section: str, text: str, config: dict[str, Any]) -> str:
     """The category before any model sees the story. The edition's infer_section ends in "UAS / Drones" for
     anything it does not recognize, so a story with no drone words is filed by rail words, else in the last
-    category, never as a drone story (the triage model's category replaces this when it runs)."""
+    category, never as a drone story; a policy section is filed by what the story is about (the triage model's
+    category replaces this when it runs)."""
+    keys = {d["key"] for d in config["desks"]}
+    if section in (config.get("topic_sections") or []):
+        return next((key for key, words in _TOPIC_WORDS if key in keys and words.search(text)), config["desks"][-1]["key"])
     if section == "UAS / Drones" and not _DRONE_WORDS.search(text):
         has_rail = any(d["key"] == "rail" for d in config["desks"])
         return "rail" if has_rail and _RAIL_WORDS.search(text) else config["desks"][-1]["key"]
