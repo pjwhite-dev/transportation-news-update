@@ -30,7 +30,7 @@ every worker is beating; a stale file means restart the process). Settings: `con
 | First pass | writer + code | one or two sentences; every name, number and date must be in the article; one strict rewrite. Page label "Quick summary" | headline and link only |
 | Check | verifier (gemma, other family) | every sentence entailed by the article (grounding.ground_summary). Page label "Summary double-checked" (never "verified": we check our summary, not the reporting) | two failures: headline only |
 | Score | writer, thinking on | impact 0-5 and action class; code adds pickup, official source, U.S. relevance, novelty, penalties | two failures: stays first pass |
-| Lead | code | `live_lead.decide`: bar = 50 + (lead + 8 - 50)·e^(-h/8); 45 min minimum; 90+ after 20 min; 30 h stale rule | none |
+| Lead | code | `live_lead.decide`: bar = 50 + (lead + 8 - 50)·e^(-h/8); 45 min minimum; 90+ after 20 min; 30 h stale rule | with no lead chosen, the top-scored checked story of the last 48 h (`live_feed.top_story`; "Top story, last 48 hours") |
 
 Markets: `live_market.py` refreshes the Finnhub watchlist every 5 minutes while NYSE is open and once after each
 close (`.runtime/live_site/market.json`, falling back to the edition's `data/market.json`).
@@ -58,7 +58,8 @@ asking the agencies to let the reader in is in `docs/agency-access-request.md`.
 
 ## Doctor levels
 
-LIVE → LITE (checker unhealthy, its queue older than 30 min, or the edition has the GPU) → HEADLINES (writer and
+LIVE → LITE (checker unhealthy, its queue older than 30 min, or the edition has the GPU; the checker keeps working
+through its queue at LITE whenever it has the GPU) → HEADLINES (writer and
 fallback down) → FROZEN (the feed cannot be written; the page itself also shows "paused since" when feed.json is
 more than 10 minutes old locally, 25 minutes on the public site). Two writer failures in a row switch to qwen3.6; the primary is retried every 15 min.
 A crashed worker thread is restarted; a story that crashes a worker twice is quarantined.
@@ -77,7 +78,10 @@ A crashed worker thread is restarted; a story that crashes a worker twice is qua
   as the device's reduced-motion setting does; link previews use `og-card.png` (`scripts/make_og_card.py`).
   Search (the box above the categories, or "/") looks through every story in feed.json in the browser, whatever
   the category and U.S. focus switches say, and is in the address (`?q=waymo`). Light or dark follows the device
-  (`prefers-color-scheme`; tokens at the top of live.css). Today's stories show "N min/h ago", earlier ones the
+  (`prefers-color-scheme`; tokens at the top of live.css) until the reader picks the other with the round button at
+  the top right (localStorage `live-theme`, set in each page's head before it paints; picking the device's own
+  setting again goes back to following it). The page always has a headline: with no lead chosen, the top-rated
+  story of the last 48 hours. Today's stories show "N min/h ago", earlier ones the
   clock time under their day; the exact time is on hover; a source that gives only a date says "No time given".
 - **Past days** (`live_days.py`; https://advancedtransportation.live/days/, page in `site_assets/days/`): every
   finished Eastern day as `days/<YYYY-MM-DD>.json` plus `days/index.json`, the same public fields and grouping as
