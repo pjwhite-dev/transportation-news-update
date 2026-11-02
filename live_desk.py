@@ -631,7 +631,7 @@ class Desk:
             if take:
                 last = now
                 for story in waiting[:take]:
-                    if stop.is_set():
+                    if stop.is_set() or self.gpu_busy():  # a pause takes effect between stories, not after the batch
                         break
                     beat()
                     self.verify(story["id"])

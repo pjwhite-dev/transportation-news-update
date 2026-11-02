@@ -1002,6 +1002,16 @@ class DoctorTests(unittest.TestCase):
         busy[0] = False
         desk.level = "HEADLINES"
         self.assertEqual(desk.slow_round(200, NOW, never), 0)
+        # Owner, 2026-11-02: a GPU pause stops the checker after the story in hand, not after the whole batch.
+        desk.level = "LIVE"
+        for n in range(6):
+            desk.store.add_story({"id": f"w{n}", "url": f"https://example.com/w{n}", "title": f"Story {n}", "published": iso(NOW)}, NOW)
+            desk.store.update(f"w{n}", NOW, status=FIRST_PASS, shown_at=iso(NOW))
+        checked, stop = [], threading.Event()
+        desk.verify = lambda sid: (checked.append(sid), busy.__setitem__(0, True))
+        desk.check_stale_lead = stop.set
+        desk.run_slow(stop)
+        self.assertEqual(len(checked), 1)
 
     def test_writer_switches_to_the_fallback_and_back(self):
         store = Store(":memory:")
