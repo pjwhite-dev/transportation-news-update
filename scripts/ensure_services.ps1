@@ -38,14 +38,6 @@ if ($running -notmatch "Ubuntu") {
     Start-ScheduledTask -TaskName "newsroom-wsl" -ErrorAction SilentlyContinue
 }
 
-# The local newsroom dashboard (http://127.0.0.1:8765). It is only a view, so it never alerts.
-$dashboardUp = $false
-try { $dashboardUp = (Invoke-WebRequest "http://127.0.0.1:8765/api/state" -UseBasicParsing -TimeoutSec 10).StatusCode -eq 200 } catch { }
-if (-not $dashboardUp) {
-    Note "Dashboard not answering; starting newsroom-dashboard."
-    Start-ScheduledTask -TaskName "newsroom-dashboard" -ErrorAction SilentlyContinue
-}
-
 # The live site (live_service.py). Its heartbeat file is refreshed only while every worker is healthy, so a
 # missing or stale file means the process is down or hung: restart its task. A task started in the last
 # 10 minutes is still loading its models and is left alone, and a disabled task (the owner paused the site) is

@@ -44,10 +44,6 @@ $liveLabel = "Edition " + (Get-Date -Format "yyyy-MM-dd")
 if ($env:NEWSROOM_ATTEMPT) { $liveLabel += " (retry $($env:NEWSROOM_ATTEMPT))" }
 Send-Live run-start $liveMode $liveLabel
 $env:NEWSROOM_RUN_ACTIVE = "1"
-if (-not $DryRun -and -not $env:NEWSROOM_ATTEMPT) {
-    # The 04:30 run opens the dashboard in the browser (owner's request, 2026-10-29).
-    try { Start-Process "http://127.0.0.1:8765/" } catch { }
-}
 try {
     if (-not $DryRun) {
         # The tracker ledger is regenerated from the Federal Register on every run (and by the
