@@ -949,6 +949,26 @@ class DoctorTests(unittest.TestCase):
         self.assertEqual(self.level(writer_failures=3, verifier_failures=3), "HEADLINES")
         self.assertEqual(self.level(feed_ok=False, writer_failures=3), "FROZEN")
 
+    def test_a_long_queue_never_stops_the_checker(self):
+        # Oct. 31 - Nov. 2, 2026: the queue grew past 30 minutes, the doctor went to LITE, LITE stopped the checker,
+        # and so the queue could never shrink. Nothing was checked or scored, and nothing could lead, for two days.
+        busy = [False]
+        desk = Desk(Store(":memory:"), CONFIG, writer=writer(), verifier=verifier(), fetch=fake_page(NOW), resolve=lambda u: None, clock=lambda: NOW, gpu_busy=lambda: busy[0])
+        never = datetime.min.replace(tzinfo=timezone.utc)
+        for level in ("LIVE", "LITE"):
+            desk.level = level
+            self.assertEqual(desk.slow_round(200, NOW, NOW), 6)  # a full batch goes at once
+            self.assertEqual(desk.slow_round(2, NOW, NOW), 0)  # a short queue waits up to 10 minutes
+            self.assertEqual(desk.slow_round(2, NOW, never), 2)
+        desk.health.failures["verifier"] = 3  # a failing checker: one story every 10 minutes tests it
+        self.assertEqual((desk.slow_round(200, NOW, never), desk.slow_round(200, NOW, NOW)), (1, 0))
+        desk.health.failures["verifier"] = 0
+        busy[0] = True  # the morning edition has the GPU
+        self.assertEqual(desk.slow_round(200, NOW, never), 0)
+        busy[0] = False
+        desk.level = "HEADLINES"
+        self.assertEqual(desk.slow_round(200, NOW, never), 0)
+
     def test_writer_switches_to_the_fallback_and_back(self):
         store = Store(":memory:")
         primary, fallback = writer(), writer()

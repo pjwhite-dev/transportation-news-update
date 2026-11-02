@@ -2,7 +2,8 @@
 
 Levels step down instead of stopping and climb back by themselves:
   LIVE       every lane running
-  LITE       the checker is unhealthy, its queue is too old, or the edition has the GPU; first pass keeps flowing
+  LITE       the checker is unhealthy, its queue is too old, or the edition has the GPU; first pass keeps flowing,
+             and the checker keeps working through its queue whenever it has the GPU
   HEADLINES  the writer (and its fallback) is down; new stories show as headline, source and link
   FROZEN     the feed cannot be written; the page keeps the last good feed and says when it paused
 A crashed worker thread is restarted here; a hung one stops the heartbeat file, and the services check restarts

@@ -236,7 +236,7 @@ class Desk:
         self.resolve = resolve or (lambda url: url_resolver.resolve_url(url, session))
         self.write = grounding.make_writer(writer)
         self.model_slots = threading.BoundedSemaphore(int(config["desk"]["parallel_stories"]))
-        self.level = "LIVE"  # set by the doctor; HEADLINES skips the writer, LITE skips the slow lane
+        self.level = "LIVE"  # set by the doctor; HEADLINES skips the writer, LITE slows the slow lane (slow_round)
 
     # --- fast lane --------------------------------------------------------------------------------------------
     def first_pass(self, story_id: str) -> str:
@@ -605,17 +605,29 @@ class Desk:
                     continue
                 list(pool.map(lambda s: self.first_pass(s["id"]), batch))
 
-    def run_slow(self, stop: threading.Event, beat: Callable[[], None] = lambda: None) -> None:
+    def slow_round(self, waiting: int, now: datetime, last: datetime) -> int:
+        """How many waiting stories the slow lane checks now (0: not yet). A long queue puts the doctor at LITE, and
+        LITE must not stop the lane that clears the queue: from Oct. 31 to Nov. 2, 2026 it did, and nothing was
+        checked or could lead for two days. After repeated checker failures, one story a round tests it instead."""
         every = timedelta(minutes=float(self.config["desk"]["verify_every"]))
+        size = int(self.config["desk"]["verify_batch"])
+        if not waiting or self.level not in ("LIVE", "LITE") or self.gpu_busy():
+            return 0
+        if self.health.failures.get("verifier", 0) >= 3:
+            return 1 if now - last >= every else 0
+        return min(waiting, size) if waiting >= size or now - last >= every else 0
+
+    def run_slow(self, stop: threading.Event, beat: Callable[[], None] = lambda: None) -> None:
         size = int(self.config["desk"]["verify_batch"])
         last = datetime.min.replace(tzinfo=timezone.utc)
         while not stop.is_set():
             beat()
             waiting = self.store.by_status(FIRST_PASS, limit=size)
             now = self.clock()
-            if waiting and self.level == "LIVE" and not self.gpu_busy() and (len(waiting) >= size or now - last >= every):
+            take = self.slow_round(len(waiting), now, last)
+            if take:
                 last = now
-                for story in waiting:
+                for story in waiting[:take]:
                     if stop.is_set():
                         break
                     beat()
