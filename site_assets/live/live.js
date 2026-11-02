@@ -201,21 +201,29 @@
   function renderLead(feed) {
     var main = $("lead");
     main.textContent = "";
-    var lead = feed.lead;
+    // The feed always names a lead when it has stories; the newest story stands in for an older feed without one.
+    var lead = feed.lead || (feed.stories[0] && Object.assign({ since: feed.stories[0].published, pick: "top" }, feed.stories[0]));
     // Big only while it is news: its first hour, a Significant story, or the owner's pick. Otherwise a compact card,
     // so the newest stories are on the first screen.
     var big = lead && ((lead.held_until && new Date(lead.held_until) > Date.now()) || lead.impact === "significant"
       || Date.now() - new Date(lead.since).getTime() < 3600e3);
     main.parentNode.classList.toggle("compact", !!lead && !big);
     if (!lead) {
-      main.appendChild(el("p", "lead-empty", "No story so far has been significant enough to lead the page. The newest stories are below, as they come in."));
+      main.appendChild(el("p", "lead-empty", "The first stories are on their way."));
     } else {
       var eye = el("p", "eyebrow");
       eye.appendChild(el("span", "tag", "Lead"));
       if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
-      var day = dayLabel(lead.since);
-      var since = el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since));
-      since.title = "Lead since " + exact(lead.since);
+      var since;
+      if (lead.pick === "top") {
+        // No story has been big enough to take the lead, so the top-rated one of the last two days holds it.
+        since = el("span", "since", "Top story, last 48 hours");
+        since.title = "No newer story has rated high enough to take the lead. Published " + exact(lead.since) + ".";
+      } else {
+        var day = dayLabel(lead.since);
+        since = el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since));
+        since.title = "Lead since " + exact(lead.since);
+      }
       eye.appendChild(since);
       main.appendChild(eye);
       var h = el("h1");

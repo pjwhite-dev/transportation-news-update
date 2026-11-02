@@ -19,6 +19,32 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0A1424">
 <meta name="color-scheme" content="light dark">
+<script>
+/* Light or dark: the device's setting, unless the reader chose the other with the button at the top right (kept in
+   this browser only; choosing the device's own setting again goes back to following the device). */
+(function () {
+  var root = document.documentElement, device = window.matchMedia("(prefers-color-scheme: dark)"), KEY = "live-theme";
+  function chosen() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function label() {
+    var b = document.getElementById("theme");
+    if (!b) return;
+    b.hidden = false;
+    b.title = root.dataset.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme";
+    b.setAttribute("aria-label", b.title);
+  }
+  function apply() { root.dataset.theme = chosen() || (device.matches ? "dark" : "light"); label(); }
+  apply();
+  if (device.addEventListener) device.addEventListener("change", apply);
+  document.addEventListener("DOMContentLoaded", label);
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest || !e.target.closest("#theme")) return;
+    var next = root.dataset.theme === "dark" ? "light" : "dark";
+    try { if ((next === "dark") === device.matches) localStorage.removeItem(KEY); else localStorage.setItem(KEY, next); } catch (err) {}
+    root.dataset.theme = next;
+    label();
+  });
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -49,6 +75,10 @@
       <span class="dot" id="dot" aria-hidden="true"></span>
       <span id="status-text">Connecting…</span>
     </div>
+    <button type="button" class="theme" id="theme" hidden>
+      <svg class="to-dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      <svg class="to-light" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+    </button>
   </div>
 </header>
 

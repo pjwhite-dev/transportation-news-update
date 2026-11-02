@@ -27,6 +27,7 @@ LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (advancedtra
 DAYS = ROOT / "site_assets" / "days"  # the daily archive page (advancedtransportation.live/days/; live_days.py)
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
+TOP_WINDOW = timedelta(hours=48)  # with no lead chosen, the top-rated story of this window leads (the page always has one)
 
 
 def public_story(story: dict[str, Any]) -> dict[str, Any]:
@@ -87,6 +88,17 @@ def grouped_story(story: dict[str, Any], groups: dict[str, list[dict[str, Any]]]
     return out
 
 
+def top_story(stories: list[dict[str, Any]], now: datetime) -> dict[str, Any] | None:
+    """The page's headline when the lead desk has none (a quiet day, or the last lead aged out): the highest-scored
+    double-checked story of the last 48 hours; before any is scored, the newest summarized story, then any story."""
+    recent = [s for s in stories if (parse_iso(s["published"]) or now) >= now - TOP_WINDOW]
+    scored = [s for s in recent if s["status"] == VERIFIED and s["score"] is not None]
+    if scored:
+        return max(scored, key=lambda s: (s["score"], s["published"]))
+    summarized = [s for s in recent if s["status"] == FIRST_PASS]
+    return max(summarized or recent, key=lambda s: s["published"], default=None)
+
+
 def build_feed(
     store: Store,
     config: dict[str, Any],
@@ -112,6 +124,10 @@ def build_feed(
             held = store.get_state(live_lead.OVERRIDE_KEY) or {}
             if held.get("story_id") == story["id"] and (parse_iso(str(held.get("until", ""))) or now) > now:
                 lead["held_until"] = held["until"]  # the owner chose this lead; the /login page shows until when
+    if lead is None:
+        story = top_story(stories, now)
+        if story is not None:
+            lead = {**grouped(story), "since": story["published"], "pick": "top"}
 
     day = now - timedelta(hours=24)
     lead_group = (by_id[lead["id"]]["group_id"] or lead["id"]) if lead and lead["id"] in by_id else (lead or {}).get("id")

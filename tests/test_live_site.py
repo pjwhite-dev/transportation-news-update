@@ -323,6 +323,21 @@ class PublicPageTests(unittest.TestCase):
         self.assertNotIn("verif", days.lower())
         self.assertNotIn("login", days.lower())
 
+    def test_a_theme_button_overrides_the_device(self):
+        # 2026-11-02, the owner: a small light/dark toggle at the top right. The device's setting until the reader
+        # picks; the choice is set in the head (no white flash) and the same on the live page and Past days.
+        style = Path("site_assets/live/live.css").read_text(encoding="utf-8")
+        for path in ("site_assets/live/index.html", "site_assets/days/index.html"):
+            page = Path(path).read_text(encoding="utf-8")
+            head, body = page.split("</head>")
+            self.assertIn("root.dataset.theme", head)
+            self.assertIn('"live-theme"', head)
+            self.assertIn('id="theme"', body)
+            self.assertLess(body.index('id="theme"'), body.index("</header>"))  # in the top bar
+        self.assertIn(":root[data-theme=dark]{", style)
+        self.assertIn(":root:not([data-theme])", style)  # without the script, still the device's setting
+        self.assertIn(".theme[hidden]", style)
+
     def test_the_login_page_reads_the_same_feed_and_never_says_verified(self):
         login = Path("site_assets/login/index.html").read_text(encoding="utf-8")
         live = Path("site_assets/live/index.html").read_text(encoding="utf-8")
@@ -999,12 +1014,39 @@ class FeedTests(unittest.TestCase):
 
     def test_minor_stories_stay_out_of_developing(self):
         store = Store(":memory:")
-        for sid, score in (("big", 62), ("minor", 15)):
+        for sid, score in (("big", 62), ("mid", 45), ("minor", 15)):
             store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=1))}, NOW)
             store.update(sid, NOW, status=VERIFIED, score=score, shown_at=iso(NOW), desk="air")
         feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
-        self.assertEqual(feed["developing"], ["big"])
-        self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "minor"})  # both stay in the feed
+        self.assertEqual(feed["lead"]["id"], "big")  # no lead chosen: the top-rated story leads, so it is not Developing
+        self.assertEqual(feed["developing"], ["mid"])
+        self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "mid", "minor"})  # all stay in the feed
+
+    def test_the_page_always_has_a_headline(self):
+        # 2026-11-02, the owner: never "no story so far has been significant enough to lead". With no lead chosen
+        # (a quiet day, or the last lead aged out) the top-rated checked story of the last 48 hours leads.
+        store = Store(":memory:")
+        for sid, score, hours in (("old-best", 80, 50), ("best", 35, 30), ("newer", 20, 2)):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=hours))}, NOW)
+            store.update(sid, NOW, status=VERIFIED, score=score, shown_at=iso(NOW), desk="air")
+        feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual((feed["lead"]["id"], feed["lead"]["pick"]), ("best", "top"))  # 50 hours old is out of the window
+        self.assertEqual(feed["lead"]["since"], iso(NOW - timedelta(hours=30)))
+        store.set_lead("newer", NOW, 20, None, "the desk's choice")
+        feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual(feed["lead"]["id"], "newer")  # a lead the desk or the owner chose comes first
+        self.assertNotIn("pick", feed["lead"])
+        store.set_lead("", NOW, 0, None, "cleared")
+        self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "best")
+        # Before anything is scored, the newest summarized story leads.
+        bare = Store(":memory:")
+        for sid, hours in (("a", 3), ("b", 1)):
+            bare.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=hours))}, NOW)
+            bare.update(sid, NOW, status=FIRST_PASS, shown_at=iso(NOW), desk="air")
+        self.assertEqual(live_feed.build_feed(bare, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "b")
+        script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        self.assertIn("Top story, last 48 hours", script)
+        self.assertNotIn("significant enough to lead", script)
 
     def test_write_site_copies_the_page_and_writes_the_feed(self):
         with tempfile.TemporaryDirectory() as tmp:
