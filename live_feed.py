@@ -90,8 +90,9 @@ def grouped_story(story: dict[str, Any], groups: dict[str, list[dict[str, Any]]]
 
 def top_story(stories: list[dict[str, Any]], now: datetime) -> dict[str, Any] | None:
     """The page's headline when the lead desk has none (a quiet day, or the last lead aged out): the highest-scored
-    double-checked story of the last 48 hours; before any is scored, the newest summarized story, then any story."""
-    recent = [s for s in stories if (parse_iso(s["published"]) or now) >= now - TOP_WINDOW]
+    double-checked story of the last 48 hours; before any is scored, the newest summarized story, then any story.
+    Never a war story (live_lead.is_war)."""
+    recent = [s for s in stories if (parse_iso(s["published"]) or now) >= now - TOP_WINDOW and not live_lead.is_war(s)]
     scored = [s for s in recent if s["status"] == VERIFIED and s["score"] is not None]
     if scored:
         return max(scored, key=lambda s: (s["score"], s["published"]))
@@ -124,6 +125,8 @@ def build_feed(
             held = store.get_state(live_lead.OVERRIDE_KEY) or {}
             if held.get("story_id") == story["id"] and (parse_iso(str(held.get("until", ""))) or now) > now:
                 lead["held_until"] = held["until"]  # the owner chose this lead; the /login page shows until when
+            elif live_lead.is_war(story):
+                lead = None  # chosen before war stories were kept from the lead; the owner's own pick stands
     if lead is None:
         story = top_story(stories, now)
         if story is not None:

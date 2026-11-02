@@ -120,6 +120,40 @@ class LeadRuleTests(unittest.TestCase):
         self.assertFalse(live_lead.decide(None, self.candidate(99, published=NOW - timedelta(hours=13)), NOW).swap)
         self.assertTrue(live_lead.decide(None, self.candidate(50), NOW).swap)
 
+    def test_war_stories_are_told_apart_from_defense_news(self):
+        # Owner, 2026-11-02: "make sure the top story isn't a war story". Headlines from the page that week.
+        war = (
+            "Ukrainian Drone Strike Sets Major Russian Oil Refinery Ablaze",
+            "Russia launched 433 drones at Ukraine overnight; air defense forces shot down 371",
+            "Naval drones sink Israeli-operated cargo ship off Bulgaria's Black Sea coast",
+            "Sudan says drone attacks from Ethiopia killed, wounded hundreds",
+            "Iran's Drone and Missile Swarms Hit US Bases Faster Than Interceptors Could Be Replaced",
+            "Saudi coalition intercepts missile, drones targeting several regions",
+            "Drone violates Moldovan airspace amid Russian attacks on Ukraine",
+        )
+        not_war = (
+            "Raytheon awarded $729 million in counter-drone contracts",
+            "FCC lifts decades-old restriction on drone cellular operations",
+            "Rick Scott doubles down on DJI drone restrictions, citing a Department of War report",
+            "Leonardo selects Shield AI software to advance drone warfare capability",
+            "California county deploys firefighting drones: a five-drone strike team run by one operator",
+            "Waymo and Uber end their robotaxi price war in Austin",
+            "Spain mourns 69 killed in train crash as safety failures investigated",
+        )
+        for title in war:
+            self.assertTrue(live_lead.is_war({"title": title}), title)
+        for title in not_war:
+            self.assertFalse(live_lead.is_war({"title": title}), title)
+        self.assertTrue(live_lead.is_war({"title": "Drone maker opens plant", "summary": "Its drones fly on the front line in Ukraine."}))
+        # The lead desk never offers a war story the lead, however high it scores.
+        store = Store(":memory:")
+        desk = Desk(store, CONFIG, writer=writer(), verifier=verifier(), fetch=fake_page(NOW), resolve=lambda u: None, clock=lambda: NOW, gpu_busy=lambda: False)
+        for sid, title in (("war", war[0]), ("fcc", not_war[1])):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": title, "published": iso(NOW - timedelta(hours=1))}, NOW)
+            store.update(sid, NOW, status=VERIFIED, score=92, shown_at=iso(NOW))
+        self.assertFalse(desk.offer_lead("war"))
+        self.assertTrue(desk.offer_lead("fcc"))
+
     def test_a_minor_story_never_leads_even_with_no_lead(self):
         # 2026-10-30: a profile of a Malaysian engineer (score 15) became the first lead because nothing else had led.
         self.assertFalse(live_lead.decide(None, self.candidate(15), NOW).swap)
@@ -1058,6 +1092,15 @@ class FeedTests(unittest.TestCase):
         self.assertNotIn("pick", feed["lead"])
         store.set_lead("", NOW, 0, None, "cleared")
         self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "best")
+        # Never a war story, whatever its score; a desk lead chosen before the rule gives way too.
+        store.add_story({"id": "war", "url": "https://example.com/war", "title": "Russian drone strike kills 14 in Ukraine", "published": iso(NOW - timedelta(hours=1))}, NOW)
+        store.update("war", NOW, status=VERIFIED, score=88, shown_at=iso(NOW), desk="sec")
+        self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "best")
+        store.set_lead("war", NOW, 88, None, "chosen before the rule")
+        self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "best")
+        store.set_state(live_lead.OVERRIDE_KEY, {"story_id": "war", "until": iso(NOW + timedelta(hours=2)), "hours": 2})
+        self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "war")  # the owner's pick stands
+        # Before anything is scored, the newest summarized story leads.
         # Before anything is scored, the newest summarized story leads.
         bare = Store(":memory:")
         for sid, hours in (("a", 3), ("b", 1)):

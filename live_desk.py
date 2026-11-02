@@ -548,7 +548,7 @@ class Desk:
         return f"{story['title'][:120]} leads until {iso(until)}"
 
     def _lead_after_override(self, now: datetime, reason: str) -> None:
-        pool = [s for s in self.store.visible(now - live_lead.BEST_OF_WINDOW) if s["status"] == VERIFIED and (s["score"] or 0) >= live_lead.FLOOR]
+        pool = [s for s in self.store.visible(now - live_lead.BEST_OF_WINDOW) if s["status"] == VERIFIED and (s["score"] or 0) >= live_lead.FLOOR and not live_lead.is_war(s)]
         best = max(pool, key=lambda s: (s["score"] or 0, s["published"]), default=None)
         if best is None:
             self.store.set_lead("", now, 0, None, f"{reason}; no story of the last day scores enough to lead")
@@ -561,6 +561,9 @@ class Desk:
             return False
         now = self.clock()
         if self.override(now) is not None:
+            return False
+        if live_lead.is_war(story):
+            newsroom_live.emit("live-lead-check", desk="editors", title=story["title"][:160], score=story["score"], swap=False, reason="a war story never leads")
             return False
         lead = self.store.current_lead()
         candidate = {"story_id": story["id"], "score": story["score"], "verified": True, "published": parse_iso(story["published"])}
@@ -582,7 +585,7 @@ class Desk:
         lead = self.store.current_lead()
         pool = [
             {"story_id": s["id"], "score": s["score"], "verified": True, "published": parse_iso(s["published"])}
-            for s in self.store.visible(now - live_lead.BEST_OF_WINDOW) if s["status"] == VERIFIED
+            for s in self.store.visible(now - live_lead.BEST_OF_WINDOW) if s["status"] == VERIFIED and not live_lead.is_war(s)
         ]
         best = live_lead.stale_takeover(lead, pool, now)
         if best is None:

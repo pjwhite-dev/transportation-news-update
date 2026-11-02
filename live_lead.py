@@ -9,6 +9,7 @@ lead over in roughly a day while a very big story replaces it within the hour:
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any
@@ -142,6 +143,35 @@ def stale_takeover(lead: dict[str, Any] | None, pool: list[dict[str, Any]], now:
         and isinstance(s.get("published"), datetime) and now - s["published"] <= BEST_OF_WINDOW
     ]
     return max(fresh, key=lambda s: (int(s.get("score") or 0), s["published"]), default=None)
+
+
+# Owner, 2026-11-02: a war story never leads the page; it stays in the feed. Words, not a model, so the rule is the
+# same every time and needs no new model call. Combat and the wars themselves count; defense contracts, military
+# drone programs and counter-drone tech without them do not. Leans broad: a story wrongly kept from the lead
+# loses little, a war story at the top is what the owner asked to avoid. The owner's own pick is never second-guessed.
+_NOT_WAR = re.compile(
+    r"\b(?:trade|price|pricing|tariff|talent|bidding|chip|patent|format|console|star|culture|turf|subsidy|fare|"
+    r"streaming|robotaxi|range|bandwidth|spectrum|heat)\s+(?:wars?|sinks?)\b"
+    # the Pentagon's second name, and "warfare" (drone, naval, electronic) as a field of defense technology
+    r"|\b(?:Department|Dept\.?|Secretary|Secretaries|Under ?Secretary) of War\b|\bWar Department\b|\bwar ?fighters?\b"
+    r"|\b\w+ warfare\b", re.I)
+_WAR = re.compile(
+    r"\bwars?\b|\bwartime\b|\bwar[- ]?zones?\b|\bwar-torn\b|\bair ?strikes?\b|"
+    r"\b(?:drone|missile|rocket|artillery|ballistic)s? (?:strikes?|attacks?|barrages?)\b(?! teams?)|\bshelling\b|"
+    r"\bbombard\w*|\bbattlefields?\b|\bfront ?lines?\b|\bfrontlines?\b|\binvasion\b|\binvaded\b|\bcease-?fire\b|"
+    r"\bcasualt(?:y|ies)\b|\bcombat missions?\b|\bShahed\b|\bsank\b|\bsink(?:s|ing)?\b|"
+    r"\bintercept(?:s|ed)? (?:a |an )?(?:ballistic )?(?:missiles?|rockets?)\b|\bbases? (?:hit|struck|attacked)\b|"
+    r"\bhit (?:US |U\.S\. |American )?(?:air ?)?bases\b|\bYemen\w*|"
+    r"\bUkrain\w*|\bKyiv\b|\bKremlin\b|\bDonbas+\b|\bLuhansk\b|\bDonetsk\b|\bCrimea\w*|\bKharkiv\b|"
+    r"\bZaporizhzhia\b|\bshadow fleet\b|\bRussian (?:forces|army|military|troops|attacks?|strikes?|drones?|"
+    r"missiles?|invasion|offensive|(?:oil )?refiner(?:y|ies))\b|\bGaza\b|\bHamas\b|\bHezbollah\b|\bHouthis?\b|"
+    r"\bIDF\b", re.I)
+
+
+def is_war(story: dict[str, Any]) -> bool:
+    """True for a story about a war or combat (headline or summary): it may be on the page but never leads it."""
+    text = _NOT_WAR.sub(" ", f"{story.get('title') or ''} {story.get('summary') or ''}")
+    return bool(_WAR.search(text))
 
 
 def held_text(held: timedelta) -> str:
