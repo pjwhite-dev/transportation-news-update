@@ -37,8 +37,10 @@ close (`.runtime/live_site/market.json`, falling back to the edition's `data/mar
 
 While the edition holds `.runtime/edition.lock`, model work pauses; stories are still read and filed and go up
 as headline only after 20 minutes. The owner can pause model work the same way until a set time with
-`.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`); it lapses by itself, and unloading the models
-(`ollama stop <model>`) frees the card at once.
+`.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`); it lapses by itself (a far-off time is an
+open-ended pause; delete the file to resume), and unloading the models (`ollama stop <model>`) frees the card at once.
+The checker stops between stories, and the morning edition and the doctor honor the same file: no edition runs
+while it is in force.
 
 **Sorting** (`live_sort.py`, worker "sort"): once a story is on the page, one short writer call per story names the
 earlier report (of up to eight sharing names or figures, within two days) that covers the same event, and says

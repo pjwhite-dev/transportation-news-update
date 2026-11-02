@@ -424,6 +424,11 @@ def main() -> int:
     day = now.date().isoformat()
     if now.weekday() >= 5 or live_edition() == day:
         return 0
+    from live_desk import gpu_paused
+
+    if gpu_paused():  # the owner paused model work: no edition is expected, and no diagnosis or rerun may use the GPU
+        print("The owner paused model work; no edition expected.")
+        return 0
     try:
         with open(repo / ".runtime" / "edition.lock", "a+"):
             pass
