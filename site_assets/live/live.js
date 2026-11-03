@@ -198,42 +198,91 @@
     return map;
   }
 
+  // One of the cycling top stories: the first is the lead (the desk's or the owner's pick, or the top-rated story when
+  // there is none), the others the next top-rated stories of the last 48 hours.
+  function leadSlide(lead, i) {
+    var art = el("article", "slide");
+    var eye = el("p", "eyebrow");
+    eye.appendChild(el("span", "tag", i ? "Top story" : "Lead"));
+    if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
+    var day = dayLabel(lead.since), when = (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since);
+    var since;
+    if (i) {
+      since = el("span", "since", "published " + when);
+      since.title = "Among the top-rated stories of the last 48 hours. Published " + exact(lead.since) + ".";
+    } else if (lead.pick === "top") {
+      // No story has been big enough to take the lead, so the top-rated one of the last two days holds it.
+      since = el("span", "since", "Top story, last 48 hours");
+      since.title = "No newer story has rated high enough to take the lead. Published " + exact(lead.since) + ".";
+    } else {
+      since = el("span", "since", "since " + when);
+      since.title = "Lead since " + exact(lead.since);
+    }
+    eye.appendChild(since);
+    art.appendChild(eye);
+    var h = el(i ? "h2" : "h1", "headline");
+    h.appendChild(link(lead.url, lead.title));
+    art.appendChild(h);
+    if (lead.summary) art.appendChild(el("p", "deck", lead.summary));
+    var src = el("p", "src");
+    src.appendChild(link(lead.url, lead.source + " ↗"));
+    if (lead.also && lead.also.length) src.appendChild(document.createTextNode(" · also " + lead.also.map(function (a) { return a.source; }).slice(0, 3).join(", ")));
+    art.appendChild(src);
+    return art;
+  }
+
+  // Show top story i. The slides share one spot sized to the tallest, so turning them never moves the page.
+  function showLead(i) {
+    var slides = document.querySelectorAll("#lead .slide"), dots = document.querySelectorAll("#lead .lead-dots button");
+    if (!slides.length) return;
+    state.leadAt = (i + slides.length) % slides.length;
+    state.leadTurn = Date.now();
+    Array.prototype.forEach.call(slides, function (s, n) {
+      s.classList.toggle("on", n === state.leadAt);
+      s.setAttribute("aria-hidden", String(n !== state.leadAt));
+    });
+    Array.prototype.forEach.call(dots, function (b, n) { b.setAttribute("aria-current", String(n === state.leadAt)); });
+  }
+
   function renderLead(feed) {
     var main = $("lead");
-    main.textContent = "";
-    // The feed always names a lead when it has stories; the newest story stands in for an older feed without one.
-    var lead = feed.lead || (feed.stories[0] && Object.assign({ since: feed.stories[0].published, pick: "top" }, feed.stories[0]));
+    // The lead and the next top-rated stories of two days take turns (feed.leads); the newest story stands in for an
+    // older feed without any.
+    var leads = feed.leads || (feed.lead ? [feed.lead] : []);
+    if (!leads.length && feed.stories[0]) leads = [Object.assign({ since: feed.stories[0].published, pick: "top" }, feed.stories[0])];
+    var lead = leads[0];
     // Big only while it is news: its first hour, a Significant story, or the owner's pick. Otherwise a compact card,
     // so the newest stories are on the first screen.
     var big = lead && ((lead.held_until && new Date(lead.held_until) > Date.now()) || lead.impact === "significant"
       || Date.now() - new Date(lead.since).getTime() < 3600e3);
     main.parentNode.classList.toggle("compact", !!lead && !big);
-    if (!lead) {
-      main.appendChild(el("p", "lead-empty", "The first stories are on their way."));
-    } else {
-      var eye = el("p", "eyebrow");
-      eye.appendChild(el("span", "tag", "Lead"));
-      if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
-      var since;
-      if (lead.pick === "top") {
-        // No story has been big enough to take the lead, so the top-rated one of the last two days holds it.
-        since = el("span", "since", "Top story, last 48 hours");
-        since.title = "No newer story has rated high enough to take the lead. Published " + exact(lead.since) + ".";
-      } else {
-        var day = dayLabel(lead.since);
-        since = el("span", "since", "since " + (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since));
-        since.title = "Lead since " + exact(lead.since);
+    var key = JSON.stringify(leads);
+    if (key !== state.leadKey) { // unchanged: leave the slides (and a reader's focus) alone
+      state.leadKey = key;
+      var current = state.leadIds && state.leadIds[state.leadAt];
+      state.leadIds = leads.map(function (s) { return s.id; });
+      state.leadAt = Math.max(0, state.leadIds.indexOf(current));
+      main.textContent = "";
+      if (!lead) main.appendChild(el("p", "lead-empty", "The first stories are on their way."));
+      else {
+        var slides = el("div", "slides");
+        leads.forEach(function (s, i) { slides.appendChild(leadSlide(s, i)); });
+        main.appendChild(slides);
+        if (leads.length > 1) {
+          var dots = el("div", "lead-dots");
+          dots.setAttribute("role", "group");
+          dots.setAttribute("aria-label", "Top stories");
+          leads.forEach(function (s, i) {
+            var b = el("button");
+            b.type = "button";
+            b.setAttribute("aria-label", "Top story " + (i + 1) + " of " + leads.length + ": " + s.title);
+            b.addEventListener("click", function () { showLead(i); });
+            dots.appendChild(b);
+          });
+          main.appendChild(dots);
+        }
+        showLead(state.leadAt);
       }
-      eye.appendChild(since);
-      main.appendChild(eye);
-      var h = el("h1");
-      h.appendChild(link(lead.url, lead.title));
-      main.appendChild(h);
-      if (lead.summary) main.appendChild(el("p", "deck", lead.summary));
-      var src = el("p", "src");
-      src.appendChild(link(lead.url, lead.source + " ↗"));
-      if (lead.also && lead.also.length) src.appendChild(document.createTextNode(" · also " + lead.also.map(function (a) { return a.source; }).slice(0, 3).join(", ")));
-      main.appendChild(src);
     }
     var dev = $("developing");
     dev.textContent = "";
@@ -586,6 +635,13 @@
   setInterval(renderStatus, 5000);
   setInterval(refreshTimes, 60000);
   setInterval(stepSweep, SWEEP_MS);
+  // The top stories turn every 8 seconds; never while a reader points at or tabs into them, or with motion paused.
+  ["mouseenter", "focusin"].forEach(function (ev) { $("lead").addEventListener(ev, function () { state.leadHeld = true; }); });
+  ["mouseleave", "focusout"].forEach(function (ev) { $("lead").addEventListener(ev, function () { state.leadHeld = false; state.leadTurn = Date.now(); }); });
+  $("lead").addEventListener("touchstart", function () { state.leadTurn = Date.now() + 8000; }, { passive: true }); // a tap buys time to read
+  setInterval(function () {
+    if (!quiet() && !state.leadHeld && !document.hidden && Date.now() - (state.leadTurn || 0) >= 8000) showLead(state.leadAt + 1);
+  }, 1000);
   $("official-prev").addEventListener("click", function () { stepPosts(-1); });
   $("official-next").addEventListener("click", function () { stepPosts(1); });
   ["mouseenter", "focusin", "touchstart"].forEach(function (ev) { $("official").addEventListener(ev, function () { state.postsHeld = true; }, { passive: true }); });

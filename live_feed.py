@@ -19,7 +19,7 @@ from typing import Any
 import live_lead
 import live_posts
 import live_sort
-from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso
+from live_store import FIRST_PASS, HEADLINE, VERIFIED, Store, iso, parse_iso, title_key, title_overlap
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
@@ -28,6 +28,7 @@ DAYS = ROOT / "site_assets" / "days"  # the daily archive page (advancedtranspor
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
 TOP_WINDOW = timedelta(hours=48)  # with no lead chosen, the top-rated story of this window leads (the page always has one)
+HEADLINES = 3  # the page cycles through the lead and the next top-rated stories of TOP_WINDOW (owner, 2026-11-03)
 
 
 def public_story(story: dict[str, Any]) -> dict[str, Any]:
@@ -88,16 +89,38 @@ def grouped_story(story: dict[str, Any], groups: dict[str, list[dict[str, Any]]]
     return out
 
 
-def top_story(stories: list[dict[str, Any]], now: datetime) -> dict[str, Any] | None:
-    """The page's headline when the lead desk has none (a quiet day, or the last lead aged out): the highest-scored
-    double-checked story of the last 48 hours; before any is scored, the newest summarized story, then any story.
-    Never a war story (live_lead.is_war)."""
+def same_event(first: str, second: str) -> bool:
+    """Two headlines that share at least three words and half the shorter one's: e.g. "Spain rail crash: How did its
+    high-speed rail network reach this point?" and "Two Australians killed in Spain's second high-speed rail crash"."""
+    shared = set(title_key(first).split()) & set(title_key(second).split())
+    return len(shared) >= 3 and title_overlap(first, second) >= 0.5
+
+
+def top_stories(
+    stories: list[dict[str, Any]], now: datetime, count: int, skip: set[str] = frozenset(), after: tuple[str, ...] = (),
+) -> list[dict[str, Any]]:
+    """The top `count` stories of the last 48 hours, one per event: double-checked stories by score, then summarized
+    ones, then any, newest first within each. Groups in `skip` are left out, and so is a story whose headline shares
+    half its words with one already picked or in `after` (the sorter does not always group two takes on one event, and
+    the cycling headlines should be three different stories). Never a war story (live_lead.is_war)."""
     recent = [s for s in stories if (parse_iso(s["published"]) or now) >= now - TOP_WINDOW and not live_lead.is_war(s)]
-    scored = [s for s in recent if s["status"] == VERIFIED and s["score"] is not None]
-    if scored:
-        return max(scored, key=lambda s: (s["score"], s["published"]))
-    summarized = [s for s in recent if s["status"] == FIRST_PASS]
-    return max(summarized or recent, key=lambda s: s["published"], default=None)
+    rank = lambda s: ((2, s["score"]) if s["status"] == VERIFIED and s["score"] is not None
+                      else (1, 0) if s["status"] == FIRST_PASS else (0, 0), s["published"])
+    picked, seen, titles = [], set(skip), list(after)
+    for story in sorted(recent, key=rank, reverse=True):
+        if len(picked) == count:
+            break
+        if (story["group_id"] or story["id"]) in seen or any(same_event(story["title"], t) for t in titles):
+            continue
+        seen.add(story["group_id"] or story["id"])
+        titles.append(story["title"])
+        picked.append(story)
+    return picked
+
+
+def top_story(stories: list[dict[str, Any]], now: datetime) -> dict[str, Any] | None:
+    """The page's headline when the lead desk has none (a quiet day, or the last lead aged out)."""
+    return next(iter(top_stories(stories, now, 1)), None)
 
 
 def build_feed(
@@ -134,8 +157,12 @@ def build_feed(
 
     day = now - timedelta(hours=24)
     lead_group = (by_id[lead["id"]]["group_id"] or lead["id"]) if lead and lead["id"] in by_id else (lead or {}).get("id")
+    # The page cycles through the lead and the next top-rated stories; Developing then repeats none of them.
+    others = top_stories(stories, now, HEADLINES - 1, {lead_group}, (lead["title"],)) if lead else []
+    leads = ([lead] if lead else []) + [{**grouped(s), "since": s["published"], "pick": "top"} for s in others]
+    headline_groups = {lead_group} | {s["group_id"] or s["id"] for s in others}
     developing = sorted(
-        (s for s in shown if s["status"] == VERIFIED and (s["group_id"] or s["id"]) != lead_group
+        (s for s in shown if s["status"] == VERIFIED and (s["group_id"] or s["id"]) not in headline_groups
          and (s["score"] or 0) >= live_lead.DEVELOPING_FLOOR
          and (parse_iso(s["published"]) or now) >= now - timedelta(hours=12)),
         key=lambda s: (s["score"] or 0, s["published"]), reverse=True,
@@ -156,6 +183,7 @@ def build_feed(
         "site": {"name": site["name"], "label": site["live_label"], "poll_seconds": int(site["poll_seconds"])},
         "overnight": config.get("push", {}).get("overnight"),  # Eastern hours when the public copy updates hourly
         "lead": lead,
+        "leads": leads,
         "developing": [public_story(s)["id"] for s in developing],
         "ticker": [{"id": s["id"], "source": s["source"], "title": s["title"], "url": s["url"]} for s in ticker],
         "desks": desks,

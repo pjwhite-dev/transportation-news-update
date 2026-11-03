@@ -1078,13 +1078,14 @@ class FeedTests(unittest.TestCase):
 
     def test_minor_stories_stay_out_of_developing(self):
         store = Store(":memory:")
-        for sid, score in (("big", 62), ("mid", 45), ("minor", 15)):
-            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=1))}, NOW)
+        for sid, score, hours in (("big", 62, 1), ("top2", 58, 20), ("top3", 55, 20), ("mid", 45, 1), ("minor", 15, 1)):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=hours))}, NOW)
             store.update(sid, NOW, status=VERIFIED, score=score, shown_at=iso(NOW), desk="air")
         feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
         self.assertEqual(feed["lead"]["id"], "big")  # no lead chosen: the top-rated story leads, so it is not Developing
+        self.assertEqual([s["id"] for s in feed["leads"]], ["big", "top2", "top3"])
         self.assertEqual(feed["developing"], ["mid"])
-        self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "mid", "minor"})  # all stay in the feed
+        self.assertEqual({s["id"] for s in feed["stories"]}, {"big", "top2", "top3", "mid", "minor"})  # all stay in the feed
 
     def test_the_page_always_has_a_headline(self):
         # 2026-11-02, the owner: never "no story so far has been significant enough to lead". With no lead chosen
@@ -1111,7 +1112,6 @@ class FeedTests(unittest.TestCase):
         store.set_state(live_lead.OVERRIDE_KEY, {"story_id": "war", "until": iso(NOW + timedelta(hours=2)), "hours": 2})
         self.assertEqual(live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["lead"]["id"], "war")  # the owner's pick stands
         # Before anything is scored, the newest summarized story leads.
-        # Before anything is scored, the newest summarized story leads.
         bare = Store(":memory:")
         for sid, hours in (("a", 3), ("b", 1)):
             bare.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=hours))}, NOW)
@@ -1120,6 +1120,33 @@ class FeedTests(unittest.TestCase):
         script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
         self.assertIn("Top story, last 48 hours", script)
         self.assertNotIn("significant enough to lead", script)
+
+    def test_three_top_stories_take_turns(self):
+        # Owner, 2026-11-03: "instead of one headline, make it 3, and cycle them through. They don't all need to be
+        # from the past 24 hours." The lead, then the next top-rated stories of 48 hours: one per event, never war.
+        store = Store(":memory:")
+        for sid, score, hours in (("lead", 60, 1), ("second", 70, 30), ("same-event", 65, 20), ("third", 45, 5),
+                                  ("fourth", 30, 2), ("too-old", 90, 50)):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": f"Story {sid}", "published": iso(NOW - timedelta(hours=hours))}, NOW)
+            store.update(sid, NOW, status=VERIFIED, score=score, shown_at=iso(NOW), desk="air")
+        store.update("same-event", NOW, group_id="second")
+        store.add_story({"id": "war", "url": "https://example.com/war", "title": "Missile strikes hit Kyiv", "published": iso(NOW - timedelta(hours=3))}, NOW)
+        store.update("war", NOW, status=VERIFIED, score=95, shown_at=iso(NOW), desk="sec")
+        store.set_lead("lead", NOW, 60, None, "the desk's choice")
+        feed = live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")
+        self.assertEqual([s["id"] for s in feed["leads"]], ["lead", "second", "third"])
+        self.assertEqual(feed["leads"][0], feed["lead"])
+        self.assertEqual((feed["leads"][1]["pick"], feed["leads"][1]["since"]), ("top", iso(NOW - timedelta(hours=30))))
+        self.assertFalse({"lead", "second", "same-event", "third"} & set(feed["developing"]))  # Developing repeats none
+        script = Path("site_assets/live/live.js").read_text(encoding="utf-8")
+        # Two takes on one event the sorter left ungrouped are not two headlines (the Spain rail crash, Nov. 3).
+        store.update("lead", NOW, title="Spain rail crash: How did its high-speed rail network reach this point?")
+        store.add_story({"id": "take", "url": "https://example.com/take", "title": "Two Australians killed in Spain's second high-speed rail crash this year", "published": iso(NOW - timedelta(hours=2))}, NOW)
+        store.update("take", NOW, status=VERIFIED, score=80, shown_at=iso(NOW), desk="rail")
+        self.assertEqual([s["id"] for s in live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["leads"]], ["lead", "second", "third"])
+        self.assertFalse(live_feed.same_event("FAA drone rule delayed again", "FAA finalizes eVTOL pilot rule"))
+        self.assertIn("feed.leads", script)
+        self.assertIn("quiet()", script.split("The top stories turn")[1].split("\n")[5])  # the Pause button stops them
 
     def test_write_site_copies_the_page_and_writes_the_feed(self):
         with tempfile.TemporaryDirectory() as tmp:

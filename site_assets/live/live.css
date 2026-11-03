@@ -87,9 +87,21 @@ button{font:inherit}
 .lead .eyebrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:0 0 14px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
 .tag{background:var(--amber);color:var(--night);padding:2px 7px;border-radius:3px}
 .since{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none}
-.lead h1{font:400 clamp(1.9rem,4.6vw,3.3rem)/1.06 var(--serif);letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance}
-.lead h1 a{text-decoration:none}
-.lead h1 a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
+.lead .headline{font:400 clamp(1.9rem,4.6vw,3.3rem)/1.06 var(--serif);letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance}
+.lead .headline a{text-decoration:none}
+.lead .headline a:hover{text-decoration:underline;text-decoration-color:var(--amber)}
+/* the top stories take turns in one spot, sized to the tallest, so turning them never moves the page */
+.slides{display:grid}
+.slide{grid-area:1/1;min-width:0;visibility:hidden;opacity:0;transition:opacity .45s ease,visibility 0s .45s}
+.slide.on{visibility:visible;opacity:1;transition:opacity .45s ease}
+.still .slide{transition:none}
+.lead-dots{display:flex;gap:4px;margin-top:2px}
+.lead-dots button{position:relative;width:30px;height:24px;padding:0;border:0;background:transparent;cursor:pointer}
+.lead-dots button::before{content:"";position:absolute;inset:50% 2px auto;height:3px;margin-top:-1.5px;border-radius:2px;background:rgba(234,240,248,.3)}
+.lead-dots button:hover::before{background:rgba(234,240,248,.6)}
+.lead-dots button[aria-current=true]::before{background:var(--amber)}
+.lead-dots button:focus-visible{outline:2px solid var(--amber);outline-offset:1px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){.slide,.slide.on{transition:none}}
 .lead .deck{font-size:1.12rem;line-height:1.55;color:#C5D2E6;margin:0 0 14px;max-width:44em}
 .lead .src{font-size:.88rem;color:var(--dim)}
 .lead .src a{color:var(--amber);font-weight:600;text-decoration:none}
@@ -103,7 +115,7 @@ button{font:inherit}
 .lead-empty{color:var(--dim);font-size:1rem;padding-block:20px;max-width:36em}
 /* an older lead: a compact card, so the newest stories reach the first screen */
 .lead.compact{padding-block:10px 22px}
-.lead.compact h1{font-size:clamp(1.35rem,2.6vw,1.9rem);line-height:1.15;margin-bottom:10px}
+.lead.compact .headline{font-size:clamp(1.35rem,2.6vw,1.9rem);line-height:1.15;margin-bottom:10px}
 .lead.compact .deck{font-size:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
 .lead.compact .developing a{-webkit-line-clamp:2}
 

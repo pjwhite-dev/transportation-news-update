@@ -30,7 +30,7 @@ every worker is beating; a stale file means restart the process). Settings: `con
 | First pass | writer + code | one or two sentences; every name, number and date must be in the article; one strict rewrite. Page label "Quick summary" | headline and link only |
 | Check | verifier (gemma, other family) | every sentence entailed by the article (grounding.ground_summary). Page label "Summary double-checked" (never "verified": we check our summary, not the reporting) | two failures: headline only |
 | Score | writer, thinking on | impact 0-5 and action class; code adds pickup, official source, U.S. relevance, novelty, penalties | two failures: stays first pass |
-| Lead | code | `live_lead.decide`: bar = 50 + (lead + 8 - 50)·e^(-h/8); 45 min minimum; 90+ after 20 min; 30 h stale rule | with no lead chosen, the top-scored checked story of the last 48 h (`live_feed.top_story`; "Top story, last 48 hours"). Never a war story (`live_lead.is_war`, words in the headline or summary), except the owner's own pick |
+| Lead (3, cycling) | code | `live_lead.decide`: bar = 50 + (lead + 8 - 50)·e^(-h/8); 45 min minimum; 90+ after 20 min; 30 h stale rule | with no lead chosen, the top-scored checked story of the last 48 h (`live_feed.top_story`; "Top story, last 48 hours"). Never a war story (`live_lead.is_war`, words in the headline or summary), except the owner's own pick |
 
 Markets: `live_market.py` refreshes the Finnhub watchlist every 5 minutes while NYSE is open and once after each
 close (`.runtime/live_site/market.json`, falling back to the edition's `data/market.json`).
