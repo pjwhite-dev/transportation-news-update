@@ -202,8 +202,7 @@
   // there is none), the others the next top-rated stories of the last 48 hours.
   function leadSlide(lead, i) {
     var art = el("article", "slide");
-    var eye = el("p", "eyebrow");
-    eye.appendChild(el("span", "tag", i ? "Top story" : "Lead"));
+    var eye = el("p", "eyebrow"); // no Lead / Top story badge (owner, 2026-11-03): the category and the time say enough
     if (catName(lead.desk)) eye.appendChild(el("span", null, catName(lead.desk)));
     var day = dayLabel(lead.since), when = (day === "Today" ? "" : day === "Yesterday" ? "yesterday, " : day + ", ") + clock(lead.since);
     var since;

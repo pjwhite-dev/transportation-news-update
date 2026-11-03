@@ -85,7 +85,6 @@ button{font:inherit}
 .lead{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;padding-block:18px 40px}
 .lead-side{display:flex;flex-direction:column;gap:20px;align-self:start}
 .lead .eyebrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:0 0 14px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
-.tag{background:var(--amber);color:var(--night);padding:2px 7px;border-radius:3px}
 .since{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none}
 .lead .headline{font:400 clamp(1.9rem,4.6vw,3.3rem)/1.06 var(--serif);letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance}
 .lead .headline a{text-decoration:none}
