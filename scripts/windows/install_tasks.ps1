@@ -70,19 +70,19 @@ New-NewsroomTask "newsroom-ollama" $hidden "$hiddenArgs -Command `"$ollamaComman
 New-NewsroomTask "newsroom-hermes-gateway" $hidden "$hiddenArgs -Command `"& '$HermesExe' gateway run`"" $atLogon -LongRunning
 New-NewsroomTask "newsroom-wsl" $hidden "$hiddenArgs -Command `"wsl.exe -d $Distro -- sleep infinity`"" $atLogon -LongRunning
 # The local newsroom dashboard (newsroom_dashboard.py, http://127.0.0.1:8765) is retired (owner, 2026-11-02): no task.
-# The live site (advancedtransportation.live, the site root): wire, editing lanes, feed push. It pauses its model work while the
-# edition holds .runtime\edition.lock, so the two never compete for the GPU.
+# The live site (advancedtransportation.live, the site root): wire, editing lanes, feed push. It is the only product
+# and has the GPU to itself.
 New-NewsroomTask "newsroom-live" $pythonw "live_service.py run" $atLogon -LongRunning
 
 # 3. The scheduled jobs.
-$weekdays430 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday -At 4:30AM
-New-NewsroomTask "newsroom-edition" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\run_local_pipeline.ps1`"" $weekdays430
-New-NewsroomTask "newsroom-ensure" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\ensure_edition.ps1`"" (Every 15)
 New-NewsroomTask "newsroom-services-check" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\ensure_services.ps1`"" (Every 5)
 New-NewsroomTask "newsroom-heartbeat" $pythonw "alerts.py ping pc-alive" (Every 5)
-$weekdays815 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday -At 8:15AM
-New-NewsroomTask "newsroom-doctor" $pythonw "doctor.py" $weekdays815
-New-NewsroomTask "newsroom-tracker" $pythonw "-m tracker.core" (New-ScheduledTaskTrigger -Daily -At 4:00AM)
+# The daily edition is retired (owner, 2026-11-03): its run, catch-up retries, doctor and tracker tasks are removed.
+foreach ($name in "newsroom-edition", "newsroom-ensure", "newsroom-doctor", "newsroom-tracker") {
+    if ((Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue) -and $PSCmdlet.ShouldProcess($name, "Unregister")) {
+        Unregister-ScheduledTask -TaskName $name -Confirm:$false
+    }
+}
 
 # 4. Start the logon tasks now so nothing waits for the next sign-in.
 foreach ($name in "newsroom-ollama", "newsroom-hermes-gateway", "newsroom-wsl", "newsroom-live") {

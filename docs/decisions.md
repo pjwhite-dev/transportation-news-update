@@ -163,3 +163,6 @@ Owner asked for: FAA, DOT and White House by Google search with `site:`; ticker 
 
 ## 2026-11-02 - Owner's GPU pause holds the edition too
 Owner: "Pause GPU usage until I tell you so", only this app's. Used the existing pause file with a far-off time rather than a new switch. Windows refused Disable-ScheduledTask (no admin), so the edition script and the doctor check the same file and stand down; one switch pauses everything and deleting it resumes everything. No edition is published while paused; that is what the owner asked for. Ollama and the Hermes gateway are left running: idle, they use no GPU, and stopping them would trip the 5-minute watchdog's alerts.
+
+## 2026-11-03 - Daily edition retired
+Owner: "There should be no 'edition'--only the live version ... shut it down permanently." Retired in code (each entry point exits at once, with the old code kept below the exit as a record) rather than deleting the pipeline, because the scheduled tasks cannot be disabled without admin rights and past editions must stay. The tracker and the raw-news workflow went with it: they fed only the edition. Ollama, Hermes, the services check and the heartbeat stay; the live site needs them. Healthchecks "edition-verified" and "tracker-verified" will stop getting pings; the owner should pause those checks at healthchecks.io.

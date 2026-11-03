@@ -4,6 +4,12 @@ param(
     [switch]$DryRun
 )
 
+# Retired (owner, 2026-11-03): "There should be no edition, only the live version." The live site is the only product
+# and has the GPU to itself. The task newsroom-edition may still fire until install_tasks.ps1 is rerun as admin; it
+# stops here. The rest of the script is kept as a record; past editions at /edition/ stay as they are.
+Write-Output "The daily edition is retired; the live site is the only product."
+return
+
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $repoRoot ".venv\Scripts\python.exe"
@@ -16,16 +22,6 @@ if (-not $env:OLLAMA_BASE_URL) { $env:OLLAMA_BASE_URL = "http://127.0.0.1:11434"
 if (-not $env:OLLAMA_MODEL) { $env:OLLAMA_MODEL = "qwen3.8:27b-q4_K_M" }
 if (-not $env:OLLAMA_VERIFIER_MODEL) { $env:OLLAMA_VERIFIER_MODEL = "gemma4:31b" }
 if (-not $env:OPENAI_FALLBACK_ENABLED) { $env:OPENAI_FALLBACK_ENABLED = "false" }
-
-# The owner's pause of model work (.runtime/live_site/gpu_pause.json, {"until": ISO time}) holds the edition too.
-$pauseFile = Join-Path $repoRoot ".runtime\live_site\gpu_pause.json"
-if (Test-Path -LiteralPath $pauseFile) {
-    try { $pausedUntil = [DateTimeOffset]::Parse((Get-Content -Raw -LiteralPath $pauseFile | ConvertFrom-Json).until) } catch { $pausedUntil = $null }
-    if ($pausedUntil -and $pausedUntil -gt [DateTimeOffset]::UtcNow) {
-        Write-Output "The owner paused model work until $($pausedUntil.ToString('u')); no edition run."
-        return
-    }
-}
 
 New-Item -ItemType Directory -Force -Path (Join-Path $repoRoot ".runtime") | Out-Null
 try {

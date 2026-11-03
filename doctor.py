@@ -30,6 +30,7 @@ from alerts import redact, send_telegram
 import newsroom_live
 
 EASTERN = ZoneInfo("America/New_York")
+RETIRED = True  # the daily edition is retired (owner, 2026-11-03); the live site is the only product
 SITE = "https://advancedtransportation.live/edition/"  # the live page has the root
 EDITION_META = re.compile(r'<meta name="edition-id" content="(\d{4}-\d{2}-\d{2})">')
 LOG_TAIL_LINES = 150
@@ -422,12 +423,10 @@ def main() -> int:
     repo = args.repo.resolve()
     now = datetime.now(EASTERN)
     day = now.date().isoformat()
-    if now.weekday() >= 5 or live_edition() == day:
+    if RETIRED:
+        print("The daily edition is retired; the doctor has nothing to examine.")
         return 0
-    from live_desk import gpu_paused
-
-    if gpu_paused():  # the owner paused model work: no edition is expected, and no diagnosis or rerun may use the GPU
-        print("The owner paused model work; no edition expected.")
+    if now.weekday() >= 5 or live_edition() == day:
         return 0
     try:
         with open(repo / ".runtime" / "edition.lock", "a+"):

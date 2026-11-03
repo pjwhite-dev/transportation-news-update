@@ -35,12 +35,13 @@ every worker is beating; a stale file means restart the process). Settings: `con
 Markets: `live_market.py` refreshes the Finnhub watchlist every 5 minutes while NYSE is open and once after each
 close (`.runtime/live_site/market.json`, falling back to the edition's `data/market.json`).
 
-While the edition holds `.runtime/edition.lock`, model work pauses; stories are still read and filed and go up
-as headline only after 20 minutes. The owner can pause model work the same way until a set time with
-`.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`); it lapses by itself (a far-off time is an
-open-ended pause; delete the file to resume), and unloading the models (`ollama stop <model>`) frees the card at once.
-The checker stops between stories, and the morning edition and the doctor honor the same file: no edition runs
-while it is in force.
+The daily edition is retired (owner, 2026-11-03): the live site is the only product and has the GPU to itself. Its
+scripts (run_local_pipeline.ps1, ensure_edition.ps1, doctor.py, `python -m tracker.core`) exit at once, the raw-news
+workflow has no schedule, and install_tasks.ps1 removes their tasks; past editions stay at /edition/ and /archive/.
+The owner can pause model work until a set time with `.runtime/live_site/gpu_pause.json` (`{"until": "<ISO time>"}`);
+stories are still read and filed and go up as headline only after 20 minutes. It lapses by itself (a far-off time is
+an open-ended pause; delete the file to resume), the checker stops between stories, and unloading the models
+(`ollama stop <model>`) frees the card at once.
 
 **Sorting** (`live_sort.py`, worker "sort"): once a story is on the page, one short writer call per story names the
 earlier report (of up to eight sharing names or figures, within two days) that covers the same event, and says

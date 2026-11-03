@@ -532,6 +532,9 @@ def refresh(
 
 
 if __name__ == "__main__":
+    # The tracker fed only the daily edition, retired by the owner on 2026-11-03; the scheduled run stops here.
+    print("The regulatory tracker is retired with the daily edition.")
+    raise SystemExit(0)
     result = refresh()
     print(json.dumps(result, indent=2))
     raise SystemExit(1 if result["errors"] else 0)

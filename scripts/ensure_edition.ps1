@@ -2,6 +2,9 @@
 # missing, never runs two editions at once, caps retries, and alerts at 8:00 a.m. ET.
 param([switch]$DryRun)
 
+# Retired with the daily edition (owner, 2026-11-03): no late starts, retries, doctor calls or 8 a.m. alerts.
+return
+
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $repoRoot ".venv\Scripts\python.exe"
@@ -14,13 +17,6 @@ $today = $now.ToString("yyyy-MM-dd", [Globalization.CultureInfo]::InvariantCultu
 
 if ($now.DayOfWeek -in @([DayOfWeek]::Saturday, [DayOfWeek]::Sunday)) { return }
 if ($now.TimeOfDay -lt [TimeSpan]::FromHours(4.5)) { return }
-# The owner's pause of model work holds the edition (run_local_pipeline.ps1 stands down); a paused day is not a
-# failed attempt, so nothing is counted and the doctor is not called.
-$pauseFile = Join-Path $runtime "live_site\gpu_pause.json"
-if (Test-Path -LiteralPath $pauseFile) {
-    try { $pausedUntil = [DateTimeOffset]::Parse((Get-Content -Raw -LiteralPath $pauseFile | ConvertFrom-Json).until) } catch { $pausedUntil = $null }
-    if ($pausedUntil -and $pausedUntil -gt [DateTimeOffset]::UtcNow) { return }
-}
 
 Push-Location $repoRoot
 try {

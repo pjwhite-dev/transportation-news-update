@@ -1,10 +1,8 @@
 name: Daily Transportation Raw News Collection
 
+# The daily edition this fed is retired (owner, 2026-11-03): no schedule; it runs only by hand.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "15 4 * * *"
-      timezone: "America/New_York"
 
 permissions:
   contents: write
