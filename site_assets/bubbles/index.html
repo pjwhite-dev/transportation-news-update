@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Advanced transportation news as it breaks: each headline a bubble, sized by how big the story is, colored by its topic.">
+<meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
+<title>Advanced Transportation Bubbles</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='13' r='8' fill='%2334D399' opacity='.85'/%3E%3Ccircle cx='22' cy='20' r='6' fill='%2338BDF8' opacity='.85'/%3E%3C/svg%3E">
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#F4F7FB;
+    font-family:"Segoe UI Variable Display","Segoe UI",Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  body.idle,body.idle *{cursor:none!important}
+  #sky{position:fixed;inset:0}
+  /* a breath of light where the bubbles are born */
+  #sky::before{content:"";position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(255,255,255,.045),transparent 62%);pointer-events:none}
+  .b{position:absolute;left:0;top:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-decoration:none;color:inherit;will-change:transform,opacity;cursor:pointer;
+    background:radial-gradient(circle at 32% 26%,rgb(var(--c)/.50),rgb(var(--c)/.20) 46%,rgb(var(--c)/.09) 72%,rgb(var(--c)/.05));
+    border:1px solid rgb(var(--c)/.55);
+    box-shadow:0 0 calc(var(--d)*.16) rgb(var(--c)/.22),inset 0 0 calc(var(--d)*.10) rgb(var(--c)/.18);
+    transition:box-shadow .4s,border-color .4s}
+  .b:hover,.b:focus-visible{border-color:rgb(var(--c)/.95);box-shadow:0 0 calc(var(--d)*.28) rgb(var(--c)/.45),inset 0 0 calc(var(--d)*.12) rgb(var(--c)/.3);outline:none}
+  .b .t{width:72%;text-align:center;font-weight:600;letter-spacing:-.005em;line-height:1.18;
+    display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+  .b .s{width:64%;margin-top:.55em;text-align:center;font-size:.66em;font-weight:500;line-height:1.25;color:rgb(var(--c));
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;opacity:.92}
+  .label{position:absolute;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;
+    color:rgb(var(--c));opacity:.34;transform:translate(-50%,-50%);pointer-events:none}
+
+  /* settings: a quiet round button that fades with the cursor */
+  .gear{position:fixed;right:18px;bottom:18px;z-index:2000;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:rgba(244,247,251,.75);cursor:pointer;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .6s,background .2s,color .2s,border-color .2s}
+  .gear:hover,.gear[aria-expanded=true]{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
+  .gear:focus-visible{outline:2px solid #38BDF8;outline-offset:3px}
+  .gear svg{width:19px;height:19px;transition:transform .5s}
+  .gear[aria-expanded=true] svg{transform:rotate(60deg)}
+  body.idle .gear{opacity:0;pointer-events:none}
+  .panel{position:fixed;right:18px;bottom:72px;z-index:2000;width:264px;padding:16px;border-radius:18px;
+    background:rgba(16,20,28,.84);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.6);
+    backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+    transform-origin:100% 100%;transition:opacity .2s,transform .2s}
+  .panel[hidden]{display:block;opacity:0;transform:scale(.96) translateY(6px);pointer-events:none;visibility:hidden}
+  .panel h2{margin:0 0 10px;font-size:10.5px;font-weight:650;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,247,251,.5)}
+  .seg{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);position:relative}
+  .seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:9px;background:rgba(255,255,255,.14);
+    box-shadow:0 1px 6px rgba(0,0,0,.35);transition:transform .25s cubic-bezier(.3,.7,.2,1)}
+  .seg[data-v=all]::before{transform:translateX(100%)}
+  .seg button{position:relative;z-index:1;border:0;background:transparent;color:rgba(244,247,251,.6);font:600 12.5px inherit;font-family:inherit;
+    padding:8px 0;border-radius:9px;cursor:pointer;transition:color .2s}
+  .seg button[aria-pressed=true]{color:#fff}
+  .seg button:focus-visible{outline:2px solid #38BDF8;outline-offset:1px}
+  .note{margin:8px 2px 0;font-size:11.5px;line-height:1.4;color:rgba(244,247,251,.45)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+  .row span{font-size:12.5px;color:rgba(244,247,251,.8)}
+  .row button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font:600 12px inherit;font-family:inherit;
+    padding:7px 12px;border-radius:10px;cursor:pointer}
+  .row button:hover{background:rgba(255,255,255,.12)}
+  .row button:focus-visible{outline:2px solid #38BDF8;outline-offset:2px}
+  .home{display:block;margin-top:12px;font-size:11.5px;color:rgba(244,247,251,.45);text-decoration:none}
+  .home:hover{color:#fff}
+  @media (prefers-reduced-motion:reduce){.panel,.seg::before,.gear svg{transition:none}}
+</style>
+</head>
+<body>
+<div id="sky" aria-label="Advanced transportation headlines" role="list"></div>
+
+<button type="button" class="gear" id="gear" aria-expanded="false" aria-controls="panel" aria-label="Settings">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3.1"/>
+    <path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4z"/>
+  </svg>
+</button>
+<div class="panel" id="panel" role="dialog" aria-label="Settings" hidden>
+  <h2>Stories</h2>
+  <div class="seg" id="seg" role="group" aria-label="Which stories">
+    <button type="button" data-v="us" aria-pressed="true">U.S. only</button>
+    <button type="button" data-v="all" aria-pressed="false">Everything</button>
+  </div>
+  <p class="note" id="note">U.S. stories only. Choose Everything to add news from the rest of the world.</p>
+  <div class="row"><span>Full screen</span><button type="button" id="full">Enter</button></div>
+  <p class="note">Double-click anywhere for full screen. The cursor hides when you stop moving it.</p>
+  <a class="home" href="../">The full live page &rarr;</a>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // Each topic drifts into its own wedge (degrees; 0 is right, -90 is straight up): drones up, rail down.
+  var GROUPS = {
+    drones: { label: "Drones & Airspace",      rgb: "52 211 153",  from: -125, to: -55 },
+    sec:    { label: "Counter-UAS & Security", rgb: "248 113 113", from: -55,  to: -5 },
+    air:    { label: "Advanced Air",           rgb: "251 191 36",  from: -5,   to: 50 },
+    rail:   { label: "Rail",                   rgb: "56 189 248",  from: 50,   to: 130 },
+    av:     { label: "Autonomous Vehicles",    rgb: "167 139 250", from: 130,  to: 185 },
+    robot:  { label: "Robotics",               rgb: "251 146 60",  from: 185,  to: 235 }
+  };
+  var SIZE = { lead: 300, significant: 255, notable: 195, minor: 150, none: 128 };  // diameter at birth, per 1000px of screen
+  var ON_SCREEN = 24;          // about this many bubbles at a time, whatever the pace
+  var HOURS = 48, POLL_SECONDS = 60;
+  var reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var meta = document.querySelector('meta[name="live-feed"]');
+  var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  var FEED = LOCAL || !meta ? "../feed.json" : meta.content;
+
+  function store(key, value) {
+    try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key, value); } catch (e) { return null; }
+  }
+  var view = store("bubbles-view") === "all" ? "all" : "us";
+
+  var sky = document.getElementById("sky"), bubbles = [], queue = [], stories = [], leads = {}, onScreen = {};
+  var W = 0, H = 0, unit = 1, life = 480, spawnEvery = 20;
+  function measure() { W = innerWidth; H = innerHeight; unit = Math.min(W, H) / 1000; placeLabels(); }
+
+  function ago(t) {
+    var m = Math.max(0, (Date.now() - new Date(t)) / 60000);
+    return m < 1 ? "just now" : m < 60 ? Math.round(m) + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " d ago";
+  }
+  // War stories appear, but never at the largest sizes.
+  function tier(s) {
+    var k = leads[s.id] ? "lead" : s.impact || "none";
+    return s.war && (k === "lead" || k === "significant") ? "notable" : k;
+  }
+  function inView(s) { return view === "all" || s.scope !== "world"; }
+
+  // How far the screen edge is from the centre along angle a.
+  function edge(a) {
+    var c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
+    return Math.min(c > 1e-6 ? (W / 2) / c : Infinity, s > 1e-6 ? (H / 2) / s : Infinity);
+  }
+  function wrap(deg) { return ((deg + 540) % 360) - 180; }
+
+  // The pace follows the news: a slow day drifts slowly (about 11 minutes to the edge), a busy one faster (5 or so).
+  function pace() {
+    var cut = Date.now() - 3 * 3600e3, perHour = stories.filter(function (s) { return new Date(s.published) >= cut; }).length / 3;
+    life = Math.max(300, Math.min(660, 660 - 14 * perHour)) * (reduced ? 1.4 : 1);
+    spawnEvery = life / ON_SCREEN;
+  }
+
+  function make(story, age) {
+    var g = GROUPS[story.desk], k = tier(story);
+    var mid = (g.from + g.to) / 2, half = (g.to - g.from) / 2;
+    var deg = mid + (Math.random() * 2 - 1) * half * 0.62, a = deg * Math.PI / 180;
+    var d = SIZE[k] * unit, reach = edge(a) + d * 0.15;
+    var el = document.createElement("a");
+    el.className = "b"; el.href = story.url; el.target = "_blank"; el.rel = "noopener";
+    el.setAttribute("role", "listitem");
+    el.style.setProperty("--c", g.rgb); el.style.setProperty("--d", d + "px");
+    el.style.width = el.style.height = d + "px";
+    var font = Math.max(10.5, d * 0.07);
+    el.style.fontSize = font + "px";
+    var t = document.createElement("span"); t.className = "t"; t.textContent = story.title;
+    t.style.webkitLineClamp = String(Math.max(2, Math.floor(d * 0.46 / (font * 1.18))));
+    var s = document.createElement("span"); s.className = "s"; s.dataset.t = story.published;
+    s.textContent = story.source + " · " + ago(story.published);
+    el.appendChild(t); el.appendChild(s);
+    el.title = story.title + "\n" + story.source + " · " + new Date(story.published).toLocaleString();
+    var start = Math.min(0.92, Math.max(0.035, (age || 0) / life));   // born just off centre, already in its own direction
+    var b = { id: story.id, story: story, el: el, deg: deg, mid: mid, half: half, a: a, d: d, reach: reach,
+              born: performance.now() - (age || 0) * 1000, x: Math.cos(a) * reach * start, y: Math.sin(a) * reach * start,
+              phase: Math.random() * 6.28, hold: false, out: 0 };
+    el.addEventListener("mouseenter", function () { b.hold = true; });
+    el.addEventListener("mouseleave", function () { b.hold = false; });
+    el.addEventListener("focus", function () { b.hold = true; });
+    el.addEventListener("blur", function () { b.hold = false; });
+    sky.appendChild(el);
+    bubbles.push(b); onScreen[story.id] = true;
+    return b;
+  }
+
+  function next() {
+    if (!queue.length) queue = stories.filter(inView);    // round again, newest first
+    while (queue.length) { var s = queue.shift(); if (!onScreen[s.id] && inView(s)) return s; }
+    return null;
+  }
+
+  // Touching bubbles ease apart; the smaller gives way more.
+  function relax(rounds, strength) {
+    for (var n = 0; n < rounds; n++) {
+      for (var i = 0; i < bubbles.length; i++) {
+        for (var j = i + 1; j < bubbles.length; j++) {
+          var p = bubbles[i], q = bubbles[j], dx = q.x - p.x, dy = q.y - p.y, dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+          var min = (p.r || p.d / 2) + (q.r || q.d / 2) + 8 * unit;
+          if (dist < min) {
+            var push = (min - dist) * strength, nx = dx / dist, ny = dy / dist, total = p.d + q.d;
+            var pw = p.hold ? 0 : q.d / total * 2, qw = q.hold ? 0 : p.d / total * 2;
+            p.x -= nx * push * pw; p.y -= ny * push * pw;
+            q.x += nx * push * qw; q.y += ny * push * qw;
+          }
+        }
+      }
+      // ...but never out of their own wedge: each colour keeps to its side of the sky.
+      for (i = 0; i < bubbles.length; i++) keep(bubbles[i], strength);
+    }
+  }
+  function keep(b, strength) {
+    var dist = Math.sqrt(b.x * b.x + b.y * b.y);
+    if (dist < 1) return;
+    var deg = Math.atan2(b.y, b.x) * 180 / Math.PI, off = wrap(deg - b.mid), room = Math.max(4, b.half - 4);
+    if (Math.abs(off) <= room) return;
+    var target = b.mid + Math.sign(off) * room, turn = wrap(target - deg) * Math.min(1, strength * 4) * Math.PI / 180;
+    var cos = Math.cos(turn), sin = Math.sin(turn), x = b.x;
+    b.x = x * cos - b.y * sin; b.y = x * sin + b.y * cos;
+  }
+
+  var last = performance.now(), sinceSpawn = 0;
+  function frame(now) {
+    if (!W || !H) { measure(); requestAnimationFrame(frame); return; }
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    sinceSpawn += dt;
+    if (sinceSpawn >= spawnEvery && stories.length) { sinceSpawn = 0; var s = next(); if (s) make(s, 0); }
+    for (var i = 0; i < bubbles.length; i++) {
+      var b = bubbles[i];
+      if (!b.hold) { var v = b.reach / life; b.x += Math.cos(b.a) * v * dt; b.y += Math.sin(b.a) * v * dt; }
+    }
+    relax(2, 0.12);
+    for (i = bubbles.length - 1; i >= 0; i--) {
+      b = bubbles[i];
+      b.reach = edge(b.a) + b.d * 0.15;   // the window may have changed size
+      var prog = Math.sqrt(b.x * b.x + b.y * b.y) / b.reach;
+      var pop = Math.min(1, (now - b.born) / 900), ease = reduced ? pop : 1 + 2.2 * Math.pow(pop - 1, 3) + 1.2 * Math.pow(pop - 1, 2);
+      var scale = Math.max(0.3, 1 - 0.62 * prog) * ease;
+      var fade = prog < 0.62 ? 1 : Math.max(0, 1 - (prog - 0.62) / 0.33);
+      if (b.out) { b.out = Math.min(1, b.out + dt / 0.8); fade *= 1 - b.out; }   // left the view: fade now
+      b.r = b.d / 2 * scale;
+      if (fade <= 0) { b.el.remove(); delete onScreen[b.id]; bubbles.splice(i, 1); continue; }
+      var wob = Math.sin(now / 3200 + b.phase) * 5 * unit;
+      var px = W / 2 + b.x - b.d / 2 - Math.sin(b.a) * wob, py = H / 2 + b.y - b.d / 2 + Math.cos(b.a) * wob;
+      b.el.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) scale(" + scale.toFixed(4) + ")";
+      b.el.style.opacity = (fade * Math.min(1, pop * 1.6)).toFixed(3);
+      b.el.style.zIndex = b.hold ? 1500 : Math.round(1000 - prog * 500);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Faint topic names at the edges, where each colour ends up.
+  var labels = [];
+  function placeLabels() {
+    if (!labels.length) Object.keys(GROUPS).forEach(function (k) {
+      var g = GROUPS[k], el = document.createElement("div");
+      el.className = "label"; el.textContent = g.label; el.style.setProperty("--c", g.rgb);
+      document.body.appendChild(el); labels.push([g, el]);
+    });
+    labels.forEach(function (pair) {
+      var a = (pair[0].from + pair[0].to) / 2 * Math.PI / 180, r = edge(a) - 26, half = pair[1].offsetWidth / 2 + 20;
+      var x = Math.min(W - half, Math.max(half, W / 2 + Math.cos(a) * r)), y = Math.min(H - 22, Math.max(22, H / 2 + Math.sin(a) * r));
+      pair[1].style.left = x + "px"; pair[1].style.top = y + "px";
+    });
+  }
+
+  // Fill the sky at once: the newest nearest the centre, older ones already on their way out.
+  function fill() {
+    var start = stories.filter(inView).slice(0, ON_SCREEN);
+    start.forEach(function (s, i) { if (!onScreen[s.id]) make(s, (i + 0.4) * spawnEvery * 0.95); });
+    bubbles.forEach(function (b) { b.r = b.d / 2 * Math.max(0.3, 1 - 0.62 * Math.sqrt(b.x * b.x + b.y * b.y) / b.reach); });
+    relax(240, 0.25);
+    queue = stories.filter(inView).slice(ON_SCREEN);
+    sinceSpawn = 0;
+  }
+
+  function load(first) {
+    if (first && (!innerWidth || !innerHeight)) return setTimeout(function () { measure(); load(true); }, 200);
+    fetch(FEED + (LOCAL ? "?t=" + Date.now() : ""), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (feed) {
+      leads = {}; (feed.leads || (feed.lead ? [feed.lead] : [])).forEach(function (s) { leads[s.id] = true; });
+      var cut = Date.now() - HOURS * 3600e3, known = {};
+      stories.forEach(function (s) { known[s.id] = true; });
+      var fresh = (feed.stories || []).filter(function (s) { return new Date(s.published) >= cut && GROUPS[s.desk]; })
+        .sort(function (a, b) { return new Date(b.published) - new Date(a.published); });
+      var arrivals = fresh.filter(function (s) { return !known[s.id] && inView(s); });
+      stories = fresh;
+      pace();
+      if (first) fill();
+      else if (arrivals.length) { queue = arrivals.concat(queue); sinceSpawn = Math.max(sinceSpawn, spawnEvery - 2); }  // a new story rises next
+    }).catch(function () { if (first) setTimeout(function () { load(true); }, 15000); });
+  }
+
+  /* ---------- settings, full screen, the idle cursor ---------- */
+  var gear = document.getElementById("gear"), panel = document.getElementById("panel"), seg = document.getElementById("seg");
+  function openPanel(open) { panel.hidden = !open; gear.setAttribute("aria-expanded", String(open)); }
+  gear.addEventListener("click", function (e) { e.stopPropagation(); openPanel(panel.hidden); });
+  document.addEventListener("click", function (e) { if (!panel.hidden && !panel.contains(e.target) && e.target !== gear) openPanel(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) { openPanel(false); gear.focus(); } });
+  function setView(v) {
+    view = v; store("bubbles-view", v);
+    seg.dataset.v = v;
+    Array.prototype.forEach.call(seg.children, function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === v)); });
+    document.getElementById("note").textContent = v === "all" ? "Stories from everywhere. Choose U.S. only to show just the United States."
+      : "U.S. stories only. Choose Everything to add news from the rest of the world.";
+    bubbles.forEach(function (b) { if (!inView(b.story)) b.out = b.out || 0.001; });
+    queue = stories.filter(function (s) { return inView(s) && !onScreen[s.id]; });
+    sinceSpawn = Math.max(sinceSpawn, spawnEvery - 1.5);
+  }
+  seg.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b && b.dataset.v !== view) setView(b.dataset.v); });
+
+  function fullscreen() {
+    var d = document;
+    if (d.fullscreenElement) { if (d.exitFullscreen) d.exitFullscreen(); }
+    else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {});
+  }
+  var full = document.getElementById("full");
+  full.addEventListener("click", fullscreen);
+  document.addEventListener("fullscreenchange", function () { full.textContent = document.fullscreenElement ? "Exit" : "Enter"; });
+  sky.addEventListener("dblclick", function (e) { e.preventDefault(); fullscreen(); });
+
+  var idleTimer = 0;
+  function awake() {
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () { if (panel.hidden) document.body.classList.add("idle"); }, 3000);
+  }
+  ["mousemove", "mousedown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, awake, { passive: true }); });
+
+  setInterval(function () {   // keep "12 min ago" true
+    Array.prototype.forEach.call(document.querySelectorAll(".b .s"), function (s) { s.textContent = s.textContent.split(" · ")[0] + " · " + ago(s.dataset.t); });
+  }, 60000);
+
+  addEventListener("resize", measure);
+  setView(view);
+  measure();
+  awake();
+  load(true);
+  setInterval(load, POLL_SECONDS * 1000);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

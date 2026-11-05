@@ -1152,8 +1152,28 @@ class FeedTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = live_feed.write_site(Path(tmp), {"version": 1})
             self.assertEqual(json.loads(path.read_text(encoding="utf-8")), {"version": 1})
-            for name in ("index.html", "live.js", "live.css"):
+            for name in ("index.html", "live.js", "live.css", "bubbles/index.html"):
                 self.assertTrue((Path(tmp) / name).exists())
+
+    def test_the_bubbles_page(self):
+        # Owner, 2026-11-05: headlines as bubbles at /bubbles/, sized by the story, colored by topic, war stories
+        # included but never at the largest size, a U.S. / everything setting.
+        store = Store(":memory:")
+        for sid, title in (("war", "Missile strikes hit Kyiv overnight"), ("peace", "FAA clears drone deliveries in Texas")):
+            store.add_story({"id": sid, "url": f"https://example.com/{sid}", "title": title, "published": iso(NOW - timedelta(hours=1))}, NOW)
+            store.update(sid, NOW, status=VERIFIED, score=70, shown_at=iso(NOW), desk="drones")
+        stories = {s["id"]: s for s in live_feed.build_feed(store, CONFIG, now=NOW, level="LIVE")["stories"]}
+        self.assertTrue(stories["war"]["war"])
+        self.assertNotIn("war", stories["peace"])
+        page = (live_feed.BUBBLES / "index.html").read_text(encoding="utf-8")
+        for desk in CONFIG["desks"]:
+            self.assertIn(f"    {desk['key']}:", page)  # every desk has a colour and a wedge
+        self.assertIn('s.war && (k === "lead" || k === "significant") ? "notable"', page)
+        self.assertIn("../feed.json", page)  # the local preview: the feed written beside the live page
+        self.assertNotIn("innerHTML", page)
+        self.assertNotIn("verif", page.casefold())
+        site = Path("public_site.py").read_text(encoding="utf-8")
+        self.assertIn('("bubbles", output / "bubbles")', site)
 
     def test_the_page_never_says_verified(self):
         # We check our summary against the article; we do not verify the reporting (owner, 2026-10-30).

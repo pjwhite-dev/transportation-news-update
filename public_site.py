@@ -1271,10 +1271,12 @@ def build_public_site(root: Path, output: Path) -> dict[str, int]:
     )
     (output / "assets" / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (output / "assets" / "site.js").write_text(SITE_JS, encoding="utf-8")
-    # The live page is the site root, its daily archive is /days/ and the owner's headline override page is
-    # /login/. All are static; they read their stories from the live-feed branch, which the local live service
-    # pushes. /live/, the live page's first address, sends readers to the root.
-    for folder, target in (("live", output), ("login", output / "login"), ("days", output / "days")):
+    # The live page is the site root, its daily archive is /days/, the headlines as drifting bubbles are /bubbles/
+    # and the owner's headline override page is /login/. All are static; they read their stories from the
+    # live-feed branch, which the local live service pushes. /live/, the live page's first address, sends readers
+    # to the root.
+    for folder, target in (("live", output), ("login", output / "login"), ("days", output / "days"),
+                           ("bubbles", output / "bubbles")):
         source = root / "site_assets" / folder
         if source.is_dir():
             target.mkdir(exist_ok=True)

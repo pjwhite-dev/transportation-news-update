@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "site_assets" / "live"
 LOGIN = ROOT / "site_assets" / "login"  # the owner's override page (advancedtransportation.live/login/)
 DAYS = ROOT / "site_assets" / "days"  # the daily archive page (advancedtransportation.live/days/; live_days.py)
+BUBBLES = ROOT / "site_assets" / "bubbles"  # the headlines as drifting bubbles (advancedtransportation.live/bubbles/)
 FEED_VERSION = 1
 BADGES = {FIRST_PASS: "quick", VERIFIED: "checked", HEADLINE: "headline"}
 TOP_WINDOW = timedelta(hours=48)  # with no lead chosen, the top-rated story of this window leads (the page always has one)
@@ -54,6 +55,8 @@ def public_story(story: dict[str, Any]) -> dict[str, Any]:
         out["also"] = [{"source": a.get("source", ""), "url": a.get("url", "")} for a in story["also"] if a.get("url")]
     if story["record"].get("_scope") == "world":
         out["scope"] = "world"  # the page shows these only when the reader asks for everything
+    if live_lead.is_war(story):
+        out["war"] = True  # /bubbles/ never draws one at the largest size (owner, 2026-11-05)
     corrections = [n["note"] for n in story["notes"] if str(n.get("note", "")).startswith("Correction")]
     if corrections:
         out["correction"] = corrections[-1]
@@ -203,7 +206,7 @@ def content_hash(feed: dict[str, Any]) -> str:
 def write_site(out_dir: Path, feed: dict[str, Any]) -> Path:
     """Write feed.json atomically and refresh the page's static files."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    for folder, target_dir in ((ASSETS, out_dir), (LOGIN, out_dir / "login"), (DAYS, out_dir / "days")):
+    for folder, target_dir in ((ASSETS, out_dir), (LOGIN, out_dir / "login"), (DAYS, out_dir / "days"), (BUBBLES, out_dir / "bubbles")):
         target_dir.mkdir(parents=True, exist_ok=True)
         for asset in folder.iterdir():
             if asset.is_file():
