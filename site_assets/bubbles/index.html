@@ -23,7 +23,7 @@
   #sky::before{content:"";position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;transform:translate(-50%,-50%);
     background:radial-gradient(circle,rgba(255,255,255,.045),transparent 62%);pointer-events:none}
   .b{position:absolute;left:0;top:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-decoration:none;color:inherit;will-change:transform,opacity;cursor:grab;touch-action:none;
+    text-decoration:none;color:inherit;cursor:grab;touch-action:none;
     -webkit-user-drag:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
     background:radial-gradient(circle at 32% 26%,rgb(var(--c)/.50),rgb(var(--c)/.20) 46%,rgb(var(--c)/.09) 72%,rgb(var(--c)/.05));
     border:1px solid rgb(var(--c)/.55);
@@ -39,7 +39,8 @@
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;opacity:.92}
   .b.big .s{white-space:normal;width:70%}   /* lifted: the whole source and time */
   .label{position:absolute;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;
-    color:rgb(var(--c));opacity:.34;transform:translate(-50%,-50%);pointer-events:none}
+    color:rgb(var(--c));opacity:.34;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .4s}
+  body.zoomed .label{opacity:0}   /* zoomed in, the edges are elsewhere */
   body.small .label{font-size:9.5px;letter-spacing:.16em}
 
   /* settings: a quiet round button that fades with the cursor */
@@ -54,6 +55,18 @@
   .gear[aria-expanded=true] svg{transform:rotate(60deg)}
   body.idle .gear{opacity:0}   /* faded, but a tap in its corner still opens it (never the bubble drifting beneath) */
   body.small .gear{width:46px;height:46px}
+  /* zoomed in: a small chip beside the gear says how far, and a tap on it goes back */
+  .zoom{position:fixed;right:calc(70px + env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom));z-index:2000;
+    height:34px;padding:0 12px;border-radius:17px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);
+    color:rgba(244,247,251,.8);font:600 12px/1 inherit;font-family:inherit;letter-spacing:.02em;cursor:pointer;
+    display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .3s,background .2s}
+  .zoom[hidden]{display:none}
+  .zoom:hover{background:rgba(255,255,255,.12);color:#fff}
+  .zoom:focus-visible{outline:2px solid #38BDF8;outline-offset:3px}
+  .zoom svg{width:13px;height:13px}
+  body.small .zoom{height:38px;right:calc(74px + env(safe-area-inset-right))}
+  body.idle .zoom{opacity:.35}
   .panel{position:fixed;right:calc(18px + env(safe-area-inset-right));bottom:calc(72px + env(safe-area-inset-bottom));z-index:2000;
     width:264px;max-width:calc(100vw - 36px);box-sizing:border-box;padding:16px;border-radius:18px;
     background:rgba(16,20,28,.84);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.6);
@@ -93,6 +106,10 @@
     <circle cx="12" cy="12" r="3.1"/>
     <path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6-1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4z"/>
   </svg>
+</button>
+<button type="button" class="zoom" id="zoom" aria-label="Zoom back out" hidden>
+  <span id="zoomv">1.0&times;</span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
 </button>
 <div class="panel" id="panel" role="dialog" aria-label="Settings" hidden>
   <h2>Stories</h2>
@@ -171,13 +188,78 @@
     spawnEvery = life / ON_SCREEN;
   }
 
+  /* ---------- zoom: pinch (or the mouse wheel / a trackpad pinch) to zoom, one finger on the sky to look around ---------- */
+  var MAX_ZOOM = 4, cam = { z: 1, x: 0, y: 0 }, home = false, pointers = {}, gesture = null;
+  var zoomChip = document.getElementById("zoom"), zoomText = document.getElementById("zoomv");
+  function wx(cx) { return (cx - cam.x) / cam.z - W / 2; }   // screen point -> the bubbles' own coordinates
+  function wy(cy) { return (cy - cam.y) / cam.z - H / 2; }
+  function clampCam(soft) {
+    cam.z = Math.max(soft ? 0.8 : 1, Math.min(MAX_ZOOM, cam.z));
+    if (cam.z <= 1) { cam.x = (W - W * cam.z) / 2; cam.y = (H - H * cam.z) / 2; }   // never look past the sky's edge
+    else { cam.x = Math.min(0, Math.max(W - W * cam.z, cam.x)); cam.y = Math.min(0, Math.max(H - H * cam.z, cam.y)); }
+    zoomChip.hidden = cam.z < 1.05;
+    document.body.classList.toggle("zoomed", cam.z >= 1.05);
+    zoomText.textContent = cam.z.toFixed(1) + "\u00d7";
+  }
+  function zoomAt(cx, cy, z, soft) {
+    var px = (cx - cam.x) / cam.z, py = (cy - cam.y) / cam.z;
+    cam.z = Math.max(soft ? 0.8 : 1, Math.min(MAX_ZOOM, z));
+    cam.x = cx - px * cam.z; cam.y = cy - py * cam.z;
+    clampCam(soft);
+  }
+  function spread() {
+    var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
+    return { d: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  }
+  function controls(t) { return panel.contains(t) || gear.contains(t) || zoomChip.contains(t); }
+  document.addEventListener("pointerdown", function (e) {
+    if (controls(e.target)) return;
+    pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var n = Object.keys(pointers).length;
+    if (n === 2 && !bubbles.some(function (b) { return b.drag; })) {
+      // Two fingers: a pinch. A bubble the first finger was resting on is let go (it was not being dragged yet).
+      bubbles.forEach(function (b) {
+        if (b.press && pointers[b.ptr]) { b.press = false; b.moved = true; try { b.el.releasePointerCapture(b.ptr); } catch (x) {} }
+      });
+      var g = spread();
+      gesture = { pinch: true, d0: g.d, z0: cam.z, px: (g.x - cam.x) / cam.z, py: (g.y - cam.y) / cam.z };
+      home = false;
+    } else if (n === 1 && e.target === sky && cam.z > 1) {
+      gesture = { pan: true, id: e.pointerId, sx: e.clientX, sy: e.clientY, x0: cam.x, y0: cam.y };
+      home = false;
+    }
+  }, true);
+  document.addEventListener("pointermove", function (e) {
+    if (!pointers[e.pointerId]) return;
+    pointers[e.pointerId].x = e.clientX; pointers[e.pointerId].y = e.clientY;
+    if (gesture && gesture.pinch && Object.keys(pointers).length >= 2) {
+      var g = spread(), z = Math.max(0.8, Math.min(MAX_ZOOM, gesture.z0 * g.d / gesture.d0));
+      cam.z = z; cam.x = g.x - gesture.px * z; cam.y = g.y - gesture.py * z;   // the point between the fingers stays under them
+      clampCam(true);
+    } else if (gesture && gesture.pan && e.pointerId === gesture.id) {
+      cam.x = gesture.x0 + e.clientX - gesture.sx; cam.y = gesture.y0 + e.clientY - gesture.sy;
+      clampCam(false);
+    }
+  }, true);
+  function letGo(e) {
+    delete pointers[e.pointerId];
+    if (gesture && (gesture.pinch ? Object.keys(pointers).length < 2 : e.pointerId === gesture.id)) gesture = null;
+  }
+  document.addEventListener("pointerup", letGo, true);
+  document.addEventListener("pointercancel", letGo, true);
+  sky.addEventListener("wheel", function (e) {
+    e.preventDefault(); home = false;
+    zoomAt(e.clientX, e.clientY, cam.z * Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0015)));
+  }, { passive: false });
+  zoomChip.addEventListener("click", function () { home = true; });
+
   /* ---------- picking bubbles up: drag to move, fling to send away; on a touch screen, tap to lift, tap again to open ---------- */
   var lifted = null;
   function lift(b) {
     if (lifted && lifted !== b) drop();
     lifted = b; b.pick = true; b.pickAt = performance.now(); b.el.classList.add("on");
     // Lifted, it opens to most of a phone's width and lays the headline out again at that size, so more of it shows.
-    b.L = Math.max(b.d, Math.min(W, H) * (small ? 0.64 : 0.34));
+    b.L = Math.max(b.d, Math.min(W, H) * (small ? 0.64 : 0.34) / cam.z);
     layout(b, b.L, true);
   }
   // Draw a bubble's text at diameter D; the frame then scales it to whatever size it is at the moment.
@@ -197,23 +279,23 @@
   function handle(b) {
     var el = b.el, touch = false;
     el.addEventListener("pointerdown", function (e) {
-      if (e.button > 0 || b.press) return;
+      if (e.button > 0 || b.press || (gesture && gesture.pinch)) return;
       touch = e.pointerType !== "mouse";
       b.press = true; b.moved = false; b.ptr = e.pointerId;
       b.sx = b.lx = e.clientX; b.sy = b.ly = e.clientY; b.lt = e.timeStamp;
-      b.ox = e.clientX - W / 2 - b.x; b.oy = e.clientY - H / 2 - b.y;
+      b.ox = wx(e.clientX) - b.x; b.oy = wy(e.clientY) - b.y;
       b.vx = b.vy = 0;
       try { el.setPointerCapture(e.pointerId); } catch (x) {}
     });
     el.addEventListener("pointermove", function (e) {
-      if (!b.press || e.pointerId !== b.ptr) return;
+      if (!b.press || e.pointerId !== b.ptr || (gesture && gesture.pinch)) return;
       if (!b.drag) {
         if (Math.abs(e.clientX - b.sx) + Math.abs(e.clientY - b.sy) < 8) return;   // still a tap
         b.drag = b.moved = b.free = true; el.classList.add("on", "drag");
         if (lifted && lifted !== b) drop();
       }
-      b.x = e.clientX - W / 2 - b.ox; b.y = e.clientY - H / 2 - b.oy;
-      var dt = Math.max(8, e.timeStamp - b.lt) / 1000;
+      b.x = wx(e.clientX) - b.ox; b.y = wy(e.clientY) - b.oy;
+      var dt = Math.max(8, e.timeStamp - b.lt) / 1000 * cam.z;
       b.vx = b.vx * 0.5 + (e.clientX - b.lx) / dt * 0.5; b.vy = b.vy * 0.5 + (e.clientY - b.ly) / dt * 0.5;
       b.lx = e.clientX; b.ly = e.clientY; b.lt = e.timeStamp;
     });
@@ -310,6 +392,10 @@
     sinceSpawn += dt;
     if (sinceSpawn >= spawnEvery && stories.length) { sinceSpawn = 0; var s = next(); if (s) make(s, 0); }
     if (lifted && now - lifted.pickAt > 12000) drop();   // a lifted bubble settles back after a while
+    if (!gesture && (home || cam.z < 1)) {   // the chip or a double-tap zooms back out; a pinch past 1x springs back
+      zoomAt(W / 2, H / 2, cam.z + (1 - cam.z) * Math.min(1, dt * 7), true);
+      if (Math.abs(cam.z - 1) < 0.004) { home = false; zoomAt(W / 2, H / 2, 1); }
+    }
     for (var i = 0; i < bubbles.length; i++) {
       var b = bubbles[i];
       b.hold = !!(b.hover || b.focus || b.press || b.drag || b.pick);
@@ -335,9 +421,10 @@
       if (!b.pick && b.D !== b.d && b.up < 0.4) layout(b, b.d, false);   // put down: back to its own text
       var natural = b.d * Math.max(0.3, 1 - 0.62 * Math.min(prog, 1.2));
       var size = (natural + (b.top - natural) * b.up) * ease, scale = size / b.D;
-      if (b.pick) {   // keep a lifted bubble wholly on the screen
-        var mx = Math.max(0, W / 2 - size / 2 - 10), my = Math.max(0, H / 2 - size / 2 - 10);
-        b.x += (Math.max(-mx, Math.min(mx, b.x)) - b.x) * rate; b.y += (Math.max(-my, Math.min(my, b.y)) - b.y) * rate;
+      if (b.pick) {   // keep a lifted bubble wholly on the screen (the part of the sky in view, when zoomed)
+        var m = size / 2 + 10 / cam.z, x0 = wx(0) + m, x1 = wx(W) - m, y0 = wy(0) + m, y1 = wy(H) - m;
+        var tx = x0 > x1 ? (x0 + x1) / 2 : Math.max(x0, Math.min(x1, b.x)), ty = y0 > y1 ? (y0 + y1) / 2 : Math.max(y0, Math.min(y1, b.y));
+        b.x += (tx - b.x) * rate; b.y += (ty - b.y) * rate;
       }
       var fade = prog < 0.62 ? 1 : Math.max(0, 1 - (prog - 0.62) / 0.33);
       if (b.hold) fade = Math.max(fade, 0.92);
@@ -349,8 +436,8 @@
         b.el.remove(); delete onScreen[b.id]; bubbles.splice(i, 1); continue;
       }
       var wob = b.hold ? 0 : Math.sin(now / 3200 + b.phase) * 5 * unit;
-      var px = W / 2 + b.x - b.D / 2 - Math.sin(b.a) * wob, py = H / 2 + b.y - b.D / 2 + Math.cos(b.a) * wob;
-      b.el.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) scale(" + scale.toFixed(4) + ")";
+      var px = cam.x + cam.z * (W / 2 + b.x - Math.sin(b.a) * wob) - b.D / 2, py = cam.y + cam.z * (H / 2 + b.y + Math.cos(b.a) * wob) - b.D / 2;
+      b.el.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) scale(" + (scale * cam.z).toFixed(4) + ")";
       b.el.style.opacity = (b.f * Math.min(1, pop * 1.6)).toFixed(3);
       b.el.style.zIndex = b.drag || b.pick ? 1600 : b.hold ? 1500 : Math.round(1000 - prog * 500);
     }
@@ -432,10 +519,17 @@
   ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
     document.addEventListener(ev, function () { full.textContent = document.fullscreenElement || document.webkitFullscreenElement ? "Exit" : "Enter"; });
   });
-  sky.addEventListener("dblclick", function (e) { if (e.target === sky && canFull) { e.preventDefault(); fullscreen(); } });
+  function twice() { if (cam.z > 1.01) home = true; else if (canFull) fullscreen(); }
+  var lastTap = 0, tapType = "";
+  sky.addEventListener("pointerdown", function (e) { tapType = e.pointerType; });
+  sky.addEventListener("dblclick", function (e) { if (e.target === sky && tapType === "mouse") { e.preventDefault(); twice(); } });
+  sky.addEventListener("click", function (e) {   // a phone's double tap (with touch-action:none some browsers send no dblclick)
+    if (e.target !== sky || tapType === "mouse") return;
+    if (e.timeStamp - lastTap < 320) { lastTap = 0; twice(); } else lastTap = e.timeStamp;
+  });
   document.getElementById("how").textContent = coarse
-    ? "Drag a bubble to move it, or flick it away. Tap one to lift it and read it; tap again to open the story." + (canFull ? " Double-tap the sky for full screen." : "")
-    : "Drag a bubble to move it, or fling it away. Click one to open the story. Double-click the sky for full screen. The cursor hides when you stop moving it.";
+    ? "Pinch to zoom in and out; zoomed in, slide one finger on the sky to look around. Drag a bubble to move it, or flick it away. Tap one to lift it and read it; tap again to open the story. Double-tap the sky to zoom back out" + (canFull ? " (or, not zoomed, for full screen)." : ".")
+    : "Scroll, or pinch the trackpad, to zoom; zoomed in, drag the sky to look around. Drag a bubble to move it, or fling it away. Click one to open the story. Double-click the sky to zoom back out, or for full screen. The cursor hides when you stop moving it.";
 
   var idleTimer = 0;
   function awake() {
@@ -449,7 +543,7 @@
     Array.prototype.forEach.call(document.querySelectorAll(".b .s"), function (s) { s.textContent = s.textContent.split(" · ")[0] + " · " + ago(s.dataset.t); });
   }, 60000);
 
-  addEventListener("resize", measure);
+  addEventListener("resize", function () { measure(); clampCam(false); });
   setView(view);
   measure();
   awake();

@@ -1177,6 +1177,10 @@ class FeedTests(unittest.TestCase):
         self.assertIn("#sky{position:fixed;inset:0;touch-action:none", page)
         for hook in ('"pointerdown"', '"pointermove"', '"pointerup"', '"pointercancel"', "setPointerCapture"):
             self.assertIn(hook, page)
+        # Owner, 2026-11-05: pinch to zoom in and out on a phone (the page draws the zoom itself; the browser's is off).
+        self.assertIn("gesture = { pinch: true", page)
+        self.assertIn('sky.addEventListener("wheel"', page)
+        self.assertIn('id="zoom"', page)
         site = Path("public_site.py").read_text(encoding="utf-8")
         self.assertIn('("bubbles", output / "bubbles")', site)
 
