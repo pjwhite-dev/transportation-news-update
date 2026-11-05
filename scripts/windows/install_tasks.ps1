@@ -73,6 +73,8 @@ New-NewsroomTask "newsroom-wsl" $hidden "$hiddenArgs -Command `"wsl.exe -d $Dist
 # The live site (advancedtransportation.live, the site root): wire, editing lanes, feed push. It is the only product
 # and has the GPU to itself.
 New-NewsroomTask "newsroom-live" $pythonw "live_service.py run" $atLogon -LongRunning
+# The local monitor (monitor.py, http://127.0.0.1:8790): every task live, and the Pause / Resume control.
+New-NewsroomTask "newsroom-monitor" $pythonw "monitor.py" $atLogon -LongRunning
 
 # 3. The scheduled jobs.
 New-NewsroomTask "newsroom-services-check" $hidden "$hiddenArgs -File `"$RepoRoot\scripts\ensure_services.ps1`"" (Every 5)
@@ -85,7 +87,7 @@ foreach ($name in "newsroom-edition", "newsroom-ensure", "newsroom-doctor", "new
 }
 
 # 4. Start the logon tasks now so nothing waits for the next sign-in.
-foreach ($name in "newsroom-ollama", "newsroom-hermes-gateway", "newsroom-wsl", "newsroom-live") {
+foreach ($name in "newsroom-ollama", "newsroom-hermes-gateway", "newsroom-wsl", "newsroom-live", "newsroom-monitor") {
     if ($PSCmdlet.ShouldProcess($name, "Start now")) { Start-ScheduledTask -TaskName $name }
 }
 
