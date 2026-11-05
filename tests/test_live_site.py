@@ -1172,6 +1172,11 @@ class FeedTests(unittest.TestCase):
         self.assertIn("../feed.json", page)  # the local preview: the feed written beside the live page
         self.assertNotIn("innerHTML", page)
         self.assertNotIn("verif", page.casefold())
+        # Owner, 2026-11-05: works on a phone, and the bubbles can be picked up and moved (mouse or touch).
+        self.assertIn("viewport-fit=cover", page)
+        self.assertIn("#sky{position:fixed;inset:0;touch-action:none", page)
+        for hook in ('"pointerdown"', '"pointermove"', '"pointerup"', '"pointercancel"', "setPointerCapture"):
+            self.assertIn(hook, page)
         site = Path("public_site.py").read_text(encoding="utf-8")
         self.assertIn('("bubbles", output / "bubbles")', site)
 

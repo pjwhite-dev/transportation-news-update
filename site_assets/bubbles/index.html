@@ -2,46 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bubbles">
 <meta name="description" content="Advanced transportation news as it breaks: each headline a bubble, sized by how big the story is, colored by its topic.">
 <meta name="live-feed" content="https://raw.githubusercontent.com/pjwhite-dev/transportation-news-update/live-feed/feed.json">
 <title>Advanced Transportation Bubbles</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='13' r='8' fill='%2334D399' opacity='.85'/%3E%3Ccircle cx='22' cy='20' r='6' fill='%2338BDF8' opacity='.85'/%3E%3C/svg%3E">
 <style>
-  html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#F4F7FB;
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavior:none;color:#F4F7FB;-webkit-text-size-adjust:100%;
     font-family:"Segoe UI Variable Display","Segoe UI",Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
   body.idle,body.idle *{cursor:none!important}
-  #sky{position:fixed;inset:0}
+  /* the sky takes every touch: no scrolling, no pinch, no double-tap zoom; the bubbles are moved by hand */
+  #sky{position:fixed;inset:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   /* a breath of light where the bubbles are born */
   #sky::before{content:"";position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;transform:translate(-50%,-50%);
     background:radial-gradient(circle,rgba(255,255,255,.045),transparent 62%);pointer-events:none}
   .b{position:absolute;left:0;top:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-decoration:none;color:inherit;will-change:transform,opacity;cursor:pointer;
+    text-decoration:none;color:inherit;will-change:transform,opacity;cursor:grab;touch-action:none;
+    -webkit-user-drag:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
     background:radial-gradient(circle at 32% 26%,rgb(var(--c)/.50),rgb(var(--c)/.20) 46%,rgb(var(--c)/.09) 72%,rgb(var(--c)/.05));
     border:1px solid rgb(var(--c)/.55);
     box-shadow:0 0 calc(var(--d)*.16) rgb(var(--c)/.22),inset 0 0 calc(var(--d)*.10) rgb(var(--c)/.18);
     transition:box-shadow .4s,border-color .4s}
-  .b:hover,.b:focus-visible{border-color:rgb(var(--c)/.95);box-shadow:0 0 calc(var(--d)*.28) rgb(var(--c)/.45),inset 0 0 calc(var(--d)*.12) rgb(var(--c)/.3);outline:none}
-  .b .t{width:72%;text-align:center;font-weight:600;letter-spacing:-.005em;line-height:1.18;
+  .b:focus-visible,.b.on{border-color:rgb(var(--c)/.95);box-shadow:0 0 calc(var(--d)*.28) rgb(var(--c)/.45),inset 0 0 calc(var(--d)*.12) rgb(var(--c)/.3);outline:none}
+  .b.on{box-shadow:0 0 calc(var(--d)*.34) rgb(var(--c)/.55),0 calc(var(--d)*.06) calc(var(--d)*.22) rgba(0,0,0,.6),inset 0 0 calc(var(--d)*.12) rgb(var(--c)/.32)}
+  .b.drag{cursor:grabbing}
+  @media (hover:hover){.b:hover{border-color:rgb(var(--c)/.95);box-shadow:0 0 calc(var(--d)*.28) rgb(var(--c)/.45),inset 0 0 calc(var(--d)*.12) rgb(var(--c)/.3)}}
+  .b .t{width:72%;text-align:center;font-weight:600;letter-spacing:-.005em;line-height:1.18;pointer-events:none;
     display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance;text-shadow:0 1px 8px rgba(0,0,0,.45)}
-  .b .s{width:64%;margin-top:.55em;text-align:center;font-size:.66em;font-weight:500;line-height:1.25;color:rgb(var(--c));
+  .b .s{width:64%;margin-top:.55em;text-align:center;font-size:.66em;font-weight:500;line-height:1.25;color:rgb(var(--c));pointer-events:none;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;opacity:.92}
+  .b.big .s{white-space:normal;width:70%}   /* lifted: the whole source and time */
   .label{position:absolute;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;
     color:rgb(var(--c));opacity:.34;transform:translate(-50%,-50%);pointer-events:none}
+  body.small .label{font-size:9.5px;letter-spacing:.16em}
 
   /* settings: a quiet round button that fades with the cursor */
-  .gear{position:fixed;right:18px;bottom:18px;z-index:2000;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  .gear{position:fixed;right:calc(18px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:2000;
+    width:42px;height:42px;border-radius:50%;display:grid;place-items:center;padding:0;
     border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:rgba(244,247,251,.75);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .6s,background .2s,color .2s,border-color .2s}
   .gear:hover,.gear[aria-expanded=true]{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
   .gear:focus-visible{outline:2px solid #38BDF8;outline-offset:3px}
   .gear svg{width:19px;height:19px;transition:transform .5s}
   .gear[aria-expanded=true] svg{transform:rotate(60deg)}
-  body.idle .gear{opacity:0;pointer-events:none}
-  .panel{position:fixed;right:18px;bottom:72px;z-index:2000;width:264px;padding:16px;border-radius:18px;
+  body.idle .gear{opacity:0}   /* faded, but a tap in its corner still opens it (never the bubble drifting beneath) */
+  body.small .gear{width:46px;height:46px}
+  .panel{position:fixed;right:calc(18px + env(safe-area-inset-right));bottom:calc(72px + env(safe-area-inset-bottom));z-index:2000;
+    width:264px;max-width:calc(100vw - 36px);box-sizing:border-box;padding:16px;border-radius:18px;
     background:rgba(16,20,28,.84);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.6);
-    backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+    backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);touch-action:manipulation;
     transform-origin:100% 100%;transition:opacity .2s,transform .2s}
   .panel[hidden]{display:block;opacity:0;transform:scale(.96) translateY(6px);pointer-events:none;visibility:hidden}
   .panel h2{margin:0 0 10px;font-size:10.5px;font-weight:650;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,247,251,.5)}
@@ -50,16 +66,20 @@
     box-shadow:0 1px 6px rgba(0,0,0,.35);transition:transform .25s cubic-bezier(.3,.7,.2,1)}
   .seg[data-v=all]::before{transform:translateX(100%)}
   .seg button{position:relative;z-index:1;border:0;background:transparent;color:rgba(244,247,251,.6);font:600 12.5px inherit;font-family:inherit;
-    padding:8px 0;border-radius:9px;cursor:pointer;transition:color .2s}
+    padding:8px 0;border-radius:9px;cursor:pointer;transition:color .2s;-webkit-tap-highlight-color:transparent}
+  body.small .seg button{padding:11px 0;font-size:13.5px}
   .seg button[aria-pressed=true]{color:#fff}
   .seg button:focus-visible{outline:2px solid #38BDF8;outline-offset:1px}
   .note{margin:8px 2px 0;font-size:11.5px;line-height:1.4;color:rgba(244,247,251,.45)}
   .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+  .row[hidden]{display:none}
   .row span{font-size:12.5px;color:rgba(244,247,251,.8)}
   .row button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font:600 12px inherit;font-family:inherit;
     padding:7px 12px;border-radius:10px;cursor:pointer}
+  body.small .row button{padding:10px 14px}
   .row button:hover{background:rgba(255,255,255,.12)}
   .row button:focus-visible{outline:2px solid #38BDF8;outline-offset:2px}
+  .how{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
   .home{display:block;margin-top:12px;font-size:11.5px;color:rgba(244,247,251,.45);text-decoration:none}
   .home:hover{color:#fff}
   @media (prefers-reduced-motion:reduce){.panel,.seg::before,.gear svg{transition:none}}
@@ -71,7 +91,7 @@
 <button type="button" class="gear" id="gear" aria-expanded="false" aria-controls="panel" aria-label="Settings">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="12" cy="12" r="3.1"/>
-    <path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4z"/>
+    <path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6-1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4z"/>
   </svg>
 </button>
 <div class="panel" id="panel" role="dialog" aria-label="Settings" hidden>
@@ -81,8 +101,8 @@
     <button type="button" data-v="all" aria-pressed="false">Everything</button>
   </div>
   <p class="note" id="note">U.S. stories only. Choose Everything to add news from the rest of the world.</p>
-  <div class="row"><span>Full screen</span><button type="button" id="full">Enter</button></div>
-  <p class="note">Double-click anywhere for full screen. The cursor hides when you stop moving it.</p>
+  <div class="row" id="fullrow"><span>Full screen</span><button type="button" id="full">Enter</button></div>
+  <p class="note how" id="how">Drag a bubble to move it, or fling it away. Click one to open the story. Double-click the sky for full screen.</p>
   <a class="home" href="../">The full live page &rarr;</a>
 </div>
 
@@ -91,17 +111,17 @@
   "use strict";
   // Each topic drifts into its own wedge (degrees; 0 is right, -90 is straight up): drones up, rail down.
   var GROUPS = {
-    drones: { label: "Drones & Airspace",      rgb: "52 211 153",  from: -125, to: -55 },
-    sec:    { label: "Counter-UAS & Security", rgb: "248 113 113", from: -55,  to: -5 },
-    air:    { label: "Advanced Air",           rgb: "251 191 36",  from: -5,   to: 50 },
-    rail:   { label: "Rail",                   rgb: "56 189 248",  from: 50,   to: 130 },
-    av:     { label: "Autonomous Vehicles",    rgb: "167 139 250", from: 130,  to: 185 },
-    robot:  { label: "Robotics",               rgb: "251 146 60",  from: 185,  to: 235 }
+    drones: { label: "Drones & Airspace",      short: "Drones",       rgb: "52 211 153",  from: -125, to: -55 },
+    sec:    { label: "Counter-UAS & Security", short: "Counter-UAS",  rgb: "248 113 113", from: -55,  to: -5 },
+    air:    { label: "Advanced Air",           short: "Advanced Air", rgb: "251 191 36",  from: -5,   to: 50 },
+    rail:   { label: "Rail",                   short: "Rail",         rgb: "56 189 248",  from: 50,   to: 130 },
+    av:     { label: "Autonomous Vehicles",    short: "Autonomous",   rgb: "167 139 250", from: 130,  to: 185 },
+    robot:  { label: "Robotics",               short: "Robotics",     rgb: "251 146 60",  from: 185,  to: 235 }
   };
   var SIZE = { lead: 300, significant: 255, notable: 195, minor: 150, none: 128 };  // diameter at birth, per 1000px of screen
-  var ON_SCREEN = 24;          // about this many bubbles at a time, whatever the pace
   var HOURS = 48, POLL_SECONDS = 60;
   var reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;   // a phone or tablet: no hover
   var meta = document.querySelector('meta[name="live-feed"]');
   var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var FEED = LOCAL || !meta ? "../feed.json" : meta.content;
@@ -112,8 +132,19 @@
   var view = store("bubbles-view") === "all" ? "all" : "us";
 
   var sky = document.getElementById("sky"), bubbles = [], queue = [], stories = [], leads = {}, onScreen = {};
-  var W = 0, H = 0, unit = 1, life = 480, spawnEvery = 20;
-  function measure() { W = innerWidth; H = innerHeight; unit = Math.min(W, H) / 1000; placeLabels(); }
+  var W = 0, H = 0, unit = 1, small = false, ON_SCREEN = 24, life = 480, spawnEvery = 20;
+  // A phone gets bigger bubbles (so a headline stays readable) and fewer of them (about a quarter of the sky, as on a desktop).
+  function measure() {
+    W = innerWidth; H = innerHeight;
+    var side = Math.min(W, H) / 1000;
+    small = Math.min(W, H) < 600;
+    unit = Math.max(side, Math.min(0.7, side * 1.75));
+    var typical = Math.PI / 4 * Math.pow(SIZE.minor * unit, 2);
+    ON_SCREEN = Math.max(9, Math.min(24, Math.round(W * H * 0.24 / typical)));
+    spawnEvery = life / ON_SCREEN;
+    document.body.classList.toggle("small", small);
+    placeLabels();
+  }
 
   function ago(t) {
     var m = Math.max(0, (Date.now() - new Date(t)) / 60000);
@@ -140,32 +171,98 @@
     spawnEvery = life / ON_SCREEN;
   }
 
+  /* ---------- picking bubbles up: drag to move, fling to send away; on a touch screen, tap to lift, tap again to open ---------- */
+  var lifted = null;
+  function lift(b) {
+    if (lifted && lifted !== b) drop();
+    lifted = b; b.pick = true; b.pickAt = performance.now(); b.el.classList.add("on");
+    // Lifted, it opens to most of a phone's width and lays the headline out again at that size, so more of it shows.
+    b.L = Math.max(b.d, Math.min(W, H) * (small ? 0.64 : 0.34));
+    layout(b, b.L, true);
+  }
+  // Draw a bubble's text at diameter D; the frame then scales it to whatever size it is at the moment.
+  function layout(b, D, big) {
+    var el = b.el, font = big ? Math.max(13, D * 0.062) : Math.max(small ? 11 : 10.5, D * 0.07);
+    b.D = D; el.classList.toggle("big", !!big);
+    el.style.width = el.style.height = D + "px"; el.style.setProperty("--d", D + "px");
+    el.style.fontSize = font + "px";
+    b.t.style.webkitLineClamp = String(Math.max(2, Math.floor(D * (big ? 0.5 : 0.46) / (font * 1.18))));
+  }
+  function drop() {
+    if (!lifted) return;
+    lifted.pick = false;
+    if (!lifted.drag) lifted.el.classList.remove("on");
+    lifted = null;
+  }
+  function handle(b) {
+    var el = b.el, touch = false;
+    el.addEventListener("pointerdown", function (e) {
+      if (e.button > 0 || b.press) return;
+      touch = e.pointerType !== "mouse";
+      b.press = true; b.moved = false; b.ptr = e.pointerId;
+      b.sx = b.lx = e.clientX; b.sy = b.ly = e.clientY; b.lt = e.timeStamp;
+      b.ox = e.clientX - W / 2 - b.x; b.oy = e.clientY - H / 2 - b.y;
+      b.vx = b.vy = 0;
+      try { el.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!b.press || e.pointerId !== b.ptr) return;
+      if (!b.drag) {
+        if (Math.abs(e.clientX - b.sx) + Math.abs(e.clientY - b.sy) < 8) return;   // still a tap
+        b.drag = b.moved = b.free = true; el.classList.add("on", "drag");
+        if (lifted && lifted !== b) drop();
+      }
+      b.x = e.clientX - W / 2 - b.ox; b.y = e.clientY - H / 2 - b.oy;
+      var dt = Math.max(8, e.timeStamp - b.lt) / 1000;
+      b.vx = b.vx * 0.5 + (e.clientX - b.lx) / dt * 0.5; b.vy = b.vy * 0.5 + (e.clientY - b.ly) / dt * 0.5;
+      b.lx = e.clientX; b.ly = e.clientY; b.lt = e.timeStamp;
+    });
+    function release(e) {
+      if (!b.press || e.pointerId !== b.ptr) return;
+      b.press = false;
+      if (!b.drag) return;
+      b.drag = false; el.classList.remove("drag");
+      if (!b.pick) el.classList.remove("on");
+      if (e.type === "pointercancel" || e.timeStamp - b.lt > 90) b.vx = b.vy = 0;   // held still before letting go: it stays put
+      var speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy), cap = 3200;
+      if (speed > cap) { b.vx *= cap / speed; b.vy *= cap / speed; }
+      // From where it was dropped it drifts on outward, in whatever direction that now is.
+      if (b.x * b.x + b.y * b.y > 1) b.a = Math.atan2(b.y, b.x);
+    }
+    el.addEventListener("pointerup", release);
+    el.addEventListener("pointercancel", release);
+    el.addEventListener("click", function (e) {
+      if (b.moved) { e.preventDefault(); b.moved = false; return; }   // that was a drag, not a click
+      if (touch && !b.pick) { e.preventDefault(); lift(b); }          // first tap lifts it to full size; the next opens it
+    });
+    el.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") b.hover = true; });
+    el.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") b.hover = false; });
+    el.addEventListener("focus", function () { try { b.focus = el.matches(":focus-visible"); } catch (x) { b.focus = false; } });
+    el.addEventListener("blur", function () { b.focus = false; });
+  }
+  sky.addEventListener("click", function (e) { if (e.target === sky) drop(); });
+
   function make(story, age) {
     var g = GROUPS[story.desk], k = tier(story);
     var mid = (g.from + g.to) / 2, half = (g.to - g.from) / 2;
     var deg = mid + (Math.random() * 2 - 1) * half * 0.62, a = deg * Math.PI / 180;
     var d = SIZE[k] * unit, reach = edge(a) + d * 0.15;
     var el = document.createElement("a");
-    el.className = "b"; el.href = story.url; el.target = "_blank"; el.rel = "noopener";
+    el.className = "b"; el.href = story.url; el.target = "_blank"; el.rel = "noopener"; el.draggable = false;
     el.setAttribute("role", "listitem");
-    el.style.setProperty("--c", g.rgb); el.style.setProperty("--d", d + "px");
-    el.style.width = el.style.height = d + "px";
-    var font = Math.max(10.5, d * 0.07);
-    el.style.fontSize = font + "px";
+    el.style.setProperty("--c", g.rgb);
     var t = document.createElement("span"); t.className = "t"; t.textContent = story.title;
-    t.style.webkitLineClamp = String(Math.max(2, Math.floor(d * 0.46 / (font * 1.18))));
     var s = document.createElement("span"); s.className = "s"; s.dataset.t = story.published;
     s.textContent = story.source + " · " + ago(story.published);
     el.appendChild(t); el.appendChild(s);
-    el.title = story.title + "\n" + story.source + " · " + new Date(story.published).toLocaleString();
+    if (!coarse) el.title = story.title + "\n" + story.source + " · " + new Date(story.published).toLocaleString();
     var start = Math.min(0.92, Math.max(0.035, (age || 0) / life));   // born just off centre, already in its own direction
     var b = { id: story.id, story: story, el: el, deg: deg, mid: mid, half: half, a: a, d: d, reach: reach,
               born: performance.now() - (age || 0) * 1000, x: Math.cos(a) * reach * start, y: Math.sin(a) * reach * start,
-              phase: Math.random() * 6.28, hold: false, out: 0 };
-    el.addEventListener("mouseenter", function () { b.hold = true; });
-    el.addEventListener("mouseleave", function () { b.hold = false; });
-    el.addEventListener("focus", function () { b.hold = true; });
-    el.addEventListener("blur", function () { b.hold = false; });
+              phase: Math.random() * 6.28, hold: false, out: 0, vx: 0, vy: 0, up: 0, t: t, D: d, L: d, top: d };
+    layout(b, d, false);
+    handle(b);
     sky.appendChild(el);
     bubbles.push(b); onScreen[story.id] = true;
     return b;
@@ -177,7 +274,7 @@
     return null;
   }
 
-  // Touching bubbles ease apart; the smaller gives way more.
+  // Touching bubbles ease apart; the smaller gives way more, and one in your hand does not give way at all.
   function relax(rounds, strength) {
     for (var n = 0; n < rounds; n++) {
       for (var i = 0; i < bubbles.length; i++) {
@@ -192,8 +289,8 @@
           }
         }
       }
-      // ...but never out of their own wedge: each colour keeps to its side of the sky.
-      for (i = 0; i < bubbles.length; i++) keep(bubbles[i], strength);
+      // ...but never out of their own wedge: each colour keeps to its side of the sky (unless you moved it yourself).
+      for (i = 0; i < bubbles.length; i++) if (!bubbles[i].free) keep(bubbles[i], strength);
     }
   }
   function keep(b, strength) {
@@ -212,9 +309,18 @@
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     sinceSpawn += dt;
     if (sinceSpawn >= spawnEvery && stories.length) { sinceSpawn = 0; var s = next(); if (s) make(s, 0); }
+    if (lifted && now - lifted.pickAt > 12000) drop();   // a lifted bubble settles back after a while
     for (var i = 0; i < bubbles.length; i++) {
       var b = bubbles[i];
+      b.hold = !!(b.hover || b.focus || b.press || b.drag || b.pick);
+      if (b.drag) continue;
       if (!b.hold) { var v = b.reach / life; b.x += Math.cos(b.a) * v * dt; b.y += Math.sin(b.a) * v * dt; }
+      if (b.vx || b.vy) {   // a flung bubble coasts, then slows to its drift
+        b.x += b.vx * dt; b.y += b.vy * dt;
+        var drag = Math.exp(-2.2 * dt); b.vx *= drag; b.vy *= drag;
+        if (Math.abs(b.vx) + Math.abs(b.vy) < 4) b.vx = b.vy = 0;
+        else if (b.x * b.x + b.y * b.y > 1) b.a = Math.atan2(b.y, b.x);
+      }
     }
     relax(2, 0.12);
     for (i = bubbles.length - 1; i >= 0; i--) {
@@ -222,30 +328,46 @@
       b.reach = edge(b.a) + b.d * 0.15;   // the window may have changed size
       var prog = Math.sqrt(b.x * b.x + b.y * b.y) / b.reach;
       var pop = Math.min(1, (now - b.born) / 900), ease = reduced ? pop : 1 + 2.2 * Math.pow(pop - 1, 3) + 1.2 * Math.pow(pop - 1, 2);
-      var scale = Math.max(0.3, 1 - 0.62 * prog) * ease;
+      // In your hand a bubble swells part way back to full size; lifted with a tap, all the way, so the headline can be read.
+      var goal = b.pick ? 1 : b.drag || b.press ? 0.35 : 0, rate = Math.min(1, dt * (reduced ? 30 : 7));
+      b.up += (goal - b.up) * rate;
+      b.top += ((b.pick ? b.L : b.d) - b.top) * rate;
+      if (!b.pick && b.D !== b.d && b.up < 0.4) layout(b, b.d, false);   // put down: back to its own text
+      var natural = b.d * Math.max(0.3, 1 - 0.62 * Math.min(prog, 1.2));
+      var size = (natural + (b.top - natural) * b.up) * ease, scale = size / b.D;
+      if (b.pick) {   // keep a lifted bubble wholly on the screen
+        var mx = Math.max(0, W / 2 - size / 2 - 10), my = Math.max(0, H / 2 - size / 2 - 10);
+        b.x += (Math.max(-mx, Math.min(mx, b.x)) - b.x) * rate; b.y += (Math.max(-my, Math.min(my, b.y)) - b.y) * rate;
+      }
       var fade = prog < 0.62 ? 1 : Math.max(0, 1 - (prog - 0.62) / 0.33);
+      if (b.hold) fade = Math.max(fade, 0.92);
       if (b.out) { b.out = Math.min(1, b.out + dt / 0.8); fade *= 1 - b.out; }   // left the view: fade now
-      b.r = b.d / 2 * scale;
-      if (fade <= 0) { b.el.remove(); delete onScreen[b.id]; bubbles.splice(i, 1); continue; }
-      var wob = Math.sin(now / 3200 + b.phase) * 5 * unit;
-      var px = W / 2 + b.x - b.d / 2 - Math.sin(b.a) * wob, py = H / 2 + b.y - b.d / 2 + Math.cos(b.a) * wob;
+      b.r = size / 2;
+      b.f = b.f == null ? fade : b.f + (fade - b.f) * Math.min(1, dt * 4);   // let go near the edge: it dims, not blinks
+      if (fade <= 0 && b.f < 0.03) {
+        if (lifted === b) lifted = null;
+        b.el.remove(); delete onScreen[b.id]; bubbles.splice(i, 1); continue;
+      }
+      var wob = b.hold ? 0 : Math.sin(now / 3200 + b.phase) * 5 * unit;
+      var px = W / 2 + b.x - b.D / 2 - Math.sin(b.a) * wob, py = H / 2 + b.y - b.D / 2 + Math.cos(b.a) * wob;
       b.el.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) scale(" + scale.toFixed(4) + ")";
-      b.el.style.opacity = (fade * Math.min(1, pop * 1.6)).toFixed(3);
-      b.el.style.zIndex = b.hold ? 1500 : Math.round(1000 - prog * 500);
+      b.el.style.opacity = (b.f * Math.min(1, pop * 1.6)).toFixed(3);
+      b.el.style.zIndex = b.drag || b.pick ? 1600 : b.hold ? 1500 : Math.round(1000 - prog * 500);
     }
     requestAnimationFrame(frame);
   }
 
-  // Faint topic names at the edges, where each colour ends up.
+  // Faint topic names at the edges, where each colour ends up (shorter names on a phone).
   var labels = [];
   function placeLabels() {
     if (!labels.length) Object.keys(GROUPS).forEach(function (k) {
       var g = GROUPS[k], el = document.createElement("div");
-      el.className = "label"; el.textContent = g.label; el.style.setProperty("--c", g.rgb);
+      el.className = "label"; el.style.setProperty("--c", g.rgb);
       document.body.appendChild(el); labels.push([g, el]);
     });
     labels.forEach(function (pair) {
-      var a = (pair[0].from + pair[0].to) / 2 * Math.PI / 180, r = edge(a) - 26, half = pair[1].offsetWidth / 2 + 20;
+      pair[1].textContent = small ? pair[0].short : pair[0].label;
+      var a = (pair[0].from + pair[0].to) / 2 * Math.PI / 180, r = edge(a) - 26, half = pair[1].offsetWidth / 2 + (small ? 12 : 20);
       var x = Math.min(W - half, Math.max(half, W / 2 + Math.cos(a) * r)), y = Math.min(H - 22, Math.max(22, H / 2 + Math.sin(a) * r));
       pair[1].style.left = x + "px"; pair[1].style.top = y + "px";
     });
@@ -282,7 +404,9 @@
   function openPanel(open) { panel.hidden = !open; gear.setAttribute("aria-expanded", String(open)); }
   gear.addEventListener("click", function (e) { e.stopPropagation(); openPanel(panel.hidden); });
   document.addEventListener("click", function (e) { if (!panel.hidden && !panel.contains(e.target) && e.target !== gear) openPanel(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) { openPanel(false); gear.focus(); } });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { if (!panel.hidden) { openPanel(false); gear.focus(); } else drop(); }
+  });
   function setView(v) {
     view = v; store("bubbles-view", v);
     seg.dataset.v = v;
@@ -295,23 +419,31 @@
   }
   seg.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b && b.dataset.v !== view) setView(b.dataset.v); });
 
+  var root = document.documentElement, canFull = !!(root.requestFullscreen || root.webkitRequestFullscreen);
   function fullscreen() {
-    var d = document;
-    if (d.fullscreenElement) { if (d.exitFullscreen) d.exitFullscreen(); }
-    else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {});
+    var d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
+    if (on) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+    var p = (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+    if (p && p.catch) p.catch(function () {});
   }
   var full = document.getElementById("full");
+  document.getElementById("fullrow").hidden = !canFull;   // an iPhone has no full screen for pages (Add to Home Screen does it)
   full.addEventListener("click", fullscreen);
-  document.addEventListener("fullscreenchange", function () { full.textContent = document.fullscreenElement ? "Exit" : "Enter"; });
-  sky.addEventListener("dblclick", function (e) { e.preventDefault(); fullscreen(); });
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+    document.addEventListener(ev, function () { full.textContent = document.fullscreenElement || document.webkitFullscreenElement ? "Exit" : "Enter"; });
+  });
+  sky.addEventListener("dblclick", function (e) { if (e.target === sky && canFull) { e.preventDefault(); fullscreen(); } });
+  document.getElementById("how").textContent = coarse
+    ? "Drag a bubble to move it, or flick it away. Tap one to lift it and read it; tap again to open the story." + (canFull ? " Double-tap the sky for full screen." : "")
+    : "Drag a bubble to move it, or fling it away. Click one to open the story. Double-click the sky for full screen. The cursor hides when you stop moving it.";
 
   var idleTimer = 0;
   function awake() {
     document.body.classList.remove("idle");
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(function () { if (panel.hidden) document.body.classList.add("idle"); }, 3000);
+    idleTimer = setTimeout(function () { if (panel.hidden) document.body.classList.add("idle"); }, coarse ? 5000 : 3000);
   }
-  ["mousemove", "mousedown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, awake, { passive: true }); });
+  ["mousemove", "pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, awake, { passive: true }); });
 
   setInterval(function () {   // keep "12 min ago" true
     Array.prototype.forEach.call(document.querySelectorAll(".b .s"), function (s) { s.textContent = s.textContent.split(" · ")[0] + " · " + ago(s.dataset.t); });
