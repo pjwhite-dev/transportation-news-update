@@ -44,6 +44,39 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual([e["text"] for e in sent if e["kind"] == "ink"], ["done ", "still ", "writing"])  # the open call, the last done
         self.assertEqual(offset, self.events.stat().st_size)
 
+    def test_the_typewriter_gets_the_tokens_of_the_last_ten_calls_only(self):
+        rows = []
+        for n in range(13):
+            rows += [line("ink-start", 30 - n, id=f"c{n}", purpose="live_triage"), line("ink", 30 - n, id=f"c{n}", text=f"t{n}"),
+                     line("ink-end", 30 - n, id=f"c{n}", ok=True, chars=2)]
+        self.events.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        lines, _ = monitor.tail_events(self.events)
+        texts = [json.loads(x)["text"] for x in lines if json.loads(x)["kind"] == "ink"]
+        self.assertEqual(texts, [f"t{n}" for n in range(3, 13)])
+
+    def test_the_charts_get_the_last_hour_without_model_tokens(self):
+        rows = [
+            line("live-drop", 90, title="too old", reason="x"),
+            line("ink-start", 30, id="a", purpose="story_summary", subject="S" * 900),
+            line("ink", 30, id="a", text="tokens"),
+            line("ink-end", 29, id="a", ok=True, chars=6),
+            line("live-sweep", 5, source="wire", items=3, new=0),
+            "not json",
+        ]
+        self.events.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        events = monitor.history_events(self.events)
+        self.assertEqual([e["kind"] for e in events], ["ink-start", "ink-end", "live-sweep"])
+        self.assertEqual(len(events[0]["subject"]), 200)
+        self.assertEqual(monitor.history_events(self.dir / "missing.jsonl"), [])
+
+    def test_cpu_and_memory_readings(self):
+        self.assertEqual(monitor.cpu_percent((100, 1000), (150, 1100)), 50.0)  # 50 of 100 ticks idle
+        self.assertIsNone(monitor.cpu_percent(None, (1, 2)))
+        self.assertIsNone(monitor.cpu_percent((5, 10), (5, 10)))
+        ram = monitor.memory()
+        if ram:  # Windows
+            self.assertGreater(ram["total"], ram["used"])
+
     def test_a_half_written_last_line_waits_for_the_stream(self):
         self.events.write_bytes((line("live-arrive", title="A") + "\n" + '{"t": "x", "kind": "live-ar').encode("utf-8"))
         lines, offset = monitor.tail_events(self.events)

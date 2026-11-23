@@ -1,8 +1,8 @@
 """The local monitor: http://127.0.0.1:8790 (this computer only).
 
 A live look at everything the newsroom does as it happens: the live site's events and model calls (streamed from
-.runtime/live_site/events.jsonl as Server-Sent Events), the GPU, the models Ollama holds, the service's heartbeat and
-the scheduled tasks. Its one control is Pause / Resume:
+.runtime/live_site/events.jsonl as Server-Sent Events, with the last hour's events for the charts), the GPU, the CPU
+and memory, the models Ollama holds, the service's heartbeat and the scheduled tasks. Its one control is Pause / Resume:
 
   Pause   writes the GPU pause file (no end), stops and disables the newsroom-live task (the services check leaves a
           disabled task alone) and unloads the newsroom's models from the card.
@@ -17,6 +17,7 @@ The control answers only same-origin requests on 127.0.0.1 that carry the X-Moni
 from __future__ import annotations
 
 import argparse
+import ctypes
 import json
 import os
 import subprocess
@@ -41,9 +42,13 @@ OLLAMA = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
 LIVE_TASK = "newsroom-live"
 BACKLOG_BYTES = 3_000_000  # the end of the event log read when a page connects
 BACKLOG_EVENTS = 400
+BACKLOG_CALLS = 10  # model calls whose tokens a connecting page gets, for the typewriter's transcript
 SAMPLE_SECONDS = 2
 TASK_SECONDS = 20
 HISTORY = 300  # GPU samples kept: ten minutes
+HISTORY_MINUTES = 60  # the events a connecting page gets for its charts (model calls, wire, drops, stories)
+HISTORY_BYTES = 12_000_000
+HISTORY_EVENTS = 8000
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 TASKS = {
@@ -104,6 +109,48 @@ def gpu() -> dict[str, Any]:
         return {}
 
 
+class _FileTime(ctypes.Structure):
+    _fields_ = [("low", ctypes.c_uint32), ("high", ctypes.c_uint32)]
+
+
+class _MemoryStatus(ctypes.Structure):
+    _fields_ = [("length", ctypes.c_uint32), ("load", ctypes.c_uint32), ("total", ctypes.c_uint64), ("avail", ctypes.c_uint64),
+                ("page_total", ctypes.c_uint64), ("page_avail", ctypes.c_uint64), ("virtual_total", ctypes.c_uint64),
+                ("virtual_avail", ctypes.c_uint64), ("extended", ctypes.c_uint64)]
+
+
+def cpu_times() -> tuple[int, int] | None:
+    """(idle, total) processor time so far, from GetSystemTimes; None off Windows."""
+    try:
+        idle, kernel, user = _FileTime(), _FileTime(), _FileTime()
+        if not ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user)):  # type: ignore[attr-defined]
+            return None
+    except (AttributeError, OSError):
+        return None
+    value = lambda ft: (ft.high << 32) | ft.low
+    return value(idle), value(kernel) + value(user)  # kernel time includes idle time
+
+
+def cpu_percent(before: tuple[int, int] | None, after: tuple[int, int] | None) -> float | None:
+    if not before or not after or after[1] <= before[1]:
+        return None
+    busy = 1 - (after[0] - before[0]) / (after[1] - before[1])
+    return round(max(0.0, min(1.0, busy)) * 100, 1)
+
+
+def memory() -> dict[str, float]:
+    """Physical memory in GB, from GlobalMemoryStatusEx; {} off Windows."""
+    try:
+        status = _MemoryStatus()
+        status.length = ctypes.sizeof(_MemoryStatus)
+        if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):  # type: ignore[attr-defined]
+            return {}
+    except (AttributeError, OSError):
+        return {}
+    gb = 1024 ** 3
+    return {"used": round((status.total - status.avail) / gb, 1), "total": round(status.total / gb, 1)}
+
+
 def ollama_models() -> dict[str, Any]:
     try:
         models = requests.get(f"{OLLAMA}/api/ps", timeout=2).json().get("models") or []
@@ -155,8 +202,8 @@ def heartbeat(path: Path) -> dict[str, Any] | None:
 
 def tail_events(path: Path, limit_bytes: int = BACKLOG_BYTES, keep: int = BACKLOG_EVENTS) -> tuple[list[str], int]:
     """The last `keep` events worth showing (no quiet wire sweeps), every sweep of the last 15 minutes (for the wire
-    counter), and the tokens of the newest model call and of the last one to finish, in order; plus the offset to
-    stream from."""
+    counter), and the tokens of the newest `BACKLOG_CALLS` model calls and of the last one to finish, in order; plus
+    the offset to stream from."""
     try:
         size = path.stat().st_size
         with path.open("rb") as handle:
@@ -175,8 +222,9 @@ def tail_events(path: Path, limit_bytes: int = BACKLOG_BYTES, keep: int = BACKLO
             parsed.append((json.loads(raw), raw.decode("utf-8", "replace").rstrip("\r")))
         except ValueError:
             continue
-    last = lambda kind: next((e.get("id") for e, _ in reversed(parsed) if e.get("kind") == kind), None)
-    shown_calls = {last("ink-start"), last("ink-end")} - {None}
+    starts = [e.get("id") for e, _ in parsed if e.get("kind") == "ink-start"]
+    last_end = next((e.get("id") for e, _ in reversed(parsed) if e.get("kind") == "ink-end"), None)
+    shown_calls = set(starts[-BACKLOG_CALLS:]) | {last_end} - {None}
     picked = []  # (line, counts toward `keep`)
     for event, line in parsed:
         kind = event.get("kind")
@@ -200,6 +248,37 @@ def tail_events(path: Path, limit_bytes: int = BACKLOG_BYTES, keep: int = BACKLO
             continue
         out.append(line)
     return out, complete
+
+
+def history_events(path: Path, minutes: int = HISTORY_MINUTES, limit_bytes: int = HISTORY_BYTES,
+                   keep: int = HISTORY_EVENTS, now: float | None = None) -> list[dict[str, Any]]:
+    """The last `minutes` of events for the page's charts, without model tokens: a model call is its ink-start (subject
+    cut to 200 characters) and ink-end. The newest `keep` at most, oldest first."""
+    try:
+        size = path.stat().st_size
+        with path.open("rb") as handle:
+            handle.seek(max(0, size - limit_bytes))
+            chunk = handle.read(size - handle.tell())
+    except OSError:
+        return []
+    lines = chunk.split(b"\n")
+    if size > limit_bytes:
+        lines = lines[1:]
+    cutoff = (now if now is not None else time.time()) - minutes * 60
+    out: list[dict[str, Any]] = []
+    for raw in lines:
+        if not raw.strip() or b'"kind": "ink"' in raw:
+            continue
+        try:
+            event = json.loads(raw)
+            if datetime.fromisoformat(event["t"]).timestamp() < cutoff:
+                continue
+        except (ValueError, KeyError, TypeError):
+            continue
+        if event.get("kind") == "ink-start":
+            event["subject"] = str(event.get("subject", ""))[:200]
+        out.append(event)
+    return out[-keep:]
 
 
 def append_event(path: Path, kind: str, **fields: Any) -> None:
@@ -226,6 +305,7 @@ class Monitor:
         self.snapshot: dict[str, Any] = {}
         self.tasks: list[dict[str, Any]] = []
         self.version = 0
+        self.cpu_before = cpu_times()
 
     # --- sampling ---------------------------------------------------------------------------------------------------
     def refresh_tasks(self) -> None:
@@ -243,13 +323,15 @@ class Monitor:
 
     def sample(self) -> None:
         card, models = gpu(), ollama_models()
-        if card:
-            self.history.append([int(time.time()), card.get("util"), card.get("mem_used")])
+        after = cpu_times()
+        system = {"cpu": cpu_percent(self.cpu_before, after), "ram": memory()}
+        self.cpu_before = after
+        self.history.append([int(time.time()), card.get("util"), card.get("mem_used"), system["cpu"], system["ram"].get("used")])
         ours = newsroom_models()
         for m in models["models"]:
             m["newsroom"] = m["name"] in ours
         state = {
-            "at": now_iso(), "gpu": card, "history": list(self.history), "ollama": models,
+            "at": now_iso(), "gpu": card, "system": system, "history": list(self.history), "ollama": models,
             "heartbeat": heartbeat(self.live_dir / "heartbeat.json"), "pause": pause_state(self.pause_path),
         }
         with self.lock:
@@ -382,6 +464,7 @@ def make_handler(monitor: Monitor, port: int) -> type[BaseHTTPRequestHandler]:
                 version, state = monitor.state()
                 self.send_event("state", json.dumps(state, default=str).encode("utf-8"))
                 seen = version
+                self.send_event("history", json.dumps(history_events(path)).encode("utf-8"))
                 self.send_event("backlog", json.dumps([json.loads(line) for line in lines]).encode("utf-8"))
                 self.wfile.flush()
                 quiet = 0.0
