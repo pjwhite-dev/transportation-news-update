@@ -352,7 +352,7 @@
 
 <main>
   <section class="panel a-pipe">
-    <div class="ph"><span class="dot"></span><h2>The newsroom floor</h2><span class="tag">each story is a page carried desk to desk · a robot works each desk · dropped pages go on the spike</span><span class="spacer"></span><span class="tag" id="pipe-tag"></span></div>
+    <div class="ph"><span class="dot"></span><h2>The newsroom floor</h2><span class="tag">each story is a page carried desk to desk · a robot works each desk · thrown-out pages go in the trash</span><span class="spacer"></span><span class="tag" id="pipe-tag"></span></div>
     <div class="grow"><canvas id="pipe"></canvas></div>
     <div class="hourrow">
       <div><b id="hr-sweeps">0</b><span>sweeps/h</span></div>
@@ -444,7 +444,7 @@
   </section>
 
   <section class="panel a-spike">
-    <div class="ph"><span class="dot" style="--c:var(--bad)"></span><h2>The spike</h2><span class="tag">why dropped, last hour</span></div>
+    <div class="ph"><span class="dot" style="--c:var(--bad)"></span><h2>Trash</h2><span class="tag">why stories were thrown out, last hour</span></div>
     <div class="reasons" id="reasons"><div class="empty">Nothing dropped yet</div></div>
     <div class="spiked" id="spiked"></div>
   </section>
@@ -822,14 +822,14 @@
   /* pipeline: the newsroom floor. A little robot works at each desk; every story is a page. A page flies along the
      line, waits in the next desk's in-tray, lies on the desk while a model works on it (characters of the model's
      output float up from the desk), then flies on, marked by each desk: lines of text from Write, a check from Check,
-     a flag from Edit. Dropped pages land on the spike; the press prints the ones that reach the page; pushes fly to
+     a flag from Edit. Dropped pages crumple into the trash; the press prints the ones that reach the page; pushes fly to
      the live site. */
-  var balls = [], sparks = [], bursts = [], glyphs = [], pipeW = 1000, pipeH = 200, ballSeq = 0, spikeFlash = 0;
-  var QUEUE_MAX = 12, QUEUE_TTL = 6 * 60e3, DOCK_TTL = 5 * 60e3, TRAY_SHOWN = 6;
+  var balls = [], sparks = [], bursts = [], glyphs = [], pipeW = 1000, pipeH = 200, ballSeq = 0, trashLid = 0;
+  var QUEUE_MAX = 12, QUEUE_TTL = 6 * 60e3, DOCK_TTL = 5 * 60e3, STACK = 6;
   var WOOD = "#3E3029", WOOD_TOP = "#76594A", METAL = "#41557A", METAL_D = "#2A3A55", HAND = "#6C82A8", VISOR = "#050A12", PAPER = "#EEF2F8";
   var TOOLS = { wire: "radio", triage: "magnify", write: "type", check: "stamp", edit: "pencil" };
   // The floor's scale: as big as the canvas allows, with room for the headline above a desk, the labels below it and
-  // the spike at the bottom, and without desks touching.
+  // the trash at the bottom, and without desks touching.
   function sc(h) { var gap = (pipeW - 2 * Math.min(80, pipeW * .07)) / (NODES.length - 1); return Math.max(.6, Math.min(1.7, (h - 92) / 52, gap / 62)); }
   function nodePos(id, w, h) { var n = NODE[id], side = Math.min(80, w * .07); return { x: side + n.i * (w - 2 * side) / (NODES.length - 1), y: 36 * sc(h) + 22 }; }
   function deskSpot(id, kind) {  // where pages go at a desk: the in-tray, the desk top, or into the machine
@@ -859,7 +859,7 @@
     for (var i = 0; i < count; i++) trip(newBall(from), to, to === "site" ? "absorb" : "queue", i * 220);
     pulse(from);
   }
-  function spawnDrop(from) { var b = queued(from)[0] || newBall(from); b.call = null; trip(b, "spike", "fall", 0, 1300); }
+  function spawnDrop(from) { var b = queued(from)[0] || newBall(from); b.call = null; trip(b, "trash", "fall", 0, 1300); }
   function dock(e) {
     var at = job(e.purpose).node, b = queued(at)[0], waiting = !!b;
     if (!b) b = newBall(prevNode(at));  // came in some other way (the backlog, a restart): fly in from the desk before
@@ -871,7 +871,7 @@
     if (!b) { b = newBall(at); var d = deskSpot(at, "desk"); b.x = d.x; b.y = d.y; }
     b.call = null;
     NODE[at].done = performance.now();
-    if (c.ok === false) return trip(b, "spike", "fall", 0, 1300);
+    if (c.ok === false) return trip(b, "trash", "fall", 0, 1300);
     if (c.purpose === "story_summary") b.marks.text = true;
     if (c.purpose === "entailment") b.marks.check = true;
     if (c.purpose === "live_sort" || c.purpose === "live_score") b.marks.flag = true;
@@ -903,7 +903,7 @@
   }
   function arrive(b, now) {
     b.arrived = true; b.at = b.to;
-    if (b.mode === "fall") { spikeFlash = 1; b.gone = true; return; }
+    if (b.mode === "fall") { trashLid = 1; b.gone = true; return; }
     if (b.mode === "absorb") { var m = deskSpot(b.to, "mouth"); burst(m.x, m.y, NODE[b.to].c, true); NODE[b.to].glow = 1; b.gone = true; return; }
     if (b.mode === "dock") { var d = deskSpot(b.to, "desk"); burst(d.x, d.y, NODE[b.to].c, false); NODE[b.to].glow = 1; return; }
     pulse(b.to);
@@ -1071,20 +1071,39 @@
     [-.45, 0, .45].forEach(function (f) { var yy = gy + f * r, half = Math.sqrt(1 - f * f) * r; g.beginPath(); g.moveTo(gx - half, yy); g.lineTo(gx + half, yy); g.stroke(); });
     n.hits.forEach(function (t) { var kk = (now - t) / 1400; g.strokeStyle = alpha(n.c, .9 * (1 - kk)); g.lineWidth = 1.3 * s; g.beginPath(); g.arc(gx, y - 24 * s, 3 * s + kk * 16 * s, Math.PI * 1.15, Math.PI * 1.85); g.stroke(); });
   }
-  function drawSpike(g, x, y, s, now) {
-    var m = Math.min(7, S.drops.length);
-    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 7, 13, 2.2, 0, 0, 7); g.fill();
-    g.fillStyle = "#4B5563"; roundRect(g, x - 10, y + 2, 20, 4.5, 2); g.fill();
-    for (var i = 0; i < m; i++) drawPage(g, x + (((i * 37) % 7) - 3) * .8, y - 1 - i * 2.4, s, (((i * 53) % 11) - 5) * .08, { c: C.bad, marks: {} }, .92, .85);
-    var top = y - 26;
-    var steel = g.createLinearGradient(x - 1.5, 0, x + 1.5, 0); steel.addColorStop(0, "#64748B"); steel.addColorStop(.5, "#E2E8F0"); steel.addColorStop(1, "#64748B");
-    g.fillStyle = steel; g.beginPath(); g.moveTo(x - 1.3, y + 2); g.lineTo(x - 1.1, top + 4); g.lineTo(x, top); g.lineTo(x + 1.1, top + 4); g.lineTo(x + 1.3, y + 2); g.closePath(); g.fill();
+  function crumple(g, x, y, r, rot, a) {  // a balled-up page
+    g.save(); g.translate(x, y); g.rotate(rot); g.globalAlpha = a;
+    g.fillStyle = PAPER; g.beginPath();
+    for (var i = 0; i < 9; i++) { var ang = i / 9 * 6.283, rr = r * (.78 + ((i * 7) % 5) * .07); if (i) g.lineTo(Math.cos(ang) * rr, Math.sin(ang) * rr); else g.moveTo(Math.cos(ang) * rr, Math.sin(ang) * rr); }
+    g.closePath(); g.fill();
+    g.strokeStyle = "#A7B3C4"; g.lineWidth = Math.max(.6, r * .12); g.beginPath();
+    g.moveTo(-r * .5, -r * .2); g.lineTo(r * .1, r * .1); g.lineTo(r * .45, -r * .35); g.moveTo(-r * .2, r * .5); g.lineTo(r * .2, r * .15); g.stroke();
+    g.restore();
+  }
+  // The trash can: dropped pages crumple and land in it; it fills up with the hour's drops.
+  function drawTrash(g, x, y, s, now) {
+    var z = Math.max(.9, Math.min(1.5, s)), w = 22 * z, hgt = 24 * z, top = y - hgt, lid = trashLid;
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 1, w * .65, 2.6 * z, 0, 0, 7); g.fill();
+    // paper inside, showing over the rim as it fills (up to 6 balls)
+    var n = Math.min(6, Math.ceil(S.drops.length / 4));
+    for (var i = 0; i < n; i++) crumple(g, x + (((i * 37) % 9) - 4) * 1.6 * z, top + 1.5 * z - (i > 2 ? 3.5 * z : 0), 3.6 * z, i * 1.3, 1);
+    var body = g.createLinearGradient(x - w / 2, 0, x + w / 2, 0);
+    body.addColorStop(0, "#3B4A63"); body.addColorStop(.45, "#7E8FAA"); body.addColorStop(1, "#33415A");
+    g.fillStyle = body; g.beginPath(); g.moveTo(x - w / 2, top + 2 * z); g.lineTo(x + w / 2, top + 2 * z); g.lineTo(x + w / 2 - 3 * z, y); g.lineTo(x - w / 2 + 3 * z, y); g.closePath(); g.fill();
+    g.strokeStyle = "rgba(15,23,42,.55)"; g.lineWidth = 1 * z;
+    for (var r = -2; r <= 2; r++) { g.beginPath(); g.moveTo(x + r * w / 6, top + 4 * z); g.lineTo(x + r * (w - 6 * z) / 6, y - 2 * z); g.stroke(); }
+    g.fillStyle = "#9AA9C2"; roundRect(g, x - w / 2 - 1.2 * z, top, w + 2.4 * z, 3 * z, 1.4 * z); g.fill();  // rim
+    // the lid flips open when something is thrown out
+    g.save(); g.translate(x + w / 2 + 1 * z, top); g.rotate(-lid * 1.9);
+    g.fillStyle = "#8C9BB5"; roundRect(g, -w - 2 * z, -3 * z, w + 2 * z, 3 * z, 1.4 * z); g.fill();
+    g.fillStyle = "#5B6B86"; roundRect(g, -w / 2 - 4 * z, -5 * z, 6 * z, 2.2 * z, 1 * z); g.fill();
+    g.restore();
+    if (trashLid > .05) for (var k = 0; k < 3; k++) { g.strokeStyle = alpha("#CBD5E1", trashLid * .6); g.lineWidth = 1; g.beginPath(); g.moveTo(x - 6 * z + k * 6 * z, top - 4 * z - (1 - trashLid) * 6 * z); g.lineTo(x - 7 * z + k * 6 * z, top - 8 * z - (1 - trashLid) * 8 * z); g.stroke(); }
+    trashLid = Math.max(0, trashLid - .02);
     g.textAlign = "left"; g.textBaseline = "middle";
-    g.fillStyle = alpha(C.bad, .75 + spikeFlash * .25); g.font = "700 11px " + MONO; g.fillText("THE SPIKE", x + 16, y - 10);
-    g.fillStyle = C.dim; g.font = "10px " + MONO; g.fillText(fmt(S.drops.length) + " dropped · last hour", x + 16, y + 3);
-    if (spikeFlash > .05) { g.strokeStyle = alpha(C.bad, spikeFlash); g.lineWidth = 1.5; g.beginPath(); g.arc(x, top + 6, 6 + (1 - spikeFlash) * 14, 0, 7); g.stroke(); }
-    spikeFlash *= .94;
-    return { x: x, y: top + 2 };
+    g.fillStyle = "#CBD5E1"; g.font = "700 11px " + MONO; g.fillText("TRASH", x + w / 2 + 10, y - hgt * .62);
+    g.fillStyle = C.dim; g.font = "10px " + MONO; g.fillText(fmt(S.drops.length) + " thrown out · last hour", x + w / 2 + 10, y - hgt * .62 + 13);
+    return { x: x, y: top - 2 * z };
   }
   function drawPipe(now) {
     var f = fit($("pipe")), g = f.g, w = f.w, h = f.h, busy = {};
@@ -1102,7 +1121,7 @@
       g.beginPath(); g.moveTo(a.x + 22 * s, a.y - 6 * s); g.bezierCurveTo((a.x + b2.x) / 2, ly, (a.x + b2.x) / 2, ly, b2.x - 30 * s, b2.y + 6 * s); g.stroke();
     }
     g.setLineDash([]);
-    var spikeTop = drawSpike(g, w / 2 - 60, h - 14, s, now);
+    var trashTop = drawTrash(g, w / 2 - 70, h - 8, s, now);
     var docked = {};
     balls.forEach(function (b) { if (b.arrived && b.mode === "dock" && !b.gone) (docked[b.at] = docked[b.at] || []).push(b); });
     NODES.forEach(function (n) { drawStation(g, n, now, busy[n.id] || 0, docked[n.id] || []); });
@@ -1128,7 +1147,7 @@
       if (!b.arrived) {
         if (k < 0) return true;
         if (k >= 1) { arrive(b, now); return !b.gone; }
-        var end = b.mode === "fall" ? spikeTop : b.mode === "dock" ? deskSpot(b.to, "desk") : b.mode === "absorb" ? deskSpot(b.to, "mouth") : deskSpot(b.to, "tray");
+        var end = b.mode === "fall" ? trashTop : b.mode === "dock" ? deskSpot(b.to, "desk") : b.mode === "absorb" ? deskSpot(b.to, "mouth") : deskSpot(b.to, "tray");
         var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, tx, ty, rot;
         if (b.mode === "fall") { tx = b.sx + (end.x - b.sx) * k; ty = b.sy + (end.y - b.sy) * k * k; rot = k * 9; }
         else {
@@ -1141,20 +1160,29 @@
         g.save(); g.shadowColor = b.mode === "fall" ? C.bad : b.c; g.shadowBlur = 10; g.restore();
         var glowR = g.createRadialGradient(tx, ty, 0, tx, ty, 12 * Math.max(.78, s)); glowR.addColorStop(0, alpha(b.mode === "fall" ? C.bad : b.c, .35)); glowR.addColorStop(1, alpha(b.c, 0));
         g.fillStyle = glowR; g.beginPath(); g.arc(tx, ty, 12 * Math.max(.78, s), 0, 7); g.fill();
-        drawPage(g, tx, ty, s, rot, b.mode === "fall" ? { c: C.bad, marks: b.marks } : b, fadeK, 1.15);
+        if (b.mode === "fall" && k > .35) { trashLid = Math.max(trashLid, Math.min(1, (k - .35) * 3)); }
+        if (b.mode === "fall" && k > .45) crumple(g, tx, ty, 4.5 * Math.max(.9, Math.min(1.5, s)) * (1.25 - k * .4), rot, fadeK);
+        else drawPage(g, tx, ty, s, rot, b.mode === "fall" ? { c: C.bad, marks: b.marks } : b, fadeK, b.mode === "fall" ? 1.15 * (1 - k) + .3 : 1.15);
         return true;
       }
       if (b.mode === "dock") { if (b.title) titles[b.at] = b.title; return true; }  // drawn on its desk
       var slot = queued(b.at).indexOf(b), tray = deskSpot(b.at, "tray");
       if (slot < 0) slot = 0;
-      if (slot < TRAY_SHOWN || b.fade) {
-        var txq = tray.x + ((slot * 7) % 3 - 1) * .8 * s, tyq = tray.y - slot * 2.2 * s;
+      {
+        var col = Math.floor(slot / STACK), row = slot % STACK, pz = Math.max(.78, s);
+        var txq = tray.x - col * 12 * pz + ((slot * 7) % 3 - 1) * .6 * s, tyq = tray.y - row * 2.6 * pz;
         b.x += (txq - b.x) * .2; b.y += (tyq - b.y) * .2;
         drawPage(g, b.x, b.y, s, ((slot * 5) % 7 - 3) * .03, b, fadeK, .9);
       }
       return true;
     });
-    NODES.forEach(function (n) { var q = queued(n.id).length; if (q > TRAY_SHOWN) { var tr = deskSpot(n.id, "tray"); g.fillStyle = n.c; g.font = "600 10px " + MONO; g.textAlign = "center"; g.fillText("+" + (q - TRAY_SHOWN), tr.x, tr.y - TRAY_SHOWN * 2.2 * s - 9 * Math.max(.78, s)); } });
+    // the number waiting, on a badge above the in-tray's stack
+    NODES.forEach(function (n) {
+      var q = queued(n.id).length; if (!q) return;
+      var tr = deskSpot(n.id, "tray"), pz = Math.max(.78, s), bx = tr.x - (q > STACK ? 6 * pz : 0), by = tr.y - (Math.min(q, STACK) - 1) * 2.6 * pz - 6 * pz - 8;
+      g.save(); g.shadowColor = n.c; g.shadowBlur = 8; g.fillStyle = n.c; g.beginPath(); g.arc(bx, by, 7, 0, 7); g.fill(); g.restore();
+      g.fillStyle = "#05070C"; g.font = "700 10px " + MONO; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(String(q), bx, by + .5);
+    });
     if (balls.length > 260) balls.splice(0, balls.length - 260);
     // arrival rings, sparks and the model's characters
     bursts = bursts.filter(function (bu) {
