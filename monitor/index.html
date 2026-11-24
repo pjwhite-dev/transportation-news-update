@@ -242,10 +242,83 @@
 
   ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#1c293b;border-radius:8px}::-webkit-scrollbar-track{background:transparent}
 
-  @media (max-width:1420px){.bar{flex-wrap:wrap;row-gap:8px}.stats{order:3;flex-basis:100%;justify-content:flex-start;gap:26px}.brand{margin-right:auto}}
-  @media (max-width:1280px){.s7,.s5{grid-column:span 12}.s4{grid-column:span 6}.status{grid-template-columns:repeat(3,1fr)}}
-  @media (max-width:860px){main{padding:10px 16px}.s4{grid-column:span 12}.bar{flex-wrap:wrap}.stats{order:3;justify-content:flex-start;flex-basis:100%}#ecg{display:none}
-    .gauges{grid-template-columns:repeat(2,1fr)}.status{grid-template-columns:repeat(2,1fr)}.feed li{grid-template-columns:62px 86px minmax(0,1fr)}.feed .desk{display:none}.tw-head{grid-template-columns:1fr}.tw-meta{text-align:left}}
+  /* ---------- layout: one screen on a desktop, scrolling panels below that ---------- */
+  main{grid-template-areas:
+    "pipe pipe pipe pipe pipe pipe pipe hw hw hw hw hw"
+    "tl tl tl tl tl heat heat heat heat wire wire wire"
+    "tw tw tw tw feed feed feed feed story story spike spike"
+    "svc svc svc svc svc svc svc svc svc svc svc svc"}
+  .a-pipe{grid-area:pipe}.a-hw{grid-area:hw}.a-tl{grid-area:tl}.a-heat{grid-area:heat}.a-wire{grid-area:wire}
+  .a-tw{grid-area:tw}.a-feed{grid-area:feed}.a-story{grid-area:story}.a-spike{grid-area:spike}.a-svc{grid-area:svc}
+  .panel{display:flex;flex-direction:column}
+  .grow{position:relative;flex:1;min-height:0}
+  .grow>canvas{position:absolute;inset:0;width:100%;height:100% !important}
+  .hourrow{grid-template-columns:repeat(8,minmax(0,1fr));margin-top:6px}
+  .hourrow div{padding:3px 8px}
+  .hourrow b{font-size:14px}
+  .hw{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+  .gauges{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+  .gauge svg{max-width:96px}
+  .gauge .read b{font-size:16px}
+  .gauge .read span{font-size:9px}
+  .hw-low{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:12px}
+  .hw-models{min-height:0;overflow:auto}
+  .hw-models .ph{margin-bottom:6px}
+  .hw-chart{display:flex;flex-direction:column;min-height:0}
+  .hw-chart .legend{margin-top:4px}
+  .wire{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:8px}
+  .sources{overflow:hidden;font-size:11px}
+  .src{grid-template-columns:minmax(0,1fr) 30px 40px 36px;gap:6px;padding:3px 6px}
+  .heat{grid-template-rows:repeat(6,minmax(0,1fr)) auto}
+  .heat .row{height:auto;min-height:8px;align-self:stretch}
+  .ink{flex:1;min-height:0;height:auto}
+  .feed,.stories{flex:1;min-height:0;max-height:none}
+  .reasons{flex:none}
+  .reason .bar{height:18px}.reason .bar span{line-height:18px}
+  .spiked{flex:1;min-height:0;max-height:none}
+  .a-svc{flex-direction:row;align-items:stretch;gap:8px;padding:8px 10px}
+  .a-svc .ctr,.a-svc .st{padding:4px 10px;flex:1 1 0;min-width:84px;max-width:150px}
+  .a-svc .ctr b{font-size:17px}
+  .a-svc .st b{font-size:13px}
+  .a-svc .ctr::after{height:1.5px}
+  .svc-side{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px}
+  .svc-side .tasks,.svc-side .workers{display:flex;flex-wrap:nowrap;gap:4px;margin:0;overflow:hidden;mask-image:linear-gradient(90deg,#000 92%,transparent)}
+  .svc-side .tag{font:10px var(--mono);color:var(--faint)}
+  .tchip{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);font:10.5px var(--mono);color:var(--soft);white-space:nowrap}
+  .tchip i{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .tchip.Running i{background:var(--good);box-shadow:0 0 6px var(--good);animation:blink 1.4s ease-in-out infinite}
+  .tchip.Ready i{background:var(--wire)}
+  .tchip.Disabled i{background:var(--check)}
+  .tchip.retired{opacity:.45}
+  .workers span{padding:2px 7px;font-size:10px}
+
+  @media (min-width:1200px) and (min-height:680px){
+    html,body{height:100%;overflow:hidden}
+    body{display:flex;flex-direction:column}
+    header{position:relative;flex:none}
+    .bar{padding:7px 16px}
+    .ticker{height:22px}.ticker-track{line-height:22px;font-size:11.5px}
+    main{flex:1;min-height:0;grid-template-rows:minmax(0,30fr) minmax(0,19fr) minmax(0,38fr) auto;gap:10px;padding:10px 14px 12px}
+    .panel{padding:10px 12px}
+    .ph{margin-bottom:7px}
+    .tw-purpose{font-size:15px}
+    .tw-meta b{font-size:15px}
+    .rate{height:26px;margin-top:6px}
+    .others{min-height:0;margin-top:6px}
+    .story{padding:8px 10px}
+    .story b{font-size:12px}
+    .stage{font-size:9.5px;padding:1px 5px}
+  }
+  @media (max-width:1199.98px),(max-height:679.98px){
+    main{grid-template-columns:minmax(0,1fr);grid-template-areas:"pipe" "hw" "tw" "tl" "heat" "wire" "feed" "story" "spike" "svc"}
+    .grow{flex:none}.a-pipe .grow{height:230px}.a-tl .grow{height:150px}.radar-box{height:230px}.hw-chart .grow{height:120px}.heat.grow{flex:none}
+    .ink{height:320px;flex:none}.feed,.stories{max-height:520px}.heat{grid-template-rows:none}.heat .row{height:20px}
+    .a-svc{flex-wrap:wrap}.svc-side{flex-basis:100%}
+    .hourrow{grid-template-columns:repeat(4,minmax(0,1fr))}
+  }
+  @media (max-width:1420px){.bar{flex-wrap:wrap;row-gap:6px}.stats{order:3;flex-basis:100%;justify-content:flex-start;gap:26px}.brand{margin-right:auto}}
+  @media (max-width:700px){main{padding:10px 16px}#ecg{display:none}.gauges{grid-template-columns:repeat(3,minmax(0,1fr))}.hw-low,.wire{grid-template-columns:minmax(0,1fr)}
+    .feed li{grid-template-columns:62px 86px minmax(0,1fr)}.feed .desk{display:none}.tw-head{grid-template-columns:1fr}.tw-meta{text-align:left}.hourrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (prefers-reduced-motion:reduce){.scan,.ticker-track{animation:none}}
 </style>
 </head>
@@ -277,71 +350,11 @@
 </header>
 
 <main>
-  <section class="panel s12">
+  <section class="panel a-pipe">
     <div class="ph"><span class="dot"></span><h2>Pipeline</h2><span class="tag">every event moves through the desks · dropped stories fall onto the spike</span><span class="spacer"></span><span class="tag" id="pipe-tag"></span></div>
-    <canvas id="pipe"></canvas>
-  </section>
-
-  <section class="panel s7" id="tw-panel">
-    <div class="tw">
-      <div class="ph"><span class="dot" style="--c:var(--write)"></span><h2>The typewriter</h2><span class="tag">model output as it streams</span><span class="spacer"></span><span class="chip" id="tw-model"><i></i><span id="tw-model-name">–</span></span></div>
-      <div class="tw-head">
-        <div class="tw-purpose"><span id="tw-purpose">Waiting for a model call</span><span class="state done" id="tw-state">IDLE</span></div>
-        <div class="tw-meta">
-          <div><b id="tw-elapsed">0.0s</b>elapsed</div>
-          <div><b id="tw-chars">0</b>chars</div>
-          <div><b id="tw-rate">0</b>chars/s</div>
-        </div>
-        <div class="tw-subject" id="tw-subject"></div>
-      </div>
-      <div class="ink" id="ink"><div class="empty" id="ink-empty">The next model call will type out here.</div></div>
-      <canvas class="rate" id="rate"></canvas>
-      <div class="others" id="others"></div>
-    </div>
-  </section>
-
-  <section class="panel s5">
-    <div class="ph"><span class="dot" style="--c:var(--site)"></span><h2>Hardware</h2><span class="spacer"></span><span class="gpuname" id="gpu-name">–</span></div>
-    <div class="gauges">
-      <div class="gauge" id="g-util"></div>
-      <div class="gauge" id="g-vram"></div>
-      <div class="gauge" id="g-temp"></div>
-      <div class="gauge" id="g-power"></div>
-      <div class="gauge" id="g-cpu"></div>
-      <div class="gauge" id="g-ram"></div>
-      <div style="grid-column:span 2;min-width:0">
-        <div class="ph" style="margin:2px 0 6px"><h2>Loaded models</h2><span class="spacer"></span><span class="tag" id="ollama-tag"></span></div>
-        <div class="models" id="models"><div class="empty">–</div></div>
-      </div>
-    </div>
-    <canvas id="chart"></canvas>
-    <div class="legend"><span><i style="background:var(--write)"></i>GPU %</span><span><i style="background:var(--wire)"></i>VRAM %</span><span><i style="background:var(--triage)"></i>CPU %</span><span><i style="background:var(--check)"></i>RAM %</span><span style="margin-left:auto" id="chart-span">last 10 min</span></div>
-  </section>
-
-  <section class="panel s12">
-    <div class="ph"><span class="dot" style="--c:var(--triage)"></span><h2>Model timeline</h2><span class="tag">every call in the last 20 minutes, one lane per model</span><span class="spacer"></span><span class="legend" id="tl-legend" style="margin:0"></span></div>
-    <canvas id="timeline"></canvas>
-  </section>
-
-  <section class="panel s4">
-    <div class="ph"><span class="dot"></span><h2>Wire radar</h2><span class="tag">a ping for every sweep</span><span class="spacer"></span><span class="tag" id="radar-tag"></span></div>
-    <canvas id="radar"></canvas>
-  </section>
-  <section class="panel s4">
-    <div class="ph"><span class="dot"></span><h2>Sources</h2><span class="tag">most recently swept</span></div>
-    <div class="sources" id="sources"><div class="empty">–</div></div>
-  </section>
-  <section class="panel s4">
-    <div class="ph"><span class="dot" style="--c:var(--press)"></span><h2>Counters</h2><span class="spacer"></span><span class="tag">all time</span></div>
-    <div class="counters">
-      <div class="ctr" id="c-verified" style="--c:var(--write)"><b>0</b><span>summarized &amp; checked</span></div>
-      <div class="ctr" id="c-headline" style="--c:var(--press)"><b>0</b><span>headline only</span></div>
-      <div class="ctr" id="c-dropped" style="--c:var(--bad)"><b>0</b><span>dropped</span></div>
-      <div class="ctr" id="c-first" style="--c:var(--triage)"><b>0</b><span>first pass / unsorted</span></div>
-    </div>
-    <div class="ph" style="margin:12px 0 0"><h2>Last hour</h2></div>
+    <div class="grow"><canvas id="pipe"></canvas></div>
     <div class="hourrow">
-      <div><b id="hr-sweeps">0</b><span>sweeps</span></div>
+      <div><b id="hr-sweeps">0</b><span>sweeps/h</span></div>
       <div><b id="hr-new">0</b><span>new items</span></div>
       <div><b id="hr-calls">0</b><span>model calls</span></div>
       <div><b id="hr-chars">0</b><span>chars out</span></div>
@@ -352,21 +365,65 @@
     </div>
   </section>
 
-  <section class="panel s7">
-    <div class="ph"><span class="dot" style="--c:var(--edit)"></span><h2>Desk activity</h2><span class="tag">events per minute, last hour</span></div>
-    <div class="heat" id="heat"></div>
-  </section>
-  <section class="panel s5">
-    <div class="ph"><span class="dot" style="--c:var(--bad)"></span><h2>The spike</h2><span class="tag">why stories were dropped, last hour</span></div>
-    <div class="reasons" id="reasons"><div class="empty">Nothing dropped yet</div></div>
-    <div class="spiked" id="spiked"></div>
+  <section class="panel a-hw">
+    <div class="ph"><span class="dot" style="--c:var(--site)"></span><h2>Hardware</h2><span class="spacer"></span><span class="gpuname" id="gpu-name">–</span></div>
+    <div class="hw">
+      <div class="gauges">
+        <div class="gauge" id="g-util"></div>
+        <div class="gauge" id="g-vram"></div>
+        <div class="gauge" id="g-temp"></div>
+        <div class="gauge" id="g-power"></div>
+        <div class="gauge" id="g-cpu"></div>
+        <div class="gauge" id="g-ram"></div>
+      </div>
+      <div class="hw-low">
+        <div class="hw-models">
+          <div class="ph"><h2>Loaded models</h2><span class="spacer"></span><span class="tag" id="ollama-tag"></span></div>
+          <div class="models" id="models"><div class="empty">–</div></div>
+        </div>
+        <div class="hw-chart">
+          <div class="grow"><canvas id="chart"></canvas></div>
+          <div class="legend"><span><i style="background:var(--write)"></i>GPU</span><span><i style="background:var(--wire)"></i>VRAM</span><span><i style="background:var(--triage)"></i>CPU</span><span><i style="background:var(--check)"></i>RAM</span><span style="margin-left:auto" id="chart-span">last 10 min</span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section class="panel s5">
-    <div class="ph"><span class="dot" style="--c:var(--edit)"></span><h2>Story tracker</h2><span class="tag">each story's trip through the desks</span></div>
-    <div class="stories" id="stories"><div class="empty">No stories in the last hour</div></div>
+  <section class="panel a-tl">
+    <div class="ph"><span class="dot" style="--c:var(--triage)"></span><h2>Model timeline</h2><span class="tag">last 20 min</span><span class="spacer"></span><span class="legend" id="tl-legend" style="margin:0"></span></div>
+    <div class="grow"><canvas id="timeline"></canvas></div>
   </section>
-  <section class="panel s7">
+
+  <section class="panel a-heat">
+    <div class="ph"><span class="dot" style="--c:var(--edit)"></span><h2>Desk activity</h2><span class="tag">events per minute, last hour</span></div>
+    <div class="heat grow" id="heat"></div>
+  </section>
+
+  <section class="panel a-wire">
+    <div class="ph"><span class="dot"></span><h2>Wire</h2><span class="tag">a ping for every sweep</span><span class="spacer"></span><span class="tag" id="radar-tag"></span></div>
+    <div class="wire">
+      <div class="grow radar-box"><canvas id="radar"></canvas></div>
+      <div class="sources" id="sources"><div class="empty">–</div></div>
+    </div>
+  </section>
+
+  <section class="panel a-tw" id="tw-panel">
+    <div class="ph"><span class="dot" style="--c:var(--write)"></span><h2>The typewriter</h2><span class="tag">model output as it streams</span><span class="spacer"></span><span class="chip" id="tw-model"><i></i><span id="tw-model-name">–</span></span></div>
+    <div class="tw-head">
+      <div class="tw-purpose"><span id="tw-purpose">Waiting for a model call</span><span class="state done" id="tw-state">IDLE</span></div>
+      <div class="tw-meta">
+        <div><b id="tw-elapsed">0.0s</b>elapsed</div>
+        <div><b id="tw-chars">0</b>chars</div>
+        <div><b id="tw-rate">0</b>chars/s</div>
+      </div>
+      <div class="tw-subject" id="tw-subject"></div>
+    </div>
+    <div class="ink" id="ink"><div class="empty" id="ink-empty">The next model call will type out here.</div></div>
+    <canvas class="rate" id="rate"></canvas>
+    <div class="others" id="others"></div>
+  </section>
+
+  <section class="panel a-feed">
     <div class="ph"><span class="dot"></span><h2>Firehose</h2><span class="tag" id="feed-tag"></span><span class="spacer"></span>
       <div class="filters" id="filters">
         <button type="button" data-f="all" aria-pressed="true">All</button>
@@ -380,18 +437,33 @@
     <ul class="feed" id="feed"></ul>
   </section>
 
-  <section class="panel s12">
-    <div class="ph"><span class="dot" style="--c:var(--site)"></span><h2>Service</h2><span class="spacer"></span><span class="tag" id="svc-tag"></span></div>
-    <div class="status">
-      <div class="st" id="st-beat"><b>–</b><span>heartbeat</span></div>
-      <div class="st" id="st-publish"><b>–</b><span>last page rebuild</span></div>
-      <div class="st" id="st-push"><b>–</b><span>last push to the site</span></div>
-      <div class="st" id="st-pushfail"><b>–</b><span>push failures (1h)</span></div>
-      <div class="st" id="st-srcfail"><b>–</b><span>source failures (1h)</span></div>
-      <div class="st" id="st-service"><b>–</b><span>live service task</span></div>
+  <section class="panel a-story">
+    <div class="ph"><span class="dot" style="--c:var(--edit)"></span><h2>Story tracker</h2></div>
+    <div class="stories" id="stories"><div class="empty">No stories in the last hour</div></div>
+  </section>
+
+  <section class="panel a-spike">
+    <div class="ph"><span class="dot" style="--c:var(--bad)"></span><h2>The spike</h2><span class="tag">why dropped, last hour</span></div>
+    <div class="reasons" id="reasons"><div class="empty">Nothing dropped yet</div></div>
+    <div class="spiked" id="spiked"></div>
+  </section>
+
+  <section class="panel a-svc">
+    <div class="ctr" id="c-verified" style="--c:var(--write)"><b>0</b><span>summarized &amp; checked</span></div>
+    <div class="ctr" id="c-headline" style="--c:var(--press)"><b>0</b><span>headline only</span></div>
+    <div class="ctr" id="c-dropped" style="--c:var(--bad)"><b>0</b><span>dropped</span></div>
+    <div class="ctr" id="c-first" style="--c:var(--triage)"><b>0</b><span>first pass</span></div>
+    <div class="st" id="st-beat"><b>–</b><span>heartbeat</span></div>
+    <div class="st" id="st-publish"><b>–</b><span>page rebuilt</span></div>
+    <div class="st" id="st-push"><b>–</b><span>pushed live</span></div>
+    <div class="st" id="st-pushfail"><b>–</b><span>push fails 1h</span></div>
+    <div class="st" id="st-srcfail"><b>–</b><span>source fails 1h</span></div>
+    <div class="st" id="st-service"><b>–</b><span>live service</span></div>
+    <div class="svc-side">
+      <div class="tasks" id="tasks"></div>
+      <div class="workers" id="workers"></div>
+      <span class="tag" id="svc-tag"></span>
     </div>
-    <div class="workers" id="workers"></div>
-    <div class="tasks" id="tasks"></div>
   </section>
 </main>
 <div class="toast" id="toast" role="status"></div>
@@ -505,17 +577,14 @@
         var c = S.calls.get(e.id) || { id: e.id, text: "" };
         c.start = t; c.purpose = e.purpose; c.label = e.label; c.model = e.model || ""; c.subject = e.subject || "";
         S.calls.set(e.id, c);
-        if (live) pulse(job(e.purpose).node);
+        if (live) dock(e);
         break;
       }
       case "ink-end": {
         var c2 = S.calls.get(e.id) || { id: e.id, text: "", start: t };
         c2.end = t; c2.ok = e.ok !== false; c2.chars = e.chars || c2.text.length; c2.error = e.error || "";
         S.calls.set(e.id, c2);
-        if (live) {
-          var from = job(c2.purpose).node, to = NODES[Math.min(NODES.length - 1, NODE[from].i + 1)].id;
-          if (c2.ok) spawn(from, to, job(c2.purpose).c, 2); else spawnDrop(from);
-        }
+        if (live) undock(c2);
         break;
       }
       case "live-sweep": {
@@ -541,7 +610,7 @@
       case "live-arrive": {
         var a = story(e.title || "?"); a.t = t; a.source = e.source; a.cat = e.desk_key; a.stages.arrive = e.status || "summarized";
         S.arrivals.push({ t: t });
-        if (live) { spawn("edit", "press", C.press, 2); touched[a.title] = Date.now(); addTicker(e.title, C.press); }
+        if (live) { absorb("press"); touched[a.title] = Date.now(); addTicker(e.title, C.press); }
         break;
       }
       case "live-sort": {
@@ -552,7 +621,7 @@
       case "live-verified": {
         var ve = story(e.title || "?"); ve.t = t; ve.stages.check = true; ve.score = e.score;
         S.checks.push({ t: t });
-        if (live) { spawn("check", "edit", C.check, 2); touched[ve.title] = Date.now(); }
+        if (live) { pulse("check"); touched[ve.title] = Date.now(); }
         break;
       }
       case "live-lead-check": {
@@ -595,7 +664,7 @@
       case "live-lead-override": return ["Your lead pick", t || e.story_id, e.until ? "until " + clock(e.until) : "", "story"];
       case "live-publish": return ["Page rebuilt", e.stories + " stories", e.lead ? "lead: " + e.lead : "", "pub"];
       case "live-push": return ["Pushed live", e.stories + " stories sent to the public site", "", "pub"];
-      case "live-push-fail": return ["Push failed", "The public site was not updated", e.error, "bad"];
+      case "live-push-fail": return ["Push failed", "The public site was not updated" + (e.failures > 1 ? " (" + e.failures + " in a row)" : ""), e.error, "bad"];
       case "live-publish-fail": return ["Publish failed", "The page was not rebuilt", e.error, "bad"];
       case "live-days": return ["Archive", "Past days updated", e.files, "pub"];
       case "live-days-fail": return ["Archive failed", "Past days not updated", e.error, "bad"];
@@ -749,15 +818,67 @@
   }
   function roundRect(g, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 
-  /* pipeline */
-  var parts = [], falls = [], spikeFlash = 0;
-  function nodePos(id, w, h) { var n = NODE[id], side = Math.min(80, w * .07); return { x: side + n.i * (w - 2 * side) / (NODES.length - 1), y: h * 0.38 }; }
-  function spawn(from, to, color, count) {
-    for (var i = 0; i < count; i++) parts.push({ from: from, to: to, c: color, t0: performance.now() + i * 150, dur: 1100 + Math.random() * 600, wob: (Math.random() - .5) * 34, r: 2.4 + Math.random() * 2.2 });
-    NODE[from].glow = Math.max(NODE[from].glow, .8);
+  /* pipeline: every story is a ball. It rides the line to a desk, waits in that desk's queue, docks and circles the
+     desk while a model works on it (sparks fly with each burst of text), then rides on to the next desk. Drops fall
+     onto the spike; stories that reach the page are absorbed by the press; pushes fly to the live site. */
+  var balls = [], sparks = [], bursts = [], spikeFlash = 0, pipeW = 1000, pipeH = 200, ballSeq = 0;
+  var QUEUE_MAX = 12, QUEUE_TTL = 6 * 60e3, DOCK_TTL = 5 * 60e3;
+  function nodeR(h) { return Math.max(16, Math.min(28, h * .13)); }
+  function nodePos(id, w, h) { var n = NODE[id], side = Math.min(80, w * .07); return { x: side + n.i * (w - 2 * side) / (NODES.length - 1), y: h * 0.36 }; }
+  function nextNode(id) { return NODES[Math.min(NODES.length - 1, NODE[id].i + 1)].id; }
+  function prevNode(id) { return NODES[Math.max(0, NODE[id].i - 1)].id; }
+  function exitOf(id) { var p = nodePos(id, pipeW, pipeH); return { x: p.x + nodeR(pipeH) + 4, y: p.y }; }
+  function storyTitle(subject) {
+    return String(subject || "").replace(/^\s*(HEADLINE|REPORT|ARTICLE)\s+/, "").split(/\s(?:SUMMARY|ARTICLE|HEADLINE|REPORT|EARLIER)\b/)[0].replace(/\s+/g, " ").trim();
   }
-  function spawnDrop(from) { falls.push({ from: from, t0: performance.now(), dur: 1300, dx: (Math.random() - .5) * 80 }); }
-  function pulse(id, bad) { var n = NODE[id]; if (!n) return; n.glow = 1; n.hits.push(performance.now()); if (bad) n.bad = performance.now(); }
+  function queued(id) { return balls.filter(function (b) { return b.at === id && b.mode === "queue" && b.arrived && !b.fade; }).sort(function (a, b) { return a.born - b.born; }); }
+  // A new trip: from (x, y) to the desk `to`, ending in its queue, docked, absorbed or on the spike.
+  function trip(b, to, mode, delay, dur) {
+    b.sx = b.x; b.sy = b.y; b.to = to; b.mode = mode; b.t0 = performance.now() + (delay || 0); b.dur = dur || 1100 + Math.random() * 500; b.arrived = false; b.at = null;
+    b.c = NODE[to] ? NODE[to].c : C.bad;
+    return b;
+  }
+  function newBall(from) { var p = exitOf(from); var b = { id: ++ballSeq, x: p.x, y: p.y, born: performance.now(), phase: Math.random() * 6.3, wob: (Math.random() - .5) * 20, trail: [] }; balls.push(b); return b; }
+  function spawn(from, to, color, count) {  // stories leaving `from` for `to`'s queue (or absorbed at the live site)
+    for (var i = 0; i < count; i++) trip(newBall(from), to, to === "site" ? "absorb" : "queue", i * 180);
+    pulse(from);
+  }
+  function spawnDrop(from) {
+    var b = queued(from)[0] || newBall(from);
+    b.call = null; trip(b, "spike", "fall", 0, 1200);
+  }
+  function dock(e) {  // a model call starts at its desk: the oldest waiting story docks there
+    var at = job(e.purpose).node, b = queued(at)[0], waiting = !!b;
+    if (!b) b = newBall(prevNode(at));  // it came in some other way (the backlog, a restart): ride in from the desk before
+    b.call = e.id; b.title = storyTitle(e.subject) || b.title;
+    trip(b, at, "dock", 0, waiting ? 550 : 1000);
+  }
+  function undock(c) {  // the call ends: on to the next desk, or onto the spike if it failed
+    var b = balls.filter(function (x) { return x.call === c.id; })[0];
+    var at = job(c.purpose).node;
+    if (!b) { var p = nodePos(at, pipeW, pipeH); b = newBall(at); b.x = p.x; b.y = p.y; }
+    b.call = null;
+    if (c.ok === false) return trip(b, "spike", "fall", 0, 1200);
+    trip(b, nextNode(at), "queue");
+    pulse(at);
+  }
+  function absorb(at) {  // a story reaches the page: the press takes the next one waiting (or one from the edit desk)
+    var b = queued(at)[0] || newBall(prevNode(at));
+    trip(b, at, "absorb", 0, b.arrived ? 500 : 1000);
+  }
+  function inkSpark(id) {
+    var b = balls.filter(function (x) { return x.call === id && x.mode === "dock" && x.arrived; })[0], now = performance.now();
+    if (!b || now - (b.lastSpark || 0) < 70) return;
+    b.lastSpark = now;
+    for (var i = 0; i < 2; i++) { var a = Math.random() * 6.3, v = .04 + Math.random() * .05; sparks.push({ x: b.x, y: b.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t0: now, life: 500 + Math.random() * 300, c: b.c }); }
+  }
+  function burst(at, color, big) {
+    var p = nodePos(at, pipeW, pipeH), now = performance.now(), n = big ? 18 : 11;
+    bursts.push({ at: at, t0: now, c: color, big: big });
+    for (var i = 0; i < n; i++) { var a = i / n * 6.3 + Math.random() * .3, v = (big ? .1 : .07) + Math.random() * .06; sparks.push({ x: p.x, y: p.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t0: now, life: 600 + Math.random() * 400, c: color }); }
+    NODE[at].glow = 1;
+  }
+  function pulse(id, bad) { var n = NODE[id]; if (!n) return; n.glow = Math.max(n.glow, .8); n.hits.push(performance.now()); if (bad) n.bad = performance.now(); }
   function nodeCount(id) {
     var hourAgo = Date.now() - HOUR, n = 0;
     if (id === "wire") return short(S.sweeps.length);
@@ -766,58 +887,127 @@
     S.calls.forEach(function (c) { if (c.start > hourAgo && job(c.purpose).node === id) n++; });
     return short(n);
   }
+  function arrive(b, now) {
+    b.arrived = true; b.at = b.to;
+    if (b.mode === "fall") { spikeFlash = 1; b.gone = true; return; }
+    if (b.mode === "absorb") { burst(b.to, NODE[b.to].c, true); b.gone = true; return; }
+    if (b.mode === "dock") { burst(b.to, NODE[b.to].c, false); return; }
+    pulse(b.to);  // queued
+    if (queued(b.to).length > QUEUE_MAX) queued(b.to)[0].fade = now;
+  }
   function drawPipe(now) {
-    var f = fit($("pipe")), g = f.g, w = f.w, h = f.h, busy = {};
+    var f = fit($("pipe")), g = f.g, w = f.w, h = f.h, busy = {}, R = nodeR(h);
+    pipeW = w; pipeH = h;
     g.clearRect(0, 0, w, h);
     openCalls().forEach(function (c) { var id = job(c.purpose).node; busy[id] = (busy[id] || 0) + 1; });
+    // the line between the desks
     for (var i = 0; i < NODES.length - 1; i++) {
-      var a = nodePos(NODES[i].id, w, h), b = nodePos(NODES[i + 1].id, w, h), grad = g.createLinearGradient(a.x, 0, b.x, 0);
-      grad.addColorStop(0, alpha(NODES[i].c, .55)); grad.addColorStop(1, alpha(NODES[i + 1].c, .55));
-      g.strokeStyle = grad; g.lineWidth = 2; g.setLineDash([4, 8]); g.lineDashOffset = -now / 35;
-      g.beginPath(); g.moveTo(a.x + 32, a.y); g.bezierCurveTo((a.x + b.x) / 2, a.y - 24, (a.x + b.x) / 2, b.y + 24, b.x - 32, b.y); g.stroke();
+      var a = nodePos(NODES[i].id, w, h), b2 = nodePos(NODES[i + 1].id, w, h), grad = g.createLinearGradient(a.x, 0, b2.x, 0);
+      grad.addColorStop(0, alpha(NODES[i].c, .5)); grad.addColorStop(1, alpha(NODES[i + 1].c, .5));
+      g.strokeStyle = grad; g.lineWidth = 2; g.setLineDash([3, 9]); g.lineDashOffset = -now / 40;
+      g.beginPath(); g.moveTo(a.x + R + 4, a.y); g.bezierCurveTo((a.x + b2.x) / 2, a.y - 22, (a.x + b2.x) / 2, b2.y + 22, b2.x - R - 4, b2.y); g.stroke();
     }
     g.setLineDash([]);
-    var sx = w / 2, sy = h - 24;
+    var sx = w / 2, sy = h - 16;
     g.fillStyle = alpha(C.bad, .07 + spikeFlash * .25); g.strokeStyle = alpha(C.bad, .45 + spikeFlash * .55); g.lineWidth = 1.2;
-    roundRect(g, sx - 120, sy - 15, 240, 30, 8); g.fill(); g.stroke();
+    roundRect(g, sx - 130, sy - 12, 260, 24, 7); g.fill(); g.stroke();
     g.fillStyle = C.bad; g.font = "600 11px " + MONO; g.textAlign = "center"; g.textBaseline = "middle";
     g.fillText("THE SPIKE · " + fmt(S.drops.length) + " dropped in the last hour", sx, sy);
     spikeFlash *= 0.94;
+    // the desks
     NODES.forEach(function (n) {
-      var p = nodePos(n.id, w, h), r = 28, glow = n.glow, b = busy[n.id] || 0;
+      var p = nodePos(n.id, w, h), glow = n.glow, bz = busy[n.id] || 0;
       n.glow *= 0.965;
-      g.save(); g.shadowColor = n.c; g.shadowBlur = 10 + glow * 34 + (b ? 16 : 0);
-      var fill = g.createRadialGradient(p.x - 8, p.y - 10, 4, p.x, p.y, r);
-      fill.addColorStop(0, alpha(n.c, .32 + glow * .45)); fill.addColorStop(1, alpha(n.c, .05 + glow * .12));
-      g.fillStyle = fill; g.beginPath(); g.arc(p.x, p.y, r, 0, 7); g.fill(); g.restore();
-      g.strokeStyle = alpha(n.c, .5 + glow * .5); g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, r, 0, 7); g.stroke();
-      if (b) {
+      g.save(); g.shadowColor = n.c; g.shadowBlur = 10 + glow * 34 + (bz ? 16 : 0);
+      var fill = g.createRadialGradient(p.x - 8, p.y - 10, 4, p.x, p.y, R);
+      fill.addColorStop(0, alpha(n.c, .3 + glow * .45)); fill.addColorStop(1, alpha(n.c, .05 + glow * .12));
+      g.fillStyle = fill; g.beginPath(); g.arc(p.x, p.y, R, 0, 7); g.fill(); g.restore();
+      g.strokeStyle = alpha(n.c, .5 + glow * .5); g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, R, 0, 7); g.stroke();
+      if (bz) {
         var a0 = now / 300; g.strokeStyle = n.c; g.lineWidth = 3;
-        g.beginPath(); g.arc(p.x, p.y, r + 7, a0, a0 + 1.7); g.stroke();
-        g.beginPath(); g.arc(p.x, p.y, r + 7, a0 + Math.PI, a0 + Math.PI + 1); g.stroke();
+        g.beginPath(); g.arc(p.x, p.y, R + 7, a0, a0 + 1.7); g.stroke();
+        g.beginPath(); g.arc(p.x, p.y, R + 7, a0 + Math.PI, a0 + Math.PI + 1); g.stroke();
       }
-      n.hits = n.hits.filter(function (t) { return now - t < 1400; });
-      n.hits.forEach(function (t) { var k = (now - t) / 1400; g.strokeStyle = alpha(n.bad && now - n.bad < 1400 ? C.bad : n.c, 1 - k); g.lineWidth = 2; g.beginPath(); g.arc(p.x, p.y, r + k * 32, 0, 7); g.stroke(); });
+      n.hits = n.hits.filter(function (t) { return now - t < 1200; });
+      n.hits.forEach(function (t) { var k = (now - t) / 1200; g.strokeStyle = alpha(n.bad && now - n.bad < 1200 ? C.bad : n.c, .8 * (1 - k)); g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, R + k * 22, 0, 7); g.stroke(); });
       g.textAlign = "center"; g.textBaseline = "middle";
-      g.fillStyle = "#E8EEF8"; g.font = "600 13px " + MONO; g.fillText(nodeCount(n.id), p.x, p.y + 1);
-      g.font = "700 11px " + MONO; g.fillText(n.label, p.x, p.y + r + 17);
-      g.fillStyle = b ? n.c : C.dim; g.font = "10px " + MONO;
-      g.fillText(b ? b + " call" + (b > 1 ? "s" : "") + " running" : n.sub, p.x, p.y + r + 31);
+      g.fillStyle = "#E8EEF8"; g.font = "600 " + (R > 22 ? 13 : 11) + "px " + MONO; g.fillText(nodeCount(n.id), p.x, p.y + 1);
+      g.font = "700 11px " + MONO; g.fillText(n.label, p.x, p.y + R + 15);
+      var q = queued(n.id).length;
+      g.fillStyle = bz ? n.c : C.dim; g.font = "10px " + MONO;
+      g.fillText(bz ? "working" + (q ? " · " + q + " waiting" : "") : q ? q + " waiting" : n.sub, p.x, p.y + R + 28);
     });
-    parts = parts.filter(function (q) {
-      var k = (now - q.t0) / q.dur; if (k < 0) return true;
-      if (k >= 1) { var tn = NODE[q.to]; tn.glow = Math.max(tn.glow, .75); tn.hits.push(now); return false; }
-      var a = nodePos(q.from, w, h), b = nodePos(q.to, w, h);
-      function at(kk) { var e = kk < .5 ? 2 * kk * kk : 1 - Math.pow(-2 * kk + 2, 2) / 2; return [a.x + (b.x - a.x) * e, a.y + (b.y - a.y) * e + Math.sin(e * Math.PI) * q.wob]; }
-      for (var tr = 7; tr >= 1; tr--) { var pt = at(Math.max(0, k - tr * .018)); g.fillStyle = alpha(q.c, .45 - tr * .05); g.beginPath(); g.arc(pt[0], pt[1], q.r * (1 - tr * .09), 0, 7); g.fill(); }
-      var hd = at(k); g.save(); g.shadowColor = q.c; g.shadowBlur = 14; g.fillStyle = "#fff"; g.beginPath(); g.arc(hd[0], hd[1], q.r * .85, 0, 7); g.fill(); g.restore();
+    // arrival bursts
+    bursts = bursts.filter(function (bu) {
+      var k = (now - bu.t0) / (bu.big ? 900 : 700); if (k >= 1) return false;
+      var p = nodePos(bu.at, w, h);
+      g.strokeStyle = alpha(bu.c, 1 - k); g.lineWidth = 3 * (1 - k);
+      g.beginPath(); g.arc(p.x, p.y, R * (1 + k * (bu.big ? 1.6 : 1.1)), 0, 7); g.stroke();
+      g.fillStyle = alpha(bu.c, .35 * (1 - k)); g.beginPath(); g.arc(p.x, p.y, R * (1 - k * .3), 0, 7); g.fill();
       return true;
     });
-    falls = falls.filter(function (d) {
-      var k = (now - d.t0) / d.dur; if (k >= 1) { spikeFlash = 1; return false; }
-      var a = nodePos(d.from, w, h), x = a.x + (sx + d.dx - a.x) * k, y = a.y + 30 + (sy - 15 - a.y - 30) * (k * k);
-      g.save(); g.shadowColor = C.bad; g.shadowBlur = 12; g.fillStyle = C.bad; g.beginPath(); g.arc(x, y, 3.5, 0, 7); g.fill(); g.restore();
+    // the stories
+    var titles = {};
+    balls = balls.filter(function (b) {
+      if (b.gone) return false;
+      if (b.fade && now - b.fade > 700) return false;
+      if (!b.fade && b.mode === "queue" && b.arrived && now - b.born > QUEUE_TTL) b.fade = now;
+      if (!b.fade && b.mode === "dock" && b.arrived && now - b.t0 > DOCK_TTL) b.fade = now;
+      var k = (now - b.t0) / b.dur, tx, ty;
+      if (!b.arrived && k >= 0) {
+        if (k >= 1) { arrive(b, now); if (b.gone) return false; }
+        else {
+          var end;
+          if (b.mode === "fall") end = { x: sx + (b.wob * 3), y: sy - 10 };
+          else if (b.mode === "dock" || b.mode === "absorb") end = nodePos(b.to, w, h);
+          else { var pq = nodePos(b.to, w, h); end = { x: pq.x - R - 10, y: pq.y + R * .6 }; }
+          var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          if (b.mode === "fall") { tx = b.sx + (end.x - b.sx) * k; ty = b.sy + (end.y - b.sy) * k * k; }
+          else {
+            var mx = (b.sx + end.x) / 2, u = 1 - e;  // the same S-curve as the line
+            tx = u * u * u * b.sx + 3 * u * u * e * mx + 3 * u * e * e * mx + e * e * e * end.x;
+            ty = u * u * u * b.sy + 3 * u * u * e * (b.sy - 22 + b.wob) + 3 * u * e * e * (end.y + 22 + b.wob) + e * e * e * end.y;
+          }
+          b.x = tx; b.y = ty;
+          b.trail.push([tx, ty]); if (b.trail.length > 9) b.trail.shift();
+        }
+      }
+      if (b.arrived) {
+        var p = nodePos(b.at, w, h);
+        if (b.mode === "dock") {
+          var ang = now / 380 + b.phase; tx = p.x + Math.cos(ang) * R * .62; ty = p.y + Math.sin(ang) * R * .62;
+          if (b.title) titles[b.at] = b.title;
+        } else {
+          var slot = queued(b.at).indexOf(b); if (slot < 0) slot = 0;
+          tx = p.x - R - 10 - (slot % 4) * 8; ty = p.y + R * .55 + Math.floor(slot / 4) * 8 + Math.sin(now / 500 + b.phase) * 1.2;
+        }
+        b.x += (tx - b.x) * .2; b.y += (ty - b.y) * .2;
+        if (b.trail.length) b.trail.shift();
+      }
+      if (k < 0 && !b.arrived) return true;  // waiting to set off
+      var fadeK = b.fade ? Math.max(0, 1 - (now - b.fade) / 700) : 1, c = b.mode === "fall" ? C.bad : b.c, size = b.arrived && b.mode === "queue" ? 2.6 : 3.6;
+      b.trail.forEach(function (pt, ti) { g.fillStyle = alpha(c, .06 + ti * .045 * fadeK); g.beginPath(); g.arc(pt[0], pt[1], size * (.4 + ti * .06), 0, 7); g.fill(); });
+      g.save(); g.shadowColor = c; g.shadowBlur = b.arrived && b.mode === "queue" ? 6 : 14;
+      g.fillStyle = alpha(c, .9 * fadeK); g.beginPath(); g.arc(b.x, b.y, size + 1.2, 0, 7); g.fill();
+      g.fillStyle = "rgba(255,255,255," + (.95 * fadeK) + ")"; g.beginPath(); g.arc(b.x, b.y, size * .55, 0, 7); g.fill();
+      g.restore();
       return true;
+    });
+    if (balls.length > 260) balls.splice(0, balls.length - 260);
+    // sparks
+    sparks = sparks.filter(function (s) {
+      var age = now - s.t0, k = age / s.life; if (k >= 1) return false;
+      var x = s.x + s.vx * age, y = s.y + s.vy * age + .00004 * age * age;
+      g.fillStyle = alpha(s.c, 1 - k); g.fillRect(x - 1, y - 1, 2, 2);
+      return true;
+    });
+    if (sparks.length > 600) sparks.splice(0, sparks.length - 600);
+    // what each busy desk is working on
+    var gap = (w - 2 * Math.min(80, w * .07)) / (NODES.length - 1), maxChars = Math.max(8, Math.floor(gap / 6.4));
+    g.font = "10.5px " + MONO; g.textAlign = "center"; g.textBaseline = "middle";
+    Object.keys(titles).forEach(function (id) {
+      var p = nodePos(id, w, h), tt = titles[id].length > maxChars ? titles[id].slice(0, maxChars - 1) + "…" : titles[id];
+      g.fillStyle = alpha(NODE[id].c, .95); g.fillText(tt, p.x, Math.max(9, p.y - R - 14));
     });
   }
 
@@ -998,16 +1188,20 @@
     });
     var cn = beat.counts || {};
     tweenCounter("c-verified", cn.verified || 0); tweenCounter("c-headline", cn.headline || 0); tweenCounter("c-dropped", cn.dropped || 0); tweenCounter("c-first", (cn.first_pass || 0) + (beat.unsorted || 0));
-    var wk = $("workers"); wk.textContent = "";
-    Object.keys(beat.workers || {}).forEach(function (k) { var n = beat.workers[k]; wk.appendChild(el("span", n ? "r" : null, k + (n ? " · " + n + " restart" + (n > 1 ? "s" : "") : " · ok"))); });
-    var tb = $("tasks"); tb.textContent = "";
+    var wk = $("workers"), wkeys = Object.keys(beat.workers || {}), restarts = wkeys.filter(function (k) { return beat.workers[k]; });
+    wk.textContent = "";
+    var wsum = el("span", restarts.length ? "r" : null, wkeys.length + " workers" + (restarts.length ? " · restarted: " + restarts.map(function (k) { return k + " ×" + beat.workers[k]; }).join(", ") : " · none restarted"));
+    wsum.title = wkeys.map(function (k) { return k + ": " + beat.workers[k] + " restarts"; }).join(" · "); wk.appendChild(wsum);
+    var tb = $("tasks"), retired = [];
+    tb.textContent = "";
     (s.tasks || []).forEach(function (t) {
-      var row = el("div", "task " + (t.state || "") + (/^Retired/.test(t.about || "") ? " retired" : ""));
-      row.appendChild(el("i"));
-      var nm = el("div", "nm", t.name); nm.appendChild(el("small", null, t.about || "")); row.appendChild(nm);
-      row.appendChild(el("div", "tm", (t.state || "") + (t.last ? " · ran " + ago(t.last) : "")));
-      tb.appendChild(row);
+      if (/^Retired/.test(t.about || "")) { retired.push(t.name); return; }
+      var chip = el("span", "tchip " + (t.state || ""));
+      chip.appendChild(el("i")); chip.appendChild(document.createTextNode(String(t.name).replace(/^newsroom-/, "")));
+      chip.title = (t.about || t.name) + " · " + (t.state || "?") + (t.last ? " · last ran " + ago(t.last) : "") + (t.next ? " · next " + clock(t.next) : "");
+      tb.appendChild(chip);
     });
+    if (retired.length) { var rc = el("span", "tchip retired", retired.length + " retired"); rc.title = retired.join(", "); tb.appendChild(rc); }
     var svc = $("st-service"); svc.className = "st " + (s.service === "Running" ? "ok" : s.service === "Disabled" ? "warn" : ""); svc.querySelector("b").textContent = s.service || "–";
     $("svc-tag").textContent = "sampled " + clock(s.at);
     var c = $("control");
@@ -1160,7 +1354,7 @@
 
   /* ---------- the stream ---------- */
   function onLive(e) {
-    if (e.kind === "ink") { inkChunk(e); kick(.1); return; }
+    if (e.kind === "ink") { inkChunk(e); inkSpark(e.id); kick(.1); return; }
     ingest(e, true);
     kick(e.kind === "live-sweep" ? .2 : .6);
     if (e.kind === "ink-start") liveStart(e);

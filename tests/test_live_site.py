@@ -17,6 +17,7 @@ import live_feed
 import live_lead
 import live_market
 import live_posts
+import live_push
 import news_engine
 import requests
 
@@ -493,7 +494,7 @@ class FeedPushTests(unittest.TestCase):
             failed = args[0] == fail
             return SimpleNamespace(returncode=1 if failed else 0, stdout="", stderr="boom" if failed else "")
         config = {**CONFIG, "push": {**CONFIG["push"], "worktree": str(self.dir / "wt")}}
-        return FeedPusher(config, self.dir / "out", self.dir, run=run, clock=lambda: self.now)
+        return FeedPusher(config, self.dir / "out", self.dir, run=run, clock=lambda: self.now, pause=lambda s: None)
 
     def write_feed(self, title):
         (self.dir / "out" / "feed.json").write_text(json.dumps({"generated": iso(self.now), "stories": [{"title": title}]}), encoding="utf-8")
@@ -522,8 +523,54 @@ class FeedPushTests(unittest.TestCase):
         pusher = self.pusher(fail="push")
         self.write_feed("a")
         self.assertFalse(pusher.push_once())
-        self.assertIn("git push failed", pusher.error)
+        self.assertIn("git push failed (exit 1): boom", pusher.error)
+        self.assertEqual(self.calls, ["add", "commit", "push", "push"])  # tried twice before giving up
         self.assertIsNone(pusher.last_push)
+
+    def test_a_momentary_git_failure_is_tried_again_and_goes_out(self):
+        # 2026-11-16 on: about nine a day of "git commit failed: " (no words) that went through 30 seconds later.
+        answers = {"commit": [SimpleNamespace(returncode=0xC0000142, stdout="", stderr="")]}
+        def run(args, cwd):
+            self.calls.append(args[0])
+            queued = answers.get(args[0])
+            return queued.pop(0) if queued else SimpleNamespace(returncode=0, stdout="", stderr="")
+        pauses = []
+        config = {**CONFIG, "push": {**CONFIG["push"], "worktree": str(self.dir / "wt")}}
+        pusher = FeedPusher(config, self.dir / "out", self.dir, run=run, clock=lambda: self.now, pause=pauses.append)
+        self.write_feed("a")
+        self.assertTrue(pusher.push_once())
+        self.assertEqual(self.calls, ["add", "commit", "commit", "push"])
+        self.assertEqual(pauses, [live_push.RETRY_PAUSE])
+        self.assertEqual(pusher.error, "")
+
+    def test_a_silent_failure_names_its_exit_code(self):
+        def run(args, cwd):
+            return SimpleNamespace(returncode=0xC0000142 if args[0] == "commit" else 0, stdout="", stderr="")
+        config = {**CONFIG, "push": {**CONFIG["push"], "worktree": str(self.dir / "wt")}}
+        pusher = FeedPusher(config, self.dir / "out", self.dir, run=run, clock=lambda: self.now, pause=lambda s: None)
+        self.write_feed("a")
+        self.assertFalse(pusher.push_once())
+        self.assertEqual(pusher.error, "git commit failed (exit 0xc0000142): no message")
+
+    def test_with_no_internet_tries_back_off_to_five_minutes(self):
+        pusher = self.pusher(fail="push")
+        pusher.pause = lambda s: None
+        self.write_feed("a")
+        tries = []
+        for _ in range(40):  # 20 minutes of the service's 30-second loop
+            before = len(self.calls)
+            pusher.push_once()
+            if len(self.calls) > before:
+                tries.append(self.now)
+            self.now += timedelta(seconds=30)
+        gaps = [int((b - a).total_seconds()) for a, b in zip(tries, tries[1:])]
+        self.assertEqual(gaps[:4], [30, 60, 120, 300])
+        self.assertTrue(all(g == 300 for g in gaps[3:]))
+        self.assertEqual(pusher.failures, len(tries))
+        pusher.run_git = lambda args, cwd: SimpleNamespace(returncode=0, stdout="", stderr="")  # back online
+        self.now += timedelta(seconds=300)
+        self.assertTrue(pusher.push_once())
+        self.assertEqual((pusher.failures, pusher.retry_at), (0, None))
 
     def test_overnight_the_page_updates_once_an_hour_on_the_hour(self):
         self.now = datetime(2026, 10, 31, 3, 50, tzinfo=timezone.utc)  # 11:50 p.m. Eastern (EDT)

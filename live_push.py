@@ -6,6 +6,10 @@ the reader page and the feed are both served by GitHub and no new service is exp
 the stories changed (at most every `min_seconds`) and at least every `heartbeat_seconds`, so the page can
 tell readers when updates have stopped. Overnight (`overnight`, Eastern hours) it goes out once an hour, on the
 hour, whatever changed. The branch has its own worktree beside this one.
+
+A git step that fails is tried once more after a short pause (most failures are momentary: 2026-11 saw about nine a
+day of a commit that failed without a word and went through 30 seconds later). Pushes that keep failing (no
+internet) are retried less and less often, up to every five minutes, instead of every 30 seconds.
 """
 
 from __future__ import annotations
@@ -14,6 +18,7 @@ import json
 import shutil
 import subprocess
 import threading
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -24,6 +29,9 @@ import newsroom_live
 
 BRANCH = "live-feed"
 EASTERN = ZoneInfo("America/New_York")
+RETRY_PAUSE = 2.0  # seconds before a failed git step is tried a second time
+BACKOFF = (30, 60, 120, 300)  # seconds before the next try after 1, 2, 3, 4+ failed pushes in a row
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)  # the service has no console; git must not need one
 
 
 def overnight(now: datetime, config: dict[str, Any]) -> bool:
@@ -35,7 +43,8 @@ def overnight(now: datetime, config: dict[str, Any]) -> bool:
 
 
 def git(args: list[str], cwd: Path, timeout: float = 90) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False)
+    return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False,
+                          creationflags=NO_WINDOW)
 
 
 class FeedPusher:
@@ -47,6 +56,7 @@ class FeedPusher:
         *,
         run: Callable[[list[str], Path], subprocess.CompletedProcess[str]] = git,
         clock: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
+        pause: Callable[[float], None] = time.sleep,
     ) -> None:
         settings = config["push"]
         self.enabled = bool(settings.get("enabled", False))
@@ -54,10 +64,12 @@ class FeedPusher:
         self.min_gap = timedelta(seconds=float(settings.get("min_seconds", 180)))
         self.heartbeat = timedelta(seconds=float(settings.get("heartbeat_seconds", 600)))
         self.config = config
-        self.out_dir, self.repo_root, self.run_git, self.clock = out_dir, repo_root, run, clock
+        self.out_dir, self.repo_root, self.run_git, self.clock, self.pause = out_dir, repo_root, run, clock, pause
         self.last_push: datetime | None = None
         self.last_hash = ""
         self.error = ""
+        self.failures = 0  # failed pushes in a row
+        self.retry_at: datetime | None = None
 
     def ensure_worktree(self) -> bool:
         if (self.worktree / ".git").exists():
@@ -90,7 +102,7 @@ class FeedPusher:
             self.error = f"no feed to push: {type(exc).__name__}"
             return False
         feed_hash = live_feed.content_hash(feed)
-        if not self.due(feed_hash, now) or not self.ensure_worktree():
+        if (self.retry_at and now < self.retry_at) or not self.due(feed_hash, now) or not self.ensure_worktree():
             return False
         try:
             shutil.copyfile(source, self.worktree / "feed.json")
@@ -101,18 +113,33 @@ class FeedPusher:
                 ["push", "--quiet", "origin", f"{BRANCH}:{BRANCH}"],
             )
             for step in steps:
-                result = self.run_git(step, self.worktree)
-                if result.returncode != 0 and not (step[0] == "commit" and "nothing to commit" in result.stdout + result.stderr):
-                    raise RuntimeError(f"git {step[0]} failed: {(result.stderr or result.stdout).strip()[:200]}")
+                self.step(step)
         except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
             self.error = str(exc)[:300]
-            newsroom_live.emit("live-push-fail", desk="press", error=self.error)
+            self.failures += 1
+            self.retry_at = now + timedelta(seconds=BACKOFF[min(self.failures, len(BACKOFF)) - 1])
+            newsroom_live.emit("live-push-fail", desk="press", error=self.error, failures=self.failures)
             self._note(now)
             return False
         self.last_push, self.last_hash, self.error = now, feed_hash, ""
+        self.failures, self.retry_at = 0, None
         newsroom_live.emit("live-push", desk="press", stories=len(feed.get("stories", [])))
         self._note(now)
         return True
+
+    def step(self, args: list[str]) -> None:
+        """One git step, tried a second time after RETRY_PAUSE if it fails; raises with git's exit code and words."""
+        for attempt in (1, 2):
+            result = self.run_git(args, self.worktree)
+            output = (result.stdout or "") + (result.stderr or "")
+            if result.returncode == 0 or (args[0] == "commit" and "nothing to commit" in output):
+                return
+            if attempt == 1:
+                self.pause(RETRY_PAUSE)
+        code = result.returncode
+        shown = f"{code:#x}" if code > 255 else str(code)  # Windows start-up failures are large NTSTATUS codes
+        detail = (result.stderr or result.stdout or "").strip()[:200] or "no message"
+        raise RuntimeError(f"git {args[0]} failed (exit {shown}): {detail}")
 
     def copy_days(self) -> list[str]:
         """The daily archive's files (live_days.py) that changed, copied beside feed.json; ["days"] when any did."""
