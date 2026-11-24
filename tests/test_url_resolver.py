@@ -43,6 +43,16 @@ class DecodeTests(unittest.TestCase):
         self.assertIn("SIG", session.post.call_args.kwargs["data"] or "SIG")
 
 
+    def test_every_google_request_answers_the_cookie_banner_with_reject_all(self) -> None:
+        # 2026-11: without it Google sent these requests to consent.google.com and up to 1,000 stories a day were lost.
+        session = Mock()
+        session.get.return_value = Mock(status_code=200, text='<c-wiz data-n-a-sg="SIG" data-n-a-ts="123"></c-wiz>')
+        session.post.return_value = Mock(status_code=200, text="")
+        resolver.resolve_url("https://news.google.com/rss/articles/CBMiAU_yqLzzzzzzzzz", session)
+        self.assertEqual(session.get.call_args.kwargs["cookies"], {"SOCS": "CAI"})
+        self.assertEqual(session.post.call_args.kwargs["cookies"], {"SOCS": "CAI"})
+
+
 class ResolveArticlesTests(unittest.TestCase):
     def test_wrappers_are_replaced_and_failures_are_marked_unresolved(self) -> None:
         good = "https://www.example.com/a"

@@ -23,6 +23,10 @@ import requests
 USER_AGENT = "Mozilla/5.0 (compatible; AdvancedTransportationNewsBot/1.0)"
 BATCHEXECUTE_URL = "https://news.google.com/_/DotsSplashUi/data/batchexecute"
 GOOGLE_NEWS_HOSTS = {"news.google.com"}
+# Google's "Reject all" answer to its cookie banner. Without it Google sometimes sends these requests to its consent
+# page (consent.google.com) instead, and no link resolves: on and off since at least 2026-11-11, up to 1,000 stories a
+# day thrown out as "could not be resolved to the publisher".
+CONSENT_COOKIES = {"SOCS": "CAI"}
 _ID_PATTERN = re.compile(r"/(?:rss/)?(?:articles|read)/([A-Za-z0-9_-]+)")
 
 
@@ -65,6 +69,7 @@ def _scrape_signature(identifier: str, session: requests.Session) -> tuple[str, 
     response = session.get(
         f"https://news.google.com/rss/articles/{identifier}",
         headers={"User-Agent": USER_AGENT},
+        cookies=CONSENT_COOKIES,
         timeout=20,
     )
     if response.status_code != 200:
@@ -93,6 +98,7 @@ def exchange_for_url(identifier: str, session: requests.Session) -> str | None:
             "User-Agent": USER_AGENT,
         },
         data=body,
+        cookies=CONSENT_COOKIES,
         timeout=20,
     )
     if response.status_code != 200:
