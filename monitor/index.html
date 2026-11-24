@@ -309,6 +309,7 @@
     .story b{font-size:12px}
     .stage{font-size:9.5px;padding:1px 5px}
   }
+  @media (min-width:1200px) and (min-height:680px) and (max-height:1000px){.a-pipe .hourrow{display:none}}
   @media (max-width:1199.98px),(max-height:679.98px){
     main{grid-template-columns:minmax(0,1fr);grid-template-areas:"pipe" "hw" "tw" "tl" "heat" "wire" "feed" "story" "spike" "svc"}
     .grow{flex:none}.a-pipe .grow{height:230px}.a-tl .grow{height:150px}.radar-box{height:230px}.hw-chart .grow{height:120px}.heat.grow{flex:none}
@@ -351,7 +352,7 @@
 
 <main>
   <section class="panel a-pipe">
-    <div class="ph"><span class="dot"></span><h2>Pipeline</h2><span class="tag">every event moves through the desks · dropped stories fall onto the spike</span><span class="spacer"></span><span class="tag" id="pipe-tag"></span></div>
+    <div class="ph"><span class="dot"></span><h2>The newsroom floor</h2><span class="tag">each story is a page carried desk to desk · a robot works each desk · dropped pages go on the spike</span><span class="spacer"></span><span class="tag" id="pipe-tag"></span></div>
     <div class="grow"><canvas id="pipe"></canvas></div>
     <div class="hourrow">
       <div><b id="hr-sweeps">0</b><span>sweeps/h</span></div>
@@ -818,65 +819,78 @@
   }
   function roundRect(g, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 
-  /* pipeline: every story is a ball. It rides the line to a desk, waits in that desk's queue, docks and circles the
-     desk while a model works on it (sparks fly with each burst of text), then rides on to the next desk. Drops fall
-     onto the spike; stories that reach the page are absorbed by the press; pushes fly to the live site. */
-  var balls = [], sparks = [], bursts = [], spikeFlash = 0, pipeW = 1000, pipeH = 200, ballSeq = 0;
-  var QUEUE_MAX = 12, QUEUE_TTL = 6 * 60e3, DOCK_TTL = 5 * 60e3;
-  function nodeR(h) { return Math.max(16, Math.min(28, h * .13)); }
-  function nodePos(id, w, h) { var n = NODE[id], side = Math.min(80, w * .07); return { x: side + n.i * (w - 2 * side) / (NODES.length - 1), y: h * 0.36 }; }
+  /* pipeline: the newsroom floor. A little robot works at each desk; every story is a page. A page flies along the
+     line, waits in the next desk's in-tray, lies on the desk while a model works on it (characters of the model's
+     output float up from the desk), then flies on, marked by each desk: lines of text from Write, a check from Check,
+     a flag from Edit. Dropped pages land on the spike; the press prints the ones that reach the page; pushes fly to
+     the live site. */
+  var balls = [], sparks = [], bursts = [], glyphs = [], pipeW = 1000, pipeH = 200, ballSeq = 0, spikeFlash = 0;
+  var QUEUE_MAX = 12, QUEUE_TTL = 6 * 60e3, DOCK_TTL = 5 * 60e3, TRAY_SHOWN = 6;
+  var WOOD = "#3E3029", WOOD_TOP = "#76594A", METAL = "#41557A", METAL_D = "#2A3A55", HAND = "#6C82A8", VISOR = "#050A12", PAPER = "#EEF2F8";
+  var TOOLS = { wire: "radio", triage: "magnify", write: "type", check: "stamp", edit: "pencil" };
+  // The floor's scale: as big as the canvas allows, with room for the headline above a desk, the labels below it and
+  // the spike at the bottom, and without desks touching.
+  function sc(h) { var gap = (pipeW - 2 * Math.min(80, pipeW * .07)) / (NODES.length - 1); return Math.max(.6, Math.min(1.7, (h - 92) / 52, gap / 62)); }
+  function nodePos(id, w, h) { var n = NODE[id], side = Math.min(80, w * .07); return { x: side + n.i * (w - 2 * side) / (NODES.length - 1), y: 36 * sc(h) + 22 }; }
+  function deskSpot(id, kind) {  // where pages go at a desk: the in-tray, the desk top, or into the machine
+    var p = nodePos(id, pipeW, pipeH), s = sc(pipeH);
+    if (kind === "tray") return { x: p.x - 33 * s, y: p.y + 12 * s };
+    if (kind === "mouth") return { x: p.x, y: p.y - (id === "site" ? 12 : 8) * s };
+    if (id === "write") return { x: p.x + 1 * s, y: p.y - 9 * s };  // in the typewriter
+    return { x: p.x - 8 * s, y: p.y - 1.5 * s };
+  }
   function nextNode(id) { return NODES[Math.min(NODES.length - 1, NODE[id].i + 1)].id; }
   function prevNode(id) { return NODES[Math.max(0, NODE[id].i - 1)].id; }
-  function exitOf(id) { var p = nodePos(id, pipeW, pipeH); return { x: p.x + nodeR(pipeH) + 4, y: p.y }; }
   function storyTitle(subject) {
     return String(subject || "").replace(/^\s*(HEADLINE|REPORT|ARTICLE)\s+/, "").split(/\s(?:SUMMARY|ARTICLE|HEADLINE|REPORT|EARLIER)\b/)[0].replace(/\s+/g, " ").trim();
   }
   function queued(id) { return balls.filter(function (b) { return b.at === id && b.mode === "queue" && b.arrived && !b.fade; }).sort(function (a, b) { return a.born - b.born; }); }
-  // A new trip: from (x, y) to the desk `to`, ending in its queue, docked, absorbed or on the spike.
   function trip(b, to, mode, delay, dur) {
-    b.sx = b.x; b.sy = b.y; b.to = to; b.mode = mode; b.t0 = performance.now() + (delay || 0); b.dur = dur || 1100 + Math.random() * 500; b.arrived = false; b.at = null;
+    b.sx = b.x; b.sy = b.y; b.to = to; b.mode = mode; b.t0 = performance.now() + (delay || 0); b.dur = dur || 1200 + Math.random() * 500; b.arrived = false; b.at = null;
     b.c = NODE[to] ? NODE[to].c : C.bad;
     return b;
   }
-  function newBall(from) { var p = exitOf(from); var b = { id: ++ballSeq, x: p.x, y: p.y, born: performance.now(), phase: Math.random() * 6.3, wob: (Math.random() - .5) * 20, trail: [] }; balls.push(b); return b; }
-  function spawn(from, to, color, count) {  // stories leaving `from` for `to`'s queue (or absorbed at the live site)
-    for (var i = 0; i < count; i++) trip(newBall(from), to, to === "site" ? "absorb" : "queue", i * 180);
+  function newBall(from) {
+    var p = nodePos(from, pipeW, pipeH), s = sc(pipeH);
+    var b = { id: ++ballSeq, x: p.x + 24 * s, y: p.y - 4 * s, born: performance.now(), phase: Math.random() * 6.3, wob: (Math.random() - .5) * 18, marks: {} };
+    balls.push(b); return b;
+  }
+  function spawn(from, to, color, count) {
+    for (var i = 0; i < count; i++) trip(newBall(from), to, to === "site" ? "absorb" : "queue", i * 220);
     pulse(from);
   }
-  function spawnDrop(from) {
-    var b = queued(from)[0] || newBall(from);
-    b.call = null; trip(b, "spike", "fall", 0, 1200);
-  }
-  function dock(e) {  // a model call starts at its desk: the oldest waiting story docks there
+  function spawnDrop(from) { var b = queued(from)[0] || newBall(from); b.call = null; trip(b, "spike", "fall", 0, 1300); }
+  function dock(e) {
     var at = job(e.purpose).node, b = queued(at)[0], waiting = !!b;
-    if (!b) b = newBall(prevNode(at));  // it came in some other way (the backlog, a restart): ride in from the desk before
+    if (!b) b = newBall(prevNode(at));  // came in some other way (the backlog, a restart): fly in from the desk before
     b.call = e.id; b.title = storyTitle(e.subject) || b.title;
-    trip(b, at, "dock", 0, waiting ? 550 : 1000);
+    trip(b, at, "dock", 0, waiting ? 600 : 1100);
   }
-  function undock(c) {  // the call ends: on to the next desk, or onto the spike if it failed
-    var b = balls.filter(function (x) { return x.call === c.id; })[0];
-    var at = job(c.purpose).node;
-    if (!b) { var p = nodePos(at, pipeW, pipeH); b = newBall(at); b.x = p.x; b.y = p.y; }
+  function undock(c) {
+    var b = balls.filter(function (x) { return x.call === c.id; })[0], at = job(c.purpose).node;
+    if (!b) { b = newBall(at); var d = deskSpot(at, "desk"); b.x = d.x; b.y = d.y; }
     b.call = null;
-    if (c.ok === false) return trip(b, "spike", "fall", 0, 1200);
+    NODE[at].done = performance.now();
+    if (c.ok === false) return trip(b, "spike", "fall", 0, 1300);
+    if (c.purpose === "story_summary") b.marks.text = true;
+    if (c.purpose === "entailment") b.marks.check = true;
+    if (c.purpose === "live_sort" || c.purpose === "live_score") b.marks.flag = true;
+    if (c.purpose === "live_triage") b.marks.tag = true;
     trip(b, nextNode(at), "queue");
     pulse(at);
   }
-  function absorb(at) {  // a story reaches the page: the press takes the next one waiting (or one from the edit desk)
-    var b = queued(at)[0] || newBall(prevNode(at));
-    trip(b, at, "absorb", 0, b.arrived ? 500 : 1000);
-  }
-  function inkSpark(id) {
+  function absorb(at) { var b = queued(at)[0] || newBall(prevNode(at)); trip(b, at, "absorb", 0, b.arrived ? 600 : 1100); }
+  function inkSpark(id, text) {
     var b = balls.filter(function (x) { return x.call === id && x.mode === "dock" && x.arrived; })[0], now = performance.now();
-    if (!b || now - (b.lastSpark || 0) < 70) return;
+    if (!b || now - (b.lastSpark || 0) < 90) return;
     b.lastSpark = now;
-    for (var i = 0; i < 2; i++) { var a = Math.random() * 6.3, v = .04 + Math.random() * .05; sparks.push({ x: b.x, y: b.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t0: now, life: 500 + Math.random() * 300, c: b.c }); }
+    var chars = String(text || "").replace(/\s+/g, "").slice(0, 2), s = sc(pipeH);
+    for (var i = 0; i < chars.length; i++) glyphs.push({ ch: chars[i], x: b.x + (Math.random() - .5) * 8 * s, y: b.y - 5 * s, vx: (Math.random() - .5) * .018, vy: -.028 - Math.random() * .02, t0: now, life: 1100 + Math.random() * 500, c: b.c });
   }
-  function burst(at, color, big) {
-    var p = nodePos(at, pipeW, pipeH), now = performance.now(), n = big ? 18 : 11;
-    bursts.push({ at: at, t0: now, c: color, big: big });
-    for (var i = 0; i < n; i++) { var a = i / n * 6.3 + Math.random() * .3, v = (big ? .1 : .07) + Math.random() * .06; sparks.push({ x: p.x, y: p.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t0: now, life: 600 + Math.random() * 400, c: color }); }
-    NODE[at].glow = 1;
+  function burst(x, y, color, big) {
+    var now = performance.now(), n = big ? 14 : 8;
+    bursts.push({ x: x, y: y, t0: now, c: color, big: big });
+    for (var i = 0; i < n; i++) { var a = i / n * 6.3 + Math.random() * .3, v = (big ? .08 : .05) + Math.random() * .04; sparks.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t0: now, life: 500 + Math.random() * 300, c: color }); }
   }
   function pulse(id, bad) { var n = NODE[id]; if (!n) return; n.glow = Math.max(n.glow, .8); n.hits.push(performance.now()); if (bad) n.bad = performance.now(); }
   function nodeCount(id) {
@@ -890,124 +904,285 @@
   function arrive(b, now) {
     b.arrived = true; b.at = b.to;
     if (b.mode === "fall") { spikeFlash = 1; b.gone = true; return; }
-    if (b.mode === "absorb") { burst(b.to, NODE[b.to].c, true); b.gone = true; return; }
-    if (b.mode === "dock") { burst(b.to, NODE[b.to].c, false); return; }
-    pulse(b.to);  // queued
+    if (b.mode === "absorb") { var m = deskSpot(b.to, "mouth"); burst(m.x, m.y, NODE[b.to].c, true); NODE[b.to].glow = 1; b.gone = true; return; }
+    if (b.mode === "dock") { var d = deskSpot(b.to, "desk"); burst(d.x, d.y, NODE[b.to].c, false); NODE[b.to].glow = 1; return; }
+    pulse(b.to);
     if (queued(b.to).length > QUEUE_MAX) queued(b.to)[0].fade = now;
   }
+
+  /* ---- drawing the floor ---- */
+  function drawPage(g, x, y, s, rot, b, a, size) {
+    var ps = Math.max(.78, s) * (size || 1), w = 10 * ps, hh = 13 * ps, f = 3 * ps;
+    g.save(); g.translate(x, y); g.rotate(rot || 0); g.globalAlpha = a;
+    g.shadowColor = "rgba(0,0,0,.55)"; g.shadowBlur = 4; g.shadowOffsetY = 1;
+    g.fillStyle = PAPER; g.beginPath(); g.moveTo(-w / 2, -hh / 2); g.lineTo(w / 2 - f, -hh / 2); g.lineTo(w / 2, -hh / 2 + f); g.lineTo(w / 2, hh / 2); g.lineTo(-w / 2, hh / 2); g.closePath(); g.fill();
+    g.shadowColor = "transparent";
+    g.fillStyle = "#B9C4D4"; g.beginPath(); g.moveTo(w / 2 - f, -hh / 2); g.lineTo(w / 2 - f, -hh / 2 + f); g.lineTo(w / 2, -hh / 2 + f); g.closePath(); g.fill();
+    g.fillStyle = b && b.c ? b.c : C.wire; g.fillRect(-w / 2 + 1.3 * ps, -hh / 2 + 1.6 * ps, w * .5, 1.5 * ps);
+    g.fillStyle = "#94A1B5";
+    var lines = b && b.marks && b.marks.text ? 5 : 2;
+    for (var i = 0; i < lines; i++) g.fillRect(-w / 2 + 1.3 * ps, -hh / 2 + 4.4 * ps + i * 1.7 * ps, i % 3 === 2 ? w * .45 : w * .72, .75 * ps);
+    if (b && b.marks && b.marks.flag) { g.fillStyle = C.edit; g.beginPath(); g.moveTo(-w / 2 - .5 * ps, -hh / 2 - 2.5 * ps); g.lineTo(-w / 2 + 3 * ps, -hh / 2 - 1.2 * ps); g.lineTo(-w / 2 - .5 * ps, -hh / 2 + .2 * ps); g.fill(); g.fillRect(-w / 2 - .9 * ps, -hh / 2 - 2.5 * ps, .7 * ps, 4.5 * ps); }
+    if (b && b.marks && b.marks.check) {
+      g.fillStyle = C.write; g.beginPath(); g.arc(w / 2 - 2.2 * ps, hh / 2 - 2.2 * ps, 2.4 * ps, 0, 7); g.fill();
+      g.strokeStyle = "#04140D"; g.lineWidth = .8 * ps; g.beginPath(); g.moveTo(w / 2 - 3.3 * ps, hh / 2 - 2.2 * ps); g.lineTo(w / 2 - 2.5 * ps, hh / 2 - 1.3 * ps); g.lineTo(w / 2 - 1 * ps, hh / 2 - 3.2 * ps); g.stroke();
+    }
+    g.restore();
+  }
+  function drawDesk(g, x, y, s) {
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 16 * s, 24 * s, 2.6 * s, 0, 0, 7); g.fill();
+    g.fillStyle = WOOD; g.fillRect(x - 19 * s, y + 4 * s, 2.2 * s, 12 * s); g.fillRect(x + 16.8 * s, y + 4 * s, 2.2 * s, 12 * s);
+    g.fillRect(x - 20 * s, y + 4 * s, 40 * s, 3 * s);
+    g.fillStyle = WOOD_TOP; roundRect(g, x - 23 * s, y + 1 * s, 46 * s, 3.4 * s, 1.4 * s); g.fill();
+    g.fillStyle = "rgba(255,255,255,.12)"; g.fillRect(x - 22 * s, y + 1.2 * s, 44 * s, .7 * s);
+  }
+  function drawTray(g, id, x, y, s, n) {
+    g.fillStyle = METAL_D; roundRect(g, x - 7.5 * s, y + 4 * s, 15 * s, 3 * s, 1 * s); g.fill();
+    g.strokeStyle = METAL; g.lineWidth = 1 * s; g.beginPath(); g.moveTo(x - 7.5 * s, y + 1.5 * s); g.lineTo(x - 7.5 * s, y + 7 * s); g.lineTo(x + 7.5 * s, y + 7 * s); g.lineTo(x + 7.5 * s, y + 1.5 * s); g.stroke();
+  }
+  function drawBot(g, x, y, s, c, work, now, seed, tool, done) {
+    var bob = work ? Math.sin(now / 110 + seed) * .8 * s : Math.sin(now / 900 + seed) * .6 * s;
+    g.fillStyle = "#121A27"; roundRect(g, x - 10 * s, y - 17 * s, 20 * s, 20 * s, 4 * s); g.fill();  // chair back
+    g.fillStyle = METAL_D; roundRect(g, x - 8 * s, y - 11 * s + bob * .4, 16 * s, 13 * s, 4 * s); g.fill();  // body
+    g.fillStyle = alpha(c, work ? .95 : .5); g.fillRect(x - 3 * s, y - 7 * s + bob * .4, 6 * s, 1.3 * s);
+    var hy = y - 24.5 * s + bob;
+    g.strokeStyle = METAL; g.lineWidth = 1.2 * s; g.beginPath(); g.moveTo(x, hy); g.lineTo(x, hy - 4.5 * s); g.stroke();
+    g.save(); g.shadowColor = c; g.shadowBlur = work ? 10 : 0;
+    g.fillStyle = work ? ((now / 260 | 0) % 2 ? c : alpha(c, .45)) : alpha(c, .35); g.beginPath(); g.arc(x, hy - 5.3 * s, 1.7 * s, 0, 7); g.fill(); g.restore();
+    g.fillStyle = METAL; roundRect(g, x - 7.5 * s, hy, 15 * s, 11 * s, 3.6 * s); g.fill();
+    g.fillStyle = "rgba(255,255,255,.10)"; roundRect(g, x - 6.5 * s, hy + .8 * s, 13 * s, 2 * s, 1 * s); g.fill();
+    g.fillStyle = VISOR; roundRect(g, x - 5.6 * s, hy + 3.4 * s, 11.2 * s, 4.6 * s, 2.3 * s); g.fill();
+    var blink = ((now + seed * 997) % 4300) < 130, eh = blink ? .4 * s : 1.9 * s, scan = work ? Math.sin(now / 240 + seed) * 1.3 * s : 0;
+    g.save(); g.shadowColor = c; g.shadowBlur = work ? 8 : 3; g.fillStyle = c;
+    g.fillRect(x - 3.2 * s + scan - .9 * s, hy + 5.7 * s - eh / 2, 1.8 * s, eh); g.fillRect(x + 3.2 * s + scan - .9 * s, hy + 5.7 * s - eh / 2, 1.8 * s, eh); g.restore();
+    if (tool === "radio") {  // headset
+      g.strokeStyle = alpha(c, .9); g.lineWidth = 1.1 * s; g.beginPath(); g.arc(x, hy + 4 * s, 8.6 * s, Math.PI * 1.08, Math.PI * 1.92); g.stroke();
+      g.fillStyle = c; roundRect(g, x - 9.6 * s, hy + 3 * s, 2.4 * s, 4 * s, 1 * s); g.fill(); roundRect(g, x + 7.2 * s, hy + 3 * s, 2.4 * s, 4 * s, 1 * s); g.fill();
+    }
+    return { sh: y - 8 * s + bob * .4, bob: bob };
+  }
+  function arm(g, s, from, to) {
+    g.strokeStyle = METAL; g.lineWidth = 2.4 * s; g.lineCap = "round";
+    g.beginPath(); g.moveTo(from[0], from[1]); g.quadraticCurveTo((from[0] + to[0]) / 2 + (to[0] > from[0] ? 0 : 0), from[1] + 4 * s, to[0], to[1]); g.stroke();
+    g.fillStyle = HAND; g.beginPath(); g.arc(to[0], to[1], 1.6 * s, 0, 7); g.fill();
+  }
+  function steam(g, x, y, s, now, c) {
+    for (var i = 0; i < 3; i++) {
+      var k = ((now / 1600) + i / 3) % 1;
+      g.strokeStyle = alpha(c || "#CBD5E1", .35 * (1 - k)); g.lineWidth = .9 * s; g.beginPath();
+      for (var j = 0; j <= 6; j++) { var yy = y - k * 9 * s - j * 1.1 * s, xx = x + Math.sin(now / 300 + i * 2 + j * .9) * 1.2 * s + (i - 1) * 1.4 * s; if (j) g.lineTo(xx, yy); else g.moveTo(xx, yy); }
+      g.stroke();
+    }
+  }
+  function drawStation(g, n, now, busy, dockedHere) {
+    var p = nodePos(n.id, pipeW, pipeH), x = p.x, y = p.y, s = sc(pipeH), c = n.c, work = busy > 0, seed = n.i * 1.7;
+    var glow = n.glow; n.glow *= .965;
+    var halo = g.createRadialGradient(x, y - 6 * s, 2, x, y - 6 * s, 34 * s);
+    halo.addColorStop(0, alpha(c, .10 + glow * .22 + (work ? .12 : 0))); halo.addColorStop(1, alpha(c, 0));
+    g.fillStyle = halo; g.beginPath(); g.arc(x, y - 6 * s, 34 * s, 0, 7); g.fill();
+    n.hits = n.hits.filter(function (t) { return now - t < 1400; });
+    if (n.id === "press") return drawPress(g, n, x, y, s, now, work, glow);
+    if (n.id === "site") return drawSite(g, n, x, y, s, now, glow);
+    var tool = TOOLS[n.id], body = drawBot(g, x, y, s, c, work, now, seed, tool, n.done);
+    drawDesk(g, x, y, s);
+    drawTray(g, n.id, x - 33 * s, y + 9 * s, s);
+    // what sits on the desk
+    var lh = [x - 6 * s, y + 1.2 * s], rh = [x + 6 * s, y + 1.2 * s], since = now - (n.done || 0);
+    if (tool === "radio") {
+      g.fillStyle = METAL; roundRect(g, x + 9 * s, y - 5 * s, 11 * s, 6 * s, 1.5 * s); g.fill();
+      g.fillStyle = alpha(c, .9); g.beginPath(); g.arc(x + 12.2 * s, y - 2 * s, 1.5 * s, 0, 7); g.fill();
+      g.fillStyle = "#0B1424"; g.fillRect(x + 15 * s, y - 3.6 * s, 4 * s, 2.6 * s);
+      g.strokeStyle = METAL; g.lineWidth = 1 * s; g.beginPath(); g.moveTo(x + 18.5 * s, y - 5 * s); g.lineTo(x + 21 * s, y - 17 * s); g.stroke();
+      g.fillStyle = c; g.beginPath(); g.arc(x + 21 * s, y - 17.5 * s, 1.3 * s, 0, 7); g.fill();
+      n.hits.forEach(function (t) { var k = (now - t) / 1400; g.strokeStyle = alpha(n.bad && now - n.bad < 1400 ? C.bad : c, .9 * (1 - k)); g.lineWidth = 1.2 * s; g.beginPath(); g.arc(x + 21 * s, y - 17.5 * s, 3 * s + k * 16 * s, -1.2, .4); g.stroke(); });
+      rh = [x + 12 * s + Math.sin(now / 500) * (work ? 1.5 : .3) * s, y - 2.5 * s];
+    }
+    if (tool === "type") {
+      var carriage = work ? (((now / 60) % 24) / 24 * 4 - 2) * s : 0;
+      g.fillStyle = "#1A2433"; roundRect(g, x - 8 * s + carriage, y - 6.8 * s, 18 * s, 2.6 * s, 1.2 * s); g.fill();
+      g.fillStyle = METAL; roundRect(g, x - 9 * s, y - 4.5 * s, 20 * s, 5.8 * s, 2 * s); g.fill();
+      g.fillStyle = alpha(c, .75);
+      for (var kx = 0; kx < 6; kx++) for (var ky = 0; ky < 2; ky++) g.fillRect(x - 7 * s + kx * 3 * s + ky * 1.5 * s, y - 2.8 * s + ky * 1.8 * s, 1.5 * s, .9 * s);
+      var tap = function (o) { return work ? Math.abs(Math.sin(now / 65 + o)) * 2.2 * s : 0; };
+      lh = [x - 4 * s, y - 2.5 * s - tap(0)]; rh = [x + 5 * s, y - 2.5 * s - tap(1.7)];
+      if (since < 400) { g.fillStyle = alpha(c, 1 - since / 400); g.font = "700 " + (8 * s + 3) + "px " + MONO; g.textAlign = "left"; g.fillText("ding", x + 11 * s, y - 9 * s); }
+    }
+    if (tool === "magnify") {  // desk lamp, lit while working, and a magnifying glass over the page
+      g.strokeStyle = METAL; g.lineWidth = 1.2 * s; g.beginPath(); g.moveTo(x + 17 * s, y + 1 * s); g.lineTo(x + 15 * s, y - 10 * s); g.lineTo(x + 8 * s, y - 13 * s); g.stroke();
+      g.fillStyle = METAL; g.beginPath(); g.moveTo(x + 5 * s, y - 12 * s); g.lineTo(x + 10 * s, y - 15 * s); g.lineTo(x + 11 * s, y - 11 * s); g.closePath(); g.fill();
+      if (work) { var cone = g.createLinearGradient(0, y - 12 * s, 0, y + 2 * s); cone.addColorStop(0, alpha("#FFF3C4", .35)); cone.addColorStop(1, alpha("#FFF3C4", 0)); g.fillStyle = cone; g.beginPath(); g.moveTo(x + 6 * s, y - 12 * s); g.lineTo(x - 14 * s, y + 1.5 * s); g.lineTo(x + 4 * s, y + 1.5 * s); g.lineTo(x + 10 * s, y - 11 * s); g.closePath(); g.fill(); }
+      var mx = x - 6 * s + (work ? Math.sin(now / 420 + seed) * 4 * s : 3 * s), my = y - 4 * s + (work ? Math.cos(now / 330) * 1.2 * s : 0);
+      rh = [mx + 3 * s, my + 3 * s];
+      g.fillStyle = alpha(c, .18); g.strokeStyle = c; g.lineWidth = 1.3 * s; g.beginPath(); g.arc(mx, my, 3.4 * s, 0, 7); g.fill(); g.stroke();
+      g.strokeStyle = WOOD_TOP; g.lineWidth = 1.6 * s; g.beginPath(); g.moveTo(mx + 2.4 * s, my + 2.4 * s); g.lineTo(rh[0], rh[1]); g.stroke();
+    }
+    if (tool === "stamp") {
+      g.fillStyle = alpha(c, .8); roundRect(g, x + 10 * s, y - 1.2 * s, 8 * s, 2.4 * s, .8 * s); g.fill();  // ink pad
+      var lift = since < 500 ? (since < 150 ? (1 - since / 150) * 7 * s : 0) : work ? 5 * s + Math.sin(now / 180) * 1.6 * s : 2 * s;
+      var stx = since < 500 || work ? x - 6 * s : x + 13 * s, sty = (since < 500 || work ? y - 3 * s : y - 2.5 * s) - lift;
+      g.fillStyle = c; roundRect(g, stx - 3 * s, sty, 6 * s, 1.8 * s, .6 * s); g.fill();
+      g.fillStyle = WOOD_TOP; g.fillRect(stx - .9 * s, sty - 4 * s, 1.8 * s, 4 * s); g.beginPath(); g.arc(stx, sty - 4.6 * s, 1.8 * s, 0, 7); g.fill();
+      rh = [stx + 1.5 * s, sty - 3.5 * s];
+      if (since < 700) { var k2 = since / 700; g.strokeStyle = alpha(c, 1 - k2); g.lineWidth = 1.2 * s; g.beginPath(); g.ellipse(x - 6 * s, y - 1 * s, (4 + k2 * 10) * s, (1.5 + k2 * 3) * s, 0, 0, 7); g.stroke(); }
+    }
+    if (tool === "pencil") {
+      g.fillStyle = "#E2E8F0"; roundRect(g, x + 11 * s, y - 4.5 * s, 4.5 * s, 4.5 * s, 1 * s); g.fill();  // mug
+      g.strokeStyle = "#E2E8F0"; g.lineWidth = 1 * s; g.beginPath(); g.arc(x + 16 * s, y - 2.3 * s, 1.4 * s, -1.4, 1.4); g.stroke();
+      steam(g, x + 13.2 * s, y - 5 * s, s, now);
+      var px = x - 6 * s + (work ? Math.sin(now / 85 + seed) * 3 * s : 2 * s), py = y - 2 * s + (work ? Math.cos(now / 55) * .9 * s : 0);
+      rh = [px + 2 * s, py - 3 * s];
+      g.strokeStyle = "#F9A8D4"; g.lineWidth = 1.6 * s; g.beginPath(); g.moveTo(px, py); g.lineTo(px + 3.4 * s, py - 5.5 * s); g.stroke();
+      g.fillStyle = C.edit; g.beginPath(); g.arc(px, py, .9 * s, 0, 7); g.fill();
+    }
+    // pages lying on this desk
+    dockedHere.forEach(function (b, i) { b.x += ((deskSpot(n.id, "desk").x + i * 3 * s) - b.x) * .25; b.y += (deskSpot(n.id, "desk").y - b.y) * .25; drawPage(g, b.x, b.y, s, n.id === "write" ? 0 : -.12 + i * .1, b, b.fade ? Math.max(0, 1 - (now - b.fade) / 700) : 1, .95); });
+    if (tool === "type") { g.fillStyle = METAL; roundRect(g, x - 9 * s, y - 4.5 * s, 20 * s, 5.8 * s, 2 * s); g.fill(); g.fillStyle = alpha(c, .75); for (var kx2 = 0; kx2 < 6; kx2++) for (var ky2 = 0; ky2 < 2; ky2++) g.fillRect(x - 7 * s + kx2 * 3 * s + ky2 * 1.5 * s, y - 2.8 * s + ky2 * 1.8 * s, 1.5 * s, .9 * s); }
+    arm(g, s, [x - 7 * s, body.sh], lh); arm(g, s, [x + 7 * s, body.sh], rh);
+  }
+  function drawPress(g, n, x, y, s, now, work, glow) {
+    var recent = n.hits.length > 0, speed = recent || glow > .3 ? 140 : 1100;
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 16 * s, 24 * s, 2.6 * s, 0, 0, 7); g.fill();
+    g.fillStyle = METAL_D; roundRect(g, x - 9 * s, y - 27 * s, 4 * s, 9 * s, 1 * s); g.fill();  // chimney
+    n.hits.forEach(function (t) { var k = (now - t) / 1400; for (var i = 0; i < 3; i++) { g.fillStyle = "rgba(203,213,225," + (.35 * (1 - k)) + ")"; g.beginPath(); g.arc(x - 7 * s + Math.sin(i * 2 + k * 4) * 2 * s, y - 28 * s - k * 14 * s - i * 3 * s, (1.5 + k * 3 + i) * s, 0, 7); g.fill(); } });
+    g.fillStyle = "#22304A"; roundRect(g, x - 20 * s, y - 19 * s, 40 * s, 24 * s, 4 * s); g.fill();
+    g.strokeStyle = alpha(n.c, .55 + glow * .45); g.lineWidth = 1.2 * s; roundRect(g, x - 20 * s, y - 19 * s, 40 * s, 24 * s, 4 * s); g.stroke();
+    [[-7, -8], [7, -8]].forEach(function (o, i) {
+      var cx = x + o[0] * s, cy = y + o[1] * s, ang = now / speed * (i ? -1 : 1);
+      g.fillStyle = "#121A27"; g.beginPath(); g.arc(cx, cy, 5.5 * s, 0, 7); g.fill();
+      g.strokeStyle = n.c; g.lineWidth = 1.2 * s; g.beginPath(); g.arc(cx, cy, 5.5 * s, 0, 7); g.stroke();
+      for (var k = 0; k < 3; k++) { var a = ang + k * 2.09; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * 5 * s, cy + Math.sin(a) * 5 * s); g.stroke(); }
+    });
+    g.fillStyle = PAPER; g.fillRect(x - 12 * s, y - 1 * s, 24 * s, 1.2 * s);  // paper web
+    g.fillStyle = alpha(n.c, recent ? 1 : .35); g.beginPath(); g.arc(x + 15 * s, y - 15 * s, 1.5 * s, 0, 7); g.fill();
+    g.fillStyle = METAL_D; g.fillRect(x - 18 * s, y + 5 * s, 3 * s, 11 * s); g.fillRect(x + 15 * s, y + 5 * s, 3 * s, 11 * s);
+    g.fillStyle = METAL; roundRect(g, x + 20 * s, y - 2 * s, 8 * s, 2 * s, .8 * s); g.fill();  // out tray
+    var printed = Math.min(5, S.publishes.length);
+    for (var i = 0; i < printed; i++) drawPage(g, x + 24 * s, y - 4 * s - i * 1.6 * s, s, .08, { c: n.c, marks: { text: true } }, 1, .7);
+  }
+  function drawSite(g, n, x, y, s, now, glow) {
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 16 * s, 20 * s, 2.4 * s, 0, 0, 7); g.fill();
+    g.fillStyle = METAL_D; g.fillRect(x - 2 * s, y + 2 * s, 4 * s, 9 * s); roundRect(g, x - 9 * s, y + 11 * s, 18 * s, 3 * s, 1.2 * s); g.fill();
+    g.fillStyle = "#08111F"; roundRect(g, x - 17 * s, y - 24 * s, 34 * s, 26 * s, 3.5 * s); g.fill();
+    g.strokeStyle = alpha(n.c, .6 + glow * .4); g.lineWidth = 1.4 * s; roundRect(g, x - 17 * s, y - 24 * s, 34 * s, 26 * s, 3.5 * s); g.stroke();
+    var gx = x, gy = y - 11 * s, r = 8.5 * s;
+    g.save(); g.shadowColor = n.c; g.shadowBlur = 6 + glow * 12;
+    g.strokeStyle = alpha(n.c, .85); g.lineWidth = 1 * s; g.beginPath(); g.arc(gx, gy, r, 0, 7); g.stroke(); g.restore();
+    for (var k = 0; k < 3; k++) { var rx = Math.abs(Math.cos(now / 1800 + k * 1.05)) * r; g.strokeStyle = alpha(n.c, .5); g.beginPath(); g.ellipse(gx, gy, Math.max(.3, rx), r, 0, 0, 7); g.stroke(); }
+    [-.45, 0, .45].forEach(function (f) { var yy = gy + f * r, half = Math.sqrt(1 - f * f) * r; g.beginPath(); g.moveTo(gx - half, yy); g.lineTo(gx + half, yy); g.stroke(); });
+    n.hits.forEach(function (t) { var kk = (now - t) / 1400; g.strokeStyle = alpha(n.c, .9 * (1 - kk)); g.lineWidth = 1.3 * s; g.beginPath(); g.arc(gx, y - 24 * s, 3 * s + kk * 16 * s, Math.PI * 1.15, Math.PI * 1.85); g.stroke(); });
+  }
+  function drawSpike(g, x, y, s, now) {
+    var m = Math.min(7, S.drops.length);
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y + 7, 13, 2.2, 0, 0, 7); g.fill();
+    g.fillStyle = "#4B5563"; roundRect(g, x - 10, y + 2, 20, 4.5, 2); g.fill();
+    for (var i = 0; i < m; i++) drawPage(g, x + (((i * 37) % 7) - 3) * .8, y - 1 - i * 2.4, s, (((i * 53) % 11) - 5) * .08, { c: C.bad, marks: {} }, .92, .85);
+    var top = y - 26;
+    var steel = g.createLinearGradient(x - 1.5, 0, x + 1.5, 0); steel.addColorStop(0, "#64748B"); steel.addColorStop(.5, "#E2E8F0"); steel.addColorStop(1, "#64748B");
+    g.fillStyle = steel; g.beginPath(); g.moveTo(x - 1.3, y + 2); g.lineTo(x - 1.1, top + 4); g.lineTo(x, top); g.lineTo(x + 1.1, top + 4); g.lineTo(x + 1.3, y + 2); g.closePath(); g.fill();
+    g.textAlign = "left"; g.textBaseline = "middle";
+    g.fillStyle = alpha(C.bad, .75 + spikeFlash * .25); g.font = "700 11px " + MONO; g.fillText("THE SPIKE", x + 16, y - 10);
+    g.fillStyle = C.dim; g.font = "10px " + MONO; g.fillText(fmt(S.drops.length) + " dropped · last hour", x + 16, y + 3);
+    if (spikeFlash > .05) { g.strokeStyle = alpha(C.bad, spikeFlash); g.lineWidth = 1.5; g.beginPath(); g.arc(x, top + 6, 6 + (1 - spikeFlash) * 14, 0, 7); g.stroke(); }
+    spikeFlash *= .94;
+    return { x: x, y: top + 2 };
+  }
   function drawPipe(now) {
-    var f = fit($("pipe")), g = f.g, w = f.w, h = f.h, busy = {}, R = nodeR(h);
+    var f = fit($("pipe")), g = f.g, w = f.w, h = f.h, busy = {};
     pipeW = w; pipeH = h;
+    var s = sc(h);
     g.clearRect(0, 0, w, h);
     openCalls().forEach(function (c) { var id = job(c.purpose).node; busy[id] = (busy[id] || 0) + 1; });
-    // the line between the desks
+    // the floor and the line between the desks
+    var fy = nodePos("wire", w, h).y + 16 * s, floor = g.createLinearGradient(0, fy, 0, h); floor.addColorStop(0, "rgba(120,160,220,.06)"); floor.addColorStop(1, "rgba(120,160,220,0)");
+    g.fillStyle = floor; g.fillRect(0, fy, w, h);
     for (var i = 0; i < NODES.length - 1; i++) {
-      var a = nodePos(NODES[i].id, w, h), b2 = nodePos(NODES[i + 1].id, w, h), grad = g.createLinearGradient(a.x, 0, b2.x, 0);
-      grad.addColorStop(0, alpha(NODES[i].c, .5)); grad.addColorStop(1, alpha(NODES[i + 1].c, .5));
-      g.strokeStyle = grad; g.lineWidth = 2; g.setLineDash([3, 9]); g.lineDashOffset = -now / 40;
-      g.beginPath(); g.moveTo(a.x + R + 4, a.y); g.bezierCurveTo((a.x + b2.x) / 2, a.y - 22, (a.x + b2.x) / 2, b2.y + 22, b2.x - R - 4, b2.y); g.stroke();
+      var a = nodePos(NODES[i].id, w, h), b2 = nodePos(NODES[i + 1].id, w, h), grad = g.createLinearGradient(a.x, 0, b2.x, 0), ly = a.y - 30 * s;
+      grad.addColorStop(0, alpha(NODES[i].c, .45)); grad.addColorStop(1, alpha(NODES[i + 1].c, .45));
+      g.strokeStyle = grad; g.lineWidth = 1.6; g.setLineDash([3, 8]); g.lineDashOffset = -now / 40;
+      g.beginPath(); g.moveTo(a.x + 22 * s, a.y - 6 * s); g.bezierCurveTo((a.x + b2.x) / 2, ly, (a.x + b2.x) / 2, ly, b2.x - 30 * s, b2.y + 6 * s); g.stroke();
     }
     g.setLineDash([]);
-    var sx = w / 2, sy = h - 16;
-    g.fillStyle = alpha(C.bad, .07 + spikeFlash * .25); g.strokeStyle = alpha(C.bad, .45 + spikeFlash * .55); g.lineWidth = 1.2;
-    roundRect(g, sx - 130, sy - 12, 260, 24, 7); g.fill(); g.stroke();
-    g.fillStyle = C.bad; g.font = "600 11px " + MONO; g.textAlign = "center"; g.textBaseline = "middle";
-    g.fillText("THE SPIKE · " + fmt(S.drops.length) + " dropped in the last hour", sx, sy);
-    spikeFlash *= 0.94;
-    // the desks
+    var spikeTop = drawSpike(g, w / 2 - 60, h - 14, s, now);
+    var docked = {};
+    balls.forEach(function (b) { if (b.arrived && b.mode === "dock" && !b.gone) (docked[b.at] = docked[b.at] || []).push(b); });
+    NODES.forEach(function (n) { drawStation(g, n, now, busy[n.id] || 0, docked[n.id] || []); });
+    // labels
+    g.textAlign = "center"; g.textBaseline = "middle";
     NODES.forEach(function (n) {
-      var p = nodePos(n.id, w, h), glow = n.glow, bz = busy[n.id] || 0;
-      n.glow *= 0.965;
-      g.save(); g.shadowColor = n.c; g.shadowBlur = 10 + glow * 34 + (bz ? 16 : 0);
-      var fill = g.createRadialGradient(p.x - 8, p.y - 10, 4, p.x, p.y, R);
-      fill.addColorStop(0, alpha(n.c, .3 + glow * .45)); fill.addColorStop(1, alpha(n.c, .05 + glow * .12));
-      g.fillStyle = fill; g.beginPath(); g.arc(p.x, p.y, R, 0, 7); g.fill(); g.restore();
-      g.strokeStyle = alpha(n.c, .5 + glow * .5); g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, R, 0, 7); g.stroke();
-      if (bz) {
-        var a0 = now / 300; g.strokeStyle = n.c; g.lineWidth = 3;
-        g.beginPath(); g.arc(p.x, p.y, R + 7, a0, a0 + 1.7); g.stroke();
-        g.beginPath(); g.arc(p.x, p.y, R + 7, a0 + Math.PI, a0 + Math.PI + 1); g.stroke();
-      }
-      n.hits = n.hits.filter(function (t) { return now - t < 1200; });
-      n.hits.forEach(function (t) { var k = (now - t) / 1200; g.strokeStyle = alpha(n.bad && now - n.bad < 1200 ? C.bad : n.c, .8 * (1 - k)); g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, R + k * 22, 0, 7); g.stroke(); });
-      g.textAlign = "center"; g.textBaseline = "middle";
-      g.fillStyle = "#E8EEF8"; g.font = "600 " + (R > 22 ? 13 : 11) + "px " + MONO; g.fillText(nodeCount(n.id), p.x, p.y + 1);
-      g.font = "700 11px " + MONO; g.fillText(n.label, p.x, p.y + R + 15);
-      var q = queued(n.id).length;
-      g.fillStyle = bz ? n.c : C.dim; g.font = "10px " + MONO;
-      g.fillText(bz ? "working" + (q ? " · " + q + " waiting" : "") : q ? q + " waiting" : n.sub, p.x, p.y + R + 28);
+      var p = nodePos(n.id, w, h), bz = busy[n.id] || 0, q = queued(n.id).length, ly = p.y + 16 * s + 11;
+      g.font = "700 11px " + MONO; g.fillStyle = "#E8EEF8"; var lbl = n.label + "  ", lw = g.measureText(lbl).width;
+      g.font = "600 11px " + MONO; var cnt = nodeCount(n.id), cw = g.measureText(cnt).width;
+      g.textAlign = "left"; g.font = "700 11px " + MONO; g.fillStyle = "#E8EEF8"; g.fillText(lbl, p.x - (lw + cw) / 2, ly);
+      g.font = "600 11px " + MONO; g.fillStyle = n.c; g.fillText(cnt, p.x - (lw + cw) / 2 + lw, ly);
+      g.textAlign = "center"; g.fillStyle = bz ? n.c : C.dim; g.font = "10px " + MONO;
+      g.fillText(bz ? "working" + (q ? " · +" + q : "") : q ? q + " waiting" : n.sub, p.x, ly + 13);
     });
-    // arrival bursts
-    bursts = bursts.filter(function (bu) {
-      var k = (now - bu.t0) / (bu.big ? 900 : 700); if (k >= 1) return false;
-      var p = nodePos(bu.at, w, h);
-      g.strokeStyle = alpha(bu.c, 1 - k); g.lineWidth = 3 * (1 - k);
-      g.beginPath(); g.arc(p.x, p.y, R * (1 + k * (bu.big ? 1.6 : 1.1)), 0, 7); g.stroke();
-      g.fillStyle = alpha(bu.c, .35 * (1 - k)); g.beginPath(); g.arc(p.x, p.y, R * (1 - k * .3), 0, 7); g.fill();
-      return true;
-    });
-    // the stories
+    // in-trays and pages in flight
     var titles = {};
     balls = balls.filter(function (b) {
       if (b.gone) return false;
       if (b.fade && now - b.fade > 700) return false;
       if (!b.fade && b.mode === "queue" && b.arrived && now - b.born > QUEUE_TTL) b.fade = now;
       if (!b.fade && b.mode === "dock" && b.arrived && now - b.t0 > DOCK_TTL) b.fade = now;
-      var k = (now - b.t0) / b.dur, tx, ty;
-      if (!b.arrived && k >= 0) {
-        if (k >= 1) { arrive(b, now); if (b.gone) return false; }
+      var fadeK = b.fade ? Math.max(0, 1 - (now - b.fade) / 700) : 1, k = (now - b.t0) / b.dur;
+      if (!b.arrived) {
+        if (k < 0) return true;
+        if (k >= 1) { arrive(b, now); return !b.gone; }
+        var end = b.mode === "fall" ? spikeTop : b.mode === "dock" ? deskSpot(b.to, "desk") : b.mode === "absorb" ? deskSpot(b.to, "mouth") : deskSpot(b.to, "tray");
+        var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, tx, ty, rot;
+        if (b.mode === "fall") { tx = b.sx + (end.x - b.sx) * k; ty = b.sy + (end.y - b.sy) * k * k; rot = k * 9; }
         else {
-          var end;
-          if (b.mode === "fall") end = { x: sx + (b.wob * 3), y: sy - 10 };
-          else if (b.mode === "dock" || b.mode === "absorb") end = nodePos(b.to, w, h);
-          else { var pq = nodePos(b.to, w, h); end = { x: pq.x - R - 10, y: pq.y + R * .6 }; }
-          var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-          if (b.mode === "fall") { tx = b.sx + (end.x - b.sx) * k; ty = b.sy + (end.y - b.sy) * k * k; }
-          else {
-            var mx = (b.sx + end.x) / 2, u = 1 - e;  // the same S-curve as the line
-            tx = u * u * u * b.sx + 3 * u * u * e * mx + 3 * u * e * e * mx + e * e * e * end.x;
-            ty = u * u * u * b.sy + 3 * u * u * e * (b.sy - 22 + b.wob) + 3 * u * e * e * (end.y + 22 + b.wob) + e * e * e * end.y;
-          }
-          b.x = tx; b.y = ty;
-          b.trail.push([tx, ty]); if (b.trail.length > 9) b.trail.shift();
+          var mx = (b.sx + end.x) / 2, top = Math.min(b.sy, end.y) - 30 * s + b.wob, u = 1 - e;
+          tx = u * u * u * b.sx + 3 * u * u * e * mx + 3 * u * e * e * mx + e * e * e * end.x;
+          ty = u * u * u * b.sy + 3 * u * u * e * top + 3 * u * e * e * top + e * e * e * end.y;
+          rot = Math.sin(now / 140 + b.phase) * .35 * Math.sin(k * Math.PI);
         }
+        b.x = tx; b.y = ty;
+        g.save(); g.shadowColor = b.mode === "fall" ? C.bad : b.c; g.shadowBlur = 10; g.restore();
+        var glowR = g.createRadialGradient(tx, ty, 0, tx, ty, 12 * Math.max(.78, s)); glowR.addColorStop(0, alpha(b.mode === "fall" ? C.bad : b.c, .35)); glowR.addColorStop(1, alpha(b.c, 0));
+        g.fillStyle = glowR; g.beginPath(); g.arc(tx, ty, 12 * Math.max(.78, s), 0, 7); g.fill();
+        drawPage(g, tx, ty, s, rot, b.mode === "fall" ? { c: C.bad, marks: b.marks } : b, fadeK, 1.15);
+        return true;
       }
-      if (b.arrived) {
-        var p = nodePos(b.at, w, h);
-        if (b.mode === "dock") {
-          var ang = now / 380 + b.phase; tx = p.x + Math.cos(ang) * R * .62; ty = p.y + Math.sin(ang) * R * .62;
-          if (b.title) titles[b.at] = b.title;
-        } else {
-          var slot = queued(b.at).indexOf(b); if (slot < 0) slot = 0;
-          tx = p.x - R - 10 - (slot % 4) * 8; ty = p.y + R * .55 + Math.floor(slot / 4) * 8 + Math.sin(now / 500 + b.phase) * 1.2;
-        }
-        b.x += (tx - b.x) * .2; b.y += (ty - b.y) * .2;
-        if (b.trail.length) b.trail.shift();
+      if (b.mode === "dock") { if (b.title) titles[b.at] = b.title; return true; }  // drawn on its desk
+      var slot = queued(b.at).indexOf(b), tray = deskSpot(b.at, "tray");
+      if (slot < 0) slot = 0;
+      if (slot < TRAY_SHOWN || b.fade) {
+        var txq = tray.x + ((slot * 7) % 3 - 1) * .8 * s, tyq = tray.y - slot * 2.2 * s;
+        b.x += (txq - b.x) * .2; b.y += (tyq - b.y) * .2;
+        drawPage(g, b.x, b.y, s, ((slot * 5) % 7 - 3) * .03, b, fadeK, .9);
       }
-      if (k < 0 && !b.arrived) return true;  // waiting to set off
-      var fadeK = b.fade ? Math.max(0, 1 - (now - b.fade) / 700) : 1, c = b.mode === "fall" ? C.bad : b.c, size = b.arrived && b.mode === "queue" ? 2.6 : 3.6;
-      b.trail.forEach(function (pt, ti) { g.fillStyle = alpha(c, .06 + ti * .045 * fadeK); g.beginPath(); g.arc(pt[0], pt[1], size * (.4 + ti * .06), 0, 7); g.fill(); });
-      g.save(); g.shadowColor = c; g.shadowBlur = b.arrived && b.mode === "queue" ? 6 : 14;
-      g.fillStyle = alpha(c, .9 * fadeK); g.beginPath(); g.arc(b.x, b.y, size + 1.2, 0, 7); g.fill();
-      g.fillStyle = "rgba(255,255,255," + (.95 * fadeK) + ")"; g.beginPath(); g.arc(b.x, b.y, size * .55, 0, 7); g.fill();
-      g.restore();
       return true;
     });
+    NODES.forEach(function (n) { var q = queued(n.id).length; if (q > TRAY_SHOWN) { var tr = deskSpot(n.id, "tray"); g.fillStyle = n.c; g.font = "600 10px " + MONO; g.textAlign = "center"; g.fillText("+" + (q - TRAY_SHOWN), tr.x, tr.y - TRAY_SHOWN * 2.2 * s - 9 * Math.max(.78, s)); } });
     if (balls.length > 260) balls.splice(0, balls.length - 260);
-    // sparks
-    sparks = sparks.filter(function (s) {
-      var age = now - s.t0, k = age / s.life; if (k >= 1) return false;
-      var x = s.x + s.vx * age, y = s.y + s.vy * age + .00004 * age * age;
-      g.fillStyle = alpha(s.c, 1 - k); g.fillRect(x - 1, y - 1, 2, 2);
+    // arrival rings, sparks and the model's characters
+    bursts = bursts.filter(function (bu) {
+      var kk = (now - bu.t0) / (bu.big ? 900 : 650); if (kk >= 1) return false;
+      g.strokeStyle = alpha(bu.c, 1 - kk); g.lineWidth = 2 * (1 - kk); g.beginPath(); g.arc(bu.x, bu.y, (bu.big ? 6 : 4) + kk * (bu.big ? 26 : 16), 0, 7); g.stroke();
       return true;
     });
-    if (sparks.length > 600) sparks.splice(0, sparks.length - 600);
+    sparks = sparks.filter(function (sp) {
+      var age = now - sp.t0, kk = age / sp.life; if (kk >= 1) return false;
+      g.fillStyle = alpha(sp.c, 1 - kk); g.fillRect(sp.x + sp.vx * age - 1, sp.y + sp.vy * age + .00004 * age * age - 1, 2, 2);
+      return true;
+    });
+    g.textAlign = "center"; g.textBaseline = "middle";
+    glyphs = glyphs.filter(function (gl) {
+      var age = now - gl.t0, kk = age / gl.life; if (kk >= 1) return false;
+      g.fillStyle = alpha(gl.c, (1 - kk) * .95); g.font = "600 " + Math.round(9 + 3 * s) + "px " + MONO;
+      g.fillText(gl.ch, gl.x + gl.vx * age, gl.y + gl.vy * age);
+      return true;
+    });
+    if (glyphs.length > 200) glyphs.splice(0, glyphs.length - 200);
+    if (sparks.length > 500) sparks.splice(0, sparks.length - 500);
     // what each busy desk is working on
-    var gap = (w - 2 * Math.min(80, w * .07)) / (NODES.length - 1), maxChars = Math.max(8, Math.floor(gap / 6.4));
-    g.font = "10.5px " + MONO; g.textAlign = "center"; g.textBaseline = "middle";
+    var gap = (w - 2 * Math.min(80, w * .07)) / (NODES.length - 1), maxChars = Math.max(8, Math.floor((gap - 16) / 6.6));
+    g.font = "10.5px " + MONO; g.textAlign = "center";
     Object.keys(titles).forEach(function (id) {
       var p = nodePos(id, w, h), tt = titles[id].length > maxChars ? titles[id].slice(0, maxChars - 1) + "…" : titles[id];
-      g.fillStyle = alpha(NODE[id].c, .95); g.fillText(tt, p.x, Math.max(9, p.y - R - 14));
+      g.fillStyle = "rgba(5,7,12,.7)"; var tw2 = g.measureText(tt).width; roundRect(g, p.x - tw2 / 2 - 5, Math.max(2, p.y - 36 * s - 9) - 7, tw2 + 10, 14, 4); g.fill();
+      g.fillStyle = NODE[id].c; g.fillText(tt, p.x, Math.max(9, p.y - 36 * s - 9));
     });
   }
 
@@ -1354,7 +1529,7 @@
 
   /* ---------- the stream ---------- */
   function onLive(e) {
-    if (e.kind === "ink") { inkChunk(e); inkSpark(e.id); kick(.1); return; }
+    if (e.kind === "ink") { inkChunk(e); inkSpark(e.id, e.text); kick(.1); return; }
     ingest(e, true);
     kick(e.kind === "live-sweep" ? .2 : .6);
     if (e.kind === "ink-start") liveStart(e);
